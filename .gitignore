@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node / tooling (if ever added)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Solidity / hardhat / foundry (if ever added)
+artifacts/
+cache/
+out/
+typechain-types/
+broadcast/
+
+# Env & secrets — never commit keys
+.env
+.env.*
+*.pem
+*.key
+
+# Build / temp
+dist/
+build/
+*.log
+tmp/

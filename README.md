@@ -1,0 +1,46 @@
+# BYKO
+
+Genesis ERC-20 token on Base. A coin that does nothing, reliably.
+
+`|>` — the bar is the person, the point is the direction. Sub-brand of [bykovas.lt](https://bykovas.lt).
+
+## Token
+
+| | |
+|---|---|
+| Standard | ERC-20 |
+| Network | Base |
+| Chain ID | `8453` |
+| Symbol | `BYKO` |
+| Decimals | `18` |
+| Total supply | `790,227 BYKO` — fixed forever |
+| Contract | [`0x078bB16e24c8931fc007928c370422e5e38F4372`](https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372) |
+| Token page | [basescan.org/token/0x078b…4372](https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372) |
+| Status | Verified · running |
+
+The contract mints once at genesis, then it can only do what ERC-20 does.
+No mint function, no owner privileges, no proxy, no upgrade path. Immutable after deployment.
+
+## Repository
+
+```
+contracts/   BYKO.sol — the whole contract, 21 lines
+website/     byko site, static, self-contained
+brand/       brand guide and source marks
+assets/      logo, coin and social renders
+docs/        whitepaper and project documents
+```
+
+## Facts
+
+- Supply / fixed
+- Owner / none
+- Tax / 0%
+- Roadmap / none — the point is the direction
+- 1 BYKO = 1 BYKO
+
+## Disclaimer
+
+BYKO is a token with no utility, no yield and no promises. It does not represent
+equity, debt or any claim on anything. Nothing in this repository is financial
+advice. Verify the contract on BaseScan before interacting.
