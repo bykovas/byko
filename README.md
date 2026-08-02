@@ -16,7 +16,9 @@ Genesis ERC-20 token on Base. A coin that does nothing, reliably.
 | Total supply | `790,227 BYKO` — fixed forever |
 | Contract | [`0x078bB16e24c8931fc007928c370422e5e38F4372`](https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372) |
 | Token page | [basescan.org/token/0x078b…4372](https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372) |
-| Status | Verified · running |
+| Deployed | 2 Aug 2026, by `omenas.base.eth` |
+| Compiler | solidity v0.8.34 · OpenZeppelin 5.4.0 |
+| Status | Verified (exact match) · running |
 
 The contract mints once at genesis, then it can only do what ERC-20 does.
 No mint function, no owner privileges, no proxy, no upgrade path. Immutable after deployment.
