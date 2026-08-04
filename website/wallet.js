@@ -43,7 +43,10 @@
   button.hidden = false;
 
   function openDialog() {
-    if (!dialog.open) dialog.showModal();
+    if (!dialog.open) {
+      dialog.showModal();
+      dialog.focus({ preventScroll: true });
+    }
   }
 
   function clearBody() {

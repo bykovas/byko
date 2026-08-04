@@ -115,13 +115,14 @@ h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
 /* wallet */
 .wallet-dialog{width:min(440px,calc(100% - 32px));padding:0;background:var(--bg-2);color:var(--text);
   border:1px solid var(--line-2);border-radius:14px;box-shadow:none}
+.wallet-dialog:focus{outline:none}
 .wallet-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
 .wallet-dialog-inner{padding:24px}
 .wallet-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
 .wallet-dialog-head h2{margin:0;font-size:20px}
 .wallet-close{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:8px;
-  background:transparent;border:1px solid var(--line);color:var(--text-2);font:20px/1 Inter,sans-serif;cursor:pointer}
-.wallet-close:hover{background:var(--bg-3);border-color:var(--line-2);color:var(--text)}
+  background:transparent;border:0;color:var(--text-2);font:20px/1 Inter,sans-serif;cursor:pointer}
+.wallet-close:hover{background:var(--bg-3);color:var(--text)}
 .wallet-message{margin:0;color:var(--text-2)}
 .wallet-address{display:block;margin:16px 0 12px;padding:12px;border:1px solid var(--line);border-radius:8px;
   background:var(--bg);color:var(--text);font:12px/1.6 'JetBrains Mono',monospace;overflow-wrap:anywhere}
@@ -324,7 +325,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   </div>
 </footer>
 
-<dialog class="wallet-dialog" id="wallet-dialog" aria-labelledby="wallet-dialog-title">
+<dialog class="wallet-dialog" id="wallet-dialog" aria-labelledby="wallet-dialog-title" tabindex="-1">
   <div class="wallet-dialog-inner">
     <div class="wallet-dialog-head">
       <h2 id="wallet-dialog-title">Add BYKO</h2>
