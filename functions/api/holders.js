@@ -114,12 +114,13 @@ async function writeCheckpoint(env, block, balances) {
   await caches.default.put(CHECKPOINT_CACHE_URL, response);
 }
 
+/* BaseScan's tier scale: whale >=10% of supply, then decades down. */
 function tierFor(balance) {
-  if (balance >= TOTAL_SUPPLY_WEI / 100n) return "whale";
-  if (balance >= TOTAL_SUPPLY_WEI / 1000n) return "shark";
-  if (balance >= TOTAL_SUPPLY_WEI / 10000n) return "dolphin";
-  if (balance >= TOTAL_SUPPLY_WEI / 100000n) return "fish";
-  if (balance >= TOTAL_SUPPLY_WEI / 1000000n) return "crab";
+  if (balance >= TOTAL_SUPPLY_WEI / 10n) return "whale";
+  if (balance >= TOTAL_SUPPLY_WEI / 100n) return "shark";
+  if (balance >= TOTAL_SUPPLY_WEI / 1000n) return "dolphin";
+  if (balance >= TOTAL_SUPPLY_WEI / 10000n) return "fish";
+  if (balance >= TOTAL_SUPPLY_WEI / 100000n) return "crab";
   return "shrimp";
 }
 
