@@ -91,35 +91,86 @@
     return "could not issue the card. try again.";
   }
 
-  function showCard(data) {
+  function showCard(data, mailNote) {
     dialogForm.style.display = "none";
-    showStatus("is-ok", "card " + data.serial + " issued" + (data.mailed === false ? " · mail failed, save the link" : " · link sent by mail"));
+    showStatus("is-ok", "card " + data.serial + " issued" + (mailNote || ""));
     cardImage.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(data.svg);
     permalink.textContent = data.url;
     permalink.href = data.url;
     result.style.display = "block";
   }
 
-  function submitCard(txHash) {
-    showStatus("", "");
-    showStatus("is-ok", "verifying on Base…");
-    setBusy(true);
-    fetch("/api/card", {
+  /* Rasterize the filled SVG so the mail can carry a PNG that renders in
+     every client (the SVG original is attached server-side as well).
+     Resolves null when the browser cannot do it — the mail still goes out. */
+  function renderPng(svgText) {
+    return new Promise(function (resolve) {
+      var done = false;
+      var img;
+      var canvas;
+      var context;
+      function finish(value) {
+        if (!done) { done = true; resolve(value); }
+      }
+      try {
+        img = new Image();
+        img.onload = function () {
+          try {
+            canvas = document.createElement("canvas");
+            canvas.width = 2800;
+            canvas.height = 1240;
+            context = canvas.getContext("2d");
+            context.drawImage(img, 0, 0, 2800, 1240);
+            finish((canvas.toDataURL("image/png").split(",")[1]) || null);
+          } catch (error) { finish(null); }
+        };
+        img.onerror = function () { finish(null); };
+        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgText);
+        setTimeout(function () { finish(null); }, 8000);
+      } catch (error) { finish(null); }
+    });
+  }
+
+  function postCard(txHash, extra) {
+    var body = {
+      txHash: txHash,
+      email: emailInput.value.trim(),
+      inscription: inscriptionInput.value
+    };
+    var key;
+    for (key in (extra || {})) body[key] = extra[key];
+    return fetch("/api/card", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        txHash: txHash,
-        email: emailInput.value.trim(),
-        inscription: inscriptionInput.value
-      })
+      body: JSON.stringify(body)
     }).then(function (response) {
       return response.json().then(function (data) { return { ok: response.ok, data: data }; });
-    }).then(function (outcome) {
+    });
+  }
+
+  function submitCard(txHash) {
+    showStatus("is-ok", "verifying on Base…");
+    setBusy(true);
+    postCard(txHash, null).then(function (outcome) {
       if (!outcome.ok || !outcome.data || !outcome.data.ok) {
         showStatus("is-err", errorText(outcome.data && outcome.data.error));
         return;
       }
-      showCard(outcome.data);
+      if (outcome.data.mailed) {
+        showCard(outcome.data, " · link sent by mail");
+        return;
+      }
+      showCard(outcome.data, " · sending mail…");
+      /* follow-up: attach the client-rendered PNG and let the server mail */
+      return renderPng(outcome.data.svg).then(function (png) {
+        return postCard(txHash, png ? { mail: true, png: png } : { mail: true });
+      }).then(function (mailOutcome) {
+        var sent = mailOutcome && mailOutcome.ok && mailOutcome.data && mailOutcome.data.mailed;
+        showStatus("is-ok", "card " + outcome.data.serial + " issued" +
+          (sent ? " · link sent by mail" : " · mail failed, save the link"));
+      }, function () {
+        showStatus("is-ok", "card " + outcome.data.serial + " issued · mail failed, save the link");
+      });
     }, function () {
       showStatus("is-err", "network error. the donation is safe — retry with the tx hash.");
     }).then(function () {

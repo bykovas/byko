@@ -34,9 +34,11 @@ var RPC_URLS = [
   "https://base.meowrpc.com"
 ];
 var activeRpcUrls = RPC_URLS;
-var RATE_LIMIT = 5;
+var RATE_LIMIT = 10;
 var RATE_WINDOW_SECONDS = 3600;
 var INSCRIPTION_MAX = 300;
+/* cap the client-rendered PNG forwarded to Mailjet */
+var PNG_BASE64_MAX = 4000000;
 
 function json(body, status) {
   return new Response(JSON.stringify(body), {
@@ -271,12 +273,90 @@ async function issueSerial(kv, txHash) {
   return "BK " + String(next).padStart(7, "0");
 }
 
-async function sendMail(env, card, url, ip) {
+/* UTF-8 safe base64 for the SVG attachment */
+function base64Encode(text) {
+  var bytes = new TextEncoder().encode(text);
+  var binary = "";
+  var i;
+  for (i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(binary);
+}
+
+/* Send the card by mail: structured text + HTML with the PNG inlined (cid),
+   the PNG and the SVG original attached. Never throws — a mail failure must
+   not fail an already-issued card. Returns true when every message went out. */
+async function sendMail(env, card, url, ip, svg, pngBase64) {
   var from = env.CARD_FROM_EMAIL || "byko@bykovas.lt";
   var notifyTo = env.CARD_NOTIFY_TO || "byko@bykovas.lt";
+  var slug = slugFor(card.serial);
+  var site = url.replace(/\/card\/.*$/, "");
   var response;
   var payload;
   var i;
+  var textLines = [
+    "A donation card has been issued to the bearer.",
+    "",
+    "Serial   " + card.serial,
+    "Nominal  " + card.nominal + " BYKO",
+    "Date     " + card.date,
+    "Tx       " + card.txHash,
+    "",
+    "View your card: " + url,
+    "",
+    "1 BYKO = 1 BYKO",
+    "BYKO — " + site
+  ];
+  var html =
+    '<div style="font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#0A0A0A;line-height:1.7">' +
+    "<p>A donation card has been issued to the bearer.</p>" +
+    '<p style="font-family:monospace">Serial&nbsp;&nbsp;&nbsp;' + card.serial +
+    "<br>Nominal&nbsp;&nbsp;" + card.nominal + " BYKO" +
+    "<br>Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + card.date +
+    "<br>Tx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + card.txHash + "</p>" +
+    (pngBase64 ? '<p><img src="cid:bykocard" alt="BYKO card ' + card.serial + '" style="max-width:100%;border-radius:4px"></p>' : "") +
+    '<p><a href="' + url + '" style="color:#4A9FD8">View your card &rarr;</a></p>' +
+    '<p style="color:#8a8a8a">1 BYKO = 1 BYKO<br>BYKO &mdash; ' + site + "</p></div>";
+  var donor = {
+    From: { Email: from, Name: "BYKO" },
+    To: [{ Email: card.bearer }],
+    Subject: "Your BYKO donation card — " + card.serial,
+    TextPart: textLines.join("\n"),
+    HTMLPart: html,
+    Attachments: [{
+      ContentType: "image/svg+xml",
+      Filename: "byko-card-" + slug + ".svg",
+      Base64Content: base64Encode(svg)
+    }]
+  };
+  if (pngBase64) {
+    donor.Attachments.unshift({
+      ContentType: "image/png",
+      Filename: "byko-card-" + slug + ".png",
+      Base64Content: pngBase64
+    });
+    donor.InlinedAttachments = [{
+      ContentType: "image/png",
+      Filename: "byko-card-inline.png",
+      ContentID: "bykocard",
+      Base64Content: pngBase64
+    }];
+  }
+  var owner = {
+    From: { Email: from, Name: "BYKO" },
+    To: [{ Email: notifyTo }],
+    Subject: "BYKO / card issued " + card.serial,
+    TextPart: [
+      "card issued: " + card.serial,
+      "nominal: " + card.nominal + " BYKO",
+      "bearer: " + card.bearer,
+      "tx: " + card.txHash,
+      "date: " + card.date,
+      "ip: " + ip,
+      "link: " + url
+    ].join("\n")
+  };
   if (!env.MAILJET_API_KEY || !env.MAILJET_SECRET_KEY) return false;
   try {
     response = await fetch("https://api.mailjet.com/v3.1/send", {
@@ -285,28 +365,7 @@ async function sendMail(env, card, url, ip) {
         "Authorization": "Basic " + btoa(env.MAILJET_API_KEY + ":" + env.MAILJET_SECRET_KEY),
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        Messages: [
-          {
-            From: { Email: from },
-            To: [{ Email: card.bearer }],
-            Subject: "BYKO / card " + card.serial,
-            TextPart: "Your donation card.\n\n" +
-              "Serial: " + card.serial + "\n" +
-              "Nominal: " + card.nominal + " BYKO\n" +
-              "Tx: " + card.txHash + "\n" +
-              "Permanent link: " + url + "\n\n" +
-              "1 BYKO = 1 BYKO"
-          },
-          {
-            From: { Email: from },
-            To: [{ Email: notifyTo }],
-            Subject: "BYKO / card issued " + card.serial,
-            TextPart: "card: " + card.serial + " · " + card.nominal + " BYKO · " +
-              card.bearer + " · " + card.txHash + " · " + ip
-          }
-        ]
-      })
+      body: JSON.stringify({ Messages: [donor, owner] })
     });
   } catch (error) {
     return false;
@@ -330,6 +389,8 @@ export async function onRequestPost(context) {
   var input;
   var txHash;
   var email;
+  var wantMail;
+  var png;
   var inscription;
   var existing;
   var verification;
@@ -355,6 +416,9 @@ export async function onRequestPost(context) {
   txHash = input && typeof input.txHash === "string" ? input.txHash.trim().toLowerCase() : "";
   email = input && typeof input.email === "string" ? input.email.trim() : "";
   inscription = cleanInscription(input && input.inscription);
+  wantMail = input && input.mail === true;
+  png = input && typeof input.png === "string" && input.png.length <= PNG_BASE64_MAX &&
+    /^[A-Za-z0-9+/=]+$/.test(input.png) ? input.png : "";
   if (!validTxHash(txHash)) return json({ error: "tx" }, 400);
   if (!validEmail(email)) return json({ error: "email" }, 400);
   if (!await underRateLimit(context.request)) return json({ error: "rate" }, 429);
@@ -363,29 +427,35 @@ export async function onRequestPost(context) {
     existing = await env.CARDS.get("card:" + txHash);
     if (existing) {
       card = JSON.parse(existing);
-      url = origin + "/card/" + slugFor(card.serial);
-      svg = await fillTemplate(origin, card, false);
-      return json({ ok: true, serial: card.serial, url: url, svg: svg }, 200);
+    } else {
+      verification = await verifyDonation(txHash);
+      if (verification.error) return json({ error: verification.error }, 422);
+      card = {
+        serial: await issueSerial(env.CARDS, txHash),
+        nominal: formatNominal(verification.amountWei),
+        date: formatDate(verification.timestamp),
+        txHash: txHash,
+        inscription: inscription,
+        bearer: email,
+        mailed: false
+      };
+      await env.CARDS.put("card:" + txHash, JSON.stringify(card));
+      await env.CARDS.put("serial:" + slugFor(card.serial), txHash);
     }
-
-    verification = await verifyDonation(txHash);
-    if (verification.error) return json({ error: verification.error }, 422);
-
-    card = {
-      serial: await issueSerial(env.CARDS, txHash),
-      nominal: formatNominal(verification.amountWei),
-      date: formatDate(verification.timestamp),
-      txHash: txHash,
-      inscription: inscription,
-      bearer: email
-    };
-    await env.CARDS.put("card:" + txHash, JSON.stringify(card));
-    await env.CARDS.put("serial:" + slugFor(card.serial), txHash);
 
     url = origin + "/card/" + slugFor(card.serial);
     svg = await fillTemplate(origin, card, false);
-    mailed = await sendMail(env, card, url, clientIp(context.request));
-    return json({ ok: true, serial: card.serial, url: url, svg: svg, mailed: mailed }, 200);
+    /* The mail goes out on the follow-up request, once the client has
+       rendered the PNG for the attachment. Always to the stored bearer,
+       and only once per card. */
+    if (wantMail && card.mailed !== true) {
+      mailed = await sendMail(env, card, url, clientIp(context.request), svg, png);
+      if (mailed) {
+        card.mailed = true;
+        await env.CARDS.put("card:" + txHash, JSON.stringify(card));
+      }
+    }
+    return json({ ok: true, serial: card.serial, url: url, svg: svg, mailed: card.mailed === true }, 200);
   } catch (error) {
     return json({ error: "rpc" }, 503);
   }
