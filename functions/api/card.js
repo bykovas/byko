@@ -273,21 +273,10 @@ async function issueSerial(kv, txHash) {
   return "BK " + String(next).padStart(7, "0");
 }
 
-/* UTF-8 safe base64 for the SVG attachment */
-function base64Encode(text) {
-  var bytes = new TextEncoder().encode(text);
-  var binary = "";
-  var i;
-  for (i = 0; i < bytes.length; i += 0x8000) {
-    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-  }
-  return btoa(binary);
-}
-
-/* Send the card by mail: structured text + HTML with the PNG inlined (cid),
-   the PNG and the SVG original attached. Never throws — a mail failure must
-   not fail an already-issued card. Returns true when every message went out. */
-async function sendMail(env, card, url, ip, svg, pngBase64) {
+/* Send the card by mail: structured text + HTML with the PNG inlined (cid)
+   and attached. Never throws — a mail failure must not fail an
+   already-issued card. Returns true when every message went out. */
+async function sendMail(env, card, url, ip, pngBase64) {
   var from = env.CARD_FROM_EMAIL || "byko@bykovas.lt";
   var notifyTo = env.CARD_NOTIFY_TO || "byko@bykovas.lt";
   var slug = slugFor(card.serial);
@@ -323,19 +312,14 @@ async function sendMail(env, card, url, ip, svg, pngBase64) {
     To: [{ Email: card.bearer }],
     Subject: "Your BYKO donation card — " + card.serial,
     TextPart: textLines.join("\n"),
-    HTMLPart: html,
-    Attachments: [{
-      ContentType: "image/svg+xml",
-      Filename: "byko-card-" + slug + ".svg",
-      Base64Content: base64Encode(svg)
-    }]
+    HTMLPart: html
   };
   if (pngBase64) {
-    donor.Attachments.unshift({
+    donor.Attachments = [{
       ContentType: "image/png",
       Filename: "byko-card-" + slug + ".png",
       Base64Content: pngBase64
-    });
+    }];
     donor.InlinedAttachments = [{
       ContentType: "image/png",
       Filename: "byko-card-inline.png",
@@ -449,7 +433,7 @@ export async function onRequestPost(context) {
        rendered the PNG for the attachment. Always to the stored bearer,
        and only once per card. */
     if (wantMail && card.mailed !== true) {
-      mailed = await sendMail(env, card, url, clientIp(context.request), svg, png);
+      mailed = await sendMail(env, card, url, clientIp(context.request), png);
       if (mailed) {
         card.mailed = true;
         await env.CARDS.put("card:" + txHash, JSON.stringify(card));
