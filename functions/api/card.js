@@ -340,7 +340,9 @@ export async function onRequestPost(context) {
 
   if (!DONATION_ADDRESS) return json({ error: "config" }, 503);
   if (!env || !env.CARDS) return json({ error: "config" }, 503);
-  activeRpcUrls = (env.RPC_URL ? [env.RPC_URL] : []).concat(RPC_URLS);
+  activeRpcUrls = (env.RPC_URL ? [env.RPC_URL] : [])
+    .concat(env.DRPC_API_KEY ? ["https://lb.drpc.live/base/" + env.DRPC_API_KEY] : [])
+    .concat(RPC_URLS);
   activeEtherscanKey = env.ETHERSCAN_API_KEY || "";
 
   try {

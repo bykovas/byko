@@ -106,6 +106,15 @@ function parseCheckpoint(text) {
   return { block: data.block, balances: balances };
 }
 
+/* Keyed endpoints first: RPC_URL as a full URL, or DRPC_API_KEY as a bare
+   dRPC key (the Base URL is assembled here). */
+function keyedRpcUrls(env) {
+  var urls = [];
+  if (env && env.RPC_URL) urls.push(env.RPC_URL);
+  if (env && env.DRPC_API_KEY) urls.push("https://lb.drpc.live/base/" + env.DRPC_API_KEY);
+  return urls;
+}
+
 function checkpointKv(env) {
   if (!env) return null;
   return env.BYKO_KV || env.CARDS || null;
@@ -251,7 +260,7 @@ async function collectHolders(env) {
 
 export async function onRequestGet(context) {
   var cache = caches.default;
-  activeRpcUrls = (context.env && context.env.RPC_URL ? [context.env.RPC_URL] : []).concat(RPC_URLS);
+  activeRpcUrls = keyedRpcUrls(context.env).concat(RPC_URLS);
   var cached = await cache.match(context.request);
   var data;
   var summary;
