@@ -11,10 +11,10 @@ var TOTAL_SUPPLY_WEI = BigInt(TOTAL_SUPPLY) * WEI;
 var CHUNK_SIZE = 10000;
 var TIER_NAMES = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
 /* Balances checkpoint so a request only scans blocks since the previous run.
-   Durable when a KV namespace is bound as BYKO_KV in the Pages project;
-   falls back to the per-colo cache (best effort) without it. A full rescan
-   from DEPLOY_BLOCK stays within the subrequest limit only for a bounded
-   backlog, so the checkpoint is what keeps this endpoint alive long term. */
+   Durable in KV (the CARDS namespace binding is reused; BYKO_KV wins when
+   bound); falls back to the per-colo cache (best effort) without either.
+   A full rescan from DEPLOY_BLOCK stays within the subrequest limit only
+   for a bounded backlog, so the checkpoint keeps this endpoint alive. */
 var CHECKPOINT_KEY = "holders-checkpoint-v1";
 var CHECKPOINT_CACHE_URL = "https://byko-checkpoint.invalid/" + CHECKPOINT_KEY;
 
@@ -91,11 +91,17 @@ function parseCheckpoint(text) {
   return { block: data.block, balances: balances };
 }
 
+function checkpointKv(env) {
+  if (!env) return null;
+  return env.BYKO_KV || env.CARDS || null;
+}
+
 async function readCheckpoint(env) {
   var cached;
+  var kv = checkpointKv(env);
   var text = null;
-  if (env && env.BYKO_KV) {
-    text = await env.BYKO_KV.get(CHECKPOINT_KEY);
+  if (kv) {
+    text = await kv.get(CHECKPOINT_KEY);
   } else {
     cached = await caches.default.match(CHECKPOINT_CACHE_URL);
     if (cached) text = await cached.text();
@@ -105,9 +111,10 @@ async function readCheckpoint(env) {
 
 async function writeCheckpoint(env, block, balances) {
   var text = serializeCheckpoint(block, balances);
+  var kv = checkpointKv(env);
   var response;
-  if (env && env.BYKO_KV) {
-    await env.BYKO_KV.put(CHECKPOINT_KEY, text);
+  if (kv) {
+    await kv.put(CHECKPOINT_KEY, text);
     return;
   }
   response = new Response(text, { headers: { "Cache-Control": "public, max-age=2592000" } });

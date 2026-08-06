@@ -20,7 +20,9 @@
  * Local testing: npx wrangler pages dev website --kv CARDS
  */
 
-var DONATION_ADDRESS = ""; /* fill with the dedicated donation address */
+var DONATION_ADDRESS = "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6";
+/* Donations count from here; earlier transfers to the address cannot mint. */
+var DONATION_START_BLOCK = 49614625;
 
 var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 var TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
@@ -124,6 +126,7 @@ async function verifyDonation(txHash) {
   }
   if (amount === null) return { error: "no_byko_donation" };
   if (amount <= 0n) return { error: "no_byko_donation" };
+  if (parseInt(receipt.blockNumber, 16) < DONATION_START_BLOCK) return { error: "no_byko_donation" };
   block = await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
   if (!block || !block.timestamp) throw new Error("rpc");
   return { amountWei: amount, timestamp: parseInt(block.timestamp, 16) };

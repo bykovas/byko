@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  var DONATION_ADDRESS = ""; /* keep in sync with functions/api/card.js */
+  var DONATION_ADDRESS = "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6"; /* keep in sync with functions/api/card.js */
 
   var BYKO_ADDRESS = "0x078bB16e24c8931fc007928c370422e5e38F4372";
   var BASE_CHAIN_ID = "0x2105";
