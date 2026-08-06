@@ -20,7 +20,7 @@
     image: new URL("assets/coin-512.png", document.baseURI).href
   };
 
-  var button = document.getElementById("add-byko");
+  var button = document.getElementById("add-to-wallet");
   var dialog = document.getElementById("wallet-dialog");
   var dialogBody = document.getElementById("wallet-dialog-body");
   var closeButton = document.getElementById("wallet-dialog-close");

@@ -81,6 +81,10 @@ h1{font:600 56px/1.03 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
 .btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
 .btn:disabled{opacity:.55;cursor:wait}
 
+.cta-meta a{font-family:'JetBrains Mono',monospace;font-size:12px}
+.cta-meta .arr{display:inline-block;transition:.15s}
+.cta-meta a:hover .arr{transform:translateX(2px)}
+
 a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
 .chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 10px;border-radius:5px;
@@ -97,11 +101,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 /* sections */
 section{padding:80px 0 0}
 h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
-.section-lede{color:var(--text-2);margin:16px 0 0;max-width:60ch}
+.section-lede{color:var(--text-2);margin:16px 0 0}
 
 /* data rows */
 .rows{margin-top:40px;border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:220px 1fr;gap:24px;padding:16px 0;border-bottom:1px solid var(--line);opacity:.86;transition:.15s}
+.row{display:grid;grid-template-columns:220px 1fr;gap:24px;padding:9px 0;border-bottom:1px solid var(--line);opacity:.86;transition:.15s}
 .row:hover{opacity:1}
 .row .k{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:3px}
 .row .v{font-size:15px}
@@ -152,6 +156,38 @@ h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
 .holdrow .t span{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
 .holdrow .price{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--accent-2)}
 
+/* live row */
+.liverow{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line)}
+.liverow b{font:500 14px 'JetBrains Mono',monospace;color:var(--accent-2)}
+.liverow a{font-family:'JetBrains Mono',monospace;font-size:12px}
+.liverow .arr{display:inline-block;transition:.15s}
+.liverow a:hover .arr{transform:translateX(2px)}
+
+/* genesis distribution */
+.dist{margin-top:40px;display:grid;gap:24px}
+.dist-row{opacity:.86;transition:.15s}
+.dist-row:hover{opacity:1}
+.dist-meta{display:flex;justify-content:space-between;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin-bottom:10px}
+.dist-meta .pct{color:var(--muted)}
+.dist-track{height:8px;background:var(--bg-2);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.dist-fill{height:100%;background:var(--accent)}
+.dist-fill.f2{background:var(--accent-2)}
+.dist-total{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:24px 0 0}
+
+/* gift card */
+.giftcard{max-width:520px;margin-top:56px;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:24px}
+.giftcard h3{font:600 17px Inter,sans-serif;letter-spacing:-.01em;margin:14px 0 8px}
+.giftcard .label{display:block}
+.giftcard p.desc{color:var(--text-2);margin:0;font-size:14px}
+.gift-form{display:flex;gap:12px;margin-top:16px}
+.gift-form input{flex:1;min-width:0;padding:11px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);font:400 13px 'JetBrains Mono',monospace;outline:none;transition:.15s}
+.gift-form input:focus{border-color:var(--line-2)}
+.gift-form input::placeholder{color:var(--muted)}
+#card-status{display:none;margin:12px 0 0;font-family:'JetBrains Mono',monospace;font-size:12px}
+#card-status.is-ok{display:block;color:var(--ok)}
+#card-status.is-err{display:block;color:var(--text-2)}
+p.gift-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:12px 0 0}
+
 /* footer */
 footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 .foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
@@ -170,6 +206,8 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   .cards{grid-template-columns:1fr}
   .row{grid-template-columns:1fr;gap:6px}
   .nav-links a:not(.status){display:none}
+  .gift-form{flex-direction:column}
+  .gift-form .btn{justify-content:center}
 }
 </style>
 </head>
@@ -191,6 +229,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <nav class="nav-links">
       <a href="#token">Token</a>
       <a href="#contract">Contract</a>
+      <a href="market.html">Market</a>
       <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BaseScan</a>
       <span class="status">running</span>
     </nav>
@@ -207,14 +246,15 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
         <p class="hero-meta">790,227 supply · 18 decimals · 0 mint · 100% |&gt;</p>
         <div class="cta">
           <div class="cta-actions">
-            <button class="btn" id="add-byko" type="button" hidden>Add BYKO <span class="arr">→</span></button>
-            <a class="btn btn-ghost" href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BaseScan <span class="arr">→</span></a>
-            <a class="btn btn-ghost" href="https://www.geckoterminal.com/base/pools/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">GeckoTerminal <span class="arr">→</span></a>
-            <a class="btn btn-ghost" href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Contract <span class="arr">→</span></a>
+            <a class="btn" id="get-byko" href="#">Get BYKO <span class="arr">→</span></a>
+            <button class="btn btn-ghost" id="add-to-wallet" type="button">Add to wallet</button>
           </div>
           <div class="cta-meta">
             <span class="chip">ERC-20</span>
             <span class="chip">Verified</span>
+            <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BaseScan <span class="arr">→</span></a>
+            <a href="https://www.geckoterminal.com/base/pools/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">GeckoTerminal <span class="arr">→</span></a>
+            <a href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Contract <span class="arr">→</span></a>
           </div>
         </div>
       </div>
@@ -231,6 +271,11 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <div class="stat"><b>18</b><span>Decimals</span></div>
     <div class="stat"><b>8453</b><span>Chain ID</span></div>
     <div class="stat"><b>0</b><span>Mint functions</span></div>
+  </div>
+  <div class="liverow">
+    <span class="label">Price / USDC</span>
+    <b id="index-price">—</b>
+    <a href="market.html">Market <span class="arr">→</span></a>
   </div>
 </div>
 
@@ -300,9 +345,41 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   </div>
 </section>
 
+<section id="genesis">
+  <div class="wrap">
+    <span class="kicker">Genesis / 03</span>
+    <h2>One mint, split once</h2>
+    <p class="section-lede">The entire supply was minted in a single transaction and divided once. Most of it went straight to the pool. All of it is on-chain.</p>
+
+    <div class="dist">
+      <div class="dist-row">
+        <div class="dist-meta"><span>Pool / 740,227</span><span class="pct">93.7%</span></div>
+        <div class="dist-track"><div class="dist-fill" style="width:93.7%"></div></div>
+      </div>
+      <div class="dist-row">
+        <div class="dist-meta"><span>Founder / 50,000</span><span class="pct">6.3%</span></div>
+        <div class="dist-track"><div class="dist-fill f2" style="width:6.3%"></div></div>
+      </div>
+    </div>
+    <p class="dist-total">Total minted / 790,227 BYKO · 100%</p>
+
+    <div class="giftcard">
+      <span class="label">Card / gift</span>
+      <h3>A card, not a promise</h3>
+      <p class="desc">One physical card per address. No utility, matching the token.</p>
+      <form class="gift-form" id="card-form">
+        <input id="card-email" type="email" name="email" placeholder="mail@example.com" autocomplete="email" required>
+        <button class="btn" type="submit">Get card <span class="arr">→</span></button>
+      </form>
+      <p id="card-status"></p>
+      <p class="gift-note">a BYKO card, sent by mail</p>
+    </div>
+  </div>
+</section>
+
 <section id="direction">
   <div class="wrap">
-    <span class="kicker">Direction / 03</span>
+    <span class="kicker">Direction / 04</span>
     <h2>No roadmap. <span class="b">The point is the direction.</span></h2>
     <p class="section-lede">BYKO is a sub-brand of bykovas.lt. The bar is the person. The point is the direction. There is nothing else to announce, which is the announcement.</p>
   </div>

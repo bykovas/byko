@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — market</title>
+<meta name="description" content="BYKO market. Price and pool reserves, read directly from Base. No third-party APIs.">
+<meta property="og:title" content="BYKO — market">
+<meta property="og:description" content="Price and pool reserves, read directly from Base. 1 BYKO = 1 BYKO.">
+<meta property="og:image" content="assets/social-1200x630.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D10;
+  --bg-2:#11141A;
+  --bg-3:#171B22;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --text:#E8EAEE;
+  --text-2:rgba(232,234,238,.72);
+  --muted:rgba(232,234,238,.45);
+  --accent:#7CCBFF;
+  --accent-2:#FFB088;
+  --ok:#7CE3A6;
+  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
+.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
+.b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:24px;height:64px}
+.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
+.wordmark:hover{text-decoration:none}
+.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-links a[aria-current="page"]{color:var(--text)}
+
+.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+
+/* hero */
+.grid-bg{position:relative}
+.grid-bg::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
+  mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
+.hero{padding:160px 32px 80px}
+h1{font:600 44px/1.06 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
+.lede{font-size:18px;color:var(--text-2);margin:24px 0 0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
+  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;text-decoration:none}
+.btn:hover{background:var(--accent);text-decoration:none;color:var(--bg)}
+.btn .arr{transition:.15s}.btn:hover .arr{transform:translateX(2px)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
+.btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
+.btn:disabled{opacity:.55;cursor:wait}
+
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 10px;border-radius:5px;
+  background:var(--bg-3);border:1px solid var(--line);color:var(--text-2)}
+
+/* stats band */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stats-3{grid-template-columns:repeat(3,1fr)}
+.stat{padding:20px 24px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat b{display:block;font:600 26px/1.1 Inter,sans-serif;letter-spacing:-.02em;font-family:'JetBrains Mono',monospace}
+.stat b.hot{color:var(--accent-2)}
+.stat span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* market */
+.market-panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:56px 32px 0;text-align:center}
+.market-panel .label{display:block}
+.price-big{display:block;font:600 76px/1 'JetBrains Mono',monospace;letter-spacing:-.02em;color:var(--accent-2);margin-top:28px}
+.price-unit{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+.price-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin:20px 0 0}
+.updated{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:10px 0 0}
+.updated a{color:var(--muted)}
+.updated a:hover{color:var(--text);text-decoration:none}
+.ext{margin-left:5px;vertical-align:-1px}
+.pool-bar{--split:45.3%;position:relative;height:68px;margin-top:48px;border-radius:12px;overflow:hidden;background:var(--grad)}
+.pool-bar .slash{position:absolute;top:-20%;bottom:-20%;left:var(--split);width:2px;background:var(--bg);transform:translateX(-50%) rotate(16deg)}
+.pool-bar .genesis{position:absolute;top:-20%;bottom:-20%;left:50%;width:0;border-left:1px dashed rgba(11,13,16,.45);transform:translateX(-50%) rotate(16deg)}
+.pool-bar .sides{position:absolute;inset:0;display:flex}
+.pool-side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#0B0D10}
+.pool-side.l{width:var(--split)}
+.pool-side.r{flex:1}
+.pool-side b{font:600 17px/1.2 'JetBrains Mono',monospace;letter-spacing:-.02em}
+.pool-side span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.72}
+.pool-eq{position:absolute;left:var(--split);top:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;
+  background:var(--bg);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;
+  font:500 13px 'JetBrains Mono',monospace;color:var(--text)}
+.pool-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0;padding-bottom:40px}
+#market-chart{aspect-ratio:16/9;margin-top:48px;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.15s}
+#market-chart:hover{border-color:var(--line-2)}
+#market-chart iframe{display:block;width:100%;height:100%;border:0}
+.rpc-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:16px 0 0}
+
+/* holders */
+.holders-grid{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start;margin-top:48px}
+.donut-wrap{position:relative;max-width:320px}
+.donut-wrap svg{display:block;width:100%;height:auto}
+.seg{fill:none;stroke-width:22;stroke:var(--bg-3);transition:.15s}
+.seg[data-tier="whale"]{stroke:#E08758}
+.seg[data-tier="shark"]{stroke:#FFB088}
+.seg[data-tier="dolphin"]{stroke:rgba(124,203,255,.8)}
+.seg[data-tier="fish"]{stroke:rgba(124,203,255,.7)}
+.seg[data-tier="crab"]{stroke:rgba(124,203,255,.6)}
+.seg[data-tier="shrimp"]{stroke:rgba(124,203,255,.5)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
+.donut-center b{font:600 26px/1 Inter,sans-serif;letter-spacing:-.02em}
+.donut-center span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tiers-scroll{overflow-x:auto}
+.tier-head,.tier-row{display:grid;grid-template-columns:150px 1fr 90px 90px;gap:16px;align-items:center;min-width:440px;
+  padding:11px 0;border-bottom:1px solid var(--line)}
+.tier-head{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line)}
+.tier-row{color:var(--text-2);transition:.15s}
+.tier-row:hover{color:var(--text)}
+.tier-name{display:inline-flex;align-items:center;gap:12px;font:500 14px Inter,sans-serif;color:inherit}
+.tier-name svg{flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tier-row[data-tier="whale"] .tier-name{color:#E08758}
+.tier-row[data-tier="shark"] .tier-name{color:#FFB088}
+.tier-row[data-tier="dolphin"] .tier-name{color:rgba(124,203,255,.8)}
+.tier-row[data-tier="fish"] .tier-name{color:rgba(124,203,255,.7)}
+.tier-row[data-tier="crab"] .tier-name{color:rgba(124,203,255,.6)}
+.tier-row[data-tier="shrimp"] .tier-name{color:rgba(124,203,255,.5)}
+.tier-row:hover .tier-name{color:var(--text)}
+.tier-th{font-family:'JetBrains Mono',monospace;font-size:12px}
+.tier-holders,.tier-supply{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right}
+.holders-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:32px 0 0}
+
+/* sections */
+section{padding:80px 0 0}
+h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
+.section-lede{color:var(--text-2);margin:16px 0 0}
+
+/* footer */
+footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot .mono{font-size:12px;color:var(--muted)}
+.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+
+@media (max-width:900px){
+  h1{font-size:36px}
+  .price-big{font-size:48px}
+  .market-panel{padding:40px 20px 0}
+  .pool-side b{font-size:14px}
+  .pool-side span{font-size:9px;letter-spacing:.08em}
+  .holders-grid{grid-template-columns:1fr;gap:40px}
+  .donut-wrap{max-width:240px;margin:0 auto}
+  #holders-donut{max-width:100%}
+  .stats,.stats-3{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-left:0}
+  .stat{border-top:1px solid var(--line)}
+  .stat:nth-child(-n+2){border-top:0}
+  .nav-links a:not(.status){display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="wordmark" href="index.html">
+      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
+        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
+        </linearGradient></defs>
+        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+        </g>
+      </svg>
+      BYKO
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#token">Token</a>
+      <a href="index.html#contract">Contract</a>
+      <a href="market.html" aria-current="page">Market</a>
+      <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BaseScan</a>
+      <span class="status">running</span>
+    </nav>
+  </div>
+</header>
+
+<div class="grid-bg">
+  <div class="wrap hero">
+    <span class="kicker">Market / live</span>
+    <h1>The pool, read from the chain.</h1>
+    <p class="lede">Price and reserves of the BYKO/USDC pool on Base, read directly from the contract. No dashboards in between.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="market-panel">
+    <span class="label">BYKO/USDC · pool on Base · live</span>
+    <b class="price-big" id="market-price">0.012</b>
+    <span class="price-unit">USDC / 100 BYKO</span>
+    <p class="price-sub">1 BYKO = 0.00012 USDC</p>
+    <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC<svg class="ext" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M9.5 7v3.5H1.5V2.5H5" fill="none" stroke="currentColor"/><path d="M7 1.5h3.5V5M10.5 1.5L5.5 6.5" fill="none" stroke="currentColor"/></svg></a></p>
+    <div class="pool-bar">
+      <div class="genesis"></div>
+      <div class="slash"></div>
+      <div class="sides">
+        <div class="pool-side l"><b id="market-byko">673,214.7207</b><span>BYKO in pool</span></div>
+        <div class="pool-side r"><b id="market-usdc">81.3</b><span>USDC in pool</span></div>
+      </div>
+      <span class="pool-eq">=</span>
+    </div>
+    <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC · now 45.3% : 54.7%</p>
+  </div>
+
+  <div id="market-chart"><iframe
+    id="dextools-widget"
+    title="DEXTools Trading Chart"
+    src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=dark&chartType=1&chartResolution=1&drawingToolbars=false&showTradeHistory=true&chartInUsd=true&headerColor=11141A&tvPlatformColor=11141A&tvPaneColor=11141A&tradeHistoryColor=11141A"
+    loading="lazy"></iframe></div>
+  <p class="rpc-note">read directly from Base RPC · no third-party APIs</p>
+</div>
+
+<section id="holders">
+  <div class="wrap">
+    <span class="kicker">Holders / distribution</span>
+    <h2>Who holds it</h2>
+    <p class="section-lede">Concentration across the top addresses and the BaseScan-style tiers. Computed, not estimated.</p>
+
+    <div class="holders-grid">
+      <div id="holders-donut">
+        <div class="donut-wrap">
+          <svg viewBox="0 0 200 200" role="img" aria-label="Supply by holder tier">
+            <circle class="seg" data-tier="whale" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="71.4 28.6" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="shark" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="14.2 85.8" stroke-dashoffset="-46.4"></circle>
+            <circle class="seg" data-tier="dolphin" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="8.1 91.9" stroke-dashoffset="-60.6"></circle>
+            <circle class="seg" data-tier="fish" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="4.6 95.4" stroke-dashoffset="-68.7"></circle>
+            <circle class="seg" data-tier="crab" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="1.3 98.7" stroke-dashoffset="-73.3"></circle>
+            <circle class="seg" data-tier="shrimp" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0.4 99.6" stroke-dashoffset="-74.6"></circle>
+          </svg>
+          <div class="donut-center"><b>527</b><span>holders</span></div>
+        </div>
+      </div>
+
+      <div id="holders-tiers" class="tiers-scroll">
+        <div class="tier-head"><span>Tier</span><span>Threshold</span><span style="text-align:right">Holders</span><span style="text-align:right">Supply</span></div>
+        <div class="tier-row" data-tier="whale">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 9.5C3 6.5 6.5 5.5 9 7.2c1.2.9 1.8 2.3 1.4 3.8-2.5 1.3-6.5 1-8.9-1.5z"></path><path d="M10.4 9.2l3.6-1.7-1 2.5 1 2.5-3.8-1.5"></path><path d="M4.5 4.5v-2"></path></svg>Whale</span>
+          <span class="tier-th">≥ 1% of supply</span><span class="tier-holders">3</span><span class="tier-supply">71.4%</span>
+        </div>
+        <div class="tier-row" data-tier="shark">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 10c3.5-2.8 8-2.8 11 0-3 2.8-7.5 2.8-11 0z"></path><path d="M6.5 7.8L8.2 4l1.8 3.4"></path><path d="M12.5 10l2-1.6v3.2l-2-1.6z"></path></svg>Shark</span>
+          <span class="tier-th">0.1–1%</span><span class="tier-holders">7</span><span class="tier-supply">14.2%</span>
+        </div>
+        <div class="tier-row" data-tier="dolphin">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 12.5C2.2 7 6 3.8 11.5 4.5c-1.6 1.4-2.2 3.3-1.4 5.5"></path><path d="M8.5 6.5L9.6 4.4l1.4 1.8"></path><path d="M10.1 10l2.9 1.6-3.2 1.2"></path></svg>Dolphin</span>
+          <span class="tier-th">0.01–0.1%</span><span class="tier-holders">18</span><span class="tier-supply">8.1%</span>
+        </div>
+        <div class="tier-row" data-tier="fish">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="7" cy="9.5" rx="4.2" ry="2.6"></ellipse><path d="M11 9.5l2.8-1.8v3.6L11 9.5z"></path></svg>Fish</span>
+          <span class="tier-th">0.001–0.01%</span><span class="tier-holders">42</span><span class="tier-supply">4.6%</span>
+        </div>
+        <div class="tier-row" data-tier="crab">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="8" cy="10.5" rx="4" ry="2.6"></ellipse><path d="M5 8.2L3.4 5.6M6.3 7.5L5.8 5.2M11 8.2l1.6-2.6M9.7 7.5l.5-2.3"></path></svg>Crab</span>
+          <span class="tier-th">0.0001–0.001%</span><span class="tier-holders">96</span><span class="tier-supply">1.3%</span>
+        </div>
+        <div class="tier-row" data-tier="shrimp">
+          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M12 5.5c-5.5-2-9.7 1.6-8.4 5.2 1 2.6 4.3 3.1 6.2 1.4"></path><path d="M12 5.5l2.4-1.2-.8 2.6"></path></svg>Shrimp</span>
+          <span class="tier-th">&lt; 0.0001%</span><span class="tier-holders">361</span><span class="tier-supply">0.4%</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="holders-meta"><span id="holders-count">holders / 527</span> · <span id="holders-updated">updated 06:12 UTC</span></p>
+    <p class="rpc-note">computed from Transfer logs · Base RPC · <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372#balances" target="_blank" rel="noopener">full analytics on BaseScan →</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="wordmark" href="index.html">
+        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+          </g>
+        </svg>
+        BYKO
+      </a>
+      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    </div>
+    <p class="disclaimer">BYKO is a token with no utility, no yield and no promises. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
+
+</body>
+</html>
