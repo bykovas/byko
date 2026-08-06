@@ -26,12 +26,14 @@ var DONATION_START_BLOCK = 49614625;
 
 var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 var TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-/* Public keyless RPCs; each rate-limits Cloudflare egress IPs, so rotate. */
+/* Public keyless RPCs; each rate-limits Cloudflare egress IPs, so rotate.
+   A keyed endpoint in the RPC_URL env var is tried first when set. */
 var RPC_URLS = [
   "https://mainnet.base.org",
   "https://base.drpc.org",
   "https://base.meowrpc.com"
 ];
+var activeRpcUrls = RPC_URLS;
 var RATE_LIMIT = 5;
 var RATE_WINDOW_SECONDS = 3600;
 var INSCRIPTION_MAX = 300;
@@ -87,9 +89,9 @@ async function rpc(method, params) {
   var i;
   var response;
   var payload;
-  for (i = 0; i < RPC_URLS.length; i++) {
+  for (i = 0; i < activeRpcUrls.length; i++) {
     try {
-      response = await fetch(RPC_URLS[i], {
+      response = await fetch(activeRpcUrls[i], {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
@@ -306,6 +308,7 @@ export async function onRequestPost(context) {
 
   if (!DONATION_ADDRESS) return json({ error: "config" }, 503);
   if (!env || !env.CARDS) return json({ error: "config" }, 503);
+  activeRpcUrls = (env.RPC_URL ? [env.RPC_URL] : []).concat(RPC_URLS);
 
   try {
     input = await context.request.json();

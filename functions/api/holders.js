@@ -1,11 +1,13 @@
 var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 /* Public keyless RPCs that serve eth_getLogs over 10,000-block ranges.
-   Each rate-limits Cloudflare's shared egress IPs, so rotate on failure —
-   a single-endpoint setup was answering 503 from the deployed function. */
+   All of them rate-limit Cloudflare's shared egress IPs sooner or later,
+   so a keyed endpoint set as the RPC_URL env var in the Pages project is
+   tried first; the public list is the fallback. */
 var RPC_URLS = [
   "https://mainnet.base.org",
   "https://base.drpc.org"
 ];
+var activeRpcUrls = RPC_URLS;
 var TOTAL_SUPPLY = 790227;
 /* BYKO creation tx: 0xeac11a3210328c21d1c96bb1c7dafbfdcb2f4a51b510049fa3cdf232b64b9378 */
 var DEPLOY_BLOCK = 49430937;
@@ -38,9 +40,9 @@ async function rpc(method, params) {
   var i;
   var response;
   var payload;
-  for (i = 0; i < RPC_URLS.length; i++) {
+  for (i = 0; i < activeRpcUrls.length; i++) {
     try {
-      response = await fetch(RPC_URLS[i], {
+      response = await fetch(activeRpcUrls[i], {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
@@ -193,6 +195,7 @@ async function collectHolders(env) {
 
 export async function onRequestGet(context) {
   var cache = caches.default;
+  activeRpcUrls = (context.env && context.env.RPC_URL ? [context.env.RPC_URL] : []).concat(RPC_URLS);
   var cached = await cache.match(context.request);
   var data;
   var summary;
