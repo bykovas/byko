@@ -126,9 +126,16 @@ function pad40(address) {
 
 /* Verify the donation and return { amountWei, timestamp } */
 async function verifyDonation(txHash) {
-  var receipt = activeEtherscanKey
-    ? await etherscanProxy("eth_getTransactionReceipt", "&txhash=" + txHash)
-    : await rpc("eth_getTransactionReceipt", [txHash]);
+  var receipt;
+  if (activeEtherscanKey) {
+    try {
+      receipt = await etherscanProxy("eth_getTransactionReceipt", "&txhash=" + txHash);
+    } catch (error) {
+      receipt = await rpc("eth_getTransactionReceipt", [txHash]);
+    }
+  } else {
+    receipt = await rpc("eth_getTransactionReceipt", [txHash]);
+  }
   var i;
   var log;
   var amount = null;
@@ -146,9 +153,15 @@ async function verifyDonation(txHash) {
   if (amount === null) return { error: "no_byko_donation" };
   if (amount <= 0n) return { error: "no_byko_donation" };
   if (parseInt(receipt.blockNumber, 16) < DONATION_START_BLOCK) return { error: "no_byko_donation" };
-  block = activeEtherscanKey
-    ? await etherscanProxy("eth_getBlockByNumber", "&tag=" + receipt.blockNumber + "&boolean=false")
-    : await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
+  if (activeEtherscanKey) {
+    try {
+      block = await etherscanProxy("eth_getBlockByNumber", "&tag=" + receipt.blockNumber + "&boolean=false");
+    } catch (error) {
+      block = await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
+    }
+  } else {
+    block = await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
+  }
   if (!block || !block.timestamp) throw new Error("rpc");
   return { amountWei: amount, timestamp: parseInt(block.timestamp, 16) };
 }

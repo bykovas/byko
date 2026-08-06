@@ -219,22 +219,31 @@ async function collectHolders(env) {
   var to;
   var logs;
   var scanned;
-  latest = parseInt(key ? await etherscanProxy("eth_blockNumber", "", key) : await rpc("eth_blockNumber", []), 16);
-  scanned = from <= latest;
   if (key) {
-    if (scanned) foldLogs(balances, await etherscanLogs(from, latest, key));
-  } else {
-    while (from <= latest) {
-      to = Math.min(from + CHUNK_SIZE - 1, latest);
-      logs = await rpc("eth_getLogs", [{
-        address: BYKO,
-        fromBlock: hex(from),
-        toBlock: hex(to),
-        topics: [TRANSFER_TOPIC]
-      }]);
-      foldLogs(balances, logs);
-      from = to + 1;
+    try {
+      latest = parseInt(await etherscanProxy("eth_blockNumber", "", key), 16);
+    } catch (error) {
+      key = null; /* e.g. the free Etherscan plan does not cover Base — use RPC */
     }
+  }
+  if (!key) latest = parseInt(await rpc("eth_blockNumber", []), 16);
+  scanned = from <= latest;
+  if (key && scanned) {
+    try {
+      foldLogs(balances, await etherscanLogs(from, latest, key));
+      from = latest + 1;
+    } catch (error) { /* fall through to the chunked RPC scan */ }
+  }
+  while (from <= latest) {
+    to = Math.min(from + CHUNK_SIZE - 1, latest);
+    logs = await rpc("eth_getLogs", [{
+      address: BYKO,
+      fromBlock: hex(from),
+      toBlock: hex(to),
+      topics: [TRANSFER_TOPIC]
+    }]);
+    foldLogs(balances, logs);
+    from = to + 1;
   }
   if (scanned) await writeCheckpoint(env, latest, balances);
   return { block: latest, balances: balances };
