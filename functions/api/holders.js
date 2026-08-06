@@ -1,5 +1,11 @@
 var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
-var RPC = "https://mainnet.base.org";
+/* Public keyless RPCs that serve eth_getLogs over 10,000-block ranges.
+   Each rate-limits Cloudflare's shared egress IPs, so rotate on failure —
+   a single-endpoint setup was answering 503 from the deployed function. */
+var RPC_URLS = [
+  "https://mainnet.base.org",
+  "https://base.drpc.org"
+];
 var TOTAL_SUPPLY = 790227;
 /* BYKO creation tx: 0xeac11a3210328c21d1c96bb1c7dafbfdcb2f4a51b510049fa3cdf232b64b9378 */
 var DEPLOY_BLOCK = 49430937;
@@ -29,16 +35,23 @@ function hex(number) {
 }
 
 async function rpc(method, params) {
-  var response = await fetch(RPC, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
-  });
+  var i;
+  var response;
   var payload;
-  if (!response.ok) throw new Error("rpc");
-  payload = await response.json();
-  if (!payload || payload.error || payload.result === undefined || payload.result === null) throw new Error("rpc");
-  return payload.result;
+  for (i = 0; i < RPC_URLS.length; i++) {
+    try {
+      response = await fetch(RPC_URLS[i], {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
+      });
+      if (!response.ok) continue;
+      payload = await response.json();
+      if (!payload || payload.error || payload.result === undefined || payload.result === null) continue;
+      return payload.result;
+    } catch (error) { /* try next endpoint */ }
+  }
+  throw new Error("rpc");
 }
 
 function addBalance(balances, address, amount) {

@@ -5,7 +5,7 @@
   var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
   var USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
   var POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
-  var RPC = "https://mainnet.base.org";
+  var RPC_URLS = ["https://mainnet.base.org", "https://base.drpc.org"];
   var GENESIS_BYKO = 740227;
   var GENESIS_USDC = 74.0227;
   var latestBlock = null;
@@ -22,8 +22,10 @@
     return "0x70a08231" + address.slice(2).toLowerCase().padStart(64, "0");
   }
 
-  function requestMarket() {
-    return fetch(RPC, {
+  function requestMarket(rpcIndex) {
+    var url = RPC_URLS[rpcIndex || 0];
+    if (!url) return Promise.reject(new Error("rpc"));
+    return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([
@@ -48,6 +50,9 @@
         usdc: Number(BigInt(values[2])) / 1e6,
         block: parseInt(values[3], 16)
       };
+    }).catch(function (error) {
+      if ((rpcIndex || 0) + 1 < RPC_URLS.length) return requestMarket((rpcIndex || 0) + 1);
+      throw error;
     });
   }
 
