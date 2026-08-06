@@ -181,7 +181,9 @@ async function etherscanProxy(action, extra, key) {
   var payload;
   if (!response.ok) throw new Error("rpc");
   payload = await response.json();
-  if (!payload || payload.error || payload.status === "0" || payload.result === undefined || payload.result === null) throw new Error("rpc");
+  if (!payload || payload.error || payload.status === "0" || payload.result === undefined || payload.result === null) {
+    throw new Error("etherscan proxy " + action + ": " + (payload && (payload.result || payload.message) || "bad response"));
+  }
   return payload.result;
 }
 
@@ -198,7 +200,9 @@ async function etherscanLogs(fromBlock, toBlock, key) {
       "&page=" + page + "&offset=1000&apikey=" + key);
     if (!response.ok) throw new Error("rpc");
     payload = await response.json();
-    if (!payload || !Array.isArray(payload.result)) throw new Error("rpc");
+    if (!payload || !Array.isArray(payload.result)) {
+      throw new Error("etherscan getLogs: " + (payload && (typeof payload.result === "string" ? payload.result : payload.message) || "bad response"));
+    }
     all = all.concat(payload.result);
     if (payload.result.length < 1000) return all;
     page += 1;
@@ -256,6 +260,13 @@ export async function onRequestGet(context) {
     context.waitUntil(cache.put(context.request, response.clone()));
     return response;
   } catch (error) {
+    if (new URL(context.request.url).searchParams.get("debug") === "1") {
+      return json({
+        error: "rpc",
+        detail: String(error && error.message || error),
+        keyed: !!(context.env && context.env.ETHERSCAN_API_KEY)
+      }, 503);
+    }
     return json({ error: "rpc" }, 503);
   }
 }
