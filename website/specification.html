@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — specification</title>
+<meta name="description" content="The BYKO specification. Being written; the contract is the specification meanwhile.">
+<meta property="og:title" content="BYKO — specification">
+<meta property="og:description" content="21 lines of Solidity, fixed supply, no owner. 1 BYKO = 1 BYKO.">
+<meta property="og:image" content="assets/social-1200x630.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D10;
+  --bg-2:#11141A;
+  --bg-3:#171B22;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --text:#E8EAEE;
+  --text-2:rgba(232,234,238,.72);
+  --muted:rgba(232,234,238,.45);
+  --accent:#7CCBFF;
+  --accent-2:#FFB088;
+  --ok:#7CE3A6;
+  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
+.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
+.b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:'JetBrains Mono',monospace}
+
+header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:24px;height:64px}
+.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
+.wordmark:hover{text-decoration:none}
+.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-links a[aria-current="page"]{color:var(--text)}
+
+.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+
+.grid-bg{position:relative}
+.grid-bg::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
+  mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
+.hero{padding:160px 32px 80px}
+h1{font:600 44px/1.06 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
+.lede{font-size:18px;color:var(--text-2);margin:24px 0 0;max-width:60ch}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
+  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;text-decoration:none}
+.btn:hover{background:var(--accent);text-decoration:none;color:var(--bg)}
+.btn .arr{transition:.15s}.btn:hover .arr{transform:translateX(2px)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
+.btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.cta{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;align-items:center}
+
+.spec-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:48px 0 0}
+
+footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot .mono{font-size:12px;color:var(--muted)}
+.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+
+@media (max-width:900px){
+  h1{font-size:36px}
+  .nav-links a:not(.status){display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="wordmark" href="index.html">
+      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
+        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
+        </linearGradient></defs>
+        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+        </g>
+      </svg>
+      BYKO
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Token</a>
+      <a href="market.html">Market</a>
+      <span class="status">running</span>
+    </nav>
+  </div>
+</header>
+
+<div class="grid-bg">
+  <div class="wrap hero">
+    <span class="kicker">Specification / pending</span>
+    <h1>The contract is <span class="b">the specification.</span></h1>
+    <p class="lede">A formal specification is being written and will be published here — as a page and as a PDF, versioned in the repository so every change is traceable. Until then the deployed contract is the complete, authoritative description of BYKO: 21 lines, fixed supply of 790,227, no owner, immutable.</p>
+    <div class="cta">
+      <a class="btn" href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Read the contract <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href="index.html#token">The facts</a>
+    </div>
+    <p class="spec-note">spec / not yet written · contract / deployed and verified · nothing here is a promise</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="wordmark" href="index.html">
+        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+          </g>
+        </svg>
+        BYKO
+      </a>
+      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    </div>
+    <p class="disclaimer">BYKO is a token with no utility, no yield and no promises. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
+
+</body>
+</html>
