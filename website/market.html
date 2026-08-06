@@ -118,6 +118,16 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 #market-chart iframe{display:block;width:100%;height:100%;border:0}
 .rpc-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:16px 0 0}
 
+/* loading badges */
+.market-panel{position:relative}
+#market-chart{position:relative}
+.holders-grid{position:relative}
+.loading{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--accent);pointer-events:none}
+.loading[hidden]{display:none}
+.loading svg{display:block;animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 /* holders */
 .holders-grid{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start;margin-top:48px}
 .donut-wrap{position:relative;max-width:320px}
@@ -217,6 +227,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 
 <div class="wrap">
   <div class="market-panel">
+    <span class="loading" id="price-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
     <span class="label">BYKO/USDC · pool on Base · live</span>
     <b class="price-big"><span class="approx" aria-hidden="true">≈</span><span id="market-price">—</span></b>
     <span class="price-unit">USDC / 100 BYKO</span>
@@ -234,7 +245,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC</p>
   </div>
 
-  <div id="market-chart"><iframe
+  <div id="market-chart"><span class="loading" id="chart-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span><iframe
     id="dextools-widget"
     title="DEXTools Trading Chart"
     src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=dark&chartType=1&chartResolution=1&drawingToolbars=false&showTradeHistory=true&chartInUsd=true&headerColor=11141A&tvPlatformColor=11141A&tvPaneColor=11141A&tradeHistoryColor=11141A"
@@ -249,6 +260,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <p class="section-lede">Concentration across the top addresses and the BaseScan-style tiers. Computed, not estimated.</p>
 
     <div class="holders-grid">
+      <span class="loading" id="holders-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
       <div id="holders-donut">
         <div class="donut-wrap">
           <svg viewBox="0 0 200 200" role="img" aria-label="Supply by holder tier">

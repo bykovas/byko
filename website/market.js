@@ -18,6 +18,11 @@
     return document.getElementById(id);
   }
 
+  function hideLoading(id) {
+    var badge = byId(id);
+    if (badge) badge.hidden = true;
+  }
+
   function balanceOfData(address) {
     return "0x70a08231" + address.slice(2).toLowerCase().padStart(64, "0");
   }
@@ -92,6 +97,7 @@
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
     if (poolBar) poolBar.style.setProperty("--split", displaySplit.toFixed(1) + "%");
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
+    hideLoading("price-loading");
     updateHoldersMeta();
   }
 
@@ -114,6 +120,7 @@
     if (!data || !data.tiers || typeof data.holders !== "number" || !data.updated) return;
     holdersUpdated = new Date(data.updated);
     if (isNaN(holdersUpdated.getTime())) return;
+    hideLoading("holders-loading");
     if (center) center.textContent = data.holders.toLocaleString("en-US");
     if (count) count.textContent = "holders / " + data.holders.toLocaleString("en-US");
     for (i = 0; i < tierOrder.length; i++) {
@@ -141,10 +148,21 @@
     fetch("/api/holders").then(function (response) {
       if (!response.ok) throw new Error("holders");
       return response.json();
-    }).then(renderHolders, function () {});
+    }).then(renderHolders, function () {
+      hideLoading("holders-loading"); /* no data coming — stop pretending */
+    });
+  }
+
+  /* The chart badge lives over the DEXTools iframe corner until it loads. */
+  function watchChart() {
+    var frame = byId("dextools-widget");
+    if (!frame) return;
+    frame.addEventListener("load", function () { hideLoading("chart-loading"); });
+    window.setTimeout(function () { hideLoading("chart-loading"); }, 20000);
   }
 
   loadMarket(true);
   window.setInterval(function () { loadMarket(true); }, 30000);
   loadHolders();
+  watchChart();
 }());
