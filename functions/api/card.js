@@ -182,7 +182,7 @@ function inscriptionMarkup(text) {
   var out = "";
   var perLine;
   var size;
-  if (!text) text = "For systems that cannot fail";
+  if (!text) text = "Nothing promised. Everything recorded.";
   if (text.length <= 70) {
     return { size: 19, markup: escapeXml(text) };
   }
