@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/></linearGradient>
+<radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#7CCBFF" stop-opacity="0.26"/><stop offset="1" stop-color="#7CCBFF" stop-opacity="0"/></radialGradient>
+</defs>
+
+<rect x="0.5" y="0.5" width="1199" height="629" fill="#0B0D10" stroke="rgba(255,255,255,.14)"/>
+
+<line x1="56.5" y1="0" x2="56.5" y2="630" stroke="rgba(255,255,255,.14)"/>
+<line x1="108.5" y1="0" x2="108.5" y2="630" stroke="rgba(255,255,255,.14)"/>
+<text transform="translate(78,6) rotate(90)" font-family="JetBrains Mono" font-size="7" letter-spacing="1.5" fill="rgba(232,234,238,.45)">BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · </text>
+<text transform="translate(92,6) rotate(90)" font-family="JetBrains Mono" font-size="7" letter-spacing="1.5" fill="rgba(232,234,238,.3)">8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · </text>
+
+<g transform="translate(152,58) scale(0.5)" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
+<text x="216" y="93" font-family="Inter" font-weight="600" font-size="30" letter-spacing="-0.6" fill="#E8EAEE">BYKO</text>
+<text x="1144" y="88" font-family="Inter" font-weight="600" font-size="11" letter-spacing="2.6" fill="rgba(232,234,238,.35)" text-anchor="end">GENESIS ERC-20 · BASE / CHAIN 8453</text>
+
+<circle cx="960" cy="308" r="205" fill="url(#glow)"/>
+<circle cx="960" cy="308" r="128" fill="#7CCBFF"/>
+<g transform="translate(877.3,223.5) scale(1.76)" fill="none" stroke="#0B0D10" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
+
+<text x="152" y="216" font-family="Inter" font-weight="600" font-size="11" letter-spacing="2.6" fill="rgba(232,234,238,.35)">PRICE / USDC PER 100 BYKO</text>
+<text x="146" y="368" font-family="Inter" font-weight="200" font-size="152" letter-spacing="-2.3" fill="#FFB088">{{PRICE}}</text>
+<text x="152" y="424" font-family="JetBrains Mono" font-size="21" fill="rgba(232,234,238,.72)">1 BYKO = {{PRICE_SUB}} USDC</text>
+
+<line x1="152" y1="486.5" x2="1144" y2="486.5" stroke="rgba(255,255,255,.08)"/>
+<line x1="483.5" y1="486" x2="483.5" y2="566" stroke="rgba(255,255,255,.08)"/>
+<line x1="814.5" y1="486" x2="814.5" y2="566" stroke="rgba(255,255,255,.08)"/>
+
+<text x="152" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">790,227</text>
+<text x="152" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">FIXED SUPPLY</text>
+<text x="513" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">{{HOLDERS}}</text>
+<text x="513" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">HOLDERS</text>
+<text x="844" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">{{BLOCK}}</text>
+<text x="844" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">BLOCK</text>
+
+<text x="152" y="602" font-family="JetBrains Mono" font-size="12" fill="rgba(232,234,238,.45)">byko.bykovas.lt · {{DATE}} UTC</text>
+<text x="1144" y="602" font-family="JetBrains Mono" font-size="12" fill="rgba(232,234,238,.45)" text-anchor="end">1 BYKO = 1 BYKO</text>
+</svg>
