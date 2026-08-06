@@ -93,13 +93,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .market-panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:56px 32px 0;text-align:center}
 .market-panel .label{display:block}
 .price-big{display:block;font:600 76px/1 'JetBrains Mono',monospace;letter-spacing:-.02em;color:var(--accent-2);margin-top:28px}
+.price-big .approx{font-family:Inter,sans-serif;font-size:.62em;font-weight:400;letter-spacing:0;margin-right:.12em;vertical-align:.08em;opacity:.25}
 .price-unit{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:16px}
 .price-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin:20px 0 0}
 .updated{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:10px 0 0}
 .updated a{color:var(--muted)}
 .updated a:hover{color:var(--text);text-decoration:none}
 .ext{margin-left:5px;vertical-align:-1px}
-.pool-bar{--split:45.3%;position:relative;height:68px;margin-top:48px;border-radius:12px;overflow:hidden;background:var(--grad)}
+.pool-bar{--split:50%;position:relative;height:68px;margin-top:48px;border-radius:12px;overflow:hidden;background:var(--grad)}
 .pool-bar .slash{position:absolute;top:-20%;bottom:-20%;left:var(--split);width:2px;background:var(--bg);transform:translateX(-50%) rotate(16deg)}
 .pool-bar .genesis{position:absolute;top:-20%;bottom:-20%;left:50%;width:0;border-left:1px dashed rgba(11,13,16,.45);transform:translateX(-50%) rotate(16deg)}
 .pool-bar .sides{position:absolute;inset:0;display:flex}
@@ -121,6 +122,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .holders-grid{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start;margin-top:48px}
 .donut-wrap{position:relative;max-width:320px}
 .donut-wrap svg{display:block;width:100%;height:auto}
+.seg-track{fill:none;stroke-width:22;stroke:var(--bg-3)}
 .seg{fill:none;stroke-width:22;stroke:var(--bg-3);transition:.15s}
 .seg[data-tier="whale"]{stroke:#E08758}
 .seg[data-tier="shark"]{stroke:#FFB088}
@@ -214,20 +216,20 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 <div class="wrap">
   <div class="market-panel">
     <span class="label">BYKO/USDC · pool on Base · live</span>
-    <b class="price-big" id="market-price">0.012</b>
+    <b class="price-big"><span class="approx" aria-hidden="true">≈</span><span id="market-price">—</span></b>
     <span class="price-unit">USDC / 100 BYKO</span>
-    <p class="price-sub">1 BYKO = 0.00012 USDC</p>
+    <p class="price-sub" id="price-sub">1 BYKO = — USDC</p>
     <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC<svg class="ext" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M9.5 7v3.5H1.5V2.5H5" fill="none" stroke="currentColor"/><path d="M7 1.5h3.5V5M10.5 1.5L5.5 6.5" fill="none" stroke="currentColor"/></svg></a></p>
     <div class="pool-bar">
       <div class="genesis"></div>
       <div class="slash"></div>
       <div class="sides">
-        <div class="pool-side l"><b id="market-byko">673,214.7207</b><span>BYKO in pool</span></div>
-        <div class="pool-side r"><b id="market-usdc">81.3</b><span>USDC in pool</span></div>
+        <div class="pool-side l"><b id="market-byko">—</b><span>BYKO in pool</span></div>
+        <div class="pool-side r"><b id="market-usdc">—</b><span>USDC in pool</span></div>
       </div>
       <span class="pool-eq">=</span>
     </div>
-    <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC · now 45.3% : 54.7%</p>
+    <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC</p>
   </div>
 
   <div id="market-chart"><iframe
@@ -248,14 +250,15 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <div id="holders-donut">
         <div class="donut-wrap">
           <svg viewBox="0 0 200 200" role="img" aria-label="Supply by holder tier">
-            <circle class="seg" data-tier="whale" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="71.4 28.6" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="shark" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="14.2 85.8" stroke-dashoffset="-46.4"></circle>
-            <circle class="seg" data-tier="dolphin" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="8.1 91.9" stroke-dashoffset="-60.6"></circle>
-            <circle class="seg" data-tier="fish" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="4.6 95.4" stroke-dashoffset="-68.7"></circle>
-            <circle class="seg" data-tier="crab" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="1.3 98.7" stroke-dashoffset="-73.3"></circle>
-            <circle class="seg" data-tier="shrimp" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0.4 99.6" stroke-dashoffset="-74.6"></circle>
+            <circle class="seg-track" cx="100" cy="100" r="80"></circle>
+            <circle class="seg" data-tier="whale" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="shark" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="dolphin" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="fish" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="crab" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            <circle class="seg" data-tier="shrimp" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
           </svg>
-          <div class="donut-center"><b>527</b><span>holders</span></div>
+          <div class="donut-center"><b>—</b><span>holders</span></div>
         </div>
       </div>
 
@@ -263,32 +266,32 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
         <div class="tier-head"><span>Tier</span><span>Threshold</span><span style="text-align:right">Holders</span><span style="text-align:right">Supply</span></div>
         <div class="tier-row" data-tier="whale">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 9.5C3 6.5 6.5 5.5 9 7.2c1.2.9 1.8 2.3 1.4 3.8-2.5 1.3-6.5 1-8.9-1.5z"></path><path d="M10.4 9.2l3.6-1.7-1 2.5 1 2.5-3.8-1.5"></path><path d="M4.5 4.5v-2"></path></svg>Whale</span>
-          <span class="tier-th">≥ 1% of supply</span><span class="tier-holders">3</span><span class="tier-supply">71.4%</span>
+          <span class="tier-th">≥ 1% of supply</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="shark">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 10c3.5-2.8 8-2.8 11 0-3 2.8-7.5 2.8-11 0z"></path><path d="M6.5 7.8L8.2 4l1.8 3.4"></path><path d="M12.5 10l2-1.6v3.2l-2-1.6z"></path></svg>Shark</span>
-          <span class="tier-th">0.1–1%</span><span class="tier-holders">7</span><span class="tier-supply">14.2%</span>
+          <span class="tier-th">0.1–1%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="dolphin">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 12.5C2.2 7 6 3.8 11.5 4.5c-1.6 1.4-2.2 3.3-1.4 5.5"></path><path d="M8.5 6.5L9.6 4.4l1.4 1.8"></path><path d="M10.1 10l2.9 1.6-3.2 1.2"></path></svg>Dolphin</span>
-          <span class="tier-th">0.01–0.1%</span><span class="tier-holders">18</span><span class="tier-supply">8.1%</span>
+          <span class="tier-th">0.01–0.1%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="fish">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="7" cy="9.5" rx="4.2" ry="2.6"></ellipse><path d="M11 9.5l2.8-1.8v3.6L11 9.5z"></path></svg>Fish</span>
-          <span class="tier-th">0.001–0.01%</span><span class="tier-holders">42</span><span class="tier-supply">4.6%</span>
+          <span class="tier-th">0.001–0.01%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="crab">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="8" cy="10.5" rx="4" ry="2.6"></ellipse><path d="M5 8.2L3.4 5.6M6.3 7.5L5.8 5.2M11 8.2l1.6-2.6M9.7 7.5l.5-2.3"></path></svg>Crab</span>
-          <span class="tier-th">0.0001–0.001%</span><span class="tier-holders">96</span><span class="tier-supply">1.3%</span>
+          <span class="tier-th">0.0001–0.001%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="shrimp">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M12 5.5c-5.5-2-9.7 1.6-8.4 5.2 1 2.6 4.3 3.1 6.2 1.4"></path><path d="M12 5.5l2.4-1.2-.8 2.6"></path></svg>Shrimp</span>
-          <span class="tier-th">&lt; 0.0001%</span><span class="tier-holders">361</span><span class="tier-supply">0.4%</span>
+          <span class="tier-th">&lt; 0.0001%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
       </div>
     </div>
 
-    <p class="holders-meta"><span id="holders-count">holders / 527</span> · <span id="holders-updated">updated 06:12 UTC</span></p>
+    <p class="holders-meta"><span id="holders-count">holders / —</span> · <span id="holders-updated">updated —</span></p>
     <p class="rpc-note">computed from Transfer logs · Base RPC · <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372#balances" target="_blank" rel="noopener">full analytics on BaseScan →</a></p>
   </div>
 </section>
@@ -310,5 +313,6 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   </div>
 </footer>
 
+<script src="market.js" defer></script>
 </body>
 </html>
