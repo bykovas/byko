@@ -105,13 +105,30 @@ async function rpc(method, params) {
   throw new Error("rpc");
 }
 
+/* Etherscan API V2 proxy (one etherscan.io key serves Base via chainid) —
+   preferred from Cloudflare, where public JSON-RPC blocks the egress IPs.
+   A null result is legitimate here (unknown tx). */
+var ETHERSCAN_API = "https://api.etherscan.io/v2/api?chainid=8453";
+var activeEtherscanKey = "";
+
+async function etherscanProxy(action, extra) {
+  var response = await fetch(ETHERSCAN_API + "&module=proxy&action=" + action + (extra || "") + "&apikey=" + activeEtherscanKey);
+  var payload;
+  if (!response.ok) throw new Error("rpc");
+  payload = await response.json();
+  if (!payload || payload.error || payload.status === "0" || payload.result === undefined) throw new Error("rpc");
+  return payload.result;
+}
+
 function pad40(address) {
   return address.slice(2).toLowerCase().padStart(64, "0");
 }
 
 /* Verify the donation and return { amountWei, timestamp } */
 async function verifyDonation(txHash) {
-  var receipt = await rpc("eth_getTransactionReceipt", [txHash]);
+  var receipt = activeEtherscanKey
+    ? await etherscanProxy("eth_getTransactionReceipt", "&txhash=" + txHash)
+    : await rpc("eth_getTransactionReceipt", [txHash]);
   var i;
   var log;
   var amount = null;
@@ -129,7 +146,9 @@ async function verifyDonation(txHash) {
   if (amount === null) return { error: "no_byko_donation" };
   if (amount <= 0n) return { error: "no_byko_donation" };
   if (parseInt(receipt.blockNumber, 16) < DONATION_START_BLOCK) return { error: "no_byko_donation" };
-  block = await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
+  block = activeEtherscanKey
+    ? await etherscanProxy("eth_getBlockByNumber", "&tag=" + receipt.blockNumber + "&boolean=false")
+    : await rpc("eth_getBlockByNumber", [receipt.blockNumber, false]);
   if (!block || !block.timestamp) throw new Error("rpc");
   return { amountWei: amount, timestamp: parseInt(block.timestamp, 16) };
 }
@@ -309,6 +328,7 @@ export async function onRequestPost(context) {
   if (!DONATION_ADDRESS) return json({ error: "config" }, 503);
   if (!env || !env.CARDS) return json({ error: "config" }, 503);
   activeRpcUrls = (env.RPC_URL ? [env.RPC_URL] : []).concat(RPC_URLS);
+  activeEtherscanKey = env.ETHERSCAN_API_KEY || "";
 
   try {
     input = await context.request.json();

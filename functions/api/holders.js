@@ -170,24 +170,67 @@ function summarize(balances) {
   return { holders: holders, tiers: tiers };
 }
 
+/* Etherscan API V2 (one etherscan.io key serves Base via chainid) — made for
+   keyed server-side calls, so it works from Cloudflare where public JSON-RPC
+   endpoints block the shared egress IPs. Used whenever ETHERSCAN_API_KEY is
+   set; the raw RPC path below stays as the keyless fallback. */
+var ETHERSCAN_API = "https://api.etherscan.io/v2/api?chainid=8453";
+
+async function etherscanProxy(action, extra, key) {
+  var response = await fetch(ETHERSCAN_API + "&module=proxy&action=" + action + (extra || "") + "&apikey=" + key);
+  var payload;
+  if (!response.ok) throw new Error("rpc");
+  payload = await response.json();
+  if (!payload || payload.error || payload.status === "0" || payload.result === undefined || payload.result === null) throw new Error("rpc");
+  return payload.result;
+}
+
+/* All Transfer logs in [fromBlock, toBlock], paginated 1000 per call. */
+async function etherscanLogs(fromBlock, toBlock, key) {
+  var all = [];
+  var page = 1;
+  var response;
+  var payload;
+  for (;;) {
+    response = await fetch(ETHERSCAN_API + "&module=logs&action=getLogs" +
+      "&address=" + BYKO + "&topic0=" + TRANSFER_TOPIC +
+      "&fromBlock=" + fromBlock + "&toBlock=" + toBlock +
+      "&page=" + page + "&offset=1000&apikey=" + key);
+    if (!response.ok) throw new Error("rpc");
+    payload = await response.json();
+    if (!payload || !Array.isArray(payload.result)) throw new Error("rpc");
+    all = all.concat(payload.result);
+    if (payload.result.length < 1000) return all;
+    page += 1;
+    if (page > 30) throw new Error("rpc"); /* runaway guard */
+  }
+}
+
 async function collectHolders(env) {
-  var latest = parseInt(await rpc("eth_blockNumber", []), 16);
+  var key = env && env.ETHERSCAN_API_KEY;
+  var latest;
   var checkpoint = await readCheckpoint(env);
   var balances = checkpoint ? checkpoint.balances : new Map();
   var from = checkpoint ? checkpoint.block + 1 : DEPLOY_BLOCK;
   var to;
   var logs;
-  var scanned = from <= latest;
-  while (from <= latest) {
-    to = Math.min(from + CHUNK_SIZE - 1, latest);
-    logs = await rpc("eth_getLogs", [{
-      address: BYKO,
-      fromBlock: hex(from),
-      toBlock: hex(to),
-      topics: [TRANSFER_TOPIC]
-    }]);
-    foldLogs(balances, logs);
-    from = to + 1;
+  var scanned;
+  latest = parseInt(key ? await etherscanProxy("eth_blockNumber", "", key) : await rpc("eth_blockNumber", []), 16);
+  scanned = from <= latest;
+  if (key) {
+    if (scanned) foldLogs(balances, await etherscanLogs(from, latest, key));
+  } else {
+    while (from <= latest) {
+      to = Math.min(from + CHUNK_SIZE - 1, latest);
+      logs = await rpc("eth_getLogs", [{
+        address: BYKO,
+        fromBlock: hex(from),
+        toBlock: hex(to),
+        topics: [TRANSFER_TOPIC]
+      }]);
+      foldLogs(balances, logs);
+      from = to + 1;
+    }
   }
   if (scanned) await writeCheckpoint(env, latest, balances);
   return { block: latest, balances: balances };
