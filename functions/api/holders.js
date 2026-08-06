@@ -111,7 +111,11 @@ function parseCheckpoint(text) {
 function keyedRpcUrls(env) {
   var urls = [];
   if (env && env.RPC_URL) urls.push(env.RPC_URL);
-  if (env && env.DRPC_API_KEY) urls.push("https://lb.drpc.live/base/" + env.DRPC_API_KEY);
+  if (env && env.DRPC_API_KEY) {
+    urls.push(env.DRPC_API_KEY.indexOf("http") === 0
+      ? env.DRPC_API_KEY
+      : "https://lb.drpc.live/base/" + env.DRPC_API_KEY);
+  }
   return urls;
 }
 
