@@ -30,7 +30,7 @@ contracts/   BYKO.sol — the whole contract, 21 lines
 website/     byko site, static, self-contained
 brand/       brand guide and source marks
 assets/      logo, coin and social renders
-docs/        whitepaper and project documents
+docs/        specification and project documents
 ```
 
 ## Facts
@@ -40,6 +40,11 @@ docs/        whitepaper and project documents
 - Tax / 0%
 - Roadmap / none — the point is the direction
 - 1 BYKO = 1 BYKO
+
+## License
+
+MIT — see [LICENSE](LICENSE). The token contract is immutable on-chain;
+the license covers this repository.
 
 ## Disclaimer
 

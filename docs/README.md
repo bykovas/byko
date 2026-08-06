@@ -2,6 +2,13 @@
 
 Project documents live here. Written straight, like everything else.
 
+## Current
+
+- **specification.md** — the BYKO specification: token, invariants, deployment
+  record, genesis distribution, market, donation cards, public APIs. Versioned
+  here by design — every change is a commit. A rendered page and a PDF will be
+  generated from it.
+
 ## Planned
 
 - **whitepaper.md** — the BYKO whitepaper. What the token is, why the supply is
