@@ -1,6 +1,6 @@
 # BYKO — Specification
 
-Version 1.0 · 2026-08-06
+Version 1.1 · 2026-08-07
 
 This document describes the BYKO token and the systems around it. Where this
 document and the deployed contract disagree, the contract prevails — the
@@ -72,7 +72,18 @@ Pool funding tx: `0xc1ea5195a255df6ad0439b106fcd575a3e98fc2d43b3a94adb7935f45b33
 
 The website reads price and reserves directly from the chain
 (`balanceOf(pool)` on both tokens); no third-party price APIs are involved.
-Nothing in this section is a promise of liquidity or price.
+
+**The liquidity position is permanently locked.** All LP tokens of the pool
+were sent to the burn address (`0x…dEaD`) in two transactions on 7 Aug 2026,
+so the pooled liquidity cannot be withdrawn by anyone:
+
+| Burn | Tx |
+|---|---|
+| 3.07% of LP supply | `0x176dbc759894fa605c78e95bc7b61f0254005358fed20ee70ef85b0c657d5476` |
+| remaining 96.93% — final | `0xe47921b2208c15c8b2f95f07be37aa70269b46c7a38f7363817af8258da584c6` |
+
+Live proof: the pool token's holder list on BaseScan shows `0x…dEaD` at 100%.
+Nothing else in this section is a promise of liquidity or price.
 
 ## 6. Donation cards
 
@@ -111,12 +122,14 @@ These endpoints read chain state and never write to it.
 
 This specification lives at `docs/specification.md` in the
 [bykovas/byko](https://github.com/bykovas/byko) repository. Changes are made
-by commit only, so the full history of every revision is public. A rendered
-page and a PDF are generated from this file (planned; until then the file
-itself is authoritative among project documents — after the contract).
+by commit only, so the full history of every revision is public. The PDF at
+`website/ext/docs/specification.pdf` is generated from this file by
+`docs/make-specification-pdf.py`, versioned alongside; the markdown stays
+authoritative among project documents — after the contract.
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1 | 2026-08-07 | LP burn recorded: pool liquidity permanently locked |
 | 1.0 | 2026-08-06 | Initial specification |
 
 ## Disclaimer
