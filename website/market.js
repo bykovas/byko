@@ -84,6 +84,10 @@
     var priceSub = byId("price-sub");
     var marketByko = byId("market-byko");
     var marketUsdc = byId("market-usdc");
+    var bykoLabel = byId("market-byko-label");
+    var usdcLabel = byId("market-usdc-label");
+    var bykoDelta = (data.byko / GENESIS_BYKO - 1) * 100;
+    var usdcDelta = data.usdc - GENESIS_USDC;
     var marketUpdated = byId("market-updated");
     var poolBar = document.querySelector(".pool-bar");
     var indexPrice = byId("index-price");
@@ -94,6 +98,8 @@
     if (priceSub) priceSub.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
     if (marketByko) marketByko.textContent = data.byko.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
     if (marketUsdc) marketUsdc.textContent = data.usdc.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+    if (bykoLabel) bykoLabel.textContent = "BYKO in pool (" + (bykoDelta >= 0 ? "+" : "") + bykoDelta.toFixed(4) + "%)";
+    if (usdcLabel) usdcLabel.textContent = "USDC in pool (" + (usdcDelta >= 0 ? "+" : "") + usdcDelta.toFixed(4) + " USDC)";
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
     if (poolBar) poolBar.style.setProperty("--split", displaySplit.toFixed(1) + "%");
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
