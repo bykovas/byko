@@ -65,16 +65,42 @@ header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.
   background-size:64px 64px;
   -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
   mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
-.hero{padding:160px 32px 80px}
+.hero{padding:136px 32px 0}
 .hero-grid{display:grid;grid-template-columns:1fr 320px;gap:64px;align-items:center}
-h1{font:600 56px/1.03 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
-.lede{font-size:18px;color:var(--text-2);margin:24px 0 0;max-width:52ch}
-.hero-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:20px}
-.cta{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;align-items:center}
+h1{font:600 56px/1.03 Inter,sans-serif;letter-spacing:-.025em;margin:16px 0 0}
+br.m{display:none}
+.lede{font-size:18px;color:var(--text-2);margin:16px 0 0;max-width:52ch}
+.lede.bridge{margin-top:10px}
+.lede.bridge .arr{display:inline-block;transition:.15s}
+.lede.bridge a:hover .arr{transform:translateY(2px)}
+.hero-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:14px}
+.cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
 .cta-actions,.cta-meta{display:flex;gap:12px;flex-basis:100%;flex-wrap:wrap;align-items:center}
 
 .coin{display:flex;justify-content:center}
-.coin img{width:280px;height:280px;max-width:100%;border-radius:50%;filter:drop-shadow(0 0 48px rgba(124,203,255,.28))}
+.coin img{width:240px;height:240px;max-width:100%;border-radius:50%;filter:drop-shadow(0 0 48px rgba(124,203,255,.28))}
+.hero-mobile{display:none}
+
+/* experiment */
+.experiment{border-top:1px solid var(--line);margin-top:40px;padding:36px 0 64px}
+.exp-head{display:grid;grid-template-columns:1fr 380px;gap:64px}
+.exp-slogan{font:600 46px/1.08 Inter,sans-serif;letter-spacing:-.025em;color:var(--text);margin:16px 0 0}
+.exp-sub{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-2);margin:12px 0 0}
+.exp-lead{padding-top:30px;font-size:14px;line-height:1.6;color:var(--text-2);margin:0}
+.exp-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:40px}
+.exp-stats.full{grid-template-columns:repeat(6,1fr)}
+.exp-cell{padding:18px 16px;border-left:1px solid var(--line)}
+.exp-cell:first-child{border-left:0}
+.exp-cell.strong{border-left-color:var(--line-2)}
+.exp-cell b{display:block;font:600 24px/1.1 'JetBrains Mono',monospace;letter-spacing:-.02em}
+.exp-cell.result b{color:var(--accent)}
+.exp-cell.spent b{color:var(--accent-2)}
+.exp-cell span{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-top:6px}
+.exp-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px}
+.exp-legend{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.exp-legend .s{color:var(--accent-2)}
+.exp-legend .r{color:var(--accent)}
+.exp-diary{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
@@ -218,9 +244,24 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 .disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
 
 @media (max-width:900px){
+  .hero{padding:112px 32px 0}
   .hero-grid{grid-template-columns:1fr}
-  .coin{order:-1}
-  .coin img{width:180px;height:180px}
+  .coin{display:none}
+  .hero-meta{display:none}
+  br.m{display:inline}
+  .hero-mobile{display:flex;align-items:center;gap:16px;margin-top:14px}
+  .hero-mobile img{width:120px;height:120px;border-radius:50%;box-shadow:0 0 32px rgba(124,203,255,.28)}
+  .hero-mobile .mm{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--muted)}
+  .experiment{padding:32px 0 48px}
+  .exp-head{grid-template-columns:1fr;gap:24px}
+  .exp-lead{padding-top:0}
+  .exp-slogan{font-size:34px;line-height:1.1}
+  .exp-stats,.exp-stats.full{grid-template-columns:repeat(2,1fr)}
+  .exp-cell{padding:14px 12px}
+  .exp-cell b{font-size:22px}
+  .exp-cell:nth-child(odd){border-left:0}
+  .exp-cell:nth-child(n+3){border-top:1px solid var(--line)}
+  .exp-cell.strong{border-left-color:var(--line)}
   h1{font-size:44px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3){border-left:0}
@@ -267,8 +308,13 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <div class="hero-grid">
       <div>
         <span class="kicker">Genesis ERC-20 / Base</span>
-        <h1>One bar. One point.<br><span class="b">One BYKO.</span></h1>
+        <h1>One bar.<br class="m"> One point.<br><span class="b">One BYKO.</span></h1>
         <p class="lede">A genesis ERC-20 token on Base. Permanently fixed supply of 790,227. No mint function, no owner privileges, immutable after deployment. A coin that does nothing, reliably.</p>
+        <p class="lede bridge">It is also a measuring instrument — <a href="#experiment">an experiment is running <span class="arr">↓</span></a></p>
+        <div class="hero-mobile">
+          <img src="assets/coin-512.png" alt="The BYKO coin" width="120" height="120">
+          <div class="mm">790,227 supply<br>18 decimals<br>0 mint · 100% |&gt;</div>
+        </div>
         <p class="hero-meta">790,227 supply · 18 decimals · 0 mint · 100% |&gt;</p>
         <div class="cta">
           <div class="cta-actions">
@@ -285,9 +331,30 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
         </div>
       </div>
       <div class="coin">
-        <img src="assets/coin-512.png" alt="The BYKO coin" width="280" height="280">
+        <img src="assets/coin-512.png" alt="The BYKO coin" width="240" height="240">
       </div>
     </div>
+
+    <section class="experiment" id="experiment">
+      <div class="exp-head">
+        <div>
+          <span class="kicker">Experiment / 00</span>
+          <h2 class="exp-slogan">How much does legitimacy cost?</h2>
+          <p class="exp-sub">The diary of an honest token</p>
+        </div>
+        <p class="exp-lead">BYKO is not a product. It is an experiment on what happens to a provably harmless token inside an ecosystem tuned for hype and scams.</p>
+      </div>
+      <div class="exp-stats" id="exp-stats">
+        <div class="exp-cell result"><b>2</b><span>Listing rejections</span></div>
+        <div class="exp-cell result"><b>2</b><span>Wallet flags</span></div>
+        <div class="exp-cell result"><b>4</b><span>Support rounds</span></div>
+        <div class="exp-cell spent strong"><b>0</b><span>Paid listings</span></div>
+      </div>
+      <div class="exp-foot">
+        <span class="exp-legend"><span class="s">spent</span> / what went in · <span class="r">result</span> / what the system answered · counted, dated, published</span>
+        <span class="exp-diary">Diary — episodes soon</span>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -479,6 +546,33 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 </dialog>
 
 <script>
+/* Experiment counters — the single data source for the stat bar.
+   hours/usd are pending: while null their cells are not rendered at all;
+   nothing invented, nothing placeholder. The four known counts are static
+   in the markup so the page works without JS. */
+const EXPERIMENT = { hours: null, usd: null, listingRejections: 2, walletFlags: 2, supportRounds: 4, paidListings: 0 };
+(function(){
+  var bar = document.getElementById('exp-stats');
+  if (!bar || EXPERIMENT.hours === null || EXPERIMENT.usd === null) return;
+  var spent = [
+    { value: EXPERIMENT.hours + ' h', label: 'Hours spent' },
+    { value: '$' + EXPERIMENT.usd, label: 'Dollars spent' }
+  ];
+  for (var i = spent.length - 1; i >= 0; i--) {
+    var cell = document.createElement('div');
+    cell.className = 'exp-cell spent';
+    var b = document.createElement('b');
+    b.textContent = spent[i].value;
+    var label = document.createElement('span');
+    label.textContent = spent[i].label;
+    cell.appendChild(b);
+    cell.appendChild(label);
+    bar.insertBefore(cell, bar.firstChild);
+  }
+  bar.classList.add('full');
+  bar.children[2].classList.add('strong'); /* group divider before results */
+})();
+
 document.getElementById('copyBtn').addEventListener('click',function(){
   var btn=this;
   navigator.clipboard.writeText(document.getElementById('addr').textContent).then(function(){
