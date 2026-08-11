@@ -1,0 +1,36 @@
+{
+  "intro": "The diary is a log of what it takes for a provably harmless token to stop looking like a scam — every rejection, flag and support round, with dates and receipts. BYKO has nothing to sell, so the only thing worth publishing is the process itself.",
+  "publishNote": "episodes publish here first, then in the repository",
+  "episodes": [
+    {
+      "id": "ep-01",
+      "code": "ep.01",
+      "topic": "listings",
+      "title": "Seven rejections, zero reasons",
+      "status": "in writing",
+      "teaser": "A token with burned LP and verified source applies for a listing. Seven times. What the forms ask, what the silence costs, and what a \"no\" looks like when nobody signs it.",
+      "plan": "The episode will contain every listing form submitted so far — which service, what was asked, what was attached, the date of submission and the date (if any) of the answer. Rejections are quoted verbatim where a reason was given, and marked \"no reason provided\" where it was not. The running total on the home page counts these submissions.",
+      "cliffhanger": "does a third form exist?"
+    },
+    {
+      "id": "ep-02",
+      "code": "ep.02",
+      "topic": "flags",
+      "title": "Flagged as SCAM by default",
+      "status": "in writing",
+      "teaser": "Two wallets mark BYKO as risky the moment it exists. The appeal process, measured: who reads it, how long it takes, and whether a harmless token can prove a negative.",
+      "plan": "The episode will contain screenshots of both wallet warnings, the exact appeal text sent to each vendor, timestamps of every reply, and the checklist each vendor publishes for delisting a flag — annotated with which items a no-utility token can and cannot satisfy in principle.",
+      "cliffhanger": "will the flag come off?"
+    },
+    {
+      "id": "ep-03",
+      "code": "ep.03",
+      "topic": "support",
+      "title": "Four rounds with a bot",
+      "status": "in writing",
+      "teaser": "A support conversation where one side is a human with facts and the other is a script with patience. Full transcript, timestamps, and the exact moment the loop closes.",
+      "plan": "The episode will contain the full support transcript, unedited, with timestamps and round numbers. Each round is annotated with what was asked, what was answered, and whether the answer addressed the question. The transcript ends where the loop closes — or doesn't.",
+      "cliffhanger": "round five, or a human?"
+    }
+  ]
+}

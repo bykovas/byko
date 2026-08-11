@@ -1,0 +1,59 @@
+{
+  "intro": "Every counter on the home page is a claim, and a claim needs a definition: what exactly is counted, what is excluded, and when the number was last true. This page is that definition. When a number changes, the change lands here first, dated.",
+  "counters": [
+    {
+      "id": "hours",
+      "value": "68 h",
+      "label": "Hours spent",
+      "kind": "spent",
+      "asOf": "2026-08-11",
+      "counts": "Working hours spent on the BYKO study since 2 Aug 2026: contract work, liquidity setup, the website, listing applications, wallet-flag appeals, support conversations, and writing. Tracked per session, rounded to the half hour.",
+      "excludes": "Thinking about BYKO in the shower. Only sessions with an artifact — a commit, a submitted form, a sent message — are counted."
+    },
+    {
+      "id": "dollars",
+      "value": "$114",
+      "label": "Dollars spent",
+      "kind": "spent",
+      "asOf": "2026-08-11",
+      "counts": "Direct out-of-pocket cost of the study: 74 USDC seeded into the BYKO/USDC pool at genesis, plus roughly $40 of gas, domain and infrastructure. The budget is deliberately tiny — that is the point.",
+      "excludes": "The founder's own BYKO purchases from the pool (those are votes, not costs) and the value of the time counted in hours above."
+    },
+    {
+      "id": "listing-rejections",
+      "value": "7",
+      "label": "Listing rejections",
+      "kind": "result",
+      "asOf": "2026-08-11",
+      "counts": "Template refusals and non-answers received from explorer and aggregator token-info forms, counted per submission. A submission with no reply after the service's own stated review window also counts as a rejection — silence is an answer.",
+      "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid listings), and resubmissions of the same form that are still inside the review window."
+    },
+    {
+      "id": "wallet-flags",
+      "value": "2",
+      "label": "Wallet flags",
+      "kind": "result",
+      "asOf": "2026-08-11",
+      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning.",
+      "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it."
+    },
+    {
+      "id": "support-rounds",
+      "value": "4",
+      "label": "Support rounds",
+      "kind": "result",
+      "asOf": "2026-08-11",
+      "counts": "Completed request-response cycles with vendor support about the flags and listings above. One round = one message sent plus the reply it eventually received, human or bot.",
+      "excludes": "Automatic acknowledgement emails (\"we received your request\") — a round needs an answer with content, even if the content is a script."
+    },
+    {
+      "id": "paid-listings",
+      "value": "0",
+      "label": "Paid listings",
+      "kind": "result",
+      "asOf": "2026-08-11",
+      "counts": "Listings, promotions or fast-track reviews paid for with money. The study's rule is that this number stays zero; if it ever changes, the diary explains why in full.",
+      "excludes": "Nothing. Zero means zero."
+    }
+  ]
+}

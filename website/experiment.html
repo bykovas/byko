@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — What the counters count</title>
+<meta name="description" content="Every counter on the BYKO home page, defined: what it counts, what it excludes, and when the number was last true. Counted, dated, published.">
+<meta property="og:title" content="BYKO — What the counters count">
+<meta property="og:description" content="Every counter on the BYKO home page, defined: what it counts, what it excludes, and when the number was last true.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D10;
+  --bg-2:#11141A;
+  --bg-3:#171B22;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --text:#E8EAEE;
+  --text-2:rgba(232,234,238,.72);
+  --muted:rgba(232,234,238,.45);
+  --accent:#7CCBFF;
+  --accent-2:#FFB088;
+  --ok:#7CE3A6;
+  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
+.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
+.mono{font-family:'JetBrains Mono',monospace}
+
+header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:24px;height:64px}
+.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
+.wordmark:hover{text-decoration:none}
+.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+
+.page{padding:136px 0 0}
+h1{font:600 40px/1.1 Inter,sans-serif;letter-spacing:-.025em;margin:16px 0 0}
+.lede{font-size:17px;color:var(--text-2);margin:16px 0 0;max-width:64ch}
+.legend{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:16px 0 0}
+.legend .s{color:var(--accent)}
+.legend .r{color:var(--accent-2)}
+
+.counters{margin-top:48px;border-top:1px solid var(--line)}
+.counter{padding:28px 0;border-bottom:1px solid var(--line);scroll-margin-top:84px}
+.counter-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.counter-head b{font:600 30px/1 'JetBrains Mono',monospace;letter-spacing:-.02em}
+.counter.spent .counter-head b{color:var(--accent)}
+.counter.result .counter-head b{color:var(--accent-2)}
+.counter-head .name{font:600 16px Inter,sans-serif;letter-spacing:-.01em}
+.counter-head .asof{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto}
+.counter p{margin:12px 0 0;font-size:14px;line-height:1.6;color:var(--text-2);max-width:72ch}
+.counter p .k{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:8px}
+.loading-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:48px}
+.back-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:24px}
+
+footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot .mono{font-size:12px;color:var(--muted)}
+.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+
+@media (max-width:900px){
+  h1{font-size:32px}
+  .counter-head .asof{margin-left:0;flex-basis:100%}
+  .nav-links{gap:14px}
+  .nav-links .status{display:none}
+  .nav-links a:nth-child(5){display:none}
+}
+</style>
+<script
+  src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js"
+  crossorigin="anonymous"
+></script>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="wordmark" href="index.html">
+      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
+        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
+        </linearGradient></defs>
+        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+        </g>
+      </svg>
+      BYKO
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#referendum">Referendum</a>
+      <a href="diary.html">Diary</a>
+      <a href="index.html#facts">Facts</a>
+      <a href="market.html">Market</a>
+      <a href="specification.html">Specification</a>
+      <span class="status">running</span>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap page">
+  <span class="kicker">Experiment / numbers</span>
+  <h1>What the counters count</h1>
+  <p class="lede" id="counters-intro">Every counter on the home page is a claim, and a claim needs a definition: what exactly is counted, what is excluded, and when the number was last true.</p>
+  <p class="legend"><span class="s">spent</span> / what went in · <span class="r">result</span> / what the system answered</p>
+
+  <div class="counters" id="counters"></div>
+  <p class="loading-note" id="counters-loading">loading counters…</p>
+  <p class="back-note"><a href="index.html#diary">← back to the diary section</a></p>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="wordmark" href="index.html">
+        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+          </g>
+        </svg>
+        BYKO
+      </a>
+      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    </div>
+    <p class="disclaimer">BYKO is a token with no utility, no yield and no promises. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
+
+<script>
+/* Counter definitions come from a local content source, not the template.
+   TODO: swap local content source for Notion API — same shape. */
+(function () {
+  var CONTENT_URL = "content/experiment/counters.json";
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  function dated(iso) {
+    var date = new Date(iso + "T00:00:00Z");
+    if (isNaN(date.getTime())) return iso;
+    return date.getUTCDate() + " " +
+      ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][date.getUTCMonth()] +
+      " " + date.getUTCFullYear();
+  }
+
+  fetch(CONTENT_URL).then(function (response) {
+    if (!response.ok) throw new Error("content");
+    return response.json();
+  }).then(function (data) {
+    var container = document.getElementById("counters");
+    var loading = document.getElementById("counters-loading");
+    var intro = document.getElementById("counters-intro");
+    if (!data || !Array.isArray(data.counters)) throw new Error("content");
+    if (data.intro && intro) intro.textContent = data.intro;
+    data.counters.forEach(function (counter) {
+      var section = el("section", "counter " + counter.kind);
+      section.id = counter.id;
+      var head = el("div", "counter-head");
+      head.appendChild(el("b", null, counter.value));
+      head.appendChild(el("span", "name", counter.label));
+      head.appendChild(el("span", "asof", counter.value + " as of " + dated(counter.asOf)));
+      section.appendChild(head);
+      var counts = el("p");
+      counts.appendChild(el("span", "k", "counts"));
+      counts.appendChild(document.createTextNode(counter.counts));
+      section.appendChild(counts);
+      var excludes = el("p");
+      excludes.appendChild(el("span", "k", "excludes"));
+      excludes.appendChild(document.createTextNode(counter.excludes));
+      section.appendChild(excludes);
+      container.appendChild(section);
+    });
+    if (loading) loading.remove();
+    /* Content renders after the browser's own anchor jump — repeat it. */
+    if (location.hash) {
+      var target = document.getElementById(location.hash.slice(1));
+      if (target) target.scrollIntoView();
+    }
+  }).catch(function () {
+    var loading = document.getElementById("counters-loading");
+    if (loading) loading.textContent = "counter definitions unavailable — read them in the repository";
+  });
+}());
+</script>
+
+</body>
+</html>
