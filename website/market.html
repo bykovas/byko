@@ -147,6 +147,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
 .donut-center b{font:600 26px/1 Inter,sans-serif;letter-spacing:-.02em}
 .donut-center span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.donut-mode{display:flex;gap:8px;max-width:320px;margin:0 0 16px}
+.mode-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 12px;border-radius:99px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;transition:.15s}
+.mode-btn:hover{border-color:var(--line-2);color:var(--text)}
+.mode-btn.is-active{color:var(--accent);border-color:var(--line-2)}
 .tiers-scroll{overflow-x:auto}
 .tier-head,.tier-row{display:grid;grid-template-columns:150px 1fr 90px 90px;gap:16px;align-items:center;min-width:440px;
   padding:11px 0;border-bottom:1px solid var(--line)}
@@ -185,6 +190,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   .pool-side span{font-size:9px;letter-spacing:.08em}
   .holders-grid{grid-template-columns:1fr;gap:40px}
   .donut-wrap{max-width:240px;margin:0 auto}
+  .donut-mode{max-width:none;justify-content:center}
   #holders-donut{max-width:100%}
   .stats,.stats-3{grid-template-columns:repeat(2,1fr)}
   .stat:nth-child(3){border-left:0}
@@ -267,8 +273,12 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <div class="holders-grid">
       <span class="loading" id="holders-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
       <div id="holders-donut">
+        <div class="donut-mode" role="group" aria-label="Donut metric">
+          <button type="button" class="mode-btn is-active" data-mode="holders">holders</button>
+          <button type="button" class="mode-btn" data-mode="supply">supply</button>
+        </div>
         <div class="donut-wrap">
-          <svg viewBox="0 0 200 200" role="img" aria-label="Supply by holder tier">
+          <svg viewBox="0 0 200 200" role="img" aria-label="Holders by tier">
             <circle class="seg-track" cx="100" cy="100" r="80"></circle>
             <circle class="seg" data-tier="whale" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
             <circle class="seg" data-tier="shark" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>

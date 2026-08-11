@@ -11,6 +11,8 @@
   var latestBlock = null;
   var holdersUpdated = null;
   var tierOrder = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
+  var donutMode = "holders"; /* "holders" | "supply" — holders is the default view */
+  var tiersCache = null;
 
   if (typeof BigInt !== "function" || typeof fetch !== "function") return;
 
@@ -113,18 +115,96 @@
     });
   }
 
-  function renderHolders(data) {
+  function computeArcs(mode) {
     var i;
-    var cumulative = 0;
     var tier;
-    var row;
-    var segment;
-    var share;
+    var info;
+    var supply;
     var entry;
     var entries = [];
+    var total = 0;
+    var scale;
     var largest = null;
     var boost = 0;
     var MIN_ARC = 1.5; /* a populated tier is never thinner than this */
+
+    if (!tiersCache) return entries;
+    for (i = 0; i < tierOrder.length; i++) {
+      tier = tierOrder[i];
+      info = tiersCache[tier];
+      if (!info) continue;
+      supply = Number(info.supply);
+      if (!isFinite(supply) || supply < 0) supply = 0;
+      entry = {
+        tier: tier,
+        count: typeof info.count === "number" ? info.count : 0
+      };
+      entry.value = mode === "holders" ? entry.count : supply;
+      entries.push(entry);
+      total += entry.value;
+    }
+    /* Supply shares already arrive as percentages; holder counts need
+       normalising to the populated total. */
+    scale = mode === "holders" ? (total > 0 ? 100 / total : 0) : 1;
+    for (i = 0; i < entries.length; i++) entries[i].arc = entries[i].value * scale;
+    /* A dominant tier squeezes other populated tiers into invisible 0-width
+       arcs (whales can hold ~100% of supply). Give those tiers a minimum
+       visible arc and take the difference out of the largest one — the
+       table keeps the exact numbers. */
+    for (i = 0; i < entries.length; i++) {
+      if (largest === null || entries[i].arc > largest.arc) largest = entries[i];
+    }
+    for (i = 0; i < entries.length; i++) {
+      entry = entries[i];
+      if (entry !== largest && entry.count > 0 && entry.arc < MIN_ARC) {
+        boost += MIN_ARC - entry.arc;
+        entry.arc = MIN_ARC;
+      }
+    }
+    if (largest && boost > 0) largest.arc = Math.max(0, largest.arc - boost);
+    return entries;
+  }
+
+  function renderDonut() {
+    var i;
+    var cumulative = 0;
+    var segment;
+    var entries = computeArcs(donutMode);
+    var svg = document.querySelector("#holders-donut .donut-wrap svg");
+
+    for (i = 0; i < entries.length; i++) {
+      segment = document.querySelector('.seg[data-tier="' + entries[i].tier + '"]');
+      if (segment) {
+        segment.setAttribute("stroke-dasharray", entries[i].arc + " " + (100 - entries[i].arc));
+        segment.setAttribute("stroke-dashoffset", 25 - cumulative);
+      }
+      cumulative += entries[i].arc;
+    }
+    if (svg) svg.setAttribute("aria-label", donutMode === "holders" ? "Holders by tier" : "Supply by holder tier");
+  }
+
+  function initDonutMode() {
+    var buttons = document.querySelectorAll(".mode-btn");
+    var i;
+
+    function onModeClick() {
+      var mode = this.getAttribute("data-mode");
+      var all = document.querySelectorAll(".mode-btn");
+      var j;
+      if (mode === donutMode) return;
+      donutMode = mode;
+      for (j = 0; j < all.length; j++) all[j].classList.toggle("is-active", all[j] === this);
+      renderDonut();
+    }
+
+    for (i = 0; i < buttons.length; i++) buttons[i].addEventListener("click", onModeClick);
+  }
+
+  function renderHolders(data) {
+    var i;
+    var tier;
+    var row;
+    var share;
     var count = byId("holders-count");
     var center = document.querySelector(".donut-center b");
 
@@ -144,35 +224,9 @@
         row.querySelector(".tier-holders").textContent = typeof data.tiers[tier].count === "number" ? data.tiers[tier].count.toLocaleString("en-US") : "—";
         row.querySelector(".tier-supply").textContent = share.toFixed(1) + "%";
       }
-      entries.push({
-        tier: tier,
-        arc: share,
-        count: typeof data.tiers[tier].count === "number" ? data.tiers[tier].count : 0
-      });
     }
-    /* The donut shows supply share, but a whale tier near 100% squeezes every
-       other populated tier into an invisible 0-width arc. Give those tiers a
-       minimum visible arc and take the difference out of the largest one —
-       the table above keeps the exact numbers. */
-    for (i = 0; i < entries.length; i++) {
-      if (largest === null || entries[i].arc > largest.arc) largest = entries[i];
-    }
-    for (i = 0; i < entries.length; i++) {
-      entry = entries[i];
-      if (entry !== largest && entry.count > 0 && entry.arc < MIN_ARC) {
-        boost += MIN_ARC - entry.arc;
-        entry.arc = MIN_ARC;
-      }
-    }
-    if (largest && boost > 0) largest.arc = Math.max(0, largest.arc - boost);
-    for (i = 0; i < entries.length; i++) {
-      segment = document.querySelector('.seg[data-tier="' + entries[i].tier + '"]');
-      if (segment) {
-        segment.setAttribute("stroke-dasharray", entries[i].arc + " " + (100 - entries[i].arc));
-        segment.setAttribute("stroke-dashoffset", 25 - cumulative);
-      }
-      cumulative += entries[i].arc;
-    }
+    tiersCache = data.tiers;
+    renderDonut();
     updateHoldersMeta();
   }
 
@@ -196,6 +250,7 @@
 
   loadMarket(true);
   window.setInterval(function () { loadMarket(true); }, 30000);
+  initDonutMode();
   loadHolders();
   watchChart();
 }());
