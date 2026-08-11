@@ -120,6 +120,11 @@
     var row;
     var segment;
     var share;
+    var entry;
+    var entries = [];
+    var largest = null;
+    var boost = 0;
+    var MIN_ARC = 1.5; /* a populated tier is never thinner than this */
     var count = byId("holders-count");
     var center = document.querySelector(".donut-center b");
 
@@ -135,16 +140,38 @@
       share = Number(data.tiers[tier].supply);
       if (!isFinite(share) || share < 0) share = 0;
       row = document.querySelector('.tier-row[data-tier="' + tier + '"]');
-      segment = document.querySelector('.seg[data-tier="' + tier + '"]');
       if (row) {
         row.querySelector(".tier-holders").textContent = typeof data.tiers[tier].count === "number" ? data.tiers[tier].count.toLocaleString("en-US") : "—";
         row.querySelector(".tier-supply").textContent = share.toFixed(1) + "%";
       }
+      entries.push({
+        tier: tier,
+        arc: share,
+        count: typeof data.tiers[tier].count === "number" ? data.tiers[tier].count : 0
+      });
+    }
+    /* The donut shows supply share, but a whale tier near 100% squeezes every
+       other populated tier into an invisible 0-width arc. Give those tiers a
+       minimum visible arc and take the difference out of the largest one —
+       the table above keeps the exact numbers. */
+    for (i = 0; i < entries.length; i++) {
+      if (largest === null || entries[i].arc > largest.arc) largest = entries[i];
+    }
+    for (i = 0; i < entries.length; i++) {
+      entry = entries[i];
+      if (entry !== largest && entry.count > 0 && entry.arc < MIN_ARC) {
+        boost += MIN_ARC - entry.arc;
+        entry.arc = MIN_ARC;
+      }
+    }
+    if (largest && boost > 0) largest.arc = Math.max(0, largest.arc - boost);
+    for (i = 0; i < entries.length; i++) {
+      segment = document.querySelector('.seg[data-tier="' + entries[i].tier + '"]');
       if (segment) {
-        segment.setAttribute("stroke-dasharray", share + " " + (100 - share));
+        segment.setAttribute("stroke-dasharray", entries[i].arc + " " + (100 - entries[i].arc));
         segment.setAttribute("stroke-dashoffset", 25 - cumulative);
       }
-      cumulative += share;
+      cumulative += entries[i].arc;
     }
     updateHoldersMeta();
   }
