@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Three refusals, zero signed reasons — 4 August 2026
+
+On 4 August I verified ownership of the BYKO contract on BaseScan and submitted the token information form: website, icon, GitHub, LinkedIn, price data link. Everything the form asks for.
+
+The first wave of refusals arrived the same day. The stated reasons, template-picked, included: the sender's email is not the project's official domain; the information provided is false or misrepresents public entities; the token name or symbol may be susceptible to brand impersonation.
+
+The email came from bykovas@bykovas.lt. The site is byko.bykovas.lt. The founder is named on the site, with a LinkedIn link. The contract is verified as an exact match, and "BYKO" impersonates a brand that does not exist. Three reasons that contradict the submission and each other.
+
+The second refusal came on 5 August, the third on 11 August, both with the same sentence: "unable to process the update at this time. This is usually due to a lack of information about the token." No specifics, no signature on the decision, nothing to fix.
+
+The pattern is consistent: one or two days from submission to a template. Which is the honest measurement here — not that they said no, but that nobody had to say why.
+
+Next move is a reply in the existing thread rather than a fourth form.
+
+---
+**Teaser:** Three waves of refusals, four identical emails in one day, and not a single signed reason.
+**X:** Three waves of refusals from BaseScan: 4, 5 and 11 August. Wave one cited "sender's email is not the project's domain" (it is) and "symbol may impersonate a brand" (it's my surname). Nobody signs the decision.
+
 ## Flagged: what the scanners actually measure — 4 August 2026
 
 Within days of existing, BYKO was flagged.
