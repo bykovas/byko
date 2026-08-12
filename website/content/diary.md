@@ -24,6 +24,20 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Twenty holders and a $1.35 sell — 3 August 2026
+
+BYKO now has 20 holders. Not a typo, not a rounding of 20,000 — twenty addresses.
+
+Most of them came from small rewards handed out to real people on Farcaster. Not an airdrop campaign, no quests, no wallet-farming: just tokens sent to individuals who were actually there. A Sablier-based airdrop was considered and dropped — roughly $2 per claim to distribute something worth a fraction of a cent is its own kind of joke.
+
+I also bought BYKO out of my own pool, from a separate wallet, to see what happens. It works exactly as arithmetic says it should: in a pool this shallow, my own money moves my own price, and the fee goes to a pool whose LP tokens will end up burned. There is no clever trade here. It's a measurement.
+
+One more data point, from 4 August: a sell of $1.35 didn't leave a scratch on the price. That's the entire depth of this market in one sentence — and the honest answer to anyone who asks what this token is worth.
+
+---
+**Teaser:** Twenty holders, a $1.35 sell that moved nothing, and the honest depth of a market this size.
+**X:** BYKO has 20 holders. Twenty — not twenty thousand. Most came from small rewards to real people on Farcaster: no quests, no farming. A $1.35 sell on 4 Aug didn't scratch the price. That's the whole market, described honestly.
+
 ## Genesis: one block, one number, no promises — 2 August 2026
 
 BYKO exists as of block 49430937 on Base.
