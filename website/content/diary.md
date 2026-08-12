@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Flagged: what the scanners actually measure — 4 August 2026
+
+Within days of existing, BYKO was flagged.
+
+MetaMask, via Blockaid: "Low locked liquidity" and "Unstable price". Base app: "Flagged as a scam" — with no button anywhere to dispute it.
+
+So I ran the token through the scanners myself. GoPlus: not a honeypot, open source, zero tax. De.Fi: no rug-pull risk. honeypot.is: clean. RugCheck scored it 28 out of 100 — and the breakdown is the interesting part: the contract itself passed everything, the points were lost on Pool size, Transactions and Creation date. Translated: the token is small and new. Not dangerous — small.
+
+That is the actual finding. The automated verdict everyone reads as "is this safe?" mostly answers a different question: "is this big?"
+
+Since then MetaMask has dropped the liquidity flag — the LP tokens were burned, and that one is now measurably false. "Unstable price" stays; in a $150 pool it's not wrong. Base app still says scam, and as of 11 August has removed BYKO from portfolio view entirely.
+
+The appeal channels exist, they are just not where you'd look: report.blockaid.io/mistake, a report form inside MetaMask, security@coinbase.com.
+
+---
+**Teaser:** Every scanner cleared the contract. The score still said 28 — because the points measure size, not safety.
+**X:** BYKO got flagged within days of existing. GoPlus: not a honeypot, open source, no tax. De.Fi: no rug risk. RugCheck: 28/100 — points lost on pool size, transactions and age. The contract passed everything. Small isn't dangerous.
+
 ## Twenty holders and a $1.35 sell — 3 August 2026
 
 BYKO now has 20 holders. Not a typo, not a rounding of 20,000 — twenty addresses.
