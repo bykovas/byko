@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The diary started with two things I got wrong — 6 August 2026
+
+This project turned into a diary because of two things I got wrong.
+
+While redesigning the site, I wrote that "the money never reaches the author". It sounded good. It is also false: I hold BYKO, and I can sell it into the same pool that buyers pay into. The liquidity can never be withdrawn — that part is true and provable — but the sentence as written claimed something stronger than the facts support.
+
+The second one: the stat bar showing hours and dollars spent had placeholder numbers in it. On a page whose entire argument is "counted, dated, published", invented figures are the one thing that cannot ship.
+
+Both were caught before going live, which is the only reason this is a diary entry and not an apology.
+
+That's when the format became obvious. Not a product launch, not a roadmap — a log of what it actually takes for a token with nothing to hide to stop looking like a scam. Hours, emails, dollars, days of waiting. Measured, dated, published, including the parts where I'm the one who got it wrong.
+
+BYKO isn't a product. It's a measuring instrument, and the first thing it measured was me.
+
+---
+**Teaser:** Two claims on this site didn't survive their own fact-check — both caught before publishing.
+**X:** While redesigning the site I found two of my own claims that didn't survive checking: "the money never reaches the author" (it can) and placeholder numbers in the stat bar. Both caught before shipping. That's when this became a diary.
+
 ## The price list for being seen — 5 August 2026
 
 Every door in this ecosystem has a price on it. Here is the list I've been quoted so far, and what I did about it.
