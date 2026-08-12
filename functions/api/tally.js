@@ -34,6 +34,11 @@ var DEAD = "0x000000000000000000000000000000000000dead";
 var POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
 var WEI = 1000000000000000000n;
 var CHUNK_SIZE = 10000;
+/* Pages Functions allow ~50 subrequests per request. A fresh checkpoint
+   (e.g. after a version bump) sits hundreds of chunks behind the chain,
+   so one request can never rescan it all: scan at most this many chunks,
+   checkpoint the progress and let the next request continue. */
+var MAX_SCAN_CHUNKS = 30;
 var MIN_VOTE = 100; /* BYKO — config, published on the page */
 var MIN_VOTE_WEI = BigInt(MIN_VOTE) * WEI;
 var RULE_TEXT = MIN_VOTE + "+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers";
@@ -303,8 +308,9 @@ async function computeTally(env) {
       from = latest + 1;
     } catch (error) { /* fall through to the chunked RPC scan */ }
   }
-  while (from <= latest) {
-    to = Math.min(from + CHUNK_SIZE - 1, latest);
+  var target = Math.min(latest, from + CHUNK_SIZE * MAX_SCAN_CHUNKS - 1);
+  while (from <= target) {
+    to = Math.min(from + CHUNK_SIZE - 1, target);
     foldLogs(state, await rpc("eth_getLogs", [{
       address: BYKO,
       fromBlock: hex(from),
@@ -313,7 +319,19 @@ async function computeTally(env) {
     }]));
     from = to + 1;
   }
-  state.block = latest;
+  state.block = from - 1;
+  if (state.block < latest) {
+    /* Not caught up yet — persist the progress and say so. No
+       classification on a mid-history state: the numbers would be wrong
+       and the EOA checks would blow the subrequest budget. */
+    await writeCheckpoint(env, state);
+    return {
+      syncing: true,
+      block: state.block,
+      behind: latest - state.block,
+      updated: new Date().toISOString()
+    };
+  }
 
   /* Classify. Only addresses that ever qualified or currently hold
      something need an EOA check. */
@@ -381,7 +399,12 @@ export async function onRequestGet(context) {
   var response;
   if (cached) return cached;
   try {
-    response = json(await computeTally(context.env), 200, { "Cache-Control": "public, s-maxage=3600" });
+    var payload = await computeTally(context.env);
+    if (payload.syncing) {
+      /* mid-rescan progress report — never cache it */
+      return json(payload, 200, { "Cache-Control": "no-store" });
+    }
+    response = json(payload, 200, { "Cache-Control": "public, s-maxage=3600" });
     context.waitUntil(cache.put(context.request, response.clone()));
     return response;
   } catch (error) {
