@@ -1,0 +1,112 @@
+# Publish new diary entries to Facebook and X when website/content/diary.md
+# gains entries. The push is the event: scripts/publish-diary.mjs diffs
+# BEFORE..SHA of that one file and posts only complete new entries.
+#
+# Deliberately independent of the Cloudflare Pages deploy (which also runs on
+# this push): the script polls the live diary page until the new entries'
+# anchors are actually served, and only then posts — with a hard timeout that
+# fails the run before anything goes out.
+#
+# COST NOTE (X API): posts that contain a link are billed at a higher rate
+# than plain-text posts — roughly $0.20 vs $0.015 per post at current pricing.
+# The link stays: a diary post without its entry link is pointless. This note
+# exists so nobody "optimises" the cost by silently dropping the link, or is
+# surprised by the bill.
+#
+# Re-run protection, two layers, no writes to the repository (so no push
+# loop is possible):
+#   1. a re-run after a fully successful attempt exits immediately;
+#   2. per-post progress is persisted via actions/cache, so a re-run after a
+#      partial failure skips the posts that already went out.
+#
+# Secrets (GitHub Secrets only, never files in the repo; logs print presence,
+# never values):
+#   FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN            — Facebook Page publishing
+#   X_API_KEY, X_API_SECRET,
+#   X_ACCESS_TOKEN, X_ACCESS_SECRET             — X API v2, OAuth 1.0a user context
+
+name: publish-diary
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - website/content/diary.md
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: publish-diary
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip re-run after a successful attempt
+        id: rerun
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.run_attempt }}" -gt 1 ]; then
+            prev=$(( ${{ github.run_attempt }} - 1 ))
+            conclusion=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${prev}" --jq .conclusion)
+            echo "previous attempt #${prev} concluded: ${conclusion}"
+            if [ "$conclusion" = "success" ]; then
+              echo "already published by attempt #${prev} — skipping everything"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Check secrets are present (names only, never values)
+        if: steps.rerun.outputs.skip != 'true'
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          missing=0
+          for name in FB_PAGE_ID FB_PAGE_ACCESS_TOKEN X_API_KEY X_API_SECRET X_ACCESS_TOKEN X_ACCESS_SECRET; do
+            if [ -z "${!name}" ]; then echo "✗ $name missing"; missing=1; else echo "✓ $name present"; fi
+          done
+          [ "$missing" = "0" ] || { echo "add the missing secrets in Settings → Secrets and variables → Actions"; exit 1; }
+
+      - uses: actions/checkout@v4
+        if: steps.rerun.outputs.skip != 'true'
+        with:
+          fetch-depth: 0
+
+      - name: Restore publish progress (re-run protection, layer 2)
+        if: steps.rerun.outputs.skip != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: .publish-progress
+          key: diary-published-${{ github.sha }}-${{ github.run_attempt }}
+          restore-keys: |
+            diary-published-${{ github.sha }}-
+
+      - name: Publish new entries
+        if: steps.rerun.outputs.skip != 'true'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+          PROGRESS_FILE: .publish-progress
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: node scripts/publish-diary.mjs
+
+      - name: Save publish progress
+        if: always() && steps.rerun.outputs.skip != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .publish-progress
+          key: diary-published-${{ github.sha }}-${{ github.run_attempt }}
