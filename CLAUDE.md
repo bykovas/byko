@@ -70,6 +70,13 @@ Where each part goes:
 
 - Header format is exactly `## {Title} — {DD Month YYYY}` — English month
   name, spaced em dash (` — `). A malformed date makes the entry invalid.
+- **Date conversion is the writing agent's job**: Notion stores ISO dates
+  (`2026-08-02`); convert to `2 August 2026` (no leading zero needed) when
+  writing diary.md. The separator must be the em dash `—` (U+2014) with a
+  space on each side — an en dash `–` or a hyphen breaks the header parse.
+- The body (FB POST) must not contain a line that is exactly `---` — that
+  token separates the field block. Replace stray horizontal rules from the
+  source with an empty line before writing.
 - `**Teaser:**` is **required** — `render-diary.mjs` fails loudly without it.
 - `**X:**` is **optional**: an entry without it goes to the site and Facebook
   but is not posted to X. The body and the X text are authored independently —
