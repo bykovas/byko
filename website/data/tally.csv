@@ -1,17 +1,18 @@
 address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
-0x02dd4285ad38ea93d021ca854016a839b0b2a6ca,excluded,560518.149518,false,false,,"pool"
+0x02dd4285ad38ea93d021ca854016a839b0b2a6ca,excluded,527889.505037,false,false,,"pool"
 0x09ad820aac5779683b481c4674208a4e1b024afa,excluded,0,false,false,false,"contract"
 0x0a2854fbbd9b3ef66f17d47284e7f899b9509330,excluded,0,false,false,false,"contract"
 0x111111125421ca6dc452d289314280a0f8842a65,excluded,0,false,false,,"router"
 0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae,excluded,0,false,false,,"router"
-0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c,withdrawn,0,true,true,true,""
+0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c,excluded,0,true,true,,"founder wallet"
 0x20f6ee51340adeed01a59b0e65cb3703f3dc860c,excluded,0,false,false,false,"contract"
 0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6,excluded,500,true,true,,"founder wallet"
 0x624056460437cb4c63f7a3cf0c5a554df3375222,excluded,0,true,true,,"founder wallet"
 0x6a2754867af13749ec3f1974e072f8bdb6e9f993,excluded,0,false,false,false,"contract"
 0x7747f8d2a76bd6345cc29622a946a929647f2359,excluded,0,false,false,false,"contract"
+0x7d9766f447a6b86cf589a31db5b5535e379863e7,excluded,0,true,false,,"founder wallet"
 0xa3c0941c0cf83c44e162617fad3e465206823a61,not-counted,97.128794,false,false,false,"contract"
 0xcd6b980029e6e6e0733ac8ec3e02be9410d09799,not-counted,81.14352,false,false,true,"gift from founder, never bought"
-0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16,for,99774.543745,true,true,true,""
-0xe8fc8769934f9461f7adf6f440ff3883e28021eb,excluded,129256.034421,true,true,,"founder wallet"
-# computed 2026-08-12T11:34:34.111Z at block 49872556 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
+0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16,excluded,116375.088325,true,true,,"founder wallet"
+0xe8fc8769934f9461f7adf6f440ff3883e28021eb,excluded,145284.134321,true,true,,"founder wallet"
+# computed 2026-08-12T20:28:16.821Z at block 49888567 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers

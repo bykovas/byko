@@ -43,16 +43,21 @@ var RULE_TEXT = MIN_VOTE + "+ BYKO, acquired via pool swap, EOA only; excluded: 
 var FOUNDER_WALLETS = [
   "0x624056460437cb4c63f7a3cf0c5a554df3375222", /* deployer, omenas.base.eth */
   "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6", /* ops / donation wallet (spec §6) */
-  "0xe8fc8769934f9461f7adf6f440ff3883e28021eb"  /* founder trading wallet (funded from deployer) */
-];
-/* Disclosure set — the full founder wallet list from the project diary.
-   Used ONLY for the holdings disclosure on the site; the exclusion set
-   above (what the tally filters) is deliberately narrower and unchanged.
-   Note: the buyer wallets below are currently counted as voters. */
-var DISCLOSURE_WALLETS = FOUNDER_WALLETS.concat([
+  "0xe8fc8769934f9461f7adf6f440ff3883e28021eb", /* founder trading wallet (funded from deployer) */
   "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", /* buyer */
-  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c"  /* buyer, retired */
-]);
+  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c", /* buyer, retired */
+  /* founder wallets from the neighbouring project — same owner, so they
+     can never count as votes either */
+  "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
+  "0xbc170538038adc0651292e28a42dab4286641e02",
+  "0x33d857fb6f06aafc498de09654da82a8f68be233",
+  "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+  "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
+  "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
+];
+/* The disclosure line sums the same set: every founder-owned wallet is
+   both excluded from the tally and counted in the holdings disclosure. */
+var DISCLOSURE_WALLETS = FOUNDER_WALLETS;
 var KNOWN_ROUTERS = [
   "0x111111125421ca6dc452d289314280a0f8842a65", /* 1inch v6 */
   "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae", /* LI.FI diamond */
@@ -63,7 +68,10 @@ var KNOWN_ROUTERS = [
 /* Derived-state checkpoint so a request only scans blocks since the last
    run (same approach as holders.js). KV if bound, per-colo cache as a
    best-effort fallback. */
-var CHECKPOINT_KEY = "tally-checkpoint-v1";
+/* v2: founder wallet list extended (buyers + neighbouring-project wallets).
+   The gift set is stamped during the scan, so widening the list needs a
+   full rescan — hence the version bump, which abandons the v1 checkpoint. */
+var CHECKPOINT_KEY = "tally-checkpoint-v2";
 var CHECKPOINT_CACHE_URL = "https://byko-checkpoint.invalid/" + CHECKPOINT_KEY;
 
 function json(body, status, headers) {
