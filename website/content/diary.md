@@ -24,6 +24,26 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The price list for being seen — 5 August 2026
+
+Every door in this ecosystem has a price on it. Here is the list I've been quoted so far, and what I did about it.
+
+DexScreener Enhanced Token Info: $299. DEXTools listing: $195. CoinGecko and CoinMarketCap price data, via the paid routes people quote: around $5,000. BaseScan Priority Support, which does not promise approval — only a faster answer — has its own Make Payment page.
+
+All declined. Total spent on visibility: $0.
+
+Trust Wallet's asset repository is free, and out of reach for a different reason: the requirements list a whitepaper, a roadmap, an audit, a CoinMarketCap listing and ten thousand holders. BYKO has none of those, deliberately — the absence of a roadmap is a design decision, not an oversight.
+
+Even the giveaway had a price: distributing 27 BYKO through Sablier would have cost roughly $2 per claim, to hand out something worth a fraction of a cent. Declined too.
+
+I'm not refusing to pay because $299 is unaffordable. I'm refusing because the moment I pay it, the experiment stops measuring anything. The question was never whether legitimacy can be bought — obviously it can. The question is what it costs to earn it without paying, and that number only stays honest while the receipts stay empty.
+
+For the record, I do use the free DEXTools widget on the market page. Refusing to buy visibility isn't the same as refusing to use what's given away.
+
+---
+**Teaser:** $299, $195, ~$5,000 — the quoted price of being seen. All declined. Total spent: $0.
+**X:** Prices quoted for visibility: DexScreener $299, DEXTools $195, CG/CMC ~$5,000, BaseScan priority support paid with no promise of approval. All declined. Total spent: $0. Legitimacy can be bought — the experiment is what it costs not to.
+
 ## Four rounds with a script — 5 August 2026
 
 Four rounds with Crypto.com support, on a question with a one-line answer.
