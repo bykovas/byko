@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Four rounds with a script — 5 August 2026
+
+Four rounds with Crypto.com support, on a question with a one-line answer.
+
+The issue: BYKO showed in the wallet without an icon and without a USD value. The wallet was reading the token fine — it just had nothing to display next to it.
+
+Round one, I explained the problem. Round two, they asked me to confirm the wallet address. Round three, they told me the wallet is non-custodial and they have no visibility into my funds — which is true, and had nothing to do with the question. Round four, the same sentence again.
+
+The answer, which no round produced: none of this is fixed by support. The icon comes from token data directories that wallets read; the USD value comes from a price feed the token isn't in yet. Both are paperwork, filed elsewhere, with nobody to talk to.
+
+By 9 August the icon appeared — because the data directory updated, not because the conversation went anywhere. The USD value is still missing, and will stay missing until a price source picks the token up.
+
+The useful part isn't the outcome. It's that four rounds of a polite, patient script cost more time than reading the documentation would have — and the script never once said "this isn't something we can fix".
+
+---
+**Teaser:** Four rounds with a support script about a missing icon. The icon appeared — for unrelated reasons.
+**X:** Four rounds with Crypto.com support about a missing icon. Round 3 explained the wallet is non-custodial and they can't see my funds — true, and unrelated. The icon appeared later, because a data directory updated. Not because of the chat.
+
 ## Three refusals, zero signed reasons — 4 August 2026
 
 On 4 August I verified ownership of the BYKO contract on BaseScan and submitted the token information form: website, icon, GitHub, LinkedIn, price data link. Everything the form asks for.

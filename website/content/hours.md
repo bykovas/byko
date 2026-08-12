@@ -7,7 +7,8 @@
 - Three refusals, zero signed reasons — 24 h
 - Four rounds with a script — 2 h
 - The price list for being seen — 8 h
-- Сайт, манифест и рождение дневника — 4 h
-- LP burn и первый результат — 2 h
+- The diary started with two things I got wrong — 4 h
+- Burning the liquidity, and the first flag that moved — 2 h
 - One handle, three channels — 4 h
 - Coinbase cannot remove its own flag — 0 h
+- The site that answered 200 to everything — 1.5 h
