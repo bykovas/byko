@@ -1,11 +1,19 @@
 #!/usr/bin/env node
-/* Render the diary from its single source into static HTML.
+/* Render the diary from its single source into static HTML, and the
+ * Experiment stat bar from its data files.
  *
  * Source:  website/content/diary.md — published entries, newest first.
+ *          website/content/experiment/counters.json — the stat bar counters
+ *            (composition, values, definitions for /experiment).
+ *          website/content/hours.md, dollars.md — per-entry tallies; their
+ *            sums OVERRIDE the hours/dollars values in counters.json (which
+ *            is updated on disk so the two never disagree). Missing files
+ *            mean "keep the current value" — nothing is invented.
  * Output:  website/diary.html  — every entry, full text, between
  *                                <!-- diary:begin --> / <!-- diary:end -->
- *          website/index.html  — the CARD_COUNT most recent entries as cards,
- *                                between the same markers.
+ *          website/index.html  — the CARD_COUNT most recent entries as cards
+ *            (same markers) and the stat bar between
+ *            <!-- counters:begin --> / <!-- counters:end -->.
  *
  * Run from the repository root after editing the markdown, commit the
  * regenerated pages together with it:
@@ -26,14 +34,19 @@
  * keeps only its static note.
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const SOURCE = "website/content/diary.md";
 const DIARY_PAGE = "website/diary.html";
 const INDEX_PAGE = "website/index.html";
+const COUNTERS_JSON = "website/content/experiment/counters.json";
+const HOURS_FILE = "website/content/hours.md";
+const DOLLARS_FILE = "website/content/dollars.md";
 const CARD_COUNT = 3;
 const BEGIN = "<!-- diary:begin -->";
 const END = "<!-- diary:end -->";
+const C_BEGIN = "<!-- counters:begin -->";
+const C_END = "<!-- counters:end -->";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
@@ -117,15 +130,66 @@ function parse(source) {
   return entries;
 }
 
-function replaceBetween(path, html) {
+function replaceBetween(path, html, begin = BEGIN, end = END) {
   const page = readFileSync(path, "utf8");
-  const begin = page.indexOf(BEGIN);
-  const end = page.indexOf(END);
-  if (begin === -1 || end === -1 || end < begin) {
-    throw new Error(`${path}: diary markers not found`);
+  const i = page.indexOf(begin);
+  const j = page.indexOf(end);
+  if (i === -1 || j === -1 || j < i) {
+    throw new Error(`${path}: markers ${begin} … ${end} not found`);
   }
   const inner = html ? "\n" + html + "\n" : "\n";
-  writeFileSync(path, page.slice(0, begin + BEGIN.length) + inner + page.slice(end));
+  writeFileSync(path, page.slice(0, i + begin.length) + inner + page.slice(j));
+}
+
+/* ---------- stat bar: counters.json + hours/dollars sums ---------- */
+
+/* "- {title} — {number}" per line; sum of the numbers, null if no file. */
+function sumTally(path) {
+  if (!existsSync(path)) return null;
+  const lines = readFileSync(path, "utf8").split("\n").map(l => l.trim()).filter(l => l.startsWith("- "));
+  if (lines.length === 0) return null;
+  let total = 0;
+  for (const line of lines) {
+    const sep = line.lastIndexOf(" — ");
+    const num = sep === -1 ? NaN : parseFloat(line.slice(sep + 3).replace(/[^0-9.]/g, ""));
+    if (isNaN(num)) throw new Error(`${path}: cannot parse "${line}" (expected "- {title} — {number}")`);
+    total += num;
+  }
+  return total;
+}
+
+function renderCounters() {
+  const today = new Date().toISOString().slice(0, 10);
+  const data = JSON.parse(readFileSync(COUNTERS_JSON, "utf8"));
+  if (!Array.isArray(data.counters) || data.counters.length === 0) {
+    throw new Error(`${COUNTERS_JSON}: no counters`);
+  }
+  const sums = {
+    hours: sumTally(HOURS_FILE),
+    dollars: sumTally(DOLLARS_FILE),
+  };
+  let jsonChanged = false;
+  for (const counter of data.counters) {
+    const sum = sums[counter.id];
+    if (sum === null || sum === undefined) continue;
+    const value = counter.id === "hours"
+      ? (Number.isInteger(sum) ? String(sum) : sum.toFixed(1)) + " h"
+      : "$" + Math.round(sum);
+    if (counter.value !== value) {
+      counter.value = value;
+      counter.asOf = today;
+      jsonChanged = true;
+    }
+  }
+  if (jsonChanged) writeFileSync(COUNTERS_JSON, JSON.stringify(data, null, 2) + "\n");
+  const band = data.counters.map(counter =>
+    `      <a class="${counter.kind === "spent" ? "blue" : "peach"}" href="experiment.html#${counter.id}"><b>${escapeHtml(counter.value)}</b><span>${escapeHtml(counter.label)}</span></a>`
+  ).join("\n");
+  return {
+    html: `    <div class="exp-band">\n${band}\n    </div>`,
+    count: data.counters.length,
+    jsonChanged,
+  };
 }
 
 const entries = parse(readFileSync(SOURCE, "utf8"));
@@ -149,4 +213,9 @@ const indexHtml = entries.length ? `    <div class="cards3">\n${cards}\n    </di
 
 replaceBetween(DIARY_PAGE, diaryHtml);
 replaceBetween(INDEX_PAGE, indexHtml);
+
+const counters = renderCounters();
+replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
+
 console.log(`rendered ${entries.length} entr${entries.length === 1 ? "y" : "ies"} → ${DIARY_PAGE}, ${entries.length ? Math.min(CARD_COUNT, entries.length) + " card(s)" : "no cards"} → ${INDEX_PAGE}`);
+console.log(`stat bar: ${counters.count} counters` + (counters.jsonChanged ? " (counters.json values updated)" : ""));

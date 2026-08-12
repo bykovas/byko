@@ -21,129 +21,48 @@ Guidance for Claude Code when working in this repository.
 - Design tokens, classes and page structure follow `brand/brand-guide.md` and the existing pages — reuse them, don't invent new ones.
 - Deploys: Cloudflare Pages serves `website/` as-is on every push to `main`. There is no CI build of the site; generators run locally and their output is committed.
 
-## Diary: single source, three channels
+## Diary and social publishing
+
+**Full instruction for the publishing agent: [docs/publish-flow.md](docs/publish-flow.md).**
+It is self-contained — source (Notion), field mapping, per-card cycle, CI
+behaviour, statuses, the final report. What follows here is only the format.
 
 `website/content/diary.md` is the single source for published diary entries.
-One correctly formatted entry, committed and pushed, ends up in three places
-automatically:
+After editing it, run `node scripts/render-diary.mjs` and commit the
+regenerated `website/diary.html` and `website/index.html` together with it.
+Never edit the HTML between `<!-- diary:begin/end -->` or
+`<!-- counters:begin/end -->` markers by hand.
 
-1. **Site** — you render it before committing: `node scripts/render-diary.mjs`
-   writes all entries into `website/diary.html` and the three most recent as
-   cards into `website/index.html`, between `<!-- diary:begin -->` /
-   `<!-- diary:end -->` markers. Never edit the HTML between those markers by
-   hand. Commit the regenerated pages together with the markdown.
-2. **Facebook** — `.github/workflows/publish-diary.yml` triggers on the push
-   (paths-filtered to `diary.md` only), waits until the new entry's anchor is
-   actually served on https://byko.bykovas.lt/diary.html, then posts the
-   long-form body (as plain text) to the Facebook page.
-3. **X** — the same workflow posts the `**X:**` field with a link to the entry.
-
-### Entry format (hand-writable, nothing exotic)
-
-New entries go at the **top** of the file, after the format comment. Newest first.
+Entry format (new entries at the top, newest first):
 
 ```markdown
-## Seven rejections, zero reasons — 14 August 2026
+## {Title} — {D Month YYYY}
 
-Long-form body. Paragraphs separated by blank lines. Inline markup:
-**bold**, `code`, [text](https://url). Lines starting with "- " form lists.
-Nothing else is supported — no headings inside the body, no images, no HTML.
-
-- lists are fine
-- like this
+Body: paragraphs separated by blank lines; **bold**, `code`,
+[text](https://url), "- " list lines. Nothing else. No line may be
+exactly "---" inside the body.
 
 ---
-**Teaser:** One or two short sentences for the home-page card. Required.
-**X:** Standalone post text for X, max 250 characters. Optional.
+**Teaser:** required — the home-page card text.
+**X:** optional — standalone X post text, max 250 chars; never derived
+from the body. Without it the entry skips X.
 ```
 
-Where each part goes:
+Hard format rules: date is `D Month YYYY` (English month; convert from ISO
+when writing); the header separator is the spaced em dash ` — ` (U+2014) —
+an en dash or hyphen breaks the parse; commit only complete entries (header
++ field block); edits to existing entries never re-post to social; never
+force-push (it destroys the publish workflow's diff baseline).
 
-| Part | /diary page | Home card | Facebook | X |
-|---|---|---|---|---|
-| `## Title — date` | heading + date | heading + date | first lines of the post | — |
-| body (before `---`) | full, with markup | — | full, converted to plain text | — |
-| `**Teaser:**` | — | card text | — | — |
-| `**X:**` | — | — | — | post text + entry link |
+## Counters data (hours / dollars / stat bar)
 
-### Hard rules
-
-- Header format is exactly `## {Title} — {DD Month YYYY}` — English month
-  name, spaced em dash (` — `). A malformed date makes the entry invalid.
-- **Date conversion is the writing agent's job**: Notion stores ISO dates
-  (`2026-08-02`); convert to `2 August 2026` (no leading zero needed) when
-  writing diary.md. The separator must be the em dash `—` (U+2014) with a
-  space on each side — an en dash `–` or a hyphen breaks the header parse.
-- The body (FB POST) must not contain a line that is exactly `---` — that
-  token separates the field block. Replace stray horizontal rules from the
-  source with an empty line before writing.
-- `**Teaser:**` is **required** — `render-diary.mjs` fails loudly without it.
-- `**X:**` is **optional**: an entry without it goes to the site and Facebook
-  but is not posted to X. The body and the X text are authored independently —
-  never derive, shorten or copy one from the other. If the source (Notion)
-  provides no X text, omit the field; do not write one yourself.
-- `**X:**` max **250 characters** (the entry link is appended automatically
-  and consumes the rest of the limit). Over the limit the workflow fails
-  before posting anything — it never truncates silently.
-- The `---` field block is what marks an entry as complete. Never commit a
-  half-written entry (header without the block): it renders nowhere and
-  publishes nothing, but it pollutes the diff baseline.
-- Editing an already-published entry is safe: edits never re-post to social —
-  only entries whose header line did not exist before the push are published.
-- Several new entries in one push are fine: they publish oldest-first,
-  45 seconds apart.
-
-### Publish workflow behaviour (so you can read its logs)
-
-- Trigger: push to `main` touching `website/content/diary.md`. Nothing else
-  triggers it; pushes to other files never post.
-- Secrets live in the GitHub environment `PROD` (`FB_BYKO_PAGE_ACCESS_TOKEN`,
-  `XCOM_BYKO_API_KEY`, `XCOM_BYKO_API_SECRET`, `XCOM_BYKO_ACCESS_TOKEN`,
-  `XCOM_BYKO_ACCESS_SECRET`). Logs print presence only, never values.
-- Before the first post it polls the live diary page (up to 3 minutes) until
-  every new entry's anchor is served — so the linked page exists when the
-  post lands. Timeout fails the run with nothing published.
-- It stops on the first error and logs exactly what was published, what
-  failed, and what was not attempted. A re-run after a partial failure skips
-  the posts that already went out (progress lives in actions/cache, never in
-  the repository).
-- A likely failure is an expired Facebook page token — the run says so
-  explicitly and posts nothing; the token has to be refreshed by a human.
-
-### Publishing checklist
-
-```bash
-# 1. add the entry to the top of website/content/diary.md
-# 2. render the site
-node scripts/render-diary.mjs
-# 3. one commit with the markdown and both regenerated pages
-git add website/content/diary.md website/diary.html website/index.html
-git commit -m "diary: {short entry title}"
-git push
-# 4. done — CF Pages deploys, the workflow waits for the deploy, then posts
-#    to Facebook and X. Check the run in GitHub Actions if in doubt.
-```
-
-## Counters data (hours / dollars)
-
-Two companion files hold the per-entry tallies behind the Experiment stat bar
-on the home page. They do **not** trigger social publishing and are not part
-of `diary.md`:
-
-- `website/content/hours.md` — one line per diary entry that logs hours:
-  ```markdown
-  - Contract and genesis — 6.5 h
-  - Seven rejections, zero reasons — 12 h
-  ```
-- `website/content/dollars.md` — one line per entry that logs spend:
-  ```markdown
-  - Pool funding — $74.02
-  - Micro-buys, gas, domain — $10.90
-  ```
-
-Line format: `- {title} — {number}` with the same spaced em dash; titles are
-free-form. The stat-bar generator that consumes these files is not built yet —
-until it exists, the numbers in `index.html`'s Experiment band and in
-`website/content/experiment/counters.json` are maintained by hand and must be
-updated together with these files, in the same commit, so the two never
-disagree.
+- `website/content/hours.md` and `dollars.md` — one line per diary entry
+  with the respective tally: `- {title} — {number}` (spaced em dash). They
+  are rebuilt in full from the whole Notion base at every publish and do
+  **not** trigger social posting.
+- The Experiment stat bar on the home page renders entirely from
+  `website/content/experiment/counters.json` via `render-diary.mjs`:
+  composition, order, labels, kinds and the `/experiment` definitions all
+  live in that one file, and the hours/dollars values are overridden by the
+  sums of the two tally files (missing files keep the current values —
+  nothing is invented). Composition rules are in docs/publish-flow.md §3.1.
