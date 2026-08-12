@@ -28,10 +28,12 @@ It is self-contained — source (Notion), field mapping, per-card cycle, CI
 behaviour, statuses, the final report. What follows here is only the format.
 
 `website/content/diary.md` is the single source for published diary entries.
-After editing it, run `node scripts/render-diary.mjs` and commit the
-regenerated `website/diary.html` and `website/index.html` together with it.
-Never edit the HTML between `<!-- diary:begin/end -->` or
-`<!-- counters:begin/end -->` markers by hand.
+After editing it, run `node scripts/render-diary.mjs` and commit everything it
+regenerated together with it (`git add website/` covers it: diary.html,
+index.html, sitemap.xml, and the header nav on all pages). Never edit the
+HTML between `<!-- diary:begin/end -->`, `<!-- counters:begin/end -->`,
+`<!-- nav:begin/end -->` or `<!-- jsonld:begin/end -->` markers by hand —
+the generator owns those regions.
 
 Entry format (new entries at the top, newest first):
 

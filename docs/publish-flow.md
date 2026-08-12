@@ -72,11 +72,13 @@ For each card, in order:
    node scripts/render-diary.mjs
    ```
    This regenerates `website/diary.html` and `website/index.html` (diary
-   cards AND the stat bar) and syncs hours/dollars values into
+   cards AND the stat bar), the diary JSON-LD, `website/sitemap.xml` and the
+   header nav on every page, and syncs hours/dollars values into
    `counters.json`. If it fails, fix the entry format — do not commit.
-4. **One commit, push to main**:
+4. **One commit, push to main** (`git add website/` — the generator may
+   touch any page):
    ```bash
-   git add website/content/ website/diary.html website/index.html
+   git add website/
    git commit -m "diary: {Title EN}"
    git push
    ```

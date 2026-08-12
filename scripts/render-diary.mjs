@@ -221,6 +221,29 @@ replaceBetween(INDEX_PAGE, indexHtml);
 const counters = renderCounters();
 replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
 
+/* ---------- header navigation (one canonical menu on every page) ------- */
+
+/* The current page's own item renders as a non-link with aria-current so
+   the user still sees where they are. Items without `page` (index anchors)
+   stay links everywhere, including on the home page itself. */
+const NAV_ITEMS = [
+  { label: "Referendum", href: "index.html#referendum" },
+  { label: "Diary", href: "diary.html", page: "diary.html" },
+  { label: "Facts", href: "index.html#facts" },
+  { label: "Market", href: "market.html", page: "market.html" },
+  { label: "Specification", href: "specification.html", page: "specification.html" },
+];
+const NAV_PAGES = [INDEX_PAGE, DIARY_PAGE, "website/experiment.html",
+  "website/market.html", "website/specification.html"];
+
+for (const path of NAV_PAGES) {
+  const file = path.split("/").pop();
+  const nav = NAV_ITEMS.map(item => item.page === file
+    ? `      <span aria-current="page">${item.label}</span>`
+    : `      <a href="${item.href}">${item.label}</a>`).join("\n");
+  replaceBetween(path, nav, "<!-- nav:begin -->", "<!-- nav:end -->");
+}
+
 /* ---------- structured data + sitemap (same source, same run) ---------- */
 
 const author = { "@type": "Person", "name": "Denisas Bykovas", "url": "https://bykovas.lt" };
