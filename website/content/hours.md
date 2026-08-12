@@ -1,0 +1,13 @@
+# Hours per diary entry — rebuilt in full from the Notion base at every publish.
+# One line per non-Archived card with Hours set: "- {title} — {hours} h".
+
+- Genesis: one block, one number, no promises — 32 h
+- Twenty holders and a $1.35 sell — 16 h
+- Flagged: what the scanners actually measure — 4 h
+- Three refusals, zero signed reasons — 24 h
+- Four rounds with a script — 2 h
+- The price list for being seen — 8 h
+- Сайт, манифест и рождение дневника — 4 h
+- LP burn и первый результат — 2 h
+- One handle, three channels — 4 h
+- Coinbase cannot remove its own flag — 0 h
