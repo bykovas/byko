@@ -27,8 +27,9 @@
  * never writes back into the repository, so no push loop can form.
  *
  * Env: BEFORE_SHA, AFTER_SHA, PROGRESS_FILE, SITE_URL,
- *      FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN,
- *      X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_SECRET,
+ *      FB_BYKO_PAGE_ACCESS_TOKEN (the page id is resolved from the token),
+ *      XCOM_BYKO_API_KEY, XCOM_BYKO_API_SECRET,
+ *      XCOM_BYKO_ACCESS_TOKEN, XCOM_BYKO_ACCESS_SECRET (OAuth 1.0a),
  *      DRY_RUN=1 to parse and log without polling or posting.
  */
 
@@ -195,15 +196,29 @@ async function pollSiteForAnchors(slugs) {
   }
 }
 
+let fbPageId = null;
+async function resolveFbPageId() {
+  if (fbPageId) return fbPageId;
+  const response = await fetch(`https://graph.facebook.com/v19.0/me?access_token=${encodeURIComponent(process.env.FB_BYKO_PAGE_ACCESS_TOKEN)}`);
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || !payload.id) {
+    throw new Error(`facebook token check failed (${response.status}): ${JSON.stringify(payload.error && payload.error.message || payload)} — the page token may have expired`);
+  }
+  fbPageId = payload.id;
+  console.log(`facebook page id resolved: ${fbPageId}`);
+  return fbPageId;
+}
+
 async function postFacebook(entry) {
   const link = `${SITE}/diary.html#${entry.slug}`;
   const message = `${entry.title}\n${entry.date.getUTCDate()} ${MONTHS[entry.date.getUTCMonth()]} ${entry.date.getUTCFullYear()}\n\n${plainText(entry.body)}`;
-  const response = await fetch(`https://graph.facebook.com/v19.0/${process.env.FB_PAGE_ID}/feed`, {
+  const pageId = await resolveFbPageId();
+  const response = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       message, link,
-      access_token: process.env.FB_PAGE_ACCESS_TOKEN,
+      access_token: process.env.FB_BYKO_PAGE_ACCESS_TOKEN,
     }),
   });
   const payload = await response.json().catch(() => ({}));
@@ -218,16 +233,16 @@ async function postFacebook(entry) {
 function oauthHeader(url) {
   const enc = encodeURIComponent;
   const params = {
-    oauth_consumer_key: process.env.X_API_KEY,
+    oauth_consumer_key: process.env.XCOM_BYKO_API_KEY,
     oauth_nonce: crypto.randomBytes(16).toString("hex"),
     oauth_signature_method: "HMAC-SHA1",
     oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
-    oauth_token: process.env.X_ACCESS_TOKEN,
+    oauth_token: process.env.XCOM_BYKO_ACCESS_TOKEN,
     oauth_version: "1.0",
   };
   const paramString = Object.keys(params).sort().map(k => `${enc(k)}=${enc(params[k])}`).join("&");
   const base = ["POST", enc(url), enc(paramString)].join("&");
-  const key = `${enc(process.env.X_API_SECRET)}&${enc(process.env.X_ACCESS_SECRET)}`;
+  const key = `${enc(process.env.XCOM_BYKO_API_SECRET)}&${enc(process.env.XCOM_BYKO_ACCESS_SECRET)}`;
   params.oauth_signature = crypto.createHmac("sha1", key).update(base).digest("base64");
   return "OAuth " + Object.keys(params).sort().map(k => `${enc(k)}="${enc(params[k])}"`).join(", ");
 }

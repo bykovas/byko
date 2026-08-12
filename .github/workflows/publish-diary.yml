@@ -21,9 +21,17 @@
 #
 # Secrets (GitHub Secrets only, never files in the repo; logs print presence,
 # never values):
-#   FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN            — Facebook Page publishing
-#   X_API_KEY, X_API_SECRET,
-#   X_ACCESS_TOKEN, X_ACCESS_SECRET             — X API v2, OAuth 1.0a user context
+#   (environment "PROD"):
+#   FB_BYKO_PAGE_ACCESS_TOKEN                   — Facebook Page publishing
+#                                                 (the page id is resolved from
+#                                                 the token at run time)
+#   XCOM_BYKO_API_KEY, XCOM_BYKO_API_SECRET,
+#   XCOM_BYKO_ACCESS_TOKEN, XCOM_BYKO_ACCESS_SECRET
+#     — X API v2, OAuth 1.0a user context. Deliberately NOT the OAuth2
+#       client/refresh set: X rotates refresh tokens on every use, and a
+#       stateless CI run has nowhere safe to persist the rotated token —
+#       one quiet week and the workflow bricks itself. OAuth 1.0a keys
+#       do not expire.
 
 name: publish-diary
 
@@ -44,6 +52,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: PROD
     steps:
       - name: Skip re-run after a successful attempt
         id: rerun
@@ -63,15 +72,14 @@ jobs:
       - name: Check secrets are present (names only, never values)
         if: steps.rerun.outputs.skip != 'true'
         env:
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          FB_BYKO_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BYKO_PAGE_ACCESS_TOKEN }}
+          XCOM_BYKO_API_KEY: ${{ secrets.XCOM_BYKO_API_KEY }}
+          XCOM_BYKO_API_SECRET: ${{ secrets.XCOM_BYKO_API_SECRET }}
+          XCOM_BYKO_ACCESS_TOKEN: ${{ secrets.XCOM_BYKO_ACCESS_TOKEN }}
+          XCOM_BYKO_ACCESS_SECRET: ${{ secrets.XCOM_BYKO_ACCESS_SECRET }}
         run: |
           missing=0
-          for name in FB_PAGE_ID FB_PAGE_ACCESS_TOKEN X_API_KEY X_API_SECRET X_ACCESS_TOKEN X_ACCESS_SECRET; do
+          for name in FB_BYKO_PAGE_ACCESS_TOKEN XCOM_BYKO_API_KEY XCOM_BYKO_API_SECRET XCOM_BYKO_ACCESS_TOKEN XCOM_BYKO_ACCESS_SECRET; do
             if [ -z "${!name}" ]; then echo "✗ $name missing"; missing=1; else echo "✓ $name present"; fi
           done
           [ "$missing" = "0" ] || { echo "add the missing secrets in Settings → Secrets and variables → Actions"; exit 1; }
@@ -96,12 +104,11 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.sha }}
           PROGRESS_FILE: .publish-progress
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_SECRET: ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          FB_BYKO_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BYKO_PAGE_ACCESS_TOKEN }}
+          XCOM_BYKO_API_KEY: ${{ secrets.XCOM_BYKO_API_KEY }}
+          XCOM_BYKO_API_SECRET: ${{ secrets.XCOM_BYKO_API_SECRET }}
+          XCOM_BYKO_ACCESS_TOKEN: ${{ secrets.XCOM_BYKO_ACCESS_TOKEN }}
+          XCOM_BYKO_ACCESS_SECRET: ${{ secrets.XCOM_BYKO_ACCESS_SECRET }}
         run: node scripts/publish-diary.mjs
 
       - name: Save publish progress
