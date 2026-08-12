@@ -45,6 +45,14 @@ var FOUNDER_WALLETS = [
   "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6", /* ops / donation wallet (spec §6) */
   "0xe8fc8769934f9461f7adf6f440ff3883e28021eb"  /* founder trading wallet (funded from deployer) */
 ];
+/* Disclosure set — the full founder wallet list from the project diary.
+   Used ONLY for the holdings disclosure on the site; the exclusion set
+   above (what the tally filters) is deliberately narrower and unchanged.
+   Note: the buyer wallets below are currently counted as voters. */
+var DISCLOSURE_WALLETS = FOUNDER_WALLETS.concat([
+  "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", /* buyer */
+  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c"  /* buyer, retired */
+]);
 var KNOWN_ROUTERS = [
   "0x111111125421ca6dc452d289314280a0f8842a65", /* 1inch v6 */
   "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae", /* LI.FI diamond */
@@ -337,8 +345,8 @@ async function computeTally(env) {
 
   var founderBalance = 0;
   var i;
-  for (i = 0; i < FOUNDER_WALLETS.length; i++) {
-    founderBalance += toByko(state.balances.get(FOUNDER_WALLETS[i]) || 0n);
+  for (i = 0; i < DISCLOSURE_WALLETS.length; i++) {
+    founderBalance += toByko(state.balances.get(DISCLOSURE_WALLETS[i]) || 0n);
   }
 
   if (scanned) await writeCheckpoint(env, state);
@@ -350,7 +358,7 @@ async function computeTally(env) {
     tally: tally,
     notCounted: notCounted,
     founder: {
-      wallets: FOUNDER_WALLETS,
+      wallets: DISCLOSURE_WALLETS,
       balance: Math.round(founderBalance * 100) / 100,
       pct: Math.round(founderBalance / TOTAL_SUPPLY * 1000) / 10
     },

@@ -1,6 +1,6 @@
 # BYKO — Specification
 
-Version 1.1 · 2026-08-07
+Version 1.2 · 2026-08-12
 
 This document describes the BYKO token and the systems around it. Where this
 document and the deployed contract disagree, the contract prevails — the
@@ -73,9 +73,9 @@ Pool funding tx: `0xc1ea5195a255df6ad0439b106fcd575a3e98fc2d43b3a94adb7935f45b33
 The website reads price and reserves directly from the chain
 (`balanceOf(pool)` on both tokens); no third-party price APIs are involved.
 
-**The liquidity position is permanently locked.** All LP tokens of the pool
-were sent to the burn address (`0x…dEaD`) in two transactions on 7 Aug 2026,
-so the pooled liquidity cannot be withdrawn by anyone:
+**The liquidity position is permanently burned.** LP tokens were sent to
+`0x…dEaD` on 7 Aug 2026 — burned, not locked: nothing is recoverable by
+anyone, including the founder, ever. The two transactions:
 
 | Burn | Tx |
 |---|---|
@@ -129,6 +129,7 @@ authoritative among project documents — after the contract.
 
 | Version | Date | Change |
 |---|---|---|
+| 1.2 | 2026-08-12 | Wording: liquidity is burned, not locked |
 | 1.1 | 2026-08-07 | LP burn recorded: pool liquidity permanently locked |
 | 1.0 | 2026-08-06 | Initial specification |
 

@@ -48,6 +48,13 @@ const FOUNDER_WALLETS = [
   "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6", // ops / donation wallet (spec §6)
   "0xe8fc8769934f9461f7adf6f440ff3883e28021eb"  // founder trading wallet (funded from deployer)
 ];
+// Disclosure set — the full founder wallet list from the project diary.
+// Used ONLY for the holdings disclosure; the exclusion set above (what
+// the tally filters) is deliberately narrower and unchanged.
+const DISCLOSURE_WALLETS = FOUNDER_WALLETS.concat([
+  "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", // buyer
+  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c"  // buyer, retired
+]);
 
 /* Known routers/aggregators, excluded explicitly on top of the EOA check. */
 const KNOWN_ROUTERS = [
@@ -200,8 +207,8 @@ for (const address of [...seen].sort()) {
 }
 
 /* 5. Founder balances for the disclosure line. */
-const founder = { wallets: FOUNDER_WALLETS, balance: 0, pct: 0 };
-for (const wallet of FOUNDER_WALLETS) {
+const founder = { wallets: DISCLOSURE_WALLETS, balance: 0, pct: 0 };
+for (const wallet of DISCLOSURE_WALLETS) {
   founder.balance += toByko(balances.get(wallet.toLowerCase()) || 0n);
 }
 founder.balance = Math.round(founder.balance * 100) / 100;

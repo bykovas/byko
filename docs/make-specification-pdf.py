@@ -25,8 +25,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONTS = os.path.join(ROOT, "website", "assets", "fonts")
 OUT = os.path.join(ROOT, "website", "ext", "docs", "specification.pdf")
 
-VERSION = "1.1"
-DATE = "2026-08-07"
+VERSION = "1.2"
+DATE = "2026-08-12"
 
 BG = HexColor("#0B0D10")
 TEXT = HexColor("#E8EAEE")
@@ -248,9 +248,9 @@ story.append(Paragraph(
     "The website reads price and reserves directly from the chain "
     f"({mono('balanceOf(pool)')} on both tokens); no third-party price APIs are involved.", body))
 story.append(Paragraph(
-    f"{strong('The liquidity position is permanently locked.')} All LP tokens of the pool "
-    f"were sent to the burn address ({mono('0x…dEaD')}) in two transactions on 7 Aug 2026, "
-    "so the pooled liquidity cannot be withdrawn by anyone:", body))
+    f"{strong('The liquidity position is permanently burned.')} LP tokens were sent to "
+    f"{mono('0x…dEaD')} on 7 Aug 2026 — burned, not locked: nothing is recoverable by "
+    "anyone, including the founder, ever. The two transactions:", body))
 story.append(facts_table([
     ("Burn 1 · 3.07%", mono("0x176dbc759894fa605c78e95bc7b61f0254005358fed20ee70ef85b0c657d5476", "#E8EAEE", 7.5)),
     ("Burn 2 · 96.93%", mono("0xe47921b2208c15c8b2f95f07be37aa70269b46c7a38f7363817af8258da584c6", "#E8EAEE", 7.5)),
@@ -303,6 +303,7 @@ story.append(Paragraph(
     "script versioned alongside. Changes are made by commit only, so the full history of "
     "every revision is public.", body))
 story.append(facts_table([
+    ("1.2 · 2026-08-12", "Wording: liquidity is burned, not locked"),
     ("1.1 · 2026-08-07", "LP burn recorded: pool liquidity permanently locked"),
     ("1.0 · 2026-08-06", "Initial specification"),
 ], col0=110))

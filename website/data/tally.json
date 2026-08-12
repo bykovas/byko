@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-11T10:32:05.130Z",
-  "block": 49827484,
+  "updated": "2026-08-12T11:34:34.111Z",
+  "block": 49872556,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -18,10 +18,12 @@
     "wallets": [
       "0x624056460437cb4c63f7a3cf0c5a554df3375222",
       "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6",
-      "0xe8fc8769934f9461f7adf6f440ff3883e28021eb"
+      "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
+      "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
+      "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c"
     ],
-    "balance": 129756.03,
-    "pct": 16.4
+    "balance": 229530.58,
+    "pct": 29
   },
   "voters": [
     {
