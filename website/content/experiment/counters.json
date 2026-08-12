@@ -38,13 +38,13 @@
       "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it."
     },
     {
-      "id": "support-rounds",
-      "value": "4",
-      "label": "Support rounds",
+      "id": "flags-removed",
+      "value": "1",
+      "label": "Flags removed",
       "kind": "result",
       "asOf": "2026-08-12",
-      "counts": "Completed request-response cycles with vendor support about the flags and listings above. One round = one message sent plus the reply it eventually received, human or bot.",
-      "excludes": "Automatic acknowledgement emails (\"we received your request\") — a round needs an answer with content, even if the content is a script."
+      "counts": "Warnings that a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. So far one: MetaMask's \"Low locked liquidity\", dropped by Blockaid within about a day of the LP burn on 7 Aug 2026 — removed by evidence, with no email, form or appeal.",
+      "excludes": "Warnings still displayed (\"Unstable price\" in MetaMask, the Base app scam flag) and removals promised in a reply but not visible in the product — a flag counts only when the warning is gone from the screen."
     },
     {
       "id": "paid-listings",

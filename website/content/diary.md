@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Burning the liquidity, and the first flag that moved — 7 August 2026
+
+On 7 August I burned the liquidity. All of it.
+
+Two transactions: first 3.07% as a rehearsal — to watch exactly what happens and confirm nothing breaks — then the remaining 96.93%. The LP tokens now sit at 0x…dEaD, which is an address nobody holds the keys to. The pool cannot be withdrawn by anyone. Including me. Especially me.
+
+Burned, not locked. A lock has an expiry date and a service you have to trust; burning has neither. The proof isn't a promise, it's a holder list: on the LP token's page, the dead address holds 100%.
+
+The next day, MetaMask dropped its "Low locked liquidity" warning. Blockaid had rescanned, seen the burn and counted it — in roughly twenty-four hours, with no email, no form, no appeal.
+
+That is the first measurable result of this whole experiment: one flag, removed by evidence rather than by argument. The other one, "Unstable price", stays. It goes away only with trading history, and no amount of writing changes that.
+
+Cost of the burn: a few cents of gas. Cost of what was burned: the pool is now permanently beyond reach — which was the entire point.
+
+---
+**Teaser:** 100% of the LP burned in two transactions. A day later, the first flag came off by itself.
+**X:** On 7 Aug I burned 100% of the LP tokens to 0x…dEaD — a 3% rehearsal first, then the rest. The pool can never be withdrawn by anyone, including me. A day later MetaMask dropped its "low locked liquidity" flag. First measurable result.
+
 ## The diary started with two things I got wrong — 6 August 2026
 
 This project turned into a diary because of two things I got wrong.
