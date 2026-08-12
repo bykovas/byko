@@ -1,0 +1,9 @@
+# Raw data sources duplicate the rendered pages — keep them out of search.
+# (docs like /ext/docs/specification.pdf stay indexable on purpose: the PDF
+# is the signed, versioned document, not a duplicate of the page.)
+
+/content/*
+  X-Robots-Tag: noindex
+
+/data/*
+  X-Robots-Tag: noindex

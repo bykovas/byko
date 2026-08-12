@@ -1,0 +1,7 @@
+# Cloudflare's managed robots.txt (Content Signals) is prepended to this
+# file at serve time — crawl policy for AI bots lives there, not here.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://byko.bykovas.lt/sitemap.xml

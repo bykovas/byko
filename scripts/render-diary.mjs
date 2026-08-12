@@ -47,6 +47,10 @@ const BEGIN = "<!-- diary:begin -->";
 const END = "<!-- diary:end -->";
 const C_BEGIN = "<!-- counters:begin -->";
 const C_END = "<!-- counters:end -->";
+const J_BEGIN = "<!-- jsonld:begin -->";
+const J_END = "<!-- jsonld:end -->";
+const SITE = "https://byko.bykovas.lt";
+const SITEMAP = "website/sitemap.xml";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
@@ -197,7 +201,7 @@ const entries = parse(readFileSync(SOURCE, "utf8"));
 /* /diary — every entry, full text */
 const diaryHtml = entries.map(entry => `<article class="entry" id="${entry.slug}">
   <div class="entry-head">
-    <h3>${inline(entry.title)}</h3>
+    <h2>${inline(entry.title)}</h2>
     <span class="entry-date">${escapeHtml(entry.dateText)}</span>
   </div>
 ${entry.bodyHtml}
@@ -216,6 +220,47 @@ replaceBetween(INDEX_PAGE, indexHtml);
 
 const counters = renderCounters();
 replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
+
+/* ---------- structured data + sitemap (same source, same run) ---------- */
+
+const author = { "@type": "Person", "name": "Denisas Bykovas", "url": "https://bykovas.lt" };
+const blogJson = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": `${SITE}/diary`,
+  "url": `${SITE}/diary`,
+  "name": "The diary of an honest token",
+  "inLanguage": "en",
+  "author": author,
+  "blogPost": entries.map(entry => ({
+    "@type": "BlogPosting",
+    "headline": entry.title,
+    "datePublished": entry.date.toISOString().slice(0, 10),
+    "url": `${SITE}/diary#${entry.slug}`,
+    "author": author,
+  })),
+};
+replaceBetween(DIARY_PAGE,
+  `<script type="application/ld+json">\n${JSON.stringify(blogJson, null, 2)}\n</script>`,
+  J_BEGIN, J_END);
+
+/* Anchors cannot go into a sitemap, so diary entries surface only through
+   the /diary lastmod (and the home page, which shows the latest cards). */
+const newest = entries.length ? entries[0].date.toISOString().slice(0, 10) : null;
+const sitemapUrls = [
+  { loc: `${SITE}/`, lastmod: newest },
+  { loc: `${SITE}/diary`, lastmod: newest },
+  { loc: `${SITE}/market` },
+  { loc: `${SITE}/specification` },
+  { loc: `${SITE}/experiment` },
+];
+writeFileSync(SITEMAP,
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+  sitemapUrls.map(u =>
+    `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`
+  ).join("\n") +
+  `\n</urlset>\n`);
 
 console.log(`rendered ${entries.length} entr${entries.length === 1 ? "y" : "ies"} → ${DIARY_PAGE}, ${entries.length ? Math.min(CARD_COUNT, entries.length) + " card(s)" : "no cards"} → ${INDEX_PAGE}`);
 console.log(`stat bar: ${counters.count} counters` + (counters.jsonChanged ? " (counters.json values updated)" : ""));

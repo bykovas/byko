@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — 404</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D10;
+  --line:rgba(255,255,255,.08);
+  --text:#E8EAEE;
+  --text-2:rgba(232,234,238,.72);
+  --muted:rgba(232,234,238,.45);
+  --accent:#7CCBFF;
+  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+main{text-align:center;max-width:420px}
+h1{font:600 60px/1 Inter,sans-serif;letter-spacing:-.025em;margin:24px 0 0;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+p{margin:12px 0 0;color:var(--text-2)}
+a{color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:13px}
+a:hover{text-decoration:underline}
+.home{display:inline-block;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<main>
+  <svg viewBox="0 0 96 96" width="40" height="40" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
+    <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
+    </linearGradient></defs>
+    <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
+      <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
+    </g>
+  </svg>
+  <h1>404</h1>
+  <p>Nothing at this address. On this site, that is verifiable.</p>
+  <a class="home" href="/">back to byko.bykovas.lt</a>
+</main>
+</body>
+</html>
