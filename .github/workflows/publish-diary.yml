@@ -3,9 +3,11 @@
 # BEFORE..SHA of that one file and posts only complete new entries.
 #
 # Deliberately independent of the Cloudflare Pages deploy (which also runs on
-# this push): the script polls the live diary page until the new entries'
-# anchors are actually served, and only then posts — with a hard timeout that
-# fails the run before anything goes out.
+# this push): the script gives each shared entry URL a commit-time Unix
+# query (`/d/{slug}?v=...`), then polls that exact URL and its entry-specific
+# PNG until both are directly served with 200. The query gives X a fresh page
+# cache key; canonical/og:url stay clean. Only then does it post, with a hard
+# timeout that fails the run before anything goes out.
 #
 # COST NOTE (X API): posts that contain a link are billed at a higher rate
 # than plain-text posts — roughly $0.20 vs $0.015 per post at current pricing.
@@ -97,6 +99,12 @@ jobs:
           key: diary-published-${{ github.sha }}-${{ github.run_attempt }}
           restore-keys: |
             diary-published-${{ github.sha }}-
+
+      - name: Validate generated diary pages and social cards
+        if: steps.rerun.outputs.skip != 'true'
+        run: |
+          node scripts/test-diary-og.mjs
+          node scripts/test-diary-pages.mjs
 
       - name: Publish new entries
         if: steps.rerun.outputs.skip != 'true'

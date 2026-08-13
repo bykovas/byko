@@ -18,7 +18,7 @@ Field mapping — how a Notion card becomes a diary entry:
 
 | Notion field | Where it goes | Rules |
 |---|---|---|
-| Title EN | `## {Title EN} — {date}` header in `website/content/diary.md`; also the title in `hours.md` / `dollars.md` lines | verbatim |
+| Title EN | `## {Title EN} — {date}` header in `website/content/diary.md`; also the title in `hours.md` / `dollars.md` lines | verbatim; after publication it is immutable because it defines the permanent `/d/{slug}` URL |
 | Date (ISO, e.g. `2026-08-02`) | the header date | **you convert** to `2 August 2026` (English month, no leading zero required). Separator is the em dash `—` (U+2014) with a space on each side — an en dash or hyphen breaks the parser |
 | FB POST | entry body (everything before the `---` field block) | already written and proofread by a human: do not rewrite, shorten, "improve" or derive anything from it. Must not contain a line that is exactly `---` — replace stray horizontal rules with an empty line |
 | Teaser | `**Teaser:** …` line | required; verbatim |
@@ -71,9 +71,11 @@ For each card, in order:
    ```bash
    node scripts/render-diary.mjs
    ```
-   This regenerates `website/diary.html` and `website/index.html` (diary
-   cards AND the stat bar), the diary JSON-LD, `website/sitemap.xml` and the
-   header nav on every page, and syncs hours/dollars values into
+   This regenerates `website/diary.html`, the generator-owned
+   `website/d/{slug}.html` page for every entry, `website/data/diary-og.json`
+   for entry-specific 1200×630 cards, and `website/index.html` (diary cards
+   AND the stat bar), plus the diary JSON-LD, `website/sitemap.xml` and the
+   header nav on every page. It also syncs hours/dollars values into
    `counters.json`. If it fails, fix the entry format — do not commit.
 4. **One commit, push to main** (`git add website/` — the generator may
    touch any page):
@@ -156,8 +158,18 @@ After the cycle (or the stop on first failure), report:
 - Triggers only on pushes to `main` touching `website/content/diary.md`.
 - Detects new entries from the push diff; edits to existing entries never
   re-post.
-- Polls `https://byko.bykovas.lt/diary.html` (up to 3 min) until the new
-  entry's anchor is served, so the linked page exists before the post.
+- Creates one share URL per entry in the form
+  `https://byko.bykovas.lt/d/{slug}?v={unix-timestamp}`. The timestamp is the
+  publishing commit's UTC Unix time, so it is fresh for a new entry but stable
+  across workflow retries and identical in the Facebook and X links. It gives
+  X a URL it has not cached; the page's `canonical` and `og:url` remain the
+  clean `https://byko.bykovas.lt/d/{slug}`, so the cache buster does not create
+  duplicate SEO identities.
+- Polls that exact cache-busted URL (up to 3 min) until it returns a direct 200
+  with the expected clean canonical/slug marker, then checks that its
+  entry-specific, versioned `twitter:image` returns a direct 200 PNG with an
+  actual IHDR size of 1200×630. This warms both fresh cache keys before either
+  social post is sent.
 - Posts the body to the Facebook page, then the `**X:**` text with the entry
   link to X; several entries go oldest-first, 45 s apart; stops on the first
   error with a published/failed/remaining log.

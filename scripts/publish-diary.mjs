@@ -12,15 +12,19 @@
  * to old entries therefore never publish: their fragments do not parse as
  * complete entries, and their headers already existed.
  *
- * Per entry: long-form body → Facebook Page post (link preview to the diary
- * anchor), the **X:** field → X post with the same link. An entry without
+ * Per entry: long-form body → Facebook Page post (link preview to /d/{slug}),
+ * the **X:** field → X post with the same link. Published links carry one
+ * commit-specific `?v={unix-timestamp}` cache buster so X fetches a fresh URL;
+ * the page's canonical and og:url deliberately remain the clean /d/{slug}.
+ * An entry without
  * an **X:** field goes to Facebook only — the two texts are authored
  * independently and one is NEVER derived from the other.
  *
- * Before anything is posted, the deployed site is polled until every new
- * entry's anchor is actually present in the served diary page (Cloudflare
- * Pages deploys in parallel with this workflow); timeout fails the run
- * before any post goes out.
+ * Before anything is posted, every cache-busted /d/{slug}?v=... share URL is
+ * polled until that exact URL returns a direct 200 with the expected clean
+ * canonical/slug marker and its Twitter image also returns a direct 200 PNG.
+ * This both proves the Cloudflare deploy landed and warms the fresh social
+ * page/image cache keys. A timeout fails the run before any post goes out.
  *
  * Progress (which posts already went out) is written to PROGRESS_FILE and
  * persisted via actions/cache — a re-run skips what already succeeded and
@@ -34,11 +38,11 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync, existsSync, appendFileSync } from "node:fs";
+import { readFileSync, existsSync, appendFileSync } from "node:fs";
 import crypto from "node:crypto";
 
 const FILE = "website/content/diary.md";
-const SITE = process.env.SITE_URL || "https://byko.bykovas.lt";
+const SITE = (process.env.SITE_URL || "https://byko.bykovas.lt").replace(/\/+$/, "");
 const PAUSE_S = 45;            /* between outbound posts */
 const POLL_INTERVAL_S = 10;
 const POLL_TIMEOUT_S = 180;
@@ -51,6 +55,7 @@ const before = process.env.BEFORE_SHA || "";
 const after = process.env.AFTER_SHA || "";
 const progressFile = process.env.PROGRESS_FILE || ".publish-progress";
 const dryRun = process.env.DRY_RUN === "1";
+let SHARE_CACHE_BUSTER;
 
 function git(...args) {
   return execFileSync("git", args, { encoding: "utf8" });
@@ -124,6 +129,15 @@ function plainText(markdown) {
 if (!/^[0-9a-f]{40}$/.test(before) || /^0{40}$/.test(before)) {
   fail(`cannot determine the previous state (BEFORE_SHA="${before}", e.g. force-push). Refusing to guess what is new.`);
 }
+if (!/^[0-9a-f]{40}$/.test(after) || /^0{40}$/.test(after)) {
+  fail(`cannot determine the published commit (AFTER_SHA="${after}"). Refusing to construct share URLs.`);
+}
+/* Use the commit's Unix timestamp: every new commit gets a fresh X cache key,
+   while retries of that same publish keep the Facebook and X URLs identical. */
+SHARE_CACHE_BUSTER = git("show", "-s", "--format=%ct", after).trim();
+if (!/^\d{10,}$/.test(SHARE_CACHE_BUSTER)) {
+  fail(`cannot determine a Unix timestamp for ${after}`);
+}
 
 const diff = git("diff", before, after, "--", FILE);
 const addedText = diff.split("\n")
@@ -170,22 +184,67 @@ function markDone(key) {
 
 const sleep = s => new Promise(resolve => setTimeout(resolve, s * 1000));
 
-async function pollSiteForAnchors(slugs) {
-  const url = `${SITE}/diary.html`;
+function canonicalEntryUrl(entry) {
+  return `${SITE}/d/${typeof entry === "string" ? entry : entry.slug}`;
+}
+
+function entryUrl(entry) {
+  return `${canonicalEntryUrl(entry)}?v=${SHARE_CACHE_BUSTER}`;
+}
+
+function pngDimensions(bytes) {
+  if (bytes.byteLength < 24) return null;
+  const signature = [137, 80, 78, 71, 13, 10, 26, 10];
+  for (let i = 0; i < signature.length; i++) {
+    if (bytes[i] !== signature[i]) return null;
+  }
+  if (String.fromCharCode(bytes[12], bytes[13], bytes[14], bytes[15]) !== "IHDR") return null;
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  return { width: view.getUint32(16), height: view.getUint32(20) };
+}
+
+async function deployedEntryProblem(entry) {
+  const url = entryUrl(entry);
+  const response = await fetch(url, {
+    redirect: "manual",
+    headers: { "Cache-Control": "no-cache", "User-Agent": "Twitterbot/1.0" },
+  });
+  if (response.status !== 200) return `${url} → ${response.status}`;
+  const html = await response.text();
+  if (!html.includes(`data-diary-slug="${entry.slug}"`)) return `${url} → wrong or missing slug marker`;
+  const canonicalUrl = canonicalEntryUrl(entry);
+  if (!html.includes(`<link rel="canonical" href="${canonicalUrl}">`)) return `${url} → wrong or missing canonical`;
+  if (!html.includes('<meta name="twitter:card" content="summary_large_image">')) {
+    return `${url} → summary_large_image metadata missing`;
+  }
+  const imageMatch = /<meta name="twitter:image" content="([^"]+)">/.exec(html);
+  if (!imageMatch) return `${url} → twitter:image missing`;
+  const imageUrl = imageMatch[1].replace(/&amp;/g, "&");
+  const imageResponse = await fetch(imageUrl, {
+    redirect: "manual",
+    headers: { "Cache-Control": "no-cache", "User-Agent": "Twitterbot/1.0" },
+  });
+  const imageType = (imageResponse.headers.get("content-type") || "").split(";", 1)[0];
+  if (imageResponse.status !== 200 || imageType !== "image/png") {
+    return `${imageUrl} → ${imageResponse.status} ${imageType || "without content-type"}`;
+  }
+  const dimensions = pngDimensions(new Uint8Array(await imageResponse.arrayBuffer()));
+  if (!dimensions || dimensions.width !== 1200 || dimensions.height !== 630) {
+    return `${imageUrl} → expected PNG 1200×630, got ${dimensions ? `${dimensions.width}×${dimensions.height}` : "invalid PNG"}`;
+  }
+  return null;
+}
+
+async function pollSiteForEntries(entries) {
   const deadline = Date.now() + POLL_TIMEOUT_S * 1000;
-  /* fetching 200 alone proves nothing — the page exists before the deploy
-     lands; the anchors of the new entries are what proves the deploy. */
   for (;;) {
     try {
-      const response = await fetch(url, { headers: { "Cache-Control": "no-cache" } });
-      if (response.ok) {
-        const html = await response.text();
-        const missing = slugs.filter(slug => !html.includes(`id="${slug}"`));
-        if (missing.length === 0) return;
-        console.log(`waiting for deploy: missing anchors ${missing.join(", ")}`);
-      } else {
-        console.log(`waiting for deploy: ${url} → ${response.status}`);
-      }
+      const problems = (await Promise.all(entries.map(async entry => {
+        try { return await deployedEntryProblem(entry); }
+        catch (error) { return `${entryUrl(entry)} → ${error.message}`; }
+      }))).filter(Boolean);
+      if (problems.length === 0) return;
+      console.log(`waiting for deploy: ${problems.join("; ")}`);
     } catch (error) {
       console.log(`waiting for deploy: ${error.message}`);
     }
@@ -210,7 +269,7 @@ async function resolveFbPageId() {
 }
 
 async function postFacebook(entry) {
-  const link = `${SITE}/diary.html#${entry.slug}`;
+  const link = entryUrl(entry);
   const message = `${entry.title}\n${entry.date.getUTCDate()} ${MONTHS[entry.date.getUTCMonth()]} ${entry.date.getUTCFullYear()}\n\n${plainText(entry.body)}`;
   const pageId = await resolveFbPageId();
   const response = await fetch(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
@@ -249,7 +308,7 @@ function oauthHeader(url) {
 
 async function postX(entry) {
   const url = "https://api.x.com/2/tweets";
-  const text = `${entry.x}\n${SITE}/diary.html#${entry.slug}`;
+  const text = `${entry.x}\n${entryUrl(entry)}`;
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: oauthHeader(url) },
@@ -272,11 +331,13 @@ for (const entry of newEntries) {
 
 if (dryRun) {
   console.log("DRY_RUN — would publish, in order:");
+  console.log(`share URL cache buster: v=${SHARE_CACHE_BUSTER}`);
+  for (const entry of newEntries) console.log(`share URL: ${entryUrl(entry)}`);
   for (const item of queue) console.log("  " + item.label + (done.has(item.key) ? " (already done, would skip)" : ""));
   process.exit(0);
 }
 
-await pollSiteForAnchors(newEntries.map(e => e.slug));
+await pollSiteForEntries(newEntries);
 
 const published = [];
 let first = true;
