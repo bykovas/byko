@@ -24,6 +24,22 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## One handle, three channels — 12 August 2026
+
+BYKO now has its own channels, so the diary stops living only on the website:
+
+Telegram: t.me/bykocoin
+X: x.com/bykocoin
+Facebook: this page
+
+One handle across all of them — bykocoin — the same name as the basename bykocoin.base.eth that the distribution wallet uses on-chain. If you find something calling itself BYKO under a different handle, it isn't this project.
+
+Nothing gets posted here that isn't already documented on the site, with dates and receipts. These are distribution channels for a log, not a hype apparatus.
+
+---
+**Teaser:** One handle everywhere — bykocoin — matching the on-chain basename. Anything else isn't this project.
+**X:** BYKO now posts under one handle everywhere: @bykocoin — the same name as the on-chain basename bykocoin.base.eth. Anything calling itself BYKO under another handle isn't this project. Nothing is posted that isn't already on the site, dated.
+
 ## Burning the liquidity, and the first flag that moved — 7 August 2026
 
 On 7 August I burned the liquidity. All of it.
