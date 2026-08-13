@@ -24,6 +24,22 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Signed by the deployer — 13 August 2026
+
+The website has always said BYKO's author is Denisas Bykovas. Until today, that claim rested on things that proved intent, not identity: a statement on a domain, basenames chosen by the same person, a private verification only Basescan's own system could see.
+
+Today that changed. A message was signed with the private key of the address that deployed the BYKO contract — 0x624056460437Cb4c63F7A3CF0c5a554dF3375222, the deployer wallet — and published on Basescan. The message states the name, the LinkedIn profile, the deployer address, and the BYKO contract address, all in one line. Anyone can verify it against the signature, byte for byte, at basescan.org/verifySig/95926.
+
+The signing wallet was chosen deliberately: not the main wallet, which carries a smart-account delegation that would make a plain signature check fail and look like a red flag instead of proof. The deployer address is a clean externally-owned account, so the signature verifies with any standard tool — not just Basescan's.
+
+What it proves: control of that one key, nothing more. It doesn't cover the rest of the wallet cluster, and that's left as is on purpose. What it removes is the need to just trust the page. Cost: $0 — no transaction, no gas, a few minutes to sign. The link, once published, can't be revoked — only lost, which would be worse.
+
+A matching note now also lives on LinkedIn, pointing back at the site — so the identity claim runs both directions.
+
+---
+**Teaser:** The site said the author is Denisas Bykovas — now it's cryptographically signed and publicly verifiable on Basescan.
+**X:** The site said BYKO's author is Denisas Bykovas. Now it's proven: a message signed with the deployer's private key, published on Basescan, verified byte for byte. Cost: $0, no gas, minutes. Trusting the page is no longer required.
+
 ## Bykocoin: now official — 12 August 2026
 
 BYKO now has official channels: Telegram, X, and Facebook.

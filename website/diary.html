@@ -33,6 +33,17 @@
   "blogPost": [
     {
       "@type": "BlogPosting",
+      "headline": "Signed by the deployer",
+      "datePublished": "2026-08-13",
+      "url": "https://byko.bykovas.lt/d/signed-by-the-deployer",
+      "author": {
+        "@type": "Person",
+        "name": "Denisas Bykovas",
+        "url": "https://bykovas.lt"
+      }
+    },
+    {
+      "@type": "BlogPosting",
       "headline": "Bykocoin: now official",
       "datePublished": "2026-08-12",
       "url": "https://byko.bykovas.lt/d/bykocoin-now-official",
@@ -290,6 +301,17 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 
   <div class="entries">
 <!-- diary:begin -->
+<article class="entry" id="signed-by-the-deployer">
+  <div class="entry-head">
+    <h2><a href="/d/signed-by-the-deployer">Signed by the deployer</a></h2>
+    <span class="entry-date">13 August 2026</span>
+  </div>
+<p>The website has always said BYKO's author is Denisas Bykovas. Until today, that claim rested on things that proved intent, not identity: a statement on a domain, basenames chosen by the same person, a private verification only Basescan's own system could see.</p>
+<p>Today that changed. A message was signed with the private key of the address that deployed the BYKO contract — 0x624056460437Cb4c63F7A3CF0c5a554dF3375222, the deployer wallet — and published on Basescan. The message states the name, the LinkedIn profile, the deployer address, and the BYKO contract address, all in one line. Anyone can verify it against the signature, byte for byte, at basescan.org/verifySig/95926.</p>
+<p>The signing wallet was chosen deliberately: not the main wallet, which carries a smart-account delegation that would make a plain signature check fail and look like a red flag instead of proof. The deployer address is a clean externally-owned account, so the signature verifies with any standard tool — not just Basescan's.</p>
+<p>What it proves: control of that one key, nothing more. It doesn't cover the rest of the wallet cluster, and that's left as is on purpose. What it removes is the need to just trust the page. Cost: $0 — no transaction, no gas, a few minutes to sign. The link, once published, can't be revoked — only lost, which would be worse.</p>
+<p>A matching note now also lives on LinkedIn, pointing back at the site — so the identity claim runs both directions.</p>
+</article>
 <article class="entry" id="bykocoin-now-official">
   <div class="entry-head">
     <h2><a href="/d/bykocoin-now-official">Bykocoin: now official</a></h2>
