@@ -24,6 +24,22 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Someone is reading us — 12 August 2026
+
+BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.
+
+Honestly, we're a bit flattered. It means someone is reading. A coin with a hundred-dollar pool and a handful of holders already has an audience — even if the first readers arrived with a price list.
+
+No hard feelings — it's just not our genre. BYKO is an experiment in what legitimacy costs when you don't buy it. Paid attention would break the instrument.
+
+But free help is a different story. Honest feedback, a repost, a word of advice, or simply reading the diary — welcome. That's exactly the signal this experiment is built to measure.
+
+byko.bykovas.lt
+
+---
+**Teaser:** The first replies to BYKO's brand-new social channels were paid promotion offers — which means we have readers. Free help is welcome.
+**X:** Our new social channels got their first replies: paid promotion offers. So someone is reading. Wow. BYKO doesn't buy attention — that's the whole experiment. But if you want to help for free: welcome.
+
 ## The site that answered 200 to everything — 12 August 2026
 
 Registered the site in Google Search Console — free, fifteen minutes, and the first thing it did was point at something embarrassing.

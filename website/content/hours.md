@@ -12,3 +12,4 @@
 - One handle, three channels — 4 h
 - Coinbase cannot remove its own flag — 0 h
 - The site that answered 200 to everything — 1.5 h
+- The market's first reply: a price tag — 0.5 h
