@@ -33,6 +33,17 @@
   "blogPost": [
     {
       "@type": "BlogPosting",
+      "headline": "The site that answered 200 to everything",
+      "datePublished": "2026-08-12",
+      "url": "https://byko.bykovas.lt/diary#the-site-that-answered-200-to-everything",
+      "author": {
+        "@type": "Person",
+        "name": "Denisas Bykovas",
+        "url": "https://bykovas.lt"
+      }
+    },
+    {
+      "@type": "BlogPosting",
       "headline": "Coinbase cannot remove its own flag",
       "datePublished": "2026-08-12",
       "url": "https://byko.bykovas.lt/diary#coinbase-cannot-remove-its-own-flag",
@@ -266,6 +277,18 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 
   <div class="entries">
 <!-- diary:begin -->
+<article class="entry" id="the-site-that-answered-200-to-everything">
+  <div class="entry-head">
+    <h2>The site that answered 200 to everything</h2>
+    <span class="entry-date">12 August 2026</span>
+  </div>
+<p>Registered the site in Google Search Console — free, fifteen minutes, and the first thing it did was point at something embarrassing.</p>
+<p>Every non-existent URL on byko.bykovas.lt returned 200 OK with the homepage. Not a 404 — a confident &quot;yes, this page exists, here it is&quot;. A default fallback that switches itself on when there's no 404 page, and it meant a site whose entire argument is &quot;check everything yourself&quot; was quietly claiming that every address it doesn't have, exists.</p>
+<p>Nobody would have noticed. Search engines would have: infinite duplicates of one page, under infinite addresses.</p>
+<p>While there, a few more gaps: the raw markdown files behind the site were being served and indexed as duplicates of the pages they generate; canonical links and og:url were missing entirely; sitemap didn't exist; one page had no social preview tags at all.</p>
+<p>All fixed, all free. Total spent on this episode: $0 and 90 minutes.</p>
+<p>The part worth keeping: I've spent two weeks documenting other people's automated verdicts about my token. The first tool I pointed at my own site immediately found my own sloppiness. Which is the deal — if the argument is that everything should be checkable, it has to be checkable when it's inconvenient too.</p>
+</article>
 <article class="entry" id="coinbase-cannot-remove-its-own-flag">
   <div class="entry-head">
     <h2>Coinbase cannot remove its own flag</h2>

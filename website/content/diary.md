@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The site that answered 200 to everything — 12 August 2026
+
+Registered the site in Google Search Console — free, fifteen minutes, and the first thing it did was point at something embarrassing.
+
+Every non-existent URL on byko.bykovas.lt returned 200 OK with the homepage. Not a 404 — a confident "yes, this page exists, here it is". A default fallback that switches itself on when there's no 404 page, and it meant a site whose entire argument is "check everything yourself" was quietly claiming that every address it doesn't have, exists.
+
+Nobody would have noticed. Search engines would have: infinite duplicates of one page, under infinite addresses.
+
+While there, a few more gaps: the raw markdown files behind the site were being served and indexed as duplicates of the pages they generate; canonical links and og:url were missing entirely; sitemap didn't exist; one page had no social preview tags at all.
+
+All fixed, all free. Total spent on this episode: $0 and 90 minutes.
+
+The part worth keeping: I've spent two weeks documenting other people's automated verdicts about my token. The first tool I pointed at my own site immediately found my own sloppiness. Which is the deal — if the argument is that everything should be checkable, it has to be checkable when it's inconvenient too.
+
+---
+**Teaser:** A site about verifiable facts was returning 200 OK for every address that doesn't exist.
+**X:** Registered the site in Search Console and found this: every non-existent URL returned 200 OK with the homepage. A site about verifiability was quietly claiming that every address it doesn't have, exists. Fixed. Cost: $0 and 90 minutes.
+
 ## Coinbase cannot remove its own flag — 12 August 2026
 
 First real answer from anyone, after eight days of disputes: Coinbase Support, case #27207505, 12 August.
