@@ -31,6 +31,7 @@ behaviour, statuses, the final report. What follows here is only the format.
 After editing it, run `node scripts/render-diary.mjs` and commit everything it
 regenerated together with it (`git add website/` covers it: diary.html,
 the generator-owned `d/{slug}.html` entry pages, `data/diary-og.json`,
+the versioned static X cards in `assets/og/diary/`,
 index.html, sitemap.xml, and the header nav on all pages). Never edit the
 HTML between `<!-- diary:begin/end -->`, `<!-- counters:begin/end -->`,
 `<!-- nav:begin/end -->` or `<!-- jsonld:begin/end -->` markers by hand —

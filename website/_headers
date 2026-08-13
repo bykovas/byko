@@ -7,3 +7,8 @@
 
 /data/*
   X-Robots-Tag: noindex
+
+# X failed to fetch the dynamic Worker image even though Facebook accepts it.
+# These content-hashed PNGs are immutable, static and support byte ranges.
+/assets/og/diary/*
+  Cache-Control: public, max-age=31536000, immutable

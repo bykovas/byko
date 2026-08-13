@@ -2,6 +2,7 @@
 
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const SITE = "https://byko.bykovas.lt";
 const manifest = JSON.parse(readFileSync("website/data/diary-og.json", "utf8"));
@@ -9,6 +10,7 @@ const sitemap = readFileSync("website/sitemap.xml", "utf8");
 const diary = readFileSync("website/diary.html", "utf8");
 const index = readFileSync("website/index.html", "utf8");
 const publisher = readFileSync("scripts/publish-diary.mjs", "utf8");
+const headers = readFileSync("website/_headers", "utf8");
 const files = readdirSync("website/d").filter(name => name.endsWith(".html")).sort();
 
 assert.equal(files.length, manifest.entries.length, "one generated page per manifest entry");
@@ -24,10 +26,17 @@ assert.match(publisher, /const canonicalUrl = canonicalEntryUrl\(entry\)/,
   "publisher must validate the clean canonical behind the cache-busted URL");
 assert.match(publisher, /dimensions\.width !== 1200 \|\| dimensions\.height !== 630/,
   "publisher must verify the social image's actual PNG dimensions");
+assert.match(publisher, /twitter:image must be a same-origin versioned static diary PNG/,
+  "publisher must reject dynamic or cross-origin X images");
+assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-age=31536000, immutable/,
+  "versioned static X images must have immutable cache headers");
 
 for (const entry of manifest.entries) {
   const url = `${SITE}/d/${entry.slug}`;
   const filename = `${entry.slug}.html`;
+  const ogImageUrl = `${SITE}/api/og?slug=${entry.slug}&v=${entry.imageVersion}`;
+  const twitterImageUrl = `${SITE}/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`;
+  const twitterImagePath = `website/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`;
   assert.ok(files.includes(filename), `${entry.slug}: generated file exists`);
   const html = readFileSync(`website/d/${filename}`, "utf8");
   assert.equal((html.match(/data-diary-slug=/g) || []).length, 1, `${entry.slug}: one complete entry`);
@@ -40,7 +49,19 @@ for (const entry of manifest.entries) {
   assert.ok(html.includes('<meta property="og:image:height" content="630">'), `${entry.slug}: OG height`);
   assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image">'), `${entry.slug}: large X card`);
   assert.ok(html.includes(`<meta name="twitter:title" content="${entry.title.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">`), `${entry.slug}: twitter:title`);
-  assert.ok(html.includes(`/api/og?slug=${entry.slug}&amp;v=${entry.imageVersion}`), `${entry.slug}: versioned image URL`);
+  assert.ok(html.includes(`<meta property="og:image" content="${ogImageUrl.replace(/&/g, "&amp;")}">`),
+    `${entry.slug}: Facebook keeps the dynamic OG image`);
+  assert.ok(html.includes(`<meta name="twitter:image" content="${twitterImageUrl}">`),
+    `${entry.slug}: X gets a static PNG URL`);
+  assert.notEqual(ogImageUrl, twitterImageUrl, `${entry.slug}: platform image delivery URLs are split`);
+  const png = readFileSync(twitterImagePath);
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10],
+    `${entry.slug}: static X asset is PNG`);
+  assert.equal(png.readUInt32BE(16), 1200, `${entry.slug}: static X asset width`);
+  assert.equal(png.readUInt32BE(20), 630, `${entry.slug}: static X asset height`);
+  assert.ok(png.byteLength < 5_000_000, `${entry.slug}: static X asset is comfortably below 5 MB`);
+  assert.equal(createHash("sha256").update(png).digest("hex").slice(0, 12),
+    entry.twitterImageVersion, `${entry.slug}: static X filename hash matches its bytes`);
   assert.ok(html.includes('href="/diary">Read the full diary →</a>'), `${entry.slug}: full diary link`);
   assert.ok(diary.includes(`id="${entry.slug}"`), `${entry.slug}: legacy diary anchor remains`);
   assert.ok(diary.includes(`href="/d/${entry.slug}"`), `${entry.slug}: diary links to entry page`);
@@ -53,6 +74,7 @@ for (const entry of manifest.entries) {
   assert.equal(jsonLd.url, url, `${entry.slug}: JSON-LD URL`);
   assert.equal(jsonLd.headline, entry.title, `${entry.slug}: JSON-LD title`);
   assert.equal(jsonLd.datePublished, entry.datePublished, `${entry.slug}: JSON-LD date`);
+  assert.equal(jsonLd.image.url, ogImageUrl, `${entry.slug}: JSON-LD follows Open Graph image`);
 }
 
 assert.doesNotMatch(diary, /"url": "https:\/\/byko\.bykovas\.lt\/diary#/, "Blog JSON-LD uses entry URLs");

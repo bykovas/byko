@@ -2,11 +2,17 @@
 
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { initWasm, Resvg } from "../functions/lib/resvg.js";
 import {
   layoutTitle, measureTitleLine, renderDiaryOgSvg, TITLE_MAX_WIDTH,
 } from "../functions/lib/og-title.mjs";
 
 const manifest = JSON.parse(readFileSync("website/data/diary-og.json", "utf8"));
+await initWasm(readFileSync("functions/lib/resvg.wasm"));
+const fonts = [
+  readFileSync("website/assets/fonts/Inter-SemiBold.ttf"),
+  readFileSync("website/assets/fonts/JetBrainsMono-Regular.ttf"),
+];
 
 for (const entry of manifest.entries) {
   const layout = layoutTitle(entry.title);
@@ -19,6 +25,15 @@ for (const entry of manifest.entries) {
   const svg = renderDiaryOgSvg(entry);
   assert.match(svg, /^<svg[^>]+width="1200" height="630"/);
   assert.doesNotMatch(svg, /…|\.\.\./, `${entry.slug}: no ellipsis`);
+  const expectedPng = new Resvg(svg, {
+    fitTo: { mode: "width", value: 1200 },
+    font: { loadSystemFonts: false, fontBuffers: fonts, defaultFontFamily: "Inter" },
+  }).render().asPng();
+  const staticPng = readFileSync(
+    `website/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`
+  );
+  assert.equal(Buffer.compare(staticPng, Buffer.from(expectedPng)), 0,
+    `${entry.slug}: static X PNG must exactly match the dynamic renderer`);
 }
 
 assert.deepEqual(
@@ -57,4 +72,4 @@ const escapedSvg = renderDiaryOgSvg({
 assert.match(escapedSvg, /Angles &lt; &amp; &gt;/);
 assert.doesNotMatch(escapedSvg, /Angles < & >/);
 
-console.log(`diary OG layout: ${manifest.entries.length} current titles + long/3-line/4-line/XML/failure cases ok`);
+console.log(`diary OG layout/render: ${manifest.entries.length} current titles and byte-identical static PNGs + long/3-line/4-line/XML/failure cases ok`);

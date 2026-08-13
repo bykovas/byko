@@ -220,6 +220,14 @@ async function deployedEntryProblem(entry) {
   const imageMatch = /<meta name="twitter:image" content="([^"]+)">/.exec(html);
   if (!imageMatch) return `${url} → twitter:image missing`;
   const imageUrl = imageMatch[1].replace(/&amp;/g, "&");
+  let parsedImageUrl;
+  try { parsedImageUrl = new URL(imageUrl); }
+  catch { return `${url} → invalid twitter:image URL`; }
+  const expectedImagePath = new RegExp(`^/assets/og/diary/${entry.slug}-[0-9a-f]{12}\\.png$`);
+  if (parsedImageUrl.origin !== SITE || parsedImageUrl.search || parsedImageUrl.hash ||
+      !expectedImagePath.test(parsedImageUrl.pathname)) {
+    return `${url} → twitter:image must be a same-origin versioned static diary PNG`;
+  }
   const imageResponse = await fetch(imageUrl, {
     redirect: "manual",
     headers: { "Cache-Control": "no-cache", "User-Agent": "Twitterbot/1.0" },

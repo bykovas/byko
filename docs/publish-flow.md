@@ -73,10 +73,13 @@ For each card, in order:
    ```
    This regenerates `website/diary.html`, the generator-owned
    `website/d/{slug}.html` page for every entry, `website/data/diary-og.json`
-   for entry-specific 1200×630 cards, and `website/index.html` (diary cards
-   AND the stat bar), plus the diary JSON-LD, `website/sitemap.xml` and the
-   header nav on every page. It also syncs hours/dollars values into
-   `counters.json`. If it fails, fix the entry format — do not commit.
+   for entry-specific 1200×630 cards, and a versioned static X image at
+   `website/assets/og/diary/{slug}-{hash}.png`. Facebook/Open Graph keeps the
+   dynamic `/api/og` image; `twitter:image` uses the visually identical static
+   PNG because X did not reliably fetch the Worker response. It also regenerates
+   `website/index.html`, the diary JSON-LD, `website/sitemap.xml` and the header
+   nav, and syncs hours/dollars values into `counters.json`. If it fails, fix
+   the entry format — do not commit.
 4. **One commit, push to main** (`git add website/` — the generator may
    touch any page):
    ```bash
@@ -167,9 +170,10 @@ After the cycle (or the stop on first failure), report:
   duplicate SEO identities.
 - Polls that exact cache-busted URL (up to 3 min) until it returns a direct 200
   with the expected clean canonical/slug marker, then checks that its
-  entry-specific, versioned `twitter:image` returns a direct 200 PNG with an
-  actual IHDR size of 1200×630. This warms both fresh cache keys before either
-  social post is sent.
+  entry-specific, versioned, static `twitter:image` returns a direct 200 PNG
+  with an actual IHDR size of 1200×630. This warms both fresh cache keys before
+  either social post is sent. `og:image` remains the dynamic card used by
+  Facebook; both URLs render the same design and entry title.
 - Posts the body to the Facebook page, then the `**X:**` text with the entry
   link to X; several entries go oldest-first, 45 s apart; stops on the first
   error with a published/failed/remaining log.
