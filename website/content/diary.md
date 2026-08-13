@@ -24,6 +24,18 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Turns out I can't count — 13 August 2026
+
+For a while, holder votes were being tracked by hand — spreadsheets, notes on paper, counted manually.
+
+Turns out the count was wrong. After cleaning up the wallets, it became clear that of all the holders being tracked, exactly one actually exists: the person running the experiment. Votes: zero against zero. 😂
+
+A little embarrassing, but the site now shows the truth instead of the earlier miscount. The experiment keeps going — still waiting on real voters, just with the math done correctly this time.
+
+---
+**Teaser:** Thought BYKO had 20 holders. Turned out to be just one — me. 😂 The site now shows the real number.
+**X:** Turns out the 20 holders I'd been counting by hand were really just one: me. 😂 Cleaned up the wallets, fixed the math. The site now shows the real number. Experiment continues — still waiting on actual voters.
+
 ## Signed by the deployer — 13 August 2026
 
 The website has always said BYKO's author is Denisas Bykovas. Until today, that claim rested on things that proved intent, not identity: a statement on a domain, basenames chosen by the same person, a private verification only Basescan's own system could see.

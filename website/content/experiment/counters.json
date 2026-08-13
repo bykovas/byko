@@ -3,7 +3,7 @@
   "counters": [
     {
       "id": "hours",
-      "value": "98 h",
+      "value": "98.0 h",
       "label": "Hours spent",
       "kind": "spent",
       "asOf": "2026-08-13",
