@@ -107,7 +107,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.
 h1{font:600 60px/1.05 Inter,sans-serif;letter-spacing:-.025em;margin:16px 0 0;max-width:15ch}
 h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
 h3{font:600 17px Inter,sans-serif;letter-spacing:-.01em;margin:14px 0 0}
-.lede{font-size:18px;color:var(--text-2);margin:16px 0 0;max-width:52ch}
+.lede{font-size:18px;color:var(--text-2);margin:16px 0 0}
 .hero-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:14px}
 .cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
 .cta-actions,.cta-meta{display:flex;gap:12px;flex-basis:100%;flex-wrap:wrap;align-items:center}
@@ -164,7 +164,7 @@ section{padding:80px 0 0}
 
 /* identity: long signed strings wrap hard, copy stays byte-exact */
 #identity .row .v.mono{font-size:12px;white-space:pre-wrap}
-.identity-note{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+.identity-note{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
 .addr{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
 .copy{font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 10px;border-radius:5px;background:var(--bg-3);
   border:1px solid var(--line);color:var(--text-2);cursor:pointer;transition:.15s}
@@ -279,7 +279,7 @@ a.card:hover{text-decoration:none}
 footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 .foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
 .foot .mono{font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
 
 @media (max-width:900px){
   .hero{padding:112px 32px 0}
@@ -406,7 +406,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <section id="identity">
       <span class="kicker">Identity / 04</span>
       <h2>Signed by the deployer</h2>
-      <p style="color:var(--text-2);margin:16px 0 0;max-width:60ch">This page says who made BYKO. Until now that was a claim you had to take on trust. Below is the same claim, signed by the private key of the address that deployed the contract.</p>
+      <p style="color:var(--text-2);margin:16px 0 0">This page says who made BYKO. Until now that was a claim you had to take on trust. Below is the same claim, signed by the private key of the address that deployed the contract.</p>
       <div class="rows">
         <div class="row"><div class="k">Address</div><div class="v mono">0x624056460437Cb4c63F7A3CF0c5a554dF3375222</div></div>
         <!-- prettier-ignore -->
@@ -425,7 +425,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <section id="referendum">
       <span class="kicker">Referendum / 05</span>
       <h2>Buying BYKO is a vote. Honesty — or hype?</h2>
-      <p style="color:var(--text-2);margin:16px 0 0;max-width:60ch">For — hold. Withdrawn — sold to zero. Counted from the pool, address by address. Even a bought referendum becomes data for the diary.</p>
+      <p style="color:var(--text-2);margin:16px 0 0">For — hold. Withdrawn — sold to zero. Counted from the pool, address by address. Even a bought referendum becomes data for the diary.</p>
       <div class="ref-grid">
         <div class="ref-panel">
           <span class="label">The tally / computed from Transfer logs</span>
