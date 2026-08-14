@@ -195,17 +195,6 @@ function summarize(balances) {
    set; the raw RPC path below stays as the keyless fallback. */
 var ETHERSCAN_API = "https://api.etherscan.io/v2/api?chainid=8453";
 
-async function etherscanProxy(action, extra, key) {
-  var response = await fetch(ETHERSCAN_API + "&module=proxy&action=" + action + (extra || "") + "&apikey=" + key);
-  var payload;
-  if (!response.ok) throw new Error("rpc");
-  payload = await response.json();
-  if (!payload || payload.error || payload.status === "0" || payload.result === undefined || payload.result === null) {
-    throw new Error("etherscan proxy " + action + ": " + (payload && (payload.result || payload.message) || "bad response"));
-  }
-  return payload.result;
-}
-
 /* All Transfer logs in [fromBlock, toBlock], paginated 1000 per call. */
 async function etherscanLogs(fromBlock, toBlock, key) {
   var all = [];
@@ -238,14 +227,13 @@ async function collectHolders(env) {
   var to;
   var logs;
   var scanned;
-  if (key) {
-    try {
-      latest = parseInt(await etherscanProxy("eth_blockNumber", "", key), 16);
-    } catch (error) {
-      key = null; /* e.g. the free Etherscan plan does not cover Base — use RPC */
-    }
-  }
-  if (!key) latest = parseInt(await rpc("eth_blockNumber", []), 16);
+  /* The block number comes from plain RPC: a single eth_blockNumber is
+     cheap and never rate-limited, while gating the Etherscan key on an
+     etherscanProxy call used to null the key whenever the proxy module
+     answered badly — throwing away the only path that can read the whole
+     log history from Cloudflare, where the public RPCs rate-limit the
+     shared egress IPs. tally.js has always done it this way and works. */
+  latest = parseInt(await rpc("eth_blockNumber", []), 16);
   scanned = from <= latest;
   if (key && scanned) {
     try {

@@ -196,6 +196,10 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   .pool-side{padding:0 6px}
   .pool-side b{font-size:14px}
   .pool-side span{font-size:9px;letter-spacing:.08em;text-align:center}
+  /* 16/9 of a phone's width is ~170px tall — the widget's own header,
+     toolbar, chart and trade history cannot fit and get cut off. Give it
+     a real height instead of an aspect ratio. */
+  #market-chart{aspect-ratio:auto;height:70vh;min-height:440px;max-height:600px}
   .holders-grid{grid-template-columns:1fr;gap:40px}
   .donut-wrap{max-width:240px;margin:0 auto}
   .donut-mode{max-width:none;justify-content:center}
