@@ -288,7 +288,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   <div class="wrap">
     <span class="kicker">Holders / distribution</span>
     <h2>Who holds it</h2>
-    <p class="section-lede">Concentration across the top addresses and the BaseScan-style tiers. Computed, not estimated. The pool is left out — its LP tokens are burned, so the BYKO sitting in it is nobody's position.</p>
+    <p class="section-lede">Concentration across the top addresses and the BaseScan-style tiers. Computed, not estimated. The pool is left out — its LP tokens are burned, so the BYKO sitting in it is nobody's position — and every share below is measured against circulating supply, what is left once it is.</p>
 
     <div class="holders-grid">
       <span class="loading" id="holders-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
@@ -315,7 +315,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
         <div class="tier-head"><span>Tier</span><span>Threshold</span><span style="text-align:right">Holders</span><span style="text-align:right">Supply</span></div>
         <div class="tier-row" data-tier="whale">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 9.5C3 6.5 6.5 5.5 9 7.2c1.2.9 1.8 2.3 1.4 3.8-2.5 1.3-6.5 1-8.9-1.5z"></path><path d="M10.4 9.2l3.6-1.7-1 2.5 1 2.5-3.8-1.5"></path><path d="M4.5 4.5v-2"></path></svg>Whale</span>
-          <span class="tier-th">≥ 10% of supply</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
+          <span class="tier-th">≥ 10% of circulating</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
         </div>
         <div class="tier-row" data-tier="shark">
           <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 10c3.5-2.8 8-2.8 11 0-3 2.8-7.5 2.8-11 0z"></path><path d="M6.5 7.8L8.2 4l1.8 3.4"></path><path d="M12.5 10l2-1.6v3.2l-2-1.6z"></path></svg>Shark</span>
@@ -363,6 +363,6 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   </div>
 </footer>
 
-<script src="market.js?v=20260814a" defer></script>
+<script src="market.js?v=20260814b" defer></script>
 </body>
 </html>

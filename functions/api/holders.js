@@ -175,13 +175,17 @@ async function writeCheckpoint(env, block, balances) {
   await caches.default.put(CHECKPOINT_CACHE_URL, response);
 }
 
-/* BaseScan's tier scale: whale >=10% of supply, then decades down. */
-function tierFor(balance) {
-  if (balance >= TOTAL_SUPPLY_WEI / 10n) return "whale";
-  if (balance >= TOTAL_SUPPLY_WEI / 100n) return "shark";
-  if (balance >= TOTAL_SUPPLY_WEI / 1000n) return "dolphin";
-  if (balance >= TOTAL_SUPPLY_WEI / 10000n) return "fish";
-  if (balance >= TOTAL_SUPPLY_WEI / 100000n) return "crab";
+/* BaseScan's tier scale — whale >=10%, then decades down — measured
+   against circulating supply rather than total. The pool holds 61% that
+   nobody can withdraw; counting it in the denominator would shrink every
+   real holder against tokens that are out of reach, and would leave the
+   supply ring 61% empty. */
+function tierFor(balance, basis) {
+  if (balance >= basis / 10n) return "whale";
+  if (balance >= basis / 100n) return "shark";
+  if (balance >= basis / 1000n) return "dolphin";
+  if (balance >= basis / 10000n) return "fish";
+  if (balance >= basis / 100000n) return "crab";
   return "shrimp";
 }
 
@@ -201,28 +205,41 @@ function summarize(balances) {
   var name;
   var pooled = 0n;
   var burned = 0n;
+  var counted = [];
+  var circulating;
   for (i = 0; i < TIER_NAMES.length; i++) tiers[TIER_NAMES[i]] = { count: 0, balance: 0n };
   for (entry of balances.entries()) {
     if (entry[1] <= 0n) continue;
     if (entry[0] === POOL_ADDRESS) { pooled = entry[1]; continue; }
     if (entry[0] === BURN_ADDRESS) { burned = entry[1]; continue; }
     if (entry[0] === ZERO_ADDRESS) continue;
+    counted.push(entry[1]);
+  }
+  /* Everything the excluded addresses do not hold. Guarded so a state
+     where the pool somehow holds everything cannot divide by zero. */
+  circulating = TOTAL_SUPPLY_WEI - pooled - burned;
+  if (circulating <= 0n) circulating = TOTAL_SUPPLY_WEI;
+  for (i = 0; i < counted.length; i++) {
     holders += 1;
-    name = tierFor(entry[1]);
+    name = tierFor(counted[i], circulating);
     tiers[name].count += 1;
-    tiers[name].balance += entry[1];
+    tiers[name].balance += counted[i];
   }
   for (i = 0; i < TIER_NAMES.length; i++) {
     name = TIER_NAMES[i];
     tiers[name] = {
       count: tiers[name].count,
-      supply: Number((tiers[name].balance * 1000n) / TOTAL_SUPPLY_WEI) / 10
+      /* two decimals: at one, a tier holding 0.058% reported as 0.0% */
+      supply: Number((tiers[name].balance * 10000n) / circulating) / 100
     };
   }
   return {
     holders: holders,
     tiers: tiers,
+    circulating: Number(circulating / 1000000000000n) / 1e6,
     excluded: {
+      /* percentages here stay against total supply — "the pool holds 61%
+         of everything" is the fact worth stating */
       pool: pctOf(pooled),
       burned: pctOf(burned)
     }
@@ -351,6 +368,7 @@ export async function onRequestGet(context) {
       updated: new Date().toISOString(),
       holders: summary.holders,
       tiers: summary.tiers,
+      circulating: summary.circulating,
       excluded: summary.excluded
     }, 200, { "Cache-Control": "public, s-maxage=600" });
     context.waitUntil(cache.put(context.request, response.clone()));

@@ -224,32 +224,37 @@
       row = document.querySelector('.tier-row[data-tier="' + tier + '"]');
       if (row) {
         row.querySelector(".tier-holders").textContent = typeof data.tiers[tier].count === "number" ? data.tiers[tier].count.toLocaleString("en-US") : "—";
-        row.querySelector(".tier-supply").textContent = share.toFixed(1) + "%";
+        /* a real but tiny share must not read as zero */
+        row.querySelector(".tier-supply").textContent =
+          (share > 0 && share < 0.1 ? share.toFixed(2) : share.toFixed(1)) + "%";
       }
     }
     tiersCache = data.tiers;
-    renderExcluded(data.excluded);
+    renderExcluded(data.excluded, data.circulating);
     renderDonut();
     updateHoldersMeta();
   }
 
   /* The pair contract and the burn address are not holdings, but dropping
      them without a word would be hiding 61% of the supply. */
-  function renderExcluded(excluded) {
+  function renderExcluded(excluded, circulating) {
     var note = byId("holders-excluded");
     var parts = [];
     if (!note) return;
     if (!excluded) { note.hidden = true; return; }
     if (excluded.pool && excluded.pool.balance > 0) {
       parts.push("pool " + Math.round(excluded.pool.balance).toLocaleString("en-US") +
-        " BYKO · " + excluded.pool.pct.toFixed(1) + "% — LP burned, withdrawable by nobody");
+        " BYKO · " + excluded.pool.pct.toFixed(1) + "% of supply — LP burned, withdrawable by nobody");
     }
     if (excluded.burned && excluded.burned.balance > 0) {
       parts.push("burned " + Math.round(excluded.burned.balance).toLocaleString("en-US") +
         " BYKO · " + excluded.burned.pct.toFixed(1) + "%");
     }
     if (!parts.length) { note.hidden = true; return; }
-    note.textContent = "not counted as holders: " + parts.join(" · ");
+    note.textContent = "not counted as holders: " + parts.join(" · ") +
+      (typeof circulating === "number"
+        ? " · shares above are of circulating " + Math.round(circulating).toLocaleString("en-US") + " BYKO"
+        : "");
     note.hidden = false;
   }
 
