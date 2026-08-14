@@ -5,3 +5,4 @@
 - Twenty holders and a $1.35 sell — $10
 - The site that answered 200 to everything — $0
 - Signed by the deployer — $0
+- Fake, worthless, decentralized — case closed — $0
