@@ -13,6 +13,9 @@ var TOTAL_SUPPLY = 790227;
 var DEPLOY_BLOCK = 49430937;
 var TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 var ZERO_ADDRESS = "0000000000000000000000000000000000000000";
+/* Balance keys are bare lowercase 40-hex, as foldLogs stores them. */
+var POOL_ADDRESS = "02dd4285ad38ea93d021ca854016a839b0b2a6ca"; /* BYKO/USDC pair; its LP is burned */
+var BURN_ADDRESS = "000000000000000000000000000000000000dead";
 var WEI = 1000000000000000000n;
 var TOTAL_SUPPLY_WEI = BigInt(TOTAL_SUPPLY) * WEI;
 /* mainnet.base.org caps eth_getLogs at a 10,000-block range */
@@ -182,15 +185,28 @@ function tierFor(balance) {
   return "shrimp";
 }
 
+/* Neither of these is anybody's holding, and together they used to make
+   the chart a picture of the pool rather than of the holders:
+   - the pair contract holds the BYKO side of the reserves, and the LP
+     tokens that own that position are burned, so no one can ever withdraw
+     it — it is market inventory, not a position;
+   - the burn address holds nothing today, and anything sent there later is
+     destroyed by definition.
+   Both are reported as excluded rather than dropped silently. */
 function summarize(balances) {
   var tiers = {};
   var entry;
   var i;
   var holders = 0;
   var name;
+  var pooled = 0n;
+  var burned = 0n;
   for (i = 0; i < TIER_NAMES.length; i++) tiers[TIER_NAMES[i]] = { count: 0, balance: 0n };
   for (entry of balances.entries()) {
-    if (entry[0] === ZERO_ADDRESS || entry[1] <= 0n) continue;
+    if (entry[1] <= 0n) continue;
+    if (entry[0] === POOL_ADDRESS) { pooled = entry[1]; continue; }
+    if (entry[0] === BURN_ADDRESS) { burned = entry[1]; continue; }
+    if (entry[0] === ZERO_ADDRESS) continue;
     holders += 1;
     name = tierFor(entry[1]);
     tiers[name].count += 1;
@@ -203,7 +219,21 @@ function summarize(balances) {
       supply: Number((tiers[name].balance * 1000n) / TOTAL_SUPPLY_WEI) / 10
     };
   }
-  return { holders: holders, tiers: tiers };
+  return {
+    holders: holders,
+    tiers: tiers,
+    excluded: {
+      pool: pctOf(pooled),
+      burned: pctOf(burned)
+    }
+  };
+}
+
+function pctOf(balance) {
+  return {
+    balance: Number(balance / 1000000000000n) / 1e6,
+    pct: Number((balance * 1000n) / TOTAL_SUPPLY_WEI) / 10
+  };
 }
 
 /* Etherscan API V2 (one etherscan.io key serves Base via chainid) — made for
@@ -320,7 +350,8 @@ export async function onRequestGet(context) {
       block: data.block,
       updated: new Date().toISOString(),
       holders: summary.holders,
-      tiers: summary.tiers
+      tiers: summary.tiers,
+      excluded: summary.excluded
     }, 200, { "Cache-Control": "public, s-maxage=600" });
     context.waitUntil(cache.put(context.request, response.clone()));
     return response;

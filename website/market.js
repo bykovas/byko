@@ -228,8 +228,29 @@
       }
     }
     tiersCache = data.tiers;
+    renderExcluded(data.excluded);
     renderDonut();
     updateHoldersMeta();
+  }
+
+  /* The pair contract and the burn address are not holdings, but dropping
+     them without a word would be hiding 61% of the supply. */
+  function renderExcluded(excluded) {
+    var note = byId("holders-excluded");
+    var parts = [];
+    if (!note) return;
+    if (!excluded) { note.hidden = true; return; }
+    if (excluded.pool && excluded.pool.balance > 0) {
+      parts.push("pool " + Math.round(excluded.pool.balance).toLocaleString("en-US") +
+        " BYKO · " + excluded.pool.pct.toFixed(1) + "% — LP burned, withdrawable by nobody");
+    }
+    if (excluded.burned && excluded.burned.balance > 0) {
+      parts.push("burned " + Math.round(excluded.burned.balance).toLocaleString("en-US") +
+        " BYKO · " + excluded.burned.pct.toFixed(1) + "%");
+    }
+    if (!parts.length) { note.hidden = true; return; }
+    note.textContent = "not counted as holders: " + parts.join(" · ");
+    note.hidden = false;
   }
 
   /* The endpoint rebuilds its balance checkpoint over several requests when
