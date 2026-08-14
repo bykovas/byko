@@ -24,6 +24,20 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The market's first reply: a price tag — 13 August 2026
+
+BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.
+
+Honestly, we're a bit flattered. It means someone is reading. A coin with a hundred-dollar pool and a handful of holders already has an audience — even if the first readers arrived with a price list.
+
+No hard feelings — it's just not our genre. BYKO is an experiment in what legitimacy costs when you don't buy it. Paid attention would break the instrument.
+
+But free help is a different story. Honest feedback, a repost, a word of advice, or simply reading the diary — welcome. That's exactly the signal this experiment is built to measure.
+
+---
+**Teaser:** Someone is reading us
+**X:** Our new social channels got their first replies: paid promotion offers. So someone is reading. Wow. BYKO doesn't buy attention — that's the whole experiment. But if you want to help for free: welcome.
+
 ## Turns out I can't count — 13 August 2026
 
 For a while, holder votes were being tracked by hand — spreadsheets, notes on paper, counted manually.
@@ -65,22 +79,6 @@ The handle — bykocoin — matches the on-chain basename bykocoin.base.eth and 
 ---
 **Teaser:** BYKO's official channels are live — Telegram, X, and Facebook, all under one handle: bykocoin.
 **X:** BYKO now has official channels — Telegram, X, Facebook, handle @bykocoin, matching the on-chain basename.
-
-## Someone is reading us — 12 August 2026
-
-BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.
-
-Honestly, we're a bit flattered. It means someone is reading. A coin with a hundred-dollar pool and a handful of holders already has an audience — even if the first readers arrived with a price list.
-
-No hard feelings — it's just not our genre. BYKO is an experiment in what legitimacy costs when you don't buy it. Paid attention would break the instrument.
-
-But free help is a different story. Honest feedback, a repost, a word of advice, or simply reading the diary — welcome. That's exactly the signal this experiment is built to measure.
-
-byko.bykovas.lt
-
----
-**Teaser:** The first replies to BYKO's brand-new social channels were paid promotion offers — which means we have readers. Free help is welcome.
-**X:** Our new social channels got their first replies: paid promotion offers. So someone is reading. Wow. BYKO doesn't buy attention — that's the whole experiment. But if you want to help for free: welcome.
 
 ## The site that answered 200 to everything — 12 August 2026
 

@@ -2,6 +2,14 @@
   "version": 1,
   "entries": [
     {
+      "slug": "the-market-s-first-reply-a-price-tag",
+      "title": "The market's first reply: a price tag",
+      "dateText": "13 August 2026",
+      "datePublished": "2026-08-13",
+      "imageVersion": "b2f5cff66a0d",
+      "twitterImageVersion": "f2eea25bfe17"
+    },
+    {
       "slug": "turns-out-i-can-t-count",
       "title": "Turns out I can't count",
       "dateText": "13 August 2026",
@@ -24,14 +32,6 @@
       "datePublished": "2026-08-12",
       "imageVersion": "72cb0ce5cabb",
       "twitterImageVersion": "aa422c660f76"
-    },
-    {
-      "slug": "someone-is-reading-us",
-      "title": "Someone is reading us",
-      "dateText": "12 August 2026",
-      "datePublished": "2026-08-12",
-      "imageVersion": "44e492d07189",
-      "twitterImageVersion": "6cf7560e57a1"
     },
     {
       "slug": "the-site-that-answered-200-to-everything",
