@@ -190,8 +190,12 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   h1{font-size:36px}
   .price-big{font-size:48px}
   .market-panel{padding:40px 20px 0}
+  /* the narrow side is only ~80px wide on a phone, so its label wraps to
+     three lines — give the bar the height to show them instead of clipping */
+  .pool-bar{height:92px}
+  .pool-side{padding:0 6px}
   .pool-side b{font-size:14px}
-  .pool-side span{font-size:9px;letter-spacing:.08em}
+  .pool-side span{font-size:9px;letter-spacing:.08em;text-align:center}
   .holders-grid{grid-template-columns:1fr;gap:40px}
   .donut-wrap{max-width:240px;margin:0 auto}
   .donut-mode{max-width:none;justify-content:center}
@@ -352,6 +356,6 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   </div>
 </footer>
 
-<script src="market.js?v=20260811" defer></script>
+<script src="market.js?v=20260814" defer></script>
 </body>
 </html>

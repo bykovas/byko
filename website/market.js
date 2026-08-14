@@ -98,10 +98,12 @@
     latestBlock = data.block;
     if (marketPrice) marketPrice.textContent = (price * 100).toFixed(4);
     if (priceSub) priceSub.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
-    if (marketByko) marketByko.textContent = data.byko.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-    if (marketUsdc) marketUsdc.textContent = data.usdc.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
-    if (bykoLabel) bykoLabel.textContent = "BYKO in pool (" + (bykoDelta >= 0 ? "+" : "") + bykoDelta.toFixed(4) + "%)";
-    if (usdcLabel) usdcLabel.textContent = "USDC in pool (" + (usdcDelta >= 0 ? "+" : "") + usdcDelta.toFixed(4) + " USDC)";
+    /* Whole numbers with a leading ~: four decimals overflow the bar on a
+       phone, and the exact reserves are one click away on BaseScan. */
+    if (marketByko) marketByko.textContent = "~" + Math.round(data.byko).toLocaleString("en-US");
+    if (marketUsdc) marketUsdc.textContent = "~" + Math.round(data.usdc).toLocaleString("en-US");
+    if (bykoLabel) bykoLabel.textContent = "BYKO in pool (~" + (bykoDelta >= 0 ? "+" : "") + Math.round(bykoDelta) + "%)";
+    if (usdcLabel) usdcLabel.textContent = "USDC in pool (~" + (usdcDelta >= 0 ? "+" : "") + Math.round(usdcDelta) + " USDC)";
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
     if (poolBar) poolBar.style.setProperty("--split", displaySplit.toFixed(1) + "%");
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
@@ -230,12 +232,28 @@
     updateHoldersMeta();
   }
 
-  function loadHolders() {
+  /* The endpoint rebuilds its balance checkpoint over several requests when
+     it has fallen behind; while it does, it answers {syncing:true} instead
+     of publishing a mid-history state as current. Keep asking rather than
+     leaving the donut empty. */
+  function loadHolders(attempt) {
+    var tries = attempt || 0;
+    var meta;
     if (!byId("holders-donut")) return;
     fetch("/api/holders").then(function (response) {
       if (!response.ok) throw new Error("holders");
       return response.json();
-    }).then(renderHolders, function () {
+    }).then(function (data) {
+      if (data && data.syncing) {
+        hideLoading("holders-loading");
+        meta = byId("holders-updated");
+        if (meta) meta.textContent = "rebuilding the holder index · " +
+          data.behind.toLocaleString("en-US") + " blocks behind";
+        if (tries < 5) window.setTimeout(function () { loadHolders(tries + 1); }, 4000);
+        return;
+      }
+      renderHolders(data);
+    }, function () {
       hideLoading("holders-loading"); /* no data coming — stop pretending */
     });
   }

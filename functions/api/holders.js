@@ -17,6 +17,12 @@ var WEI = 1000000000000000000n;
 var TOTAL_SUPPLY_WEI = BigInt(TOTAL_SUPPLY) * WEI;
 /* mainnet.base.org caps eth_getLogs at a 10,000-block range */
 var CHUNK_SIZE = 10000;
+/* Pages Functions allow ~50 subrequests per request. Once the chain is far
+   enough past DEPLOY_BLOCK, a full rescan needs more chunks than that and
+   every request dies with "rpc" — which is exactly what took this endpoint
+   down. Scan at most this many chunks, checkpoint the progress and let the
+   next request continue (same approach as tally.js). */
+var MAX_SCAN_CHUNKS = 30;
 var TIER_NAMES = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
 /* Balances checkpoint so a request only scans blocks since the previous run.
    Durable in KV (the CARDS namespace binding is reused; BYKO_KV wins when
@@ -247,8 +253,9 @@ async function collectHolders(env) {
       from = latest + 1;
     } catch (error) { /* fall through to the chunked RPC scan */ }
   }
-  while (from <= latest) {
-    to = Math.min(from + CHUNK_SIZE - 1, latest);
+  var target = Math.min(latest, from + CHUNK_SIZE * MAX_SCAN_CHUNKS - 1);
+  while (from <= target) {
+    to = Math.min(from + CHUNK_SIZE - 1, target);
     logs = await rpc("eth_getLogs", [{
       address: BYKO,
       fromBlock: hex(from),
@@ -258,7 +265,13 @@ async function collectHolders(env) {
     foldLogs(balances, logs);
     from = to + 1;
   }
-  if (scanned) await writeCheckpoint(env, latest, balances);
+  var scannedTo = from - 1;
+  if (scanned) await writeCheckpoint(env, scannedTo, balances);
+  /* Mid-history balances are a valid snapshot of an older block, but they
+     are not "now" — say so instead of publishing them as current. */
+  if (scannedTo < latest) {
+    return { syncing: true, block: scannedTo, behind: latest - scannedTo, balances: null };
+  }
   return { block: latest, balances: balances };
 }
 
@@ -272,6 +285,15 @@ export async function onRequestGet(context) {
   if (cached) return cached;
   try {
     data = await collectHolders(context.env);
+    if (data.syncing) {
+      /* mid-rescan progress report — never cache it */
+      return json({
+        syncing: true,
+        block: data.block,
+        behind: data.behind,
+        updated: new Date().toISOString()
+      }, 200, { "Cache-Control": "no-store" });
+    }
     summary = summarize(data.balances);
     response = json({
       block: data.block,
