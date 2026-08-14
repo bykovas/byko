@@ -21,10 +21,10 @@ var CHUNK_SIZE = 10000;
    enough past DEPLOY_BLOCK, a full rescan needs more chunks than that and
    every request dies with "rpc" — which is exactly what took this endpoint
    down. Scan at most this many chunks, checkpoint the progress and let the
-   next request continue (same approach as tally.js). A chunk can cost two
-   subrequests when the first RPC endpoint rate-limits, so 20 chunks leaves
-   headroom inside the budget. */
-var MAX_SCAN_CHUNKS = 20;
+   next request continue (same approach as tally.js). SUBREQUEST_BUDGET is
+   the real limiter; this is the coarse cap on how far one request may
+   reach. */
+var MAX_SCAN_CHUNKS = 40;
 var TIER_NAMES = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
 /* Balances checkpoint so a request only scans blocks since the previous run.
    Durable in KV (the CARDS namespace binding is reused; BYKO_KV wins when
@@ -44,11 +44,26 @@ function hex(number) {
   return "0x" + number.toString(16);
 }
 
+/* Every fetch counts against the platform's per-request subrequest cap, and
+   one rpc() call can spend one per endpoint. Track the spend so the scan
+   can use the budget deliberately — retrying transient failures while it
+   lasts — instead of discovering the ceiling by dying on it. Reset per
+   request in onRequestGet: module state outlives a request in a warm
+   isolate. */
+var SUBREQUEST_BUDGET = 40;
+var spent = 0;
+
+function budgetLeft() {
+  return SUBREQUEST_BUDGET - spent;
+}
+
 async function rpc(method, params) {
   var i;
   var response;
   var payload;
   for (i = 0; i < activeRpcUrls.length; i++) {
+    if (spent >= SUBREQUEST_BUDGET) break;
+    spent += 1;
     try {
       response = await fetch(activeRpcUrls[i], {
         method: "POST",
@@ -241,8 +256,14 @@ async function collectHolders(env) {
       from = latest + 1;
     } catch (error) { /* free plan on Base — use the chunked RPC scan */ }
   }
+  /* dRPC's free plan answers "Request timeout on the free plan" to roughly
+     four in ten eth_getLogs calls, and the public endpoints rate-limit
+     Cloudflare's shared egress IPs. Those failures are transient, so a
+     chunk gets a few attempts rather than ending the scan: bailing on the
+     first one advanced the checkpoint by only one or two chunks a request. */
   var target = Math.min(latest, from + CHUNK_SIZE * MAX_SCAN_CHUNKS - 1);
-  while (from <= target) {
+  var attempts = 0;
+  while (from <= target && budgetLeft() >= activeRpcUrls.length) {
     to = Math.min(from + CHUNK_SIZE - 1, target);
     try {
       logs = await rpc("eth_getLogs", [{
@@ -252,8 +273,11 @@ async function collectHolders(env) {
         topics: [TRANSFER_TOPIC]
       }]);
     } catch (error) {
-      break; /* rate-limited or out of subrequests — keep what we folded */
+      attempts += 1;
+      if (attempts >= 3) break; /* this range keeps failing — save and let the next request take it */
+      continue;
     }
+    attempts = 0;
     foldLogs(balances, logs);
     from = to + 1;
   }
@@ -273,6 +297,7 @@ async function collectHolders(env) {
 
 export async function onRequestGet(context) {
   var cache = caches.default;
+  spent = 0; /* warm isolates reuse module state */
   activeRpcUrls = keyedRpcUrls(context.env).concat(RPC_URLS);
   var cached = await cache.match(context.request);
   var data;
