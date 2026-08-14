@@ -21,8 +21,10 @@ var CHUNK_SIZE = 10000;
    enough past DEPLOY_BLOCK, a full rescan needs more chunks than that and
    every request dies with "rpc" — which is exactly what took this endpoint
    down. Scan at most this many chunks, checkpoint the progress and let the
-   next request continue (same approach as tally.js). */
-var MAX_SCAN_CHUNKS = 30;
+   next request continue (same approach as tally.js). A chunk can cost two
+   subrequests when the first RPC endpoint rate-limits, so 20 chunks leaves
+   headroom inside the budget. */
+var MAX_SCAN_CHUNKS = 20;
 var TIER_NAMES = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
 /* Balances checkpoint so a request only scans blocks since the previous run.
    Durable in KV (the CARDS namespace binding is reused; BYKO_KV wins when
@@ -227,34 +229,40 @@ async function collectHolders(env) {
   var to;
   var logs;
   var scanned;
-  /* The block number comes from plain RPC: a single eth_blockNumber is
-     cheap and never rate-limited, while gating the Etherscan key on an
-     etherscanProxy call used to null the key whenever the proxy module
-     answered badly — throwing away the only path that can read the whole
-     log history from Cloudflare, where the public RPCs rate-limit the
-     shared egress IPs. tally.js has always done it this way and works. */
+  /* One cheap eth_blockNumber; Etherscan's proxy module is not used for it
+     because the free plan answers "Free API access is not supported for
+     this chain" on Base — the same reason the getLogs shortcut below only
+     ever helps on a paid key. */
   latest = parseInt(await rpc("eth_blockNumber", []), 16);
   scanned = from <= latest;
   if (key && scanned) {
     try {
       foldLogs(balances, await etherscanLogs(from, latest, key));
       from = latest + 1;
-    } catch (error) { /* fall through to the chunked RPC scan */ }
+    } catch (error) { /* free plan on Base — use the chunked RPC scan */ }
   }
   var target = Math.min(latest, from + CHUNK_SIZE * MAX_SCAN_CHUNKS - 1);
   while (from <= target) {
     to = Math.min(from + CHUNK_SIZE - 1, target);
-    logs = await rpc("eth_getLogs", [{
-      address: BYKO,
-      fromBlock: hex(from),
-      toBlock: hex(to),
-      topics: [TRANSFER_TOPIC]
-    }]);
+    try {
+      logs = await rpc("eth_getLogs", [{
+        address: BYKO,
+        fromBlock: hex(from),
+        toBlock: hex(to),
+        topics: [TRANSFER_TOPIC]
+      }]);
+    } catch (error) {
+      break; /* rate-limited or out of subrequests — keep what we folded */
+    }
     foldLogs(balances, logs);
     from = to + 1;
   }
   var scannedTo = from - 1;
-  if (scanned) await writeCheckpoint(env, scannedTo, balances);
+  /* Persist whatever was folded, including after a failed chunk. Without
+     this a request that dies mid-scan saves nothing, so every later
+     request restarts at DEPLOY_BLOCK and the endpoint can never catch up —
+     which is exactly how it stayed broken. */
+  if (scannedTo >= DEPLOY_BLOCK) await writeCheckpoint(env, scannedTo, balances);
   /* Mid-history balances are a valid snapshot of an older block, but they
      are not "now" — say so instead of publishing them as current. */
   if (scannedTo < latest) {
