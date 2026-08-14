@@ -24,24 +24,6 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
-## Fake, worthless, decentralized — case closed — 14 August 2026
-
-Crypto.com support called BYKO “fake.” Their proof: BaseScan shows $0.00.
-
-Fine. I stopped arguing about price and asked a much simpler question: if BYKO is worth $0 in your own reasoning, why does Crypto.com Onchain Wallet show nothing instead of $0, while other zero-value assets show $0?
-
-The final answer: “we don't have access to that as the Onchain wallet is a decentralized wallet.” Then the conversation was closed.
-
-A decentralized wallet apparently explains why its own UI renders one token differently from another. Incredible.
-
-I came to support with a missing price field. I left with BYKO declared fake, then worthless, then protected from debugging by decentralization.
-
-Full transcript in today’s diary entry. Thank you to the support agent for contributing an unusually pure specimen to the experiment.
-
----
-**Teaser:** Crypto.com support called BYKO fake because BaseScan showed $0.00. Asked why their own wallet shows blank instead of $0, they answered: the wallet is decentralized.
-**X:** Crypto.com support called BYKO “fake” because BaseScan shows $0.00. I asked why their wallet then shows BLANK instead of $0. Answer: “the Onchain wallet is decentralized.” Case closed. This conversation is spectacular.
-
 ## The market's first reply: a price tag — 13 August 2026
 
 BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.
