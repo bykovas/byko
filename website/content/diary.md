@@ -28,6 +28,29 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## MetaMask values a malicious token at $1,032 — while BYKO still has no price — 15 August 2026
+
+MetaMask says this token is **Malicious** — and still counts **$1,032.23** of it in my portfolio balance.
+
+In the same wallet, BYKO is labelled **Risky** and shown with no value at all — no price, no portfolio line — even though it has a real on-chain BYKO/USDC market.
+
+That contrast is exactly why BYKO exists: not to hype another token, but to document how crypto systems decide what looks legitimate, valuable, suspicious, or invisible.
+
+One wallet. Two completely different signals.
+
+A malicious token gets a four-digit valuation.
+A transparent token with a real market gets none.
+
+The screenshots are now part of the public diary.
+
+![MetaMask, account BYKOVAS LUKO: www.bopx.club is flagged Malicious and still counted as $1,032.23 of a $1,033.17 balance](/assets/diary/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price/metamask-malicious-token-1032.png)
+
+![MetaMask, account BYKOVAS: BYKO is flagged Risky and its 262,159.22 tokens are shown with no price and no value](/assets/diary/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price/metamask-byko-risky-no-price.png)
+
+---
+**Teaser:** MetaMask counted a token it labels Malicious as $1,032.23 of portfolio value — while BYKO, labelled Risky, shows no value at all.
+**X:** MetaMask says this token is Malicious — then counts $1,032.23 of it in my portfolio. BYKO, in the same wallet, is labelled Risky and shown with no value at all, despite a real BYKO/USDC market. Crypto legitimacy, explained by UI.
+
 ## The first real vote for legitimacy — 14 August 2026
 
 The first real vote is in.
