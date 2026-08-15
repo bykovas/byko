@@ -24,6 +24,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The first real vote for legitimacy — 14 August 2026
+
+The first real vote is in.
+
+Someone outside the BYKO project independently chose to buy and hold BYKO — a token that promises no returns, no roadmap and no future utility. The only proposition was simple: holding BYKO is an on-chain signature for honesty, transparency and legitimacy over hype.
+
+Today somebody actually signed it.
+
+Wallet: 0x30Fd96C5AE61f0fB3d97e6159ab023710163eFBF
+
+I don't know who controls it, and that is exactly how it should be. The blockchain records the fact; the identity does not matter.
+
+Thank you to the first real supporter. Whatever happens next, this address is now permanently part of the BYKO diary as the first external vote for legitimacy.
+
+---
+**Teaser:** The first real vote is in. Someone outside the project chose to buy and hold BYKO — not for a promise, but as an on-chain signature for legitimacy.
+**X:** BYKO just got its first real vote for legitimacy. Someone independently bought and held it. Thank you, 0x30Fd…eFBF. The first external on-chain signature is now permanently part of the diary.
+
 ## Fake, worthless, decentralized — case closed — 14 August 2026
 
 Crypto.com support called BYKO “fake.” Their proof: BaseScan shows $0.00.

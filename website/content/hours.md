@@ -15,3 +15,4 @@
 - The market's first reply: a price tag — 0.5 h
 - Turns out I can't count — 0.05 h
 - Fake, worthless, decentralized — case closed — 1.5 h
+- The first real vote for legitimacy — 0 h
