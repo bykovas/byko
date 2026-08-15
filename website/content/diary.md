@@ -12,6 +12,10 @@
 
   Long-form body. Paragraphs separated by blank lines. Inline markup:
   **bold**, `code`, [text](https://url). Lines starting with "- " form lists.
+  A line that is only "![alt](/assets/diary/{slug}/{file})" becomes a figure:
+  alt text is required and doubles as the caption, the file must be a PNG or
+  JPEG committed under website/assets/diary, and the line never reaches the
+  Facebook or X text.
 
   ---
   **Teaser:** one or two short sentences for the home-page card. Required.

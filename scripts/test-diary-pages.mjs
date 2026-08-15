@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 
 const SITE = "https://byko.bykovas.lt";
@@ -66,6 +66,14 @@ for (const entry of manifest.entries) {
   assert.ok(diary.includes(`id="${entry.slug}"`), `${entry.slug}: legacy diary anchor remains`);
   assert.ok(diary.includes(`href="/d/${entry.slug}"`), `${entry.slug}: diary links to entry page`);
   assert.equal((sitemap.match(new RegExp(`<loc>${url}</loc>`, "g")) || []).length, 1, `${entry.slug}: sitemap URL`);
+
+  for (const [tag, src] of [...html.matchAll(/<img\s+src="(\/assets\/diary\/[^"]+)"[^>]*>/g)].map(m => [m[0], m[1]])) {
+    assert.match(tag, /\salt="[^"]+"/, `${entry.slug}: diary image has alt text`);
+    assert.match(tag, /\swidth="\d+"\sheight="\d+"/, `${entry.slug}: diary image reserves its space`);
+    assert.match(tag, /\sloading="lazy"/, `${entry.slug}: diary image loads lazily`);
+    assert.ok(existsSync(`website${src}`), `${entry.slug}: ${src} exists in the repository`);
+  }
+  assert.doesNotMatch(html, /!\[[^\]]*\]\(/, `${entry.slug}: no unrendered image markdown`);
 
   const jsonLdMatch = /<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/.exec(html);
   assert.ok(jsonLdMatch, `${entry.slug}: JSON-LD exists`);

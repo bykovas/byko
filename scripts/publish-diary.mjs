@@ -116,6 +116,10 @@ function parseEntries(text) {
 function plainText(markdown) {
   return markdown
     .split(/\n{2,}/)
+    /* Image lines are page structure, not prose: the screenshots belong to
+       the entry, and "![alt](/assets/…)" must never surface as post text. */
+    .map(block => block.split("\n").filter(row => !/^!\[[^\]]*\]\([^)\s]+\)$/.test(row.trim())).join("\n"))
+    .filter(block => block.trim())
     .map(block => block
       .split("\n").map(row => row.trim().replace(/^- /, "– ")).join("\n")
       .replace(/\*\*([^*]+)\*\*/g, "$1")

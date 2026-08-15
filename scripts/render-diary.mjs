@@ -122,14 +122,62 @@ function parseDate(text) {
   return new Date(Date.UTC(Number(match[3]), month, Number(match[1])));
 }
 
-function bodyToHtml(lines) {
+/* A standalone "![alt](/assets/diary/…)" line is a figure. Same-origin only:
+   the site ships its own bytes, so a screenshot cannot rot or be swapped
+   under us the way a hotlinked image can. */
+const IMAGE_LINE = /^!\[([^\]]*)\]\((\/assets\/diary\/[^)\s]+)\)$/;
+
+/* Intrinsic size straight from the file header — width/height on the tag is
+   what keeps the page from jumping while a screenshot loads. */
+function imageSize(path) {
+  const bytes = readFileSync(path);
+  if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) {
+    return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+  }
+  if (bytes.readUInt16BE(0) === 0xffd8) { /* JPEG: first SOFn frame header */
+    for (let i = 2; i + 9 < bytes.length;) {
+      if (bytes[i] !== 0xff) { i++; continue; }
+      const marker = bytes[i + 1];
+      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+        return { height: bytes.readUInt16BE(i + 5), width: bytes.readUInt16BE(i + 7) };
+      }
+      i += 2 + bytes.readUInt16BE(i + 2);
+    }
+  }
+  throw new Error(`${path}: not a PNG or JPEG (diary images must be either)`);
+}
+
+function figureHtml(alt, src, title) {
+  if (!alt.trim()) {
+    throw new Error(`entry "${title}": image ${src} has no alt text — it is both the caption and what a screen reader announces`);
+  }
+  const path = `website${src}`;
+  if (!existsSync(path)) throw new Error(`entry "${title}": image file ${path} does not exist`);
+  const { width, height } = imageSize(path);
+  return `<figure class="shot">`
+    + `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" width="${width}" height="${height}"`
+    + ` loading="lazy" decoding="async">`
+    + `<figcaption>${inline(alt)}</figcaption></figure>`;
+}
+
+function bodyToHtml(lines, title) {
   const blocks = lines.join("\n").split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
   const html = [];
   for (const block of blocks) {
     const rows = block.split("\n").map(r => r.trim());
-    if (rows.every(r => r.startsWith("- "))) {
+    if (rows.every(r => IMAGE_LINE.test(r))) {
+      html.push(rows.map(row => {
+        const [, alt, src] = IMAGE_LINE.exec(row);
+        return figureHtml(alt, src, title);
+      }).join("\n"));
+    } else if (rows.every(r => r.startsWith("- "))) {
       html.push("<ul>" + rows.map(r => "<li>" + inline(r.slice(2)) + "</li>").join("") + "</ul>");
     } else {
+      /* A stray image line mixed into prose would silently print as text. */
+      const stray = rows.find(r => r.startsWith("!["));
+      if (stray) {
+        throw new Error(`entry "${title}": image line must stand alone in its own paragraph — "${stray}"`);
+      }
       html.push("<p>" + inline(rows.join(" ")) + "</p>");
     }
   }
@@ -169,7 +217,7 @@ function parse(source) {
       slug: slugify(title),
       teaser: fields.teaser,
       teaserText: inlineToPlain(fields.teaser),
-      bodyHtml: bodyToHtml(lines.slice(0, cut)),
+      bodyHtml: bodyToHtml(lines.slice(0, cut), title),
     });
   }
   entries.sort((a, b) => b.date - a.date); /* newest first, whatever the file order */

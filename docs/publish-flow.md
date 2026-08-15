@@ -23,6 +23,7 @@ Field mapping — how a Notion card becomes a diary entry:
 | FB POST | entry body (everything before the `---` field block) | already written and proofread by a human: do not rewrite, shorten, "improve" or derive anything from it. Must not contain a line that is exactly `---` — replace stray horizontal rules with an empty line |
 | Teaser | `**Teaser:** …` line | required; verbatim |
 | XCOM POST | `**X:** …` line | verbatim; max **250 characters**. Over the limit: **stop and report which card and by how many characters — never cut**. If the card has no XCOM POST, omit the `**X:**` line entirely (the entry then skips X); never write one yourself |
+| Proofs (screenshots) | `website/assets/diary/{slug}/{file}` + an `![alt](…)` line in the body | only if the human hands you the files (chat, a commit, or a URL) — the Notion API returns opaque `file://` references you cannot download. Alt text is required and becomes the caption. The line stands alone in its own paragraph and is stripped from the Facebook and X text, so screenshots stay on the site |
 | Hours | a line in `website/content/hours.md` | `- {Title EN} — {hours} h` |
 | USD | a line in `website/content/dollars.md` | `- {Title EN} — ${amount}` |
 | Body, Summary | nowhere | working fields; never published, never edited by you |

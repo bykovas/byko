@@ -43,8 +43,14 @@ Entry format (new entries at the top, newest first):
 ## {Title} — {D Month YYYY}
 
 Body: paragraphs separated by blank lines; **bold**, `code`,
-[text](https://url), "- " list lines. Nothing else. No line may be
-exactly "---" inside the body.
+[text](https://url), "- " list lines, and image lines. Nothing else. No
+line may be exactly "---" inside the body.
+
+An image is a line of its own: ![alt](/assets/diary/{slug}/{file}). The
+file is a PNG or JPEG committed under website/assets/diary/{slug}/, the
+alt text is required (it is also the caption), and the renderer reads the
+real pixel size into width/height. Image lines are stripped from the
+Facebook and X text, so screenshots live on the site only.
 
 ---
 **Teaser:** required — the home-page card text.
