@@ -46,6 +46,7 @@ const SITE = (process.env.SITE_URL || "https://byko.bykovas.lt").replace(/\/+$/,
 const PAUSE_S = 45;            /* between outbound posts */
 const POLL_INTERVAL_S = 10;
 const POLL_TIMEOUT_S = 180;
+const SCRAPE_TIMEOUT_S = 120;  /* how long Facebook gets to crawl a usable card */
 const X_TEXT_MAX = 250;        /* leaves room for the t.co-wrapped link */
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
@@ -216,6 +217,18 @@ async function deployedEntryProblem(entry) {
   if (response.status !== 200) return `${url} → ${response.status}`;
   const html = await response.text();
   if (!html.includes(`data-diary-slug="${entry.slug}"`)) return `${url} → wrong or missing slug marker`;
+  /* The check above asks the edge to revalidate, so it sees the deploy the
+     moment it lands. A crawler asks for nothing of the sort and can still be
+     handed a cached or not-yet-propagated 404 — which is exactly what ends up
+     in the preview card. Verify the page the way a crawler will get it. */
+  const asCrawler = await fetch(url, {
+    redirect: "manual",
+    headers: { "User-Agent": "facebookexternalhit/1.1" },
+  });
+  if (asCrawler.status !== 200) return `${url} → ${asCrawler.status} for a plain crawler request`;
+  if (!(await asCrawler.text()).includes(`data-diary-slug="${entry.slug}"`)) {
+    return `${url} → wrong page for a plain crawler request`;
+  }
   const canonicalUrl = canonicalEntryUrl(entry);
   if (!html.includes(`<link rel="canonical" href="${canonicalUrl}">`)) return `${url} → wrong or missing canonical`;
   if (!html.includes('<meta name="twitter:card" content="summary_large_image">')) {
@@ -280,7 +293,39 @@ async function resolveFbPageId() {
   return fbPageId;
 }
 
+/* Facebook builds the card from its own crawl, not from anything we send, and
+   it keeps whatever it got the first time. One unlucky crawl during the deploy
+   window is enough to publish a post whose card reads "BYKO — 404" forever, so
+   the scrape is forced and its result inspected before the post exists. */
+async function primeFacebookPreview(entry) {
+  const url = entryUrl(entry);
+  const deadline = Date.now() + SCRAPE_TIMEOUT_S * 1000;
+  for (;;) {
+    const response = await fetch("https://graph.facebook.com/v19.0/?" + new URLSearchParams({
+      id: url, scrape: "true", access_token: process.env.FB_BYKO_PAGE_ACCESS_TOKEN,
+    }), { method: "POST" });
+    const payload = await response.json().catch(() => ({}));
+    const title = payload.title || (payload.og_object && payload.og_object.title) || "";
+    if (response.ok && title && !/\b404\b/.test(title)) {
+      if (title.trim() !== entry.title.trim()) {
+        console.log(`facebook scraped a different title than expected: ${JSON.stringify(title)}`);
+      }
+      console.log(`facebook preview primed: ${JSON.stringify(title)}`);
+      return;
+    }
+    const problem = response.ok
+      ? `scraped title ${JSON.stringify(title) || "(empty)"}`
+      : `graph ${response.status}: ${JSON.stringify(payload.error && payload.error.message || payload)}`;
+    if (Date.now() > deadline) {
+      throw new Error(`facebook never scraped ${url} into a usable card (${problem}) — refusing to post a broken preview`);
+    }
+    console.log(`waiting for facebook to scrape the entry: ${problem}`);
+    await sleep(POLL_INTERVAL_S);
+  }
+}
+
 async function postFacebook(entry) {
+  await primeFacebookPreview(entry);
   const link = entryUrl(entry);
   const message = `${entry.title}\n${entry.date.getUTCDate()} ${MONTHS[entry.date.getUTCMonth()]} ${entry.date.getUTCFullYear()}\n\n${plainText(entry.body)}`;
   const pageId = await resolveFbPageId();

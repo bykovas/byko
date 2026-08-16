@@ -28,6 +28,12 @@ assert.match(publisher, /dimensions\.width !== 1200 \|\| dimensions\.height !== 
   "publisher must verify the social image's actual PNG dimensions");
 assert.match(publisher, /twitter:image must be a same-origin versioned static diary PNG/,
   "publisher must reject dynamic or cross-origin X images");
+assert.match(publisher, /"User-Agent": "facebookexternalhit\/1\.1"/,
+  "publisher must verify the page the way a crawler receives it, without asking for revalidation");
+assert.match(publisher, /scrape: "true"/,
+  "publisher must force a Facebook crawl before the post exists");
+assert.match(publisher, /await primeFacebookPreview\(entry\)/,
+  "publisher must prime the Facebook preview before posting");
 assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-age=31536000, immutable/,
   "versioned static X images must have immutable cache headers");
 
