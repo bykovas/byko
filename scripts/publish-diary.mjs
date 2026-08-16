@@ -257,7 +257,33 @@ async function deployedEntryProblem(entry) {
   if (!dimensions || dimensions.width !== 1200 || dimensions.height !== 630) {
     return `${imageUrl} → expected PNG 1200×630, got ${dimensions ? `${dimensions.width}×${dimensions.height}` : "invalid PNG"}`;
   }
+  /* Same trap as the page: the check above revalidates, a crawler does not.
+     An image that 404s for the crawler leaves the card imageless for good. */
+  const imageAsCrawler = await fetch(imageUrl, {
+    redirect: "manual",
+    headers: { "User-Agent": "Twitterbot/1.0" },
+  });
+  const crawlerType = (imageAsCrawler.headers.get("content-type") || "").split(";", 1)[0];
+  if (imageAsCrawler.status !== 200 || crawlerType !== "image/png") {
+    return `${imageUrl} → ${imageAsCrawler.status} ${crawlerType || "without content-type"} for a plain crawler request`;
+  }
   return null;
+}
+
+/* The run checks everything once before it posts anything, but the posts go
+   out minutes apart, so the last network to post is the one most likely to
+   crawl something half-deployed. Re-verify immediately before each post. */
+async function requireDeployed(entry) {
+  const deadline = Date.now() + SCRAPE_TIMEOUT_S * 1000;
+  for (;;) {
+    const problem = await deployedEntryProblem(entry).catch(error => error.message);
+    if (!problem) return;
+    if (Date.now() > deadline) {
+      throw new Error(`entry stopped being servable before the post: ${problem}`);
+    }
+    console.log(`waiting before posting: ${problem}`);
+    await sleep(POLL_INTERVAL_S);
+  }
 }
 
 async function pollSiteForEntries(entries) {
@@ -325,6 +351,7 @@ async function primeFacebookPreview(entry) {
 }
 
 async function postFacebook(entry) {
+  await requireDeployed(entry);
   await primeFacebookPreview(entry);
   const link = entryUrl(entry);
   const message = `${entry.title}\n${entry.date.getUTCDate()} ${MONTHS[entry.date.getUTCMonth()]} ${entry.date.getUTCFullYear()}\n\n${plainText(entry.body)}`;
@@ -364,6 +391,7 @@ function oauthHeader(url) {
 }
 
 async function postX(entry) {
+  await requireDeployed(entry);
   const url = "https://api.x.com/2/tweets";
   const text = `${entry.x}\n${entryUrl(entry)}`;
   const response = await fetch(url, {
@@ -380,10 +408,27 @@ async function postX(entry) {
 
 /* ---------- run ---------- */
 
+/* A re-share often needs one network only: the other post is fine and must
+   not be duplicated. The publishing commit carries that intent, so it lives
+   with the diff that caused the post rather than in a machine's memory. */
+const commitMessage = git("show", "-s", "--format=%B", after);
+const skipFacebook = commitMessage.includes("[skip-facebook]");
+const skipX = commitMessage.includes("[skip-x]");
+if (skipFacebook) console.log("commit says [skip-facebook] — no Facebook posts this run");
+if (skipX) console.log("commit says [skip-x] — no X posts this run");
+
 const queue = [];
 for (const entry of newEntries) {
-  queue.push({ key: `${entry.slug} fb`, label: `facebook: ${entry.slug}`, run: () => postFacebook(entry) });
-  if (entry.x) queue.push({ key: `${entry.slug} x`, label: `x: ${entry.slug}`, run: () => postX(entry) });
+  if (!skipFacebook) {
+    queue.push({ key: `${entry.slug} fb`, label: `facebook: ${entry.slug}`, run: () => postFacebook(entry) });
+  }
+  if (entry.x && !skipX) {
+    queue.push({ key: `${entry.slug} x`, label: `x: ${entry.slug}`, run: () => postX(entry) });
+  }
+}
+if (queue.length === 0) {
+  console.log("every post for this push is skipped by the commit message — nothing to publish");
+  process.exit(0);
 }
 
 if (dryRun) {

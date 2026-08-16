@@ -175,6 +175,13 @@ After the cycle (or the stop on first failure), report:
   with an actual IHDR size of 1200×630. This warms both fresh cache keys before
   either social post is sent. `og:image` remains the dynamic card used by
   Facebook; both URLs render the same design and entry title.
+- Re-verifies page and image immediately before each post, and forces a
+  Facebook crawl through the Graph API, checking what came back: the crawlers
+  keep whatever they fetch first, and a card crawled during the deploy window
+  stays a "404" or an imageless box forever.
+- Honours `[skip-facebook]` / `[skip-x]` in the publishing commit message.
+  Use it for a re-share where only one network needs the post again — the
+  other one's post is fine and must not be duplicated.
 - Posts the body to the Facebook page, then the `**X:**` text with the entry
   link to X; several entries go oldest-first, 45 s apart; stops on the first
   error with a published/failed/remaining log.

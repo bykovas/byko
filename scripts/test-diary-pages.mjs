@@ -34,6 +34,14 @@ assert.match(publisher, /scrape: "true"/,
   "publisher must force a Facebook crawl before the post exists");
 assert.match(publisher, /await primeFacebookPreview\(entry\)/,
   "publisher must prime the Facebook preview before posting");
+assert.equal((publisher.match(/await requireDeployed\(entry\);/g) || []).length, 2,
+  "both posts must re-verify the entry immediately before they go out");
+assert.match(publisher, /"User-Agent": "Twitterbot\/1\.0" \},\s*\}\);\s*const crawlerType/,
+  "publisher must fetch the social image the way a crawler receives it");
+assert.match(publisher, /commitMessage\.includes\("\[skip-facebook\]"\)/,
+  "publisher must honour a per-commit Facebook skip");
+assert.match(publisher, /commitMessage\.includes\("\[skip-x\]"\)/,
+  "publisher must honour a per-commit X skip");
 assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-age=31536000, immutable/,
   "versioned static X images must have immutable cache headers");
 
