@@ -7,3 +7,4 @@
 - Signed by the deployer — $0
 - Fake, worthless, decentralized — case closed — $0
 - The first real vote for legitimacy — $0
+- Every buy but one was mine — $38.29

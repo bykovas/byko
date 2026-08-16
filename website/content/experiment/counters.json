@@ -12,12 +12,12 @@
     },
     {
       "id": "dollars",
-      "value": "$85",
+      "value": "$123.29",
       "label": "Dollars spent",
       "kind": "spent",
-      "asOf": "2026-08-12",
-      "counts": "Direct out-of-pocket cost of the study: $74.02 is the exact, verified, irreversible pool-funding transaction; roughly $10 is estimated micro-buy activity, gas and infrastructure. The budget is deliberately tiny — that is the point.",
-      "excludes": "The founder's own BYKO purchases from the pool (those are votes, not costs) and the value of the time counted in hours above."
+      "asOf": "2026-08-16",
+      "counts": "Direct out-of-pocket cost of the study: $74.02 — the exact, verified, irreversible pool funding, burned along with the LP tokens — plus $49.27 of BYKO bought from the pool with project wallets, every purchase reconciled against the on-chain transaction history. The founder's own buys used to be excluded here as \"votes, not costs\"; the audit of 16 Aug 2026 counted them, because money that left the wallet is a cost whatever it was buying.",
+      "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above."
     },
     {
       "id": "listing-rejections",

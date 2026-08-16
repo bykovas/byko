@@ -394,7 +394,9 @@ function renderCounters() {
     if (sum === null || sum === undefined) continue;
     const value = counter.id === "hours"
       ? (Number.isInteger(sum) ? String(sum) : sum.toFixed(1)) + " h"
-      : "$" + Math.round(sum);
+      /* Cents only when there are cents: the diary quotes the exact figure,
+         and a counter rounded away from it reads as a contradiction. */
+      : "$" + (Number.isInteger(sum) ? sum : sum.toFixed(2));
     if (counter.value !== value) {
       counter.value = value;
       counter.asOf = today;

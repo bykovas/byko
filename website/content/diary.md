@@ -28,6 +28,36 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Every buy but one was mine — 16 August 2026
+
+The on-chain audit turned up one more number this diary hadn't published: $49.27.
+
+That's the total of every buy ever made from the BYKO pool. Thirty-three transactions across two weeks, and all but one of them were mine, made from project wallets. In that time the price went from $0.000100 to $0.000252 — up 152%. That entire move was made with my own money. Four small sells returned $5.57.
+
+So the chart on the site is real and verifiable, and almost meaningless as a price. It is a record of one person buying from himself in a pool a hundred dollars deep. In two weeks, exactly one purchase came from outside the project: $9.91, on 14 August.
+
+The spend counter was wrong too. It read $85. The real figure is $123.29 — $74.02 put into the pool and burned along with the LP tokens, plus $49.27 of buys that never made it into the tally. The counter now shows the corrected number.
+
+From today, the buying stops. An instrument that moves its own needle measures nothing. Whatever the price does next, it will not be me doing it.
+
+Which brings this to the part I cannot do alone.
+
+BYKO is not an investment and never will be. Fixed supply, no owner, no mint, liquidity permanently burned to a dead address — there is nothing to grow and nobody who can promise you anything. What it is, is a measurement: how much does it cost for a provably honest token to stop being treated as a scam?
+
+Two weeks in, the answer so far reads: $123.29 spent, about 100 hours of work, three refusals from Basescan, one security flag removed, one wallet that still hides the token as a scam, and one person who bought in.
+
+If you want to move this experiment, there are three ways, and two of them are free:
+
+- Read the diary and tell me where I am wrong. Every correction so far came from auditing my own claims. Outside eyes are better than mine.
+- Share it. Reach is the one thing this project will not buy.
+- Or hold one BYKO. Not as an investment — as a data point. A second independent holder changes a number that no amount of writing can change.
+
+All of it is verifiable on-chain. That is the entire point.
+
+---
+**Teaser:** Thirty-three buys moved BYKO's price 152%. All but one were mine, $49.27 in total — and the spend counter was wrong too: $85 is really $123.29.
+**X:** 33 buys pushed BYKO's price up 152%. All but one were mine — $49.27 total. The spend counter was wrong too: $85 is really $123.29. From today I stop buying. An instrument shouldn't move its own needle.
+
 ## On-chain audit: 100 transactions, three debunked facts — 16 August 2026
 
 This week, a full on-chain audit ran through BYKO's entire transaction history: 100 Transfer events since deploy, every one classified — mints, LP adds, buys, sells, LP removals, plain transfers. The reconciled balances matched on-chain balances exactly, down to the decimal, and the total matched the fixed supply of 790,227.
