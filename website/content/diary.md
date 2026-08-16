@@ -44,6 +44,7 @@ Getting the record wrong and then correcting it in public, with the receipts, is
 
 ---
 **Teaser:** An on-chain audit of BYKO's full history just debunked three things this diary had recorded as fact.
+**X:** Full on-chain audit: 100 transactions, all reconciled to the supply. It debunked three things this diary had recorded as fact — including holder numbers that were wrong. Correcting the record in public is the whole point of this experiment.
 
 ## MetaMask values a malicious token at $1,032 — while BYKO still has no price — 15 August 2026
 
