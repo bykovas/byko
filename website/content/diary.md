@@ -127,6 +127,8 @@ Turns out the count was wrong. After cleaning up the wallets, it became clear th
 
 A little embarrassing, but the site now shows the truth instead of the earlier miscount. The experiment keeps going — still waiting on real voters, just with the math done correctly this time.
 
+**Update, 16 August 2026:** a full on-chain audit went further and put the author's real holdings at 260,599 BYKO, 32.98% of supply — the token count in this entry was off too: [On-chain audit: 100 transactions, three debunked facts](https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts).
+
 ---
 **Teaser:** Thought BYKO had 20 holders. Turned out to be just one — me. 😂 The site now shows the real number.
 **X:** Turns out the 20 holders I'd been counting by hand were really just one: me. 😂 Cleaned up the wallets, fixed the math. The site now shows the real number. Experiment continues — still waiting on actual voters.
@@ -310,6 +312,8 @@ The appeal channels exist, they are just not where you'd look: report.blockaid.i
 **X:** BYKO got flagged within days of existing. GoPlus: not a honeypot, open source, no tax. De.Fi: no rug risk. RugCheck: 28/100 — points lost on pool size, transactions and age. The contract passed everything. Small isn't dangerous.
 
 ## Twenty holders and a $1.35 sell — 3 August 2026
+
+**Correction, 16 August 2026:** both numbers in this entry are wrong. A full on-chain audit of every BYKO transfer found that the twenty holders were DEX routing contracts passing tokens through in the same transaction, not people, and that the $1.35 sell never happened — there were no sells that day at all. The audit, with the reconciled figures: [On-chain audit: 100 transactions, three debunked facts](https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts). The original text is left below, unedited.
 
 BYKO now has 20 holders. Not a typo, not a rounding of 20,000 — twenty addresses.
 
