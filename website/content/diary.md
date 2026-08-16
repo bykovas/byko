@@ -28,6 +28,23 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## On-chain audit: 100 transactions, three debunked facts — 16 August 2026
+
+This week, a full on-chain audit ran through BYKO's entire transaction history: 100 Transfer events since deploy, every one classified — mints, LP adds, buys, sells, LP removals, plain transfers. The reconciled balances matched on-chain balances exactly, down to the decimal, and the total matched the fixed supply of 790,227.
+
+It also debunked three things this diary had recorded as fact.
+
+First: an earlier note claimed Farcaster rewards had gone out to real people, building toward 20 holders. They hadn't — every address that looked external turned out to be DEX routing infrastructure (1inch, LI.FI) passing tokens through in the same transaction, net effect zero.
+
+Second: a recorded $1.35 micro-sell from August 4th. It doesn't exist anywhere in the transaction history — there were no sells that day at all, only two small buys. The closest real transaction is a $1.36 purchase five days later.
+
+Third: the holder numbers were wrong. The diary had recorded roughly 229,000 tokens for the author. The real figure across the author's wallets is 260,599 — 32.98% of supply.
+
+Getting the record wrong and then correcting it in public, with the receipts, is exactly what this diary is supposed to do.
+
+---
+**Teaser:** An on-chain audit of BYKO's full history just debunked three things this diary had recorded as fact.
+
 ## MetaMask values a malicious token at $1,032 — while BYKO still has no price — 15 August 2026
 
 MetaMask says this token is **Malicious** — and still counts **$1,032.23** of it in my portfolio balance.
