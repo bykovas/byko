@@ -110,20 +110,24 @@ td.addr a:hover{color:var(--text)}
     { key: "byko", address: "0x078bB16e24c8931fc007928c370422e5e38F4372", decimals: 18 }
   ];
 
+  /* The four principals first, in their own order; everything else follows
+     alphabetically. Row numbers come from the position, so reordering this
+     list is all it takes. */
   var WALLETS = [
-    { n: 1,  name: "BYKOVAS",             by: "Kraken",        address: "0xe8fC8769934f9461F7adF6F440ff3883E28021Eb" },
-    { n: 2,  name: "MEETLUKO",            by: "Kraken",        address: "0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" },
-    { n: 3,  name: "BYKOVAS LUKO Δ", by: "MEETLUKO",      address: "0xbC170538038ADC0651292e28A42Dab4286641e02" },
-    { n: 4,  name: "BYKO Ops",            by: "Kraken",        address: "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" },
-    { n: 5,  name: "BYKO Buyer",          by: "Kraken",        address: "0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" },
-    { n: 6,  name: "LUKO Ops",            by: "Kraken",        address: "0x33D857fb6f06aaFc498De09654Da82A8f68BE233" },
-    { n: 7,  name: "LUKO Buyer",          by: "Kraken",        address: "0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" },
-    { n: 8,  name: "LUKO Staging",        by: "Kraken",        address: "0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" },
-    { n: 9,  name: "BYKO Deployer",       by: "MEETLUKO",      address: "0x624056460437Cb4c63F7A3CF0c5a554dF3375222" },
-    { n: 10, name: "BYKO Buyer -r",       by: "BYKO Deployer", address: "0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" },
-    { n: 11, name: "LUKO Buyer -r",       by: "MEETLUKO",      address: "0x7D9766F447a6B86Cf589A31db5b5535e379863E7" },
-    { n: 12, name: "BYKOVAS Farcast ETH", by: "BYKOVAS",       address: "0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" },
-    { n: 13, name: "LUKAS Main",           by: "Kraken",        address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF" }
+    { name: "BYKOVAS",             by: "Kraken",   address: "0xe8fC8769934f9461F7adF6F440ff3883E28021Eb" },
+    { name: "LUKAS",               by: "Kraken",   address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF" },
+    { name: "BYKOCOIN",            by: "MEETLUKO", address: "0x624056460437Cb4c63F7A3CF0c5a554dF3375222" },
+    { name: "MEETLUKO",            by: "Kraken",   address: "0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" },
+
+    { name: "BYKO Buyer",          by: "Kraken",   address: "0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" },
+    { name: "BYKO Buyer -r",       by: "BYKOCOIN", address: "0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" },
+    { name: "BYKO Ops",            by: "Kraken",   address: "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" },
+    { name: "BYKOVAS Farcast ETH", by: "BYKOVAS",  address: "0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" },
+    { name: "BYKOVAS LUKO Δ",      by: "MEETLUKO", address: "0xbC170538038ADC0651292e28A42Dab4286641e02" },
+    { name: "LUKO Buyer",          by: "Kraken",   address: "0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" },
+    { name: "LUKO Buyer -r",       by: "MEETLUKO", address: "0x7D9766F447a6B86Cf589A31db5b5535e379863E7" },
+    { name: "LUKO Ops",            by: "Kraken",   address: "0x33D857fb6f06aaFc498De09654Da82A8f68BE233" },
+    { name: "LUKO Staging",        by: "Kraken",   address: "0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" }
   ];
 
   var BALANCE_OF = "0x70a08231";
@@ -166,9 +170,9 @@ td.addr a:hover{color:var(--text)}
     body.textContent = "";
     var totals = { eth: 0, usdc: 0, luko: 0, byko: 0 };
 
-    WALLETS.forEach(function (wallet) {
+    WALLETS.forEach(function (wallet, index) {
       var row = document.createElement("tr");
-      [["l", String(wallet.n)], ["l name", wallet.name], ["l", wallet.by]].forEach(function (pair) {
+      [["l", String(index + 1)], ["l name", wallet.name], ["l", wallet.by]].forEach(function (pair) {
         var td = document.createElement("td");
         td.className = pair[0];
         td.textContent = pair[1];
