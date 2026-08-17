@@ -1,10 +1,10 @@
 {
-  "intro": "Every counter on the home page is a claim, and a claim needs a definition: what exactly is counted, what is excluded, and when the number was last true. This page is that definition. When a number changes, the change lands here first, dated.",
+  "intro": "Every counter on the home page is a claim, and a claim needs a definition: what exactly is counted, what is excluded, and when the number was last true. This page is that definition, and it holds every counter the study keeps — including the ones the home page does not show. When a number changes, the change lands here first, dated.",
   "counters": [
     {
       "id": "hours",
       "value": "99.5 h",
-      "label": "Hours spent",
+      "label": "Hours logged",
       "kind": "spent",
       "asOf": "2026-08-14",
       "counts": "Working hours spent on the BYKO study since 2 Aug 2026: contract work, liquidity setup, the website, listing applications, wallet-flag appeals, support conversations, and writing. Tracked per session, rounded to the half hour. Self-reported estimate from the project diary; it will increase as the remaining episodes get logged.",
@@ -20,19 +20,57 @@
       "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above."
     },
     {
+      "id": "paid-listings",
+      "value": "$0",
+      "label": "Paid for legitimacy",
+      "kind": "result",
+      "asOf": "2026-08-17",
+      "counts": "Money paid for listings, promotions, fast-track reviews or any other route to visibility. Quoted so far and declined: $299 (DexScreener Enhanced Token Info), $195 (DEXTools), about $5,000 for CoinGecko and CoinMarketCap price data via the paid routes people quote, and BaseScan Priority Support, which sells a faster answer rather than an approval. The study's rule is that this number stays zero; if it ever changes, the diary explains why in full.",
+      "excludes": "Nothing. Zero means zero."
+    },
+    {
+      "id": "institutions",
+      "value": "9",
+      "label": "Institutions tested",
+      "kind": "result",
+      "asOf": "2026-08-17",
+      "counts": "Organisations and automated systems that BYKO was submitted to, or that issued a verdict on it — each one recorded in the diary with the quote, the case number or the screenshot: BaseScan, Crypto.com, Coinbase (support and the Base app), MetaMask, Blockaid, GoPlus, De.Fi, honeypot.is and RugCheck. Counted once per organisation, however many rounds it took to get an answer.",
+      "excludes": "Services whose price list or requirements were only read, with nothing submitted — DexScreener, DEXTools and Trust Wallet — and tools used for the site rather than the token."
+    },
+    {
+      "id": "transactions-audited",
+      "value": "100",
+      "label": "Transactions audited",
+      "kind": "result",
+      "asOf": "2026-08-16",
+      "counts": "BYKO Transfer events classified one by one in the on-chain audit of 16 Aug 2026 — mints, liquidity adds, buys, sells, LP removals and plain transfers — covering the entire history since deployment. The reconciled balances matched the on-chain balances exactly, and their total matched the fixed supply of 790,227. The audit corrected three facts this diary had already published.",
+      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history is excluded — that is what makes the reconciliation meaningful."
+    },
+    {
+      "id": "episodes",
+      "value": "19",
+      "label": "Episodes published",
+      "kind": "result",
+      "asOf": "2026-08-17",
+      "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
+      "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared."
+    },
+    {
       "id": "listing-rejections",
       "value": "3",
       "label": "Listing rejections",
       "kind": "result",
+      "home": false,
       "asOf": "2026-08-12",
       "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 so far. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
-      "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid listings), and resubmissions of the same form that are still inside the review window."
+      "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid for legitimacy), and resubmissions of the same form that are still inside the review window."
     },
     {
       "id": "wallet-flags",
       "value": "2",
       "label": "Wallet flags",
       "kind": "result",
+      "home": false,
       "asOf": "2026-08-12",
       "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning.",
       "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it."
@@ -42,18 +80,10 @@
       "value": "1",
       "label": "Flags removed",
       "kind": "result",
+      "home": false,
       "asOf": "2026-08-12",
       "counts": "Warnings that a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. So far one: MetaMask's \"Low locked liquidity\", dropped by Blockaid within about a day of the LP burn on 7 Aug 2026 — removed by evidence, with no email, form or appeal.",
       "excludes": "Warnings still displayed (\"Unstable price\" in MetaMask, the Base app scam flag) and removals promised in a reply but not visible in the product — a flag counts only when the warning is gone from the screen."
-    },
-    {
-      "id": "paid-listings",
-      "value": "0",
-      "label": "Paid listings",
-      "kind": "result",
-      "asOf": "2026-08-12",
-      "counts": "Listings, promotions or fast-track reviews paid for with money. The study's rule is that this number stays zero; if it ever changes, the diary explains why in full.",
-      "excludes": "Nothing. Zero means zero."
     }
   ]
 }

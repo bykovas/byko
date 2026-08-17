@@ -404,12 +404,16 @@ function renderCounters() {
     }
   }
   if (jsonChanged) writeFileSync(COUNTERS_JSON, JSON.stringify(data, null, 2) + "\n");
-  const band = data.counters.map(counter =>
+  /* "home": false keeps a counter defined and dated on /experiment while
+     leaving it off the home page band, which holds six cells. */
+  const onHome = data.counters.filter(counter => counter.home !== false);
+  const band = onHome.map(counter =>
     `      <a class="${counter.kind === "spent" ? "blue" : "peach"}" href="experiment.html#${counter.id}"><b>${escapeHtml(counter.value)}</b><span>${escapeHtml(counter.label)}</span></a>`
   ).join("\n");
   return {
     html: `    <div class="exp-band">\n${band}\n    </div>`,
-    count: data.counters.length,
+    count: onHome.length,
+    total: data.counters.length,
     jsonChanged,
   };
 }
@@ -521,4 +525,4 @@ console.log(`rendered ${entries.length} entr${entries.length === 1 ? "y" : "ies"
 console.log(`entry pages: ${entryPages.count} → ${ENTRY_DIR}` + (entryPages.removed ? ` (${entryPages.removed} stale removed)` : ""));
 console.log(`X images: ${twitterImages.count} static PNGs → ${TWITTER_IMAGE_DIR} (${twitterImages.totalBytes} bytes)` +
   (twitterImages.removed ? `; ${twitterImages.removed} invalid stale artifact(s) removed` : ""));
-console.log(`stat bar: ${counters.count} counters` + (counters.jsonChanged ? " (counters.json values updated)" : ""));
+console.log(`stat bar: ${counters.count} of ${counters.total} counters on the home page` + (counters.jsonChanged ? " (counters.json values updated)" : ""));

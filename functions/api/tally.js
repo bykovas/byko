@@ -51,6 +51,7 @@ var FOUNDER_WALLETS = [
   "0xe8fc8769934f9461f7adf6f440ff3883e28021eb", /* founder trading wallet (funded from deployer) */
   "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", /* buyer */
   "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c", /* buyer, retired */
+  "0x2f66cab27ad9a62561df741cad01f908ca7295b9", /* farcaster (built-in wallet) */
   /* founder wallets from the neighbouring project — same owner, so they
      can never count as votes either */
   "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
