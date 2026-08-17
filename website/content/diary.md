@@ -28,6 +28,28 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The site is leaving the dark — 17 August 2026
+
+The site is leaving the dark.
+
+Not for fashion. The old one was a dark developer-tool template — near-black background, a blue accent, a faint grid, glass header. Competent, and indistinguishable from a hundred other crypto pages. Worse than that: it read like a chronicle of something that had already ended.
+
+Three things were quietly wrong with it. Body text sat at 72% opacity, captions at 45%, and the data rows were dimmed until you hovered them — the verifiable layer, the entire reason the site exists, was the faintest thing on the page. Small monospaced type had taken over: there was more of it than prose, which made every caption read like a terminal log or legal fine print. And the hierarchy was upside down — the largest thing on the page was the question, the second largest number was "1", the single vote in the referendum, and the findings came third.
+
+The counters had the same problem. Four of the six measured damage: rejections, flags. A study that only counts what was done to it is not a study, it is a complaint.
+
+The new direction is an instrument panel. BYKO has described itself as a measuring instrument from the beginning, so the page is now built like one: light, in print, with parameters, tolerances and provenance. Readings carry the resolution they were measured at. Every figure says where it came from — blue means read live from the chain and you can verify it yourself; plain means counted by hand from the log and you are taking my word for it. The colour is no longer decoration; it tells you which numbers are checkable without me.
+
+One section is inverted against the rest: invoices settled in BYKO. It is the only part of the instrument that points forward instead of recording the past, so it looks different on purpose.
+
+The numbers have not changed. $123.29 spent, 99.5 hours logged, $0 paid for legitimacy, three institutions petitioned, one holder who is not me. Same proofs, same transaction hashes, same public repository — every edit is still a commit. Only the reading of them got easier.
+
+The typefaces are self-hosted rather than loaded from Google's servers, for the same reason the analytics went cookieless last week: a study about legitimacy should not quietly hand its readers' addresses to a third party.
+
+---
+**Teaser:** The site is leaving the dark — not for fashion, but because the old template read like a chronicle of a dead project instead of a study in progress.
+**X:** BYKO's site is leaving the dark. Same numbers, same proofs — but the old dark-theme template read like a chronicle of a dead project, not a study in progress. New direction: an instrument panel, light, in print.
+
 ## BYKO now sits in exactly two wallets — 17 August 2026
 
 BYKO now sits in exactly two wallets.
