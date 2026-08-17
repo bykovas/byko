@@ -36,8 +36,15 @@
 .loading{display:inline-flex;align-items:center;gap:7px;font:var(--byko-data);color:var(--byko-label)}
 .loading[hidden]{display:none}
 
-.pool-bar{display:grid;grid-template-columns:var(--split,50%) 1fr;height:64px;margin-top:30px;
+.pool-bar{position:relative;display:grid;grid-template-columns:var(--split,50%) 1fr;height:64px;margin-top:30px;
   border-top:var(--byko-rule-heavy);border-bottom:var(--byko-rule-heavy)}
+/* the dashed line is where the pool started: 740,227 BYKO : 74.0227 USDC.
+   The solid edge between the two sides is where it stands now, so the gap
+   between them is the whole story. */
+.pool-bar .genesis{position:absolute;left:50%;top:-9px;bottom:-9px;width:0;
+  border-left:2px dashed rgba(13,17,22,.55);transform:translateX(-1px);pointer-events:none}
+.pool-bar .genesis span{position:absolute;left:8px;top:-2px;font:var(--byko-label-sm-font);
+  letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;color:var(--byko-label);white-space:nowrap}
 .pool-side{display:flex;flex-direction:column;justify-content:center;padding:0 14px}
 .pool-side.l{background:var(--byko-live-wash);border-right:2px solid var(--byko-ink)}
 .pool-side.r{background:var(--byko-paper-2);text-align:right;align-items:flex-end}
@@ -127,8 +134,9 @@
         <div class="pool-bar">
           <div class="pool-side l"><b id="market-byko">—</b><span id="market-byko-label">BYKO in pool</span></div>
           <div class="pool-side r"><b id="market-usdc">—</b><span id="market-usdc-label">USDC in pool</span></div>
+          <i class="genesis" aria-hidden="true"><span>genesis</span></i>
         </div>
-        <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
+        <p class="pool-note">dashed line = genesis, 740,227 BYKO : 74.0227 USDC · the solid edge is where the pool stands now · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
       </div>
     </div>
 

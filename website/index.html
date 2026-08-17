@@ -291,7 +291,20 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
           <h2>Signed by the deployer</h2>
         </div>
         <p>This page says who made BYKO. Until now that was a claim you had to take on trust. Below is the same claim, signed by the private key of the address that deployed the contract.</p>
-        <div class="insert">
+      </div>
+      <div class="apparatus">
+        <span class="label">Method</span>
+        <ul>
+          <li>personal_sign · EIP-191 · any ecrecover tool</li>
+          <li><a href="https://basescan.org/verifySig/95926" target="_blank" rel="noopener">basescan.org/verifySig/95926 →</a></li>
+          <li><a href="https://www.linkedin.com/in/bykovas/details/projects/" target="_blank" rel="noopener">the profile links back here →</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- the fields run the full width: a 132-character signature has nowhere
+         to go in a text column, and wrapping it three times reads as noise -->
+    <div class="insert">
           <div class="hexfield">
             <span class="label">Address</span>
             <span class="hex" id="identity-address">0x624056460437Cb4c63F7A3CF0c5a554dF3375222</span>
@@ -313,18 +326,8 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
             <span class="hex" id="identity-signature">0xb199a91d1fd2352090c41c14097a049348843fa94877f011a04ee4b58d2e14f970d2512668f04fccc32b65479d354d8dec699208f8b49310f03e44b577448eaf1b</span>
             <button class="copy" type="button" data-copy="identity-signature">copy</button>
           </div>
-        </div>
-        <p class="note" style="margin-top:18px">The signature proves control of the key behind that address, and nothing more. Whether the name attached to it is real is checked the ordinary way — the domain, the profile, the person. What is no longer required is trust in this page.</p>
-      </div>
-      <div class="apparatus">
-        <span class="label">Method</span>
-        <ul>
-          <li>personal_sign · EIP-191 · any ecrecover tool</li>
-          <li><a href="https://basescan.org/verifySig/95926" target="_blank" rel="noopener">basescan.org/verifySig/95926 →</a></li>
-          <li><a href="https://www.linkedin.com/in/bykovas/details/projects/" target="_blank" rel="noopener">the profile links back here →</a></li>
-        </ul>
-      </div>
     </div>
+    <p class="note" style="margin-top:18px">The signature proves control of the key behind that address, and nothing more. Whether the name attached to it is real is checked the ordinary way — the domain, the profile, the person. What is no longer required is trust in this page.</p>
   </section>
 
   <section id="referendum">
