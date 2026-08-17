@@ -735,7 +735,23 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       set("founder-balance", fmt(data.founder.balance));
       set("founder-pct", String(data.founder.pct));
       set("founder-computed", "balances computed " + stamp(data.updated));
-      if (window.renderWalletRegister) window.renderWalletRegister(data.founder.holdings || []);
+      /* An endpoint that predates the per-wallet split (or a cached answer
+         from one) has no holdings; fall back to the committed snapshot
+         rather than rendering an empty register that reads as "0 of 0". */
+      if (window.renderWalletRegister) {
+        var holdings = data.founder.holdings;
+        if (Array.isArray(holdings) && holdings.length) {
+          window.renderWalletRegister(holdings);
+        } else {
+          fetch("data/tally.json")
+            .then(function (response) { return response.json(); })
+            .then(function (snapshot) {
+              var fallback = snapshot && snapshot.founder && snapshot.founder.holdings;
+              if (Array.isArray(fallback) && fallback.length) window.renderWalletRegister(fallback);
+            })
+            .catch(function () {});
+        }
+      }
     }
   }
   fetch("/api/tally").then(function (response) {
