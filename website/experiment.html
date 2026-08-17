@@ -33,7 +33,10 @@
 #counter-table .def p{margin:0 0 8px}
 #counter-table .def p:last-child{margin:0}
 #counter-table td.value-lg{white-space:nowrap}
-#counter-table tr:target td{background:var(--byko-live-wash)}
+/* the rows are built after the browser has already handled the hash, so the
+   highlight is set in script rather than with :target */
+#counter-table tr{scroll-margin-top:76px}
+#counter-table tr.is-target td{background:var(--byko-live-wash)}
 .loading-note{font:var(--byko-data);color:var(--byko-label);margin-top:20px}
 .off-home{font:var(--byko-data);color:var(--byko-label)}
 </style>
@@ -203,10 +206,14 @@
     renderTable(data.counters);
     var loading = document.getElementById("counters-loading");
     if (loading) loading.remove();
-    /* content renders after the browser's own anchor jump — repeat it */
+    /* content renders after the browser's own anchor jump, so repeat it here
+       and mark the row — otherwise the link lands on the wrong scroll offset */
     if (location.hash) {
       var target = document.getElementById(location.hash.slice(1));
-      if (target) target.scrollIntoView();
+      if (target) {
+        target.classList.add("is-target");
+        requestAnimationFrame(function () { target.scrollIntoView({ block: "start" }); });
+      }
     }
   }).catch(function () {
     var loading = document.getElementById("counters-loading");
