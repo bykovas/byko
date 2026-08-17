@@ -28,6 +28,26 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BYKO now sits in exactly two wallets — 17 August 2026
+
+BYKO now sits in exactly two wallets.
+
+Until today it was scattered across nine addresses. Not for any reason worth defending — it happened the way these things happen, a few tokens moved here to test something, a few more moved there, and after two weeks the holdings looked like a map nobody could read, least of all me.
+
+That matters more than it sounds. The disclosure section of this site lists every wallet the author controls, and a list of nine addresses with fractions in each is technically complete and practically useless. Anyone checking it has to add the numbers up themselves and trust that none were left out.
+
+So the dust has been swept into one place. One wallet holds the tokens. A second, the deployer, holds the operational balance — it is the address that signs, that was verified on Farcaster, and that anything given away will be sent from. That is the whole map now.
+
+What did not happen: nothing was bought, nothing was sold, and no amount changed hands with anyone. Every one of these transfers is a movement between two addresses that were already disclosed, and every one is on-chain with a hash. The total held by the author is exactly what it was this morning — 278,173 BYKO, 35.2% of supply.
+
+One address was deliberately left alone: the single holder who is not me. It stays where it is.
+
+This is housekeeping, not strategy. But an instrument whose own readings are hard to check is a bad instrument, and the wallet map was the last part of this study that took effort to verify.
+
+---
+**Teaser:** Nine addresses became two. Nothing was bought or sold — the wallet map is simply readable now, and every transfer that made it is on-chain.
+**X:** BYKO now sits in exactly two wallets. Nine addresses, one instrument — the scattered dust is swept into one operational wallet, the holdings into another. Nothing sold, nothing bought, every transfer on-chain.
+
 ## Every buy but one was mine — 16 August 2026
 
 The on-chain audit turned up one more number this diary hadn't published: $49.27.
