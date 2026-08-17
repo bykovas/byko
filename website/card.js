@@ -117,10 +117,10 @@
         img.onload = function () {
           try {
             canvas = document.createElement("canvas");
-            canvas.width = 2800;
+            canvas.width = 1748;
             canvas.height = 1240;
             context = canvas.getContext("2d");
-            context.drawImage(img, 0, 0, 2800, 1240);
+            context.drawImage(img, 0, 0, 1748, 1240);
             finish((canvas.toDataURL("image/png").split(",")[1]) || null);
           } catch (error) { finish(null); }
         };

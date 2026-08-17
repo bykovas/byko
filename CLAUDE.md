@@ -16,7 +16,9 @@ Guidance for Claude Code when working in this repository.
 ## Website conventions
 
 - `website/` is a vanilla static site: no frameworks, no build step, one inline `<style>` block per page reusing the `:root` design tokens.
-- **Cache busting (important):** whenever `website/*.js` (`market.js`, `wallet.js`, `card.js`) changes, bump the `?v=YYYYMMDD` query param on every `<script src="...">` tag that references the changed file (check all of `index.html`, `market.html`, `specification.html`). If the same date is already used, append a letter (`?v=20260811a`).
+- The design system lives in `website/assets/byko.css` — tokens, page furniture and every shared component. Pages link it and keep only their own composition in one inline `<style>` block. Values come from the handoff; do not invent new tokens.
+- **Cache busting (important):** whenever `website/assets/byko.css` or a `website/*.js` file (`market.js`, `wallet.js`, `card.js`) changes, bump the `?v=YYYYMMDD` query param on every tag that references it — across `index.html`, `diary.html`, `experiment.html`, `market.html`, `specification.html`, `404.html`, `w.html` and `scripts/templates/diary-entry.html`. If the same date is already used, append a letter (`?v=20260811a`).
+- Three rules of the system that are easy to break: blue marks a value read from the chain live and nothing else; no opacity for text, no shadows, no radius outside controls; mono is for data only — never labels, nav or kickers.
 - Serverless endpoints live in `functions/` (Cloudflare Pages functions), e.g. `/api/holders`.
 - Design tokens, classes and page structure follow `brand/brand-guide.md` and the existing pages — reuse them, don't invent new ones.
 - Deploys: Cloudflare Pages serves `website/` as-is on every push to `main`. There is no CI build of the site; generators run locally and their output is committed.

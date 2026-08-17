@@ -36,12 +36,14 @@ function inscriptionMarkup(text) {
   var i;
   var out = "";
   if (!text) text = "Nothing promised. Everything recorded.";
-  if (text.length <= 70) {
-    return { size: 19, markup: escapeXml(text) };
+  /* the card is 1748 wide with the inscription starting at x=368, so a short
+     line sets at 34px; longer ones wrap and step down to 26px */
+  if (text.length <= 46) {
+    return { size: 34, markup: escapeXml(text) };
   }
   words = text.split(" ");
   for (i = 0; i < words.length; i++) {
-    if (line && (line + " " + words[i]).length > 100) {
+    if (line && (line + " " + words[i]).length > 58) {
       lines.push(line);
       line = words[i];
     } else {
@@ -49,11 +51,11 @@ function inscriptionMarkup(text) {
     }
   }
   if (line) lines.push(line);
-  for (i = 0; i < lines.length && i < 4; i++) {
+  for (i = 0; i < lines.length && i < 5; i++) {
     escaped = escapeXml(lines[i]);
-    out += '<tspan x="176" dy="' + (i === 0 ? 0 : 18) + '">' + escaped + "</tspan>";
+    out += '<tspan x="368" dy="' + (i === 0 ? 0 : 44) + '">' + escaped + "</tspan>";
   }
-  return { size: 14, markup: out };
+  return { size: 26, markup: out };
 }
 
 async function fillTemplate(origin, card) {
@@ -63,8 +65,8 @@ async function fillTemplate(origin, card) {
   if (!response.ok) throw new Error("template");
   svg = await response.text();
   inscription = inscriptionMarkup(card.inscription);
-  svg = svg.replace('font-size="19" fill="rgba(232,234,238,.72)">{{INSCRIPTION}}',
-    'font-size="' + inscription.size + '" fill="rgba(232,234,238,.72)">{{INSCRIPTION}}');
+  svg = svg.replace('font-size="34" fill="#0D1116">{{INSCRIPTION}}',
+    'font-size="' + inscription.size + '" fill="#0D1116">{{INSCRIPTION}}');
   return svg
     .replace(/\{\{SERIAL\}\}/g, escapeXml(card.serial))
     .replace(/\{\{NOMINAL\}\}/g, escapeXml(card.nominal))
