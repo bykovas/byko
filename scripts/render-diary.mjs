@@ -467,6 +467,7 @@ const NAV_ITEMS = [
   { label: "Referendum", href: "index.html#referendum" },
   { label: "Diary", href: "diary.html", page: "diary.html" },
   { label: "Facts", href: "index.html#facts" },
+  { label: "Services", href: "index.html#services" },
   { label: "Market", href: "market.html", page: "market.html" },
   { label: "Specification", href: "specification.html", page: "specification.html" },
 ];

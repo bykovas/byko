@@ -150,7 +150,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 
 /* sections */
 section{padding:80px 0 0}
-#identity,#referendum{scroll-margin-top:84px}
+#identity,#referendum,#services{scroll-margin-top:84px}
 #diary,#facts{scroll-margin-top:4px}
 
 /* data rows */
@@ -294,7 +294,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   .row{grid-template-columns:1fr;gap:6px}
   .nav-links{gap:14px}
   .nav-links .status{display:none}
-  .nav-links a:nth-child(5){display:none}
+  .nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}
   .check-vote{flex-direction:column}
   .check-vote input{min-width:auto}
   .check-vote button{width:100%}
@@ -329,6 +329,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <a href="index.html#referendum">Referendum</a>
       <a href="diary.html">Diary</a>
       <a href="index.html#facts">Facts</a>
+      <a href="index.html#services">Services</a>
       <a href="market.html">Market</a>
       <a href="specification.html">Specification</a>
 <!-- nav:end -->
@@ -555,8 +556,8 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <div class="row"><div class="k">Status</div><div class="v"><span class="status">verified · running</span></div></div>
     </div>
 
-    <section id="settlement">
-      <span class="kicker">Settlement</span>
+    <section id="services">
+      <span class="kicker">Services</span>
       <h2>Invoices can be settled in BYKO</h2>
       <p style="color:var(--text-2);margin:16px 0 0">The author accepts BYKO in payment for his own work. The price is set in euro; the token is only how that price can be paid.</p>
       <div class="rows">
