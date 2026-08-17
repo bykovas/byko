@@ -484,7 +484,7 @@ const NAV_ITEMS = [
   { label: "Referendum", href: "index.html#referendum" },
   { label: "Diary", href: "diary.html", page: "diary.html" },
   { label: "Facts", href: "index.html#facts" },
-  { label: "Services", href: "index.html#services" },
+  { label: "Services", href: "index.html#services", className: "services" },
   { label: "Market", href: "market.html", page: "market.html" },
   { label: "Specification", href: "specification.html", page: "specification.html" },
 ];
@@ -493,9 +493,13 @@ const NAV_PAGES = [INDEX_PAGE, DIARY_PAGE, "website/experiment.html",
 
 for (const path of NAV_PAGES) {
   const file = path.split("/").pop();
-  const nav = NAV_ITEMS.map(item => item.page === file
-    ? `      <span aria-current="page">${item.label}</span>`
-    : `      <a href="${item.href}">${item.label}</a>`).join("\n");
+  /* Services carries the live accent in the header, on every page. */
+  const nav = NAV_ITEMS.map(item => {
+    const cls = item.className ? ` class="${item.className}"` : "";
+    return item.page === file
+      ? `      <span${cls} aria-current="page">${item.label}</span>`
+      : `      <a${cls} href="${item.href}">${item.label}</a>`;
+  }).join("\n");
   replaceBetween(path, nav, "<!-- nav:begin -->", "<!-- nav:end -->");
 }
 

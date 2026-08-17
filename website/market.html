@@ -19,200 +19,68 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/byko.css?v=20260817">
 <style>
-:root{
-  --bg:#0B0D10;
-  --bg-2:#11141A;
-  --bg-3:#171B22;
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
-  --text:#E8EAEE;
-  --text-2:rgba(232,234,238,.72);
-  --muted:rgba(232,234,238,.45);
-  --accent:#7CCBFF;
-  --accent-2:#FFB088;
-  --ok:#7CE3A6;
-  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+.page-head{padding-top:34px}
+.page-head h1{margin:12px 0 0}
+.page-head .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:16px 0 0}
 
-.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
-.b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mono{font-family:'JetBrains Mono',monospace}
-
-/* header */
-header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:24px;height:64px}
-.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
-.wordmark:hover{text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
-.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-links span[aria-current="page"]{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
-.nav-links a[aria-current="page"]{color:var(--text)}
-
-.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
-.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
-
-/* hero */
-.grid-bg{position:relative}
-.grid-bg::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
-  mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
-.hero{padding:160px 32px 80px}
-h1{font:600 44px/1.06 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
-.lede{font-size:18px;color:var(--text-2);margin:24px 0 0}
-
-/* buttons */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
-  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;text-decoration:none}
-.btn:hover{background:var(--accent);text-decoration:none;color:var(--bg)}
-.btn .arr{transition:.15s}.btn:hover .arr{transform:translateX(2px)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
-.btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
-.btn:disabled{opacity:.55;cursor:wait}
-
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-
-.chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 10px;border-radius:5px;
-  background:var(--bg-3);border:1px solid var(--line);color:var(--text-2)}
-
-/* stats band */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.stats-3{grid-template-columns:repeat(3,1fr)}
-.stat{padding:20px 24px;border-left:1px solid var(--line)}
-.stat:first-child{border-left:0}
-.stat b{display:block;font:600 26px/1.1 Inter,sans-serif;letter-spacing:-.02em;font-family:'JetBrains Mono',monospace}
-.stat b.hot{color:var(--accent-2)}
-.stat span{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-
-/* market */
-.market-panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:56px 32px 0;text-align:center}
-.market-panel .label{display:block}
-.price-big{display:block;font:600 76px/1 'JetBrains Mono',monospace;letter-spacing:-.02em;color:var(--accent-2);margin-top:28px}
-.price-big .approx{font-family:Inter,sans-serif;font-size:.62em;font-weight:400;letter-spacing:0;margin-right:.12em;vertical-align:.08em;opacity:.25}
-.price-unit{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:16px}
-.price-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin:20px 0 0}
-.updated{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:10px 0 0}
-.updated a{color:var(--muted)}
-.updated a:hover{color:var(--text);text-decoration:none}
-.ext{margin-left:5px;vertical-align:-1px}
-.pool-bar{--split:50%;position:relative;height:68px;margin-top:48px;border-radius:12px;overflow:hidden;background:var(--grad)}
-.pool-bar .slash{position:absolute;top:-20%;bottom:-20%;left:var(--split);width:2px;background:var(--bg);transform:translateX(-50%) rotate(16deg)}
-.pool-bar .genesis{position:absolute;top:-20%;bottom:-20%;left:50%;width:0;border-left:1px dashed rgba(11,13,16,.45);transform:translateX(-50%) rotate(16deg)}
-.pool-bar .sides{position:absolute;inset:0;display:flex}
-.pool-side{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#0B0D10}
-.pool-side.l{width:var(--split)}
-.pool-side.r{flex:1}
-.pool-side b{font:600 17px/1.2 'JetBrains Mono',monospace;letter-spacing:-.02em}
-.pool-side span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.72}
-.pool-eq{position:absolute;left:var(--split);top:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;
-  background:var(--bg);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;
-  font:500 13px 'JetBrains Mono',monospace;color:var(--text)}
-.pool-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0;padding-bottom:40px}
-#market-chart{aspect-ratio:16/9;margin-top:48px;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.15s}
-#market-chart:hover{border-color:var(--line-2)}
-#market-chart iframe{display:block;width:100%;height:100%;border:0}
-.rpc-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:16px 0 0}
-
-/* loading badges */
-.market-panel{position:relative}
-#market-chart{position:relative}
-.holders-grid{position:relative}
-.loading{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:7px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--accent);pointer-events:none}
+.price-block{margin-top:32px;border-top:var(--byko-live-bar);padding-top:20px}
+.price-big{display:block;font:600 76px/1 var(--byko-font-mono);letter-spacing:-.045em;color:var(--byko-live-ink);
+  font-variant-numeric:tabular-nums}
+.price-big .approx{font-family:var(--byko-font-sans);font-size:.5em;font-weight:400;letter-spacing:0;
+  margin-right:.14em;vertical-align:.14em;color:var(--byko-label)}
+.price-unit{display:block;margin-top:12px}
+.price-sub{font:var(--byko-value);color:var(--byko-ink-2);margin:14px 0 0}
+.updated{font:var(--byko-data);color:var(--byko-label);margin:8px 0 0}
+.loading{display:inline-flex;align-items:center;gap:7px;font:var(--byko-data);color:var(--byko-label)}
 .loading[hidden]{display:none}
-.loading svg{display:block;animation:spin 1.2s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* holders */
-.holders-grid{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start;margin-top:48px}
-.donut-wrap{position:relative;max-width:320px}
+.pool-bar{display:grid;grid-template-columns:var(--split,50%) 1fr;height:64px;margin-top:30px;
+  border-top:var(--byko-rule-heavy);border-bottom:var(--byko-rule-heavy)}
+.pool-side{display:flex;flex-direction:column;justify-content:center;padding:0 14px}
+.pool-side.l{background:var(--byko-live-wash);border-right:2px solid var(--byko-ink)}
+.pool-side.r{background:var(--byko-paper-2);text-align:right;align-items:flex-end}
+.pool-side b{font:600 18px/1.2 var(--byko-font-mono);font-variant-numeric:tabular-nums}
+.pool-side span{font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);
+  text-transform:uppercase;color:var(--byko-label);margin-top:5px}
+.pool-note{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
+
+#market-chart{position:relative;margin-top:var(--byko-sp-9);border:1px solid var(--byko-rule);height:420px}
+#market-chart iframe{display:block;width:100%;height:100%;border:0}
+#chart-loading{position:absolute;top:14px;left:14px}
+
+.holders-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:44px;align-items:start;margin-top:26px}
+.donut-mode{display:flex;gap:8px;margin-bottom:14px}
+.mode-btn{padding:5px 11px;background:var(--byko-paper);border:1px solid rgba(13,17,22,.22);
+  border-radius:var(--byko-radius-control);font:var(--byko-data);color:var(--byko-ink-2);cursor:pointer;
+  transition:var(--byko-transition)}
+.mode-btn.is-active{background:var(--byko-ink);border-color:var(--byko-ink);color:var(--byko-paper)}
+.donut-wrap{position:relative}
 .donut-wrap svg{display:block;width:100%;height:auto}
-.seg-track{fill:none;stroke-width:22;stroke:var(--bg-3)}
-.seg{fill:none;stroke-width:22;stroke:var(--bg-3);transition:.15s}
-.seg[data-tier="whale"]{stroke:#E08758}
-.seg[data-tier="shark"]{stroke:#FFB088}
-.seg[data-tier="dolphin"]{stroke:rgba(124,203,255,.8)}
-.seg[data-tier="fish"]{stroke:rgba(124,203,255,.7)}
-.seg[data-tier="crab"]{stroke:rgba(124,203,255,.6)}
-.seg[data-tier="shrimp"]{stroke:rgba(124,203,255,.5)}
-.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
-.donut-center b{font:600 26px/1 Inter,sans-serif;letter-spacing:-.02em}
-.donut-center span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.donut-mode{display:flex;gap:8px;max-width:320px;margin:0 0 16px}
-.mode-btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  padding:5px 12px;border-radius:99px;background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;transition:.15s}
-.mode-btn:hover{border-color:var(--line-2);color:var(--text)}
-.mode-btn.is-active{color:var(--accent);border-color:var(--line-2)}
-.tiers-scroll{overflow-x:auto}
-.tier-head,.tier-row{display:grid;grid-template-columns:150px 1fr 90px 90px;gap:16px;align-items:center;min-width:440px;
-  padding:11px 0;border-bottom:1px solid var(--line)}
-.tier-head{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line)}
-.tier-row{color:var(--text-2);transition:.15s}
-.tier-row:hover{color:var(--text)}
-.tier-name{display:inline-flex;align-items:center;gap:12px;font:500 14px Inter,sans-serif;color:inherit}
-.tier-name svg{flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.tier-row[data-tier="whale"] .tier-name{color:#E08758}
-.tier-row[data-tier="shark"] .tier-name{color:#FFB088}
-.tier-row[data-tier="dolphin"] .tier-name{color:rgba(124,203,255,.8)}
-.tier-row[data-tier="fish"] .tier-name{color:rgba(124,203,255,.7)}
-.tier-row[data-tier="crab"] .tier-name{color:rgba(124,203,255,.6)}
-.tier-row[data-tier="shrimp"] .tier-name{color:rgba(124,203,255,.5)}
-.tier-row:hover .tier-name{color:var(--text)}
-.tier-th{font-family:'JetBrains Mono',monospace;font-size:12px}
-.tier-holders,.tier-supply{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right}
-.holders-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:32px 0 0}
-.holders-meta.excluded-note{margin-top:8px}
-.holders-meta[hidden]{display:none}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none}
+.donut-center b{font:600 34px/1 var(--byko-font-mono);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.donut-center span{font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
+  text-transform:uppercase;color:var(--byko-label);margin-top:8px}
 
-/* sections */
-section{padding:80px 0 0}
-h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
-.section-lede{color:var(--text-2);margin:16px 0 0}
-
-/* footer */
-footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.foot .mono{font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
+.tiers{width:100%;font-variant-numeric:tabular-nums}
+.tiers th{text-align:left;font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
+  text-transform:uppercase;color:var(--byko-label);padding:0 12px 8px;border-bottom:var(--byko-rule-heavy)}
+.tiers th:first-child,.tiers td:first-child{padding-left:0}
+.tiers th:last-child,.tiers td:last-child{padding-right:0}
+.tiers th.num,.tiers td.num{text-align:right}
+.tiers td{padding:var(--byko-cell-pad);border-bottom:var(--byko-rule-hair)}
+.tiers td.tier-name{font-weight:600}
+.tiers td.tier-th{font:var(--byko-data);color:var(--byko-ink-2)}
+.tiers td.tier-holders,.tiers td.tier-supply{font:var(--byko-value);text-align:right}
+.tiers tbody tr:hover td{background:var(--byko-paper-3)}
+.tiers .swatch{display:inline-block;width:10px;height:10px;margin-right:9px;vertical-align:baseline}
 
 @media (max-width:900px){
-  h1{font-size:36px}
-  .price-big{font-size:48px}
-  .market-panel{padding:40px 20px 0}
-  /* the narrow side is only ~80px wide on a phone, so its label wraps to
-     three lines — give the bar the height to show them instead of clipping */
-  .pool-bar{height:92px}
-  .pool-side{padding:0 6px}
-  .pool-side b{font-size:14px}
-  .pool-side span{font-size:9px;letter-spacing:.08em;text-align:center}
-  /* 16/9 of a phone's width is ~170px tall — the widget's own header,
-     toolbar, chart and trade history cannot fit and get cut off. Give it
-     a real height instead of an aspect ratio. */
-  #market-chart{aspect-ratio:auto;height:70vh;min-height:440px;max-height:600px}
-  .holders-grid{grid-template-columns:1fr;gap:40px}
-  .donut-wrap{max-width:240px;margin:0 auto}
-  .donut-mode{max-width:none;justify-content:center}
-  #holders-donut{max-width:100%}
-  .stats,.stats-3{grid-template-columns:repeat(2,1fr)}
-  .stat:nth-child(3){border-left:0}
-  .stat{border-top:1px solid var(--line)}
-  .stat:nth-child(-n+2){border-top:0}
-  .nav-links{gap:16px}
-  .nav-links .status{display:none}
-  .nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}
+  .price-big{font-size:52px}
+  .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+  #market-chart{height:320px}
 }
 </style>
 <script
@@ -222,148 +90,148 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 </head>
 <body>
 
-<header>
-  <div class="wrap nav">
-    <a class="wordmark" href="index.html">
-      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
-        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
-        </linearGradient></defs>
-        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-        </g>
-      </svg>
-      BYKO
-    </a>
-    <nav class="nav-links">
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
 <!-- nav:begin -->
       <a href="index.html#referendum">Referendum</a>
       <a href="diary.html">Diary</a>
       <a href="index.html#facts">Facts</a>
-      <a href="index.html#services">Services</a>
+      <a class="services" href="index.html#services">Services</a>
       <span aria-current="page">Market</span>
       <a href="specification.html">Specification</a>
 <!-- nav:end -->
-      <span class="status">running</span>
+      <span class="lamp">running</span>
     </nav>
   </div>
 </header>
 
-<div class="grid-bg">
-  <div class="wrap hero">
-    <span class="kicker">Market / live</span>
-    <h1>The pool, read from the chain.</h1>
-    <p class="lede">Price and reserves of the BYKO/USDC pool on Base, read directly from the contract. No dashboards in between.</p>
-  </div>
-</div>
-
-<div class="wrap">
-  <div class="market-panel">
-    <span class="loading" id="price-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
-    <span class="label">BYKO/USDC · pool on Base · live</span>
-    <b class="price-big"><span class="approx" aria-hidden="true">≈</span><span id="market-price">—</span></b>
-    <span class="price-unit">USDC / 100 BYKO</span>
-    <p class="price-sub" id="price-sub">1 BYKO = — USDC</p>
-    <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC<svg class="ext" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M9.5 7v3.5H1.5V2.5H5" fill="none" stroke="currentColor"/><path d="M7 1.5h3.5V5M10.5 1.5L5.5 6.5" fill="none" stroke="currentColor"/></svg></a></p>
-    <div class="pool-bar">
-      <div class="genesis"></div>
-      <div class="slash"></div>
-      <div class="sides">
-        <div class="pool-side l"><b id="market-byko">—</b><span id="market-byko-label">BYKO in pool</span></div>
-        <div class="pool-side r"><b id="market-usdc">—</b><span id="market-usdc-label">USDC in pool</span></div>
+<main class="wrap">
+  <div class="doc">
+    <div>
+      <div class="page-head">
+        <span class="kicker">Market · live</span>
+        <h1>The pool, read from the chain.</h1>
+        <p class="lede">Price and reserves come from <span class="mono">balanceOf</span> on the pool contract, in your browser. No aggregator, no price API, no dashboard in between — the same numbers you would get by querying Base yourself.</p>
       </div>
-      <span class="pool-eq">=</span>
+
+      <div class="price-block">
+        <span class="label">Price · USDC per 100 BYKO</span>
+        <b class="price-big"><span class="approx" aria-hidden="true">≈</span><span id="market-price">—</span></b>
+        <span class="loading" id="price-loading">loading…</span>
+        <p class="price-sub" id="price-sub">1 BYKO = — USDC</p>
+        <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC →</a></p>
+
+        <div class="pool-bar">
+          <div class="pool-side l"><b id="market-byko">—</b><span id="market-byko-label">BYKO in pool</span></div>
+          <div class="pool-side r"><b id="market-usdc">—</b><span id="market-usdc-label">USDC in pool</span></div>
+        </div>
+        <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
+      </div>
     </div>
-    <p class="pool-note">genesis = 740,227 BYKO : 74.0227 USDC · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener" title="live proof: dEaD = 100%">verify →</a></p>
+
+    <div class="apparatus">
+      <span class="label">Read it yourself</span>
+      <ul>
+        <li><span class="label-sm">Pool</span><br><a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">0x02dd…a6ca →</a></li>
+        <li><span class="label-sm">Token</span><br><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">0x078b…4372 →</a></li>
+        <li><span class="label-sm">Method</span><br><span class="mono">balanceOf(pool)</span> on both tokens</li>
+        <li><span class="label-sm">Swap</span><br><a href="https://aerodrome.finance/swap?from=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&amp;to=0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">Aerodrome →</a></li>
+      </ul>
+      <p class="note" style="margin-top:14px">The chart below is the free DEXTools widget. Refusing to buy visibility is not the same as refusing what is given away.</p>
+    </div>
   </div>
 
-  <div id="market-chart"><span class="loading" id="chart-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span><iframe
+  <div id="market-chart"><span class="loading" id="chart-loading">loading…</span><iframe
     id="dextools-widget"
-    title="DEXTools Trading Chart"
-    src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=dark&chartType=1&chartResolution=1&drawingToolbars=false&showTradeHistory=true&chartInUsd=true&headerColor=11141A&tvPlatformColor=11141A&tvPaneColor=11141A&tradeHistoryColor=11141A"
+    title="DEXTools chart, BYKO/USDC on Base"
+    src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=light&chartType=2&chartResolution=30&drawingToolbars=false"
     loading="lazy"></iframe></div>
-  <p class="rpc-note">read directly from Base RPC · no third-party APIs</p>
-</div>
 
-<section id="holders">
-  <div class="wrap">
-    <span class="kicker">Holders / distribution</span>
-    <h2>Who holds it</h2>
-    <p class="section-lede">Concentration across the top addresses and the BaseScan-style tiers. Computed, not estimated. The pool is left out — its LP tokens are burned, so the BYKO sitting in it is nobody's position — and every share below is measured against circulating supply, what is left once it is.</p>
+  <section id="holders">
+    <div class="section-head">
+      <span class="kicker">Holders · distribution</span>
+      <h2>Who holds it</h2>
+    </div>
+    <p class="section-intro">Tiers follow the BaseScan convention: a share of circulating supply, decade by decade. Counted from <span class="mono">Transfer</span> logs, not from a third-party index. <span id="holders-updated" class="mono"></span></p>
 
     <div class="holders-grid">
-      <span class="loading" id="holders-loading"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13.9 1.6v2.8h-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>loading</span>
-      <div id="holders-donut">
+      <div>
         <div class="donut-mode" role="group" aria-label="Donut metric">
-          <button type="button" class="mode-btn is-active" data-mode="holders">holders</button>
-          <button type="button" class="mode-btn" data-mode="supply">supply</button>
+          <button class="mode-btn is-active" type="button" data-mode="holders">holders</button>
+          <button class="mode-btn" type="button" data-mode="supply">supply</button>
         </div>
-        <div class="donut-wrap">
-          <svg viewBox="0 0 200 200" role="img" aria-label="Holders by tier">
-            <circle class="seg-track" cx="100" cy="100" r="80"></circle>
-            <circle class="seg" data-tier="whale" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="shark" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="dolphin" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="fish" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="crab" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-            <circle class="seg" data-tier="shrimp" cx="100" cy="100" r="80" pathLength="100" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-          </svg>
-          <div class="donut-center"><b>—</b><span>holders</span></div>
+        <div id="holders-donut">
+          <div class="donut-wrap">
+            <svg viewBox="0 0 42 42" role="img" aria-label="Holders by tier">
+              <circle cx="21" cy="21" r="15.91549431" fill="none" stroke="#DCD8CD" stroke-width="5"></circle>
+              <circle class="seg" data-tier="whale" cx="21" cy="21" r="15.91549431" fill="none" stroke="#0D1116" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+              <circle class="seg" data-tier="shark" cx="21" cy="21" r="15.91549431" fill="none" stroke="#0A5C8F" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+              <circle class="seg" data-tier="dolphin" cx="21" cy="21" r="15.91549431" fill="none" stroke="#3FA5E4" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+              <circle class="seg" data-tier="fish" cx="21" cy="21" r="15.91549431" fill="none" stroke="#7CCBFF" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+              <circle class="seg" data-tier="crab" cx="21" cy="21" r="15.91549431" fill="none" stroke="#A85B2A" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+              <circle class="seg" data-tier="shrimp" cx="21" cy="21" r="15.91549431" fill="none" stroke="#C3BEB1" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+            </svg>
+            <div class="donut-center"><b>—</b><span id="holders-count">holders</span></div>
+          </div>
         </div>
+        <span class="loading" id="holders-loading">loading…</span>
       </div>
 
-      <div id="holders-tiers" class="tiers-scroll">
-        <div class="tier-head"><span>Tier</span><span>Threshold</span><span style="text-align:right">Holders</span><span style="text-align:right">Supply</span></div>
-        <div class="tier-row" data-tier="whale">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 9.5C3 6.5 6.5 5.5 9 7.2c1.2.9 1.8 2.3 1.4 3.8-2.5 1.3-6.5 1-8.9-1.5z"></path><path d="M10.4 9.2l3.6-1.7-1 2.5 1 2.5-3.8-1.5"></path><path d="M4.5 4.5v-2"></path></svg>Whale</span>
-          <span class="tier-th">≥ 10% of circulating</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-        <div class="tier-row" data-tier="shark">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.5 10c3.5-2.8 8-2.8 11 0-3 2.8-7.5 2.8-11 0z"></path><path d="M6.5 7.8L8.2 4l1.8 3.4"></path><path d="M12.5 10l2-1.6v3.2l-2-1.6z"></path></svg>Shark</span>
-          <span class="tier-th">1–10%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-        <div class="tier-row" data-tier="dolphin">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 12.5C2.2 7 6 3.8 11.5 4.5c-1.6 1.4-2.2 3.3-1.4 5.5"></path><path d="M8.5 6.5L9.6 4.4l1.4 1.8"></path><path d="M10.1 10l2.9 1.6-3.2 1.2"></path></svg>Dolphin</span>
-          <span class="tier-th">0.1–1%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-        <div class="tier-row" data-tier="fish">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="7" cy="9.5" rx="4.2" ry="2.6"></ellipse><path d="M11 9.5l2.8-1.8v3.6L11 9.5z"></path></svg>Fish</span>
-          <span class="tier-th">0.01–0.1%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-        <div class="tier-row" data-tier="crab">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><ellipse cx="8" cy="10.5" rx="4" ry="2.6"></ellipse><path d="M5 8.2L3.4 5.6M6.3 7.5L5.8 5.2M11 8.2l1.6-2.6M9.7 7.5l.5-2.3"></path></svg>Crab</span>
-          <span class="tier-th">0.001–0.01%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-        <div class="tier-row" data-tier="shrimp">
-          <span class="tier-name"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M12 5.5c-5.5-2-9.7 1.6-8.4 5.2 1 2.6 4.3 3.1 6.2 1.4"></path><path d="M12 5.5l2.4-1.2-.8 2.6"></path></svg>Shrimp</span>
-          <span class="tier-th">&lt; 0.001%</span><span class="tier-holders">—</span><span class="tier-supply">—</span>
-        </div>
-      </div>
+      <table class="tiers" id="holders-tiers">
+        <thead>
+          <tr><th>Tier</th><th>Threshold</th><th class="num">Holders</th><th class="num">Supply</th></tr>
+        </thead>
+        <tbody>
+          <tr class="tier-row" data-tier="whale"><td class="tier-name"><span class="swatch" style="background:#0D1116"></span>Whale</td><td class="tier-th">≥ 10% of circulating</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+          <tr class="tier-row" data-tier="shark"><td class="tier-name"><span class="swatch" style="background:#0A5C8F"></span>Shark</td><td class="tier-th">1–10%</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+          <tr class="tier-row" data-tier="dolphin"><td class="tier-name"><span class="swatch" style="background:#3FA5E4"></span>Dolphin</td><td class="tier-th">0.1–1%</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+          <tr class="tier-row" data-tier="fish"><td class="tier-name"><span class="swatch" style="background:#7CCBFF"></span>Fish</td><td class="tier-th">0.01–0.1%</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+          <tr class="tier-row" data-tier="crab"><td class="tier-name"><span class="swatch" style="background:#A85B2A"></span>Crab</td><td class="tier-th">0.001–0.01%</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+          <tr class="tier-row" data-tier="shrimp"><td class="tier-name"><span class="swatch" style="background:#C3BEB1"></span>Shrimp</td><td class="tier-th">&lt; 0.001%</td><td class="tier-holders num">—</td><td class="tier-supply num">—</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <p class="holders-meta"><span id="holders-count">holders / —</span> · <span id="holders-updated">updated —</span></p>
-    <p class="holders-meta excluded-note" id="holders-excluded" hidden></p>
-    <p class="rpc-note">computed from Transfer logs · Base RPC · <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372#balances" target="_blank" rel="noopener">full analytics on BaseScan →</a></p>
-  </div>
-</section>
+    <p class="fine" style="margin-top:18px">The founder's own wallets are part of this distribution and are listed in full on the <a href="index.html#disclosure">home page</a>. 1 BYKO = 1 BYKO.</p>
+  </section>
+</main>
 
-<footer>
+<footer class="site-foot">
   <div class="wrap">
-    <div class="foot">
-      <a class="wordmark" href="index.html">
-        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-          </g>
-        </svg>
-        BYKO
-      </a>
-      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
     </div>
     <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
 
-<script src="market.js?v=20260814b" defer></script>
+<script>
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+})();
+(function () {
+  var frame = document.getElementById("dextools-widget");
+  var loading = document.getElementById("chart-loading");
+  if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
+})();
+</script>
+<script src="market.js?v=20260817" defer></script>
 </body>
 </html>

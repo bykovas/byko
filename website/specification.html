@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BYKO — Specification</title>
-<meta name="description" content="The BYKO specification, versioned in the repository: token parameters, invariants, deployment record, genesis distribution, donation cards. 21 lines of Solidity; the contract prevails. 1 BYKO = 1 BYKO.">
+<meta name="description" content="The BYKO specification, versioned in the repository: token parameters, invariants, deployment record, genesis distribution, settlement in BYKO, donation cards. 21 lines of Solidity; the contract prevails. 1 BYKO = 1 BYKO.">
 <meta property="og:title" content="BYKO — Specification">
-<meta property="og:description" content="The BYKO specification, versioned in the repository: token parameters, invariants, deployment record, genesis distribution, donation cards. 21 lines of Solidity; the contract prevails. 1 BYKO = 1 BYKO.">
+<meta property="og:description" content="The BYKO specification, versioned in the repository: token parameters, invariants, deployment record, genesis distribution, settlement in BYKO, donation cards. 21 lines of Solidity; the contract prevails. 1 BYKO = 1 BYKO.">
 <meta property="og:image" content="https://byko.bykovas.lt/api/og">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -19,80 +19,13 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/byko.css?v=20260817">
 <style>
-:root{
-  --bg:#0B0D10;
-  --bg-2:#11141A;
-  --bg-3:#171B22;
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
-  --text:#E8EAEE;
-  --text-2:rgba(232,234,238,.72);
-  --muted:rgba(232,234,238,.45);
-  --accent:#7CCBFF;
-  --accent-2:#FFB088;
-  --ok:#7CE3A6;
-  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
-
-.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
-.b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mono{font-family:'JetBrains Mono',monospace}
-
-header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:24px;height:64px}
-.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
-.wordmark:hover{text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
-.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-links span[aria-current="page"]{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
-.nav-links a[aria-current="page"]{color:var(--text)}
-
-.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
-.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
-
-.grid-bg{position:relative}
-.grid-bg::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
-  mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
-.hero{padding:160px 32px 80px}
-h1{font:600 44px/1.06 Inter,sans-serif;letter-spacing:-.025em;margin:20px 0 0}
-.lede{font-size:18px;color:var(--text-2);margin:24px 0 0;max-width:60ch}
-
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
-  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;text-decoration:none}
-.btn:hover{background:var(--accent);text-decoration:none;color:var(--bg)}
-.btn .arr{transition:.15s}.btn:hover .arr{transform:translateX(2px)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
-.btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.cta{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;align-items:center}
-
-.spec-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:48px 0 0}
-
-footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.foot .mono{font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
-
-@media (max-width:900px){
-  h1{font-size:36px}
-  .nav-links{gap:16px}
-  .nav-links .status{display:none}
-  .nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}
-}
+.page-head{padding-top:34px}
+.page-head h1{margin:12px 0 0;max-width:18ch}
+.page-head h1 .edge{color:var(--byko-live-edge)}
+.page-head .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:18px 0 0}
+.contents td.name{white-space:nowrap}
 </style>
 <script
   src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js"
@@ -101,63 +34,105 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 </head>
 <body>
 
-<header>
-  <div class="wrap nav">
-    <a class="wordmark" href="index.html">
-      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
-        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
-        </linearGradient></defs>
-        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-        </g>
-      </svg>
-      BYKO
-    </a>
-    <nav class="nav-links">
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
 <!-- nav:begin -->
       <a href="index.html#referendum">Referendum</a>
       <a href="diary.html">Diary</a>
       <a href="index.html#facts">Facts</a>
-      <a href="index.html#services">Services</a>
+      <a class="services" href="index.html#services">Services</a>
       <a href="market.html">Market</a>
       <span aria-current="page">Specification</span>
 <!-- nav:end -->
-      <span class="status">running</span>
+      <span class="lamp">running</span>
     </nav>
   </div>
 </header>
 
-<div class="grid-bg">
-  <div class="wrap hero">
-    <span class="kicker">Specification / v1.3</span>
-    <h1>The contract is <span class="b">the specification.</span></h1>
-    <p class="lede">The specification is written and versioned in the repository — every change to it is a commit, so every revision is traceable. Version 1.3 adds §7, settlement in BYKO: the author accepts the token in payment for his own work, priced in euro, converted at the pool rate of a named block. That is one person's decision and changes nothing about the token — the contract still has no built-in functionality and gives its holder no rights. The deployed contract remains the authoritative source: 21 lines, fixed supply of 790,227, no owner, immutable.</p>
-    <div class="cta">
-      <a class="btn" href="https://github.com/bykovas/byko/blob/main/docs/specification.md" target="_blank" rel="noopener">Read the specification <span class="arr">→</span></a>
-      <a class="btn btn-ghost" href="ext/docs/specification.pdf" target="_blank" rel="noopener">PDF</a>
-      <a class="btn btn-ghost" href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Read the contract</a>
-    </div>
-    <p class="spec-note">spec / v1.3 · 2026-08-17 · in repository · pdf / generated from the same file · contract / deployed and verified</p>
-  </div>
-</div>
+<main class="wrap">
+  <div class="doc">
+    <div>
+      <div class="page-head">
+        <span class="kicker">Specification · v1.3</span>
+        <h1>The contract is <span class="edge">the specification.</span></h1>
+        <p class="lede">The document is written and versioned in the repository — every change to it is a commit, so every revision is traceable. Where the document and the deployed contract disagree, the contract prevails: 21 lines, fixed supply of 790,227, no owner, immutable.</p>
+      </div>
 
-<footer>
+      <div class="actions">
+        <a class="btn" href="https://github.com/bykovas/byko/blob/main/docs/specification.md" target="_blank" rel="noopener">Read the specification <span>→</span></a>
+        <a class="btn btn-outline" href="ext/docs/specification.pdf" target="_blank" rel="noopener">PDF</a>
+        <a class="btn btn-outline" href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Read the contract</a>
+      </div>
+
+      <table class="ptable contents" style="margin-top:var(--byko-sp-9)">
+        <thead><tr><th>Section</th><th>What it fixes</th></tr></thead>
+        <tbody>
+          <tr><td class="name">1 · Token</td><td class="note-cell">Name, symbol, standard, decimals, supply, network, contract address.</td></tr>
+          <tr><td class="name">2 · Invariants</td><td class="note-cell">What cannot change for the lifetime of the chain: supply fixed, nobody in charge, code final, source public.</td></tr>
+          <tr><td class="name">3 · Deployment record</td><td class="note-cell">Creation transaction, block, date, deployer, compiler, verification.</td></tr>
+          <tr><td class="name">4 · Genesis distribution</td><td class="note-cell">The single mint, divided once: 93.7% to the pool, 6.3% to the founder.</td></tr>
+          <tr><td class="name">5 · Market</td><td class="note-cell">Pool, genesis ratio, and the LP burn — burned, not locked, with both transactions.</td></tr>
+          <tr><td class="name">6 · Donation cards</td><td class="note-cell">Donation address, issuance, contents, permanence. A card confers no rights.</td></tr>
+          <tr><td class="name">7 · Settlement in BYKO</td><td class="note-cell">Invoices priced in euro, payable in BYKO at the pool rate of a named block. One person's decision; the token is unchanged by it.</td></tr>
+          <tr><td class="name">8 · Public read APIs</td><td class="note-cell">The endpoints this site exposes. They read chain state and never write to it.</td></tr>
+          <tr><td class="name">9 · Versioning</td><td class="note-cell">Every revision is a commit; the changelog is part of the document.</td></tr>
+        </tbody>
+      </table>
+
+      <p class="note" style="margin-top:20px">Version 1.3 added §7. What it does not do is change the token: the contract still has no built-in functionality and gives its holder no rights.</p>
+    </div>
+
+    <div class="apparatus">
+      <span class="label">This revision</span>
+      <ul>
+        <li><span class="label-sm">Version</span><br><span class="mono">1.3 · 17 Aug 2026</span></li>
+        <li><span class="label-sm">Source of truth</span><br><span class="mono">docs/specification.md</span></li>
+        <li><span class="label-sm">PDF</span><br><a href="ext/docs/specification.pdf" target="_blank" rel="noopener">generated from the same file →</a></li>
+        <li><span class="label-sm">Contract</span><br><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">verified, exact match →</a></li>
+        <li><span class="label-sm">History</span><br><a href="https://github.com/bykovas/byko/commits/main/docs/specification.md" target="_blank" rel="noopener">every revision as a commit →</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="nameplate">
+    <span><b>Instrument</b>BYKO — legitimacy meter</span>
+    <span><b>Serial</b><span class="mono">790,227</span></span>
+    <span><b>Network</b><span class="mono">Base · 8453</span></span>
+    <span><b>Rev</b><span class="mono">1.3</span></span>
+    <span><b>Status</b><span class="live">in service · running</span></span>
+  </p>
+</main>
+
+<footer class="site-foot">
   <div class="wrap">
-    <div class="foot">
-      <a class="wordmark" href="index.html">
-        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-          </g>
-        </svg>
-        BYKO
-      </a>
-      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
     </div>
     <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
 
+<script>
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+})();
+</script>
 </body>
 </html>
