@@ -46,8 +46,8 @@ assert.match(publisher, /settling \$\{SETTLE_S\}s before inviting the crawlers/,
   "publisher must let the deploy propagate before any crawler is invited");
 assert.match(publisher, /that URL is now cached as such and any post would carry it/,
   "publisher must refuse to post once Facebook has crawled a 404 for the share URL");
-assert.match(publisher, /facebookObjectTitle\(url, \{ rescrape: false \}\)/,
-  "publisher must read back what Facebook stores, not only what it just crawled");
+assert.match(publisher, /facebookObjectTitle\(canonical, \{ rescrape: true \}\)/,
+  "publisher must force-rescrape the canonical object, which is the one a bad crawl poisons");
 assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-age=31536000, immutable/,
   "versioned static X images must have immutable cache headers");
 

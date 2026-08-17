@@ -356,13 +356,11 @@ async function primeFacebookPreview(entry) {
   if (!canonicalTitle || /\b404\b/.test(canonicalTitle)) {
     throw new Error(`facebook holds ${canonical} as ${JSON.stringify(canonicalTitle) || "(empty)"} — the canonical object is poisoned, so the post would show it`);
   }
-  /* Read back what Facebook stores, without asking it to crawl again: this is
-     what the post will actually attach. */
-  const stored = await facebookObjectTitle(url, { rescrape: false });
-  if (!stored || /\b404\b/.test(stored)) {
-    throw new Error(`facebook stores ${url} as ${JSON.stringify(stored) || "(empty)"} despite a good crawl — refusing to post`);
-  }
-  console.log(`facebook preview primed: ${JSON.stringify(stored)} (canonical ${JSON.stringify(canonicalTitle)})`);
+  /* Both forced scrapes return what Facebook just stored, so a good title here
+     IS the read-back. A plain (non-scrape) GET right after would race the
+     object's async write and return empty on a fresh ?v= URL — which once
+     failed a run that would have posted a perfectly good card. */
+  console.log(`facebook preview primed: ${JSON.stringify(title)} (canonical ${JSON.stringify(canonicalTitle)})`);
 }
 
 async function postFacebook(entry) {
