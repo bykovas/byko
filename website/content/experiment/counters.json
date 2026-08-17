@@ -53,7 +53,7 @@
     },
     {
       "id": "episodes",
-      "value": "19",
+      "value": "23",
       "label": "Episodes published",
       "kind": "result",
       "asOf": "2026-08-17",
@@ -96,24 +96,24 @@
     },
     {
       "id": "wallet-flags",
-      "value": "2",
+      "value": "1",
       "label": "Wallet flags",
       "kind": "result",
       "home": false,
-      "asOf": "2026-08-12",
-      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning.",
+      "asOf": "2026-08-17",
+      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning. One still stands: MetaMask's \"Unstable price\". Base App (Coinbase's wallet) dropped its \"scam\" flag on 17 Aug 2026 and now shows a price and a full trade page — it is counted under Flags removed instead.",
       "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it.",
       "provenance": "hand"
     },
     {
       "id": "flags-removed",
-      "value": "1",
+      "value": "2",
       "label": "Flags removed",
       "kind": "result",
       "home": false,
-      "asOf": "2026-08-12",
-      "counts": "Warnings that a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. So far one: MetaMask's \"Low locked liquidity\", dropped by Blockaid within about a day of the LP burn on 7 Aug 2026 — removed by evidence, with no email, form or appeal.",
-      "excludes": "Warnings still displayed (\"Unstable price\" in MetaMask, the Base app scam flag) and removals promised in a reply but not visible in the product — a flag counts only when the warning is gone from the screen.",
+      "asOf": "2026-08-17",
+      "counts": "Warnings a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. Two so far: MetaMask's \"Low locked liquidity\", dropped by Blockaid about a day after the LP burn on 7 Aug 2026; and Base App's \"scam\" flag, gone on 17 Aug 2026 — the token now shows a price and a full trade page. Both removed with no email, form or appeal; the one support case actually opened was never answered.",
+      "excludes": "Warnings still displayed — MetaMask's \"Unstable price\" — and removals promised in a reply but not visible in the product: a flag counts only when the warning is gone from the screen.",
       "provenance": "hand"
     }
   ]

@@ -28,6 +28,26 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Base App stopped calling it a scam — 17 August 2026
+
+Base App just stopped calling BYKO a scam.
+
+For sixteen days the Coinbase wallet hid the token from the portfolio entirely, with a warning that it was flagged. When I opened a support case, Coinbase answered in writing that the warnings come from third-party security providers, that support cannot remove them, and that they could not tell me which provider had flagged the token.
+
+Today it shows a price. 256,000 BYKO, $64.57, in the total balance next to ETH and USDC. The token page has no warning at all — market cap, liquidity, holder count, trade history, Buy and Sell. Everything read straight from the pool, and every number matches the site.
+
+What I did to make this happen: nothing. The support case was never answered. The Blockaid report was drafted and never sent. The formal complaint was never filed. One day the flag was there, the next day it was not, and nobody said why.
+
+That makes two flags removed. MetaMask dropped "low locked liquidity" on 8 August, one day after the liquidity was burned — also without an appeal. Base App dropped "scam" today — also without one. The only institution I actually wrote to, three times, is the only one where nothing has moved.
+
+So the measurement so far reads: letters don't help. Time and on-chain state apparently do. Whether it was the token's age, the burned liquidity, or a signal that finally reached their provider — I don't know, and I'd rather write that than guess.
+
+Still standing: MetaMask's "unstable price", and three rejections from Basescan.
+
+---
+**Teaser:** Sixteen days after hiding BYKO as a scam, Base App shows it with a price and no warning. Nobody appealed, nobody replied, nobody said why.
+**X:** Base App just stopped calling BYKO a scam. No email, no appeal, no reply to the support case — one day it was hidden from the portfolio, the next it shows a price, holders, liquidity, Buy and Sell. Second flag removed. Reason: not given.
+
 ## Two hundred and twenty-seven, to anyone who asks — 17 August 2026
 
 For two weeks BYKO had almost no holders. That was the honest result of the experiment, and I published it. Now I want to change that number the only way that doesn't compromise the measurement: by giving the token away to people who ask for it.
