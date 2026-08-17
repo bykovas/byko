@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>w</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0D10;
+  --bg-2:#11141A;
+  --bg-3:#171B22;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --text:#E8EAEE;
+  --text-2:rgba(232,234,238,.72);
+  --muted:rgba(232,234,238,.45);
+  --accent:#7CCBFF;
+  --accent-2:#FFB088;
+  --ok:#7CE3A6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:32px}
+
+.head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+h1{font:600 22px Inter,sans-serif;letter-spacing:-.02em;margin:0}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;font:500 13px Inter,sans-serif;
+  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;margin-left:auto}
+.btn:hover{background:var(--accent)}
+.btn:disabled{opacity:.55;cursor:wait}
+
+.meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:12px 0 0}
+.meta .err{color:var(--accent-2)}
+
+.scroll{overflow-x:auto;margin-top:20px;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:900px}
+th,td{text-align:right;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
+th.l,td.l{text-align:left}
+td.name{color:var(--text)}
+td.num{font-variant-numeric:tabular-nums}
+td.zero{color:rgba(232,234,238,.22)}
+td.hot{color:var(--accent-2)}
+tr:hover td{background:var(--bg-2)}
+tbody tr.total td{border-top:1px solid var(--line-2);border-bottom:0;color:var(--text);padding-top:12px}
+td.addr a{color:var(--muted);font-size:11px}
+td.addr a:hover{color:var(--text)}
+.pending{color:var(--muted)}
+.note{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:28px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:700px){.wrap{padding:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="kicker">—</span>
+    <h1>Wallets</h1>
+    <button class="btn" id="refresh" type="button">Refresh</button>
+  </div>
+  <p class="meta" id="meta">loading…</p>
+
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">#</th>
+          <th class="l">Name</th>
+          <th class="l">Funded by</th>
+          <th>ETH</th>
+          <th>USDC</th>
+          <th>LUKO</th>
+          <th>BYKO</th>
+          <th class="l">Address</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <p class="note">Balances are read live from Base, one batched JSON-RPC call, straight from the token contracts — no indexer, no aggregator in between. Nothing is stored here; the page holds no keys and cannot move anything.</p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Public Base endpoints, tried in order. No API key lives in this page.
+     Batch limits differ and are the reason for CHUNK below: mainnet.base.org
+     allows 10 calls per batch, drpc's free tier only 3 (so it is not used
+     here), publicnode took the whole thing. Ten keeps every endpoint happy. */
+  var RPCS = [
+    "https://base-rpc.publicnode.com",
+    "https://mainnet.base.org"
+  ];
+  var CHUNK = 10;
+
+  /* decimals matter: USDC is 6, everything else here is 18 */
+  var TOKENS = [
+    { key: "usdc", address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6 },
+    { key: "luko", address: "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1", decimals: 18 },
+    { key: "byko", address: "0x078bB16e24c8931fc007928c370422e5e38F4372", decimals: 18 }
+  ];
+
+  var WALLETS = [
+    { n: 1,  name: "BYKOVAS",             by: "Kraken",        address: "0xe8fC8769934f9461F7adF6F440ff3883E28021Eb" },
+    { n: 2,  name: "MEETLUKO",            by: "Kraken",        address: "0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" },
+    { n: 3,  name: "BYKOVAS LUKO Δ", by: "MEETLUKO",      address: "0xbC170538038ADC0651292e28A42Dab4286641e02" },
+    { n: 4,  name: "BYKO Ops",            by: "Kraken",        address: "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" },
+    { n: 5,  name: "BYKO Buyer",          by: "Kraken",        address: "0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" },
+    { n: 6,  name: "LUKO Ops",            by: "Kraken",        address: "0x33D857fb6f06aaFc498De09654Da82A8f68BE233" },
+    { n: 7,  name: "LUKO Buyer",          by: "Kraken",        address: "0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" },
+    { n: 8,  name: "LUKO Staging",        by: "Kraken",        address: "0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" },
+    { n: 9,  name: "BYKO Deployer",       by: "MEETLUKO",      address: "0x624056460437Cb4c63F7A3CF0c5a554dF3375222" },
+    { n: 10, name: "BYKO Buyer -r",       by: "BYKO Deployer", address: "0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" },
+    { n: 11, name: "LUKO Buyer -r",       by: "MEETLUKO",      address: "0x7D9766F447a6B86Cf589A31db5b5535e379863E7" },
+    { n: 12, name: "BYKOVAS Farcast ETH", by: "—",        address: "0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" },
+    { n: 13, name: "LYKAS Main",          by: "Kraken",        address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF" }
+  ];
+
+  var BALANCE_OF = "0x70a08231";
+  var COLUMNS = ["eth", "usdc", "luko", "byko"];
+
+  function short(address) {
+    return address.slice(0, 6) + "…" + address.slice(-4);
+  }
+
+  /* hex wei -> Number, divided by 10^decimals without losing the small end */
+  function toAmount(hex, decimals) {
+    if (!hex || hex === "0x") return 0;
+    var value = BigInt(hex);
+    var scale = BigInt(10) ** BigInt(decimals);
+    var whole = value / scale;
+    var rest = value % scale;
+    return Number(whole) + Number(rest) / Number(scale);
+  }
+
+  function fmt(amount) {
+    if (amount === null || amount === undefined) return null;
+    if (amount === 0) return "–";
+    /* dust would print as 0.0000 and read as an empty wallet, which it is not */
+    if (amount < 0.0001) return "<0.0001";
+    return amount.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  }
+
+  function cell(row, amount, className) {
+    var td = document.createElement("td");
+    td.className = "num" + (className ? " " + className : "");
+    var text = fmt(amount);
+    if (text === null) { td.textContent = "…"; td.classList.add("pending"); }
+    else { td.textContent = text; if (amount === 0) td.classList.add("zero"); }
+    row.appendChild(td);
+    return td;
+  }
+
+  function render(balances) {
+    var body = document.getElementById("rows");
+    body.textContent = "";
+    var totals = { eth: 0, usdc: 0, luko: 0, byko: 0 };
+
+    WALLETS.forEach(function (wallet) {
+      var row = document.createElement("tr");
+      [["l", String(wallet.n)], ["l name", wallet.name], ["l", wallet.by]].forEach(function (pair) {
+        var td = document.createElement("td");
+        td.className = pair[0];
+        td.textContent = pair[1];
+        row.appendChild(td);
+      });
+      COLUMNS.forEach(function (key) {
+        var amount = balances ? balances[wallet.address.toLowerCase()][key] : null;
+        cell(row, amount, key === "byko" ? "hot" : "");
+        if (amount) totals[key] += amount;
+      });
+      var addr = document.createElement("td");
+      addr.className = "l addr";
+      var link = document.createElement("a");
+      link.href = "https://basescan.org/address/" + wallet.address;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = short(wallet.address);
+      addr.appendChild(link);
+      row.appendChild(addr);
+      body.appendChild(row);
+    });
+
+    var total = document.createElement("tr");
+    total.className = "total";
+    var label = document.createElement("td");
+    label.className = "l";
+    label.colSpan = 3;
+    label.textContent = "total · " + WALLETS.length + " wallets";
+    total.appendChild(label);
+    COLUMNS.forEach(function (key) {
+      cell(total, balances ? totals[key] : null, key === "byko" ? "hot" : "");
+    });
+    total.appendChild(document.createElement("td"));
+    body.appendChild(total);
+  }
+
+  /* One batched request: eth_getBalance per wallet + balanceOf per token. */
+  function buildBatch() {
+    var calls = [];
+    WALLETS.forEach(function (wallet) {
+      calls.push({ wallet: wallet.address, key: "eth", decimals: 18,
+        body: { method: "eth_getBalance", params: [wallet.address, "latest"] } });
+      TOKENS.forEach(function (token) {
+        calls.push({ wallet: wallet.address, key: token.key, decimals: token.decimals,
+          body: { method: "eth_call", params: [{ to: token.address,
+            data: BALANCE_OF + "000000000000000000000000" + wallet.address.slice(2) }, "latest"] } });
+      });
+    });
+    calls.push({ meta: "block", body: { method: "eth_blockNumber", params: [] } });
+    return calls;
+  }
+
+  function post(url, payload) {
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) throw new Error(url.replace(/^https:\/\//, "") + " → " + response.status);
+      return response.json();
+    });
+  }
+
+  function load() {
+    var button = document.getElementById("refresh");
+    var meta = document.getElementById("meta");
+    button.disabled = true;
+    meta.textContent = "reading " + WALLETS.length + " wallets from Base…";
+    render(null);
+
+    var calls = buildBatch();
+    var payload = calls.map(function (call, index) {
+      return { jsonrpc: "2.0", id: index, method: call.body.method, params: call.body.params };
+    });
+
+    /* One chunk, walking the endpoint list until one answers. */
+    function send(chunk, attempt) {
+      var url = RPCS[attempt || 0];
+      return post(url, chunk).then(function (answer) {
+        if (!Array.isArray(answer)) throw new Error(answer && answer.error
+          ? answer.error.message : "unexpected reply");
+        return answer;
+      }).catch(function (error) {
+        if ((attempt || 0) + 1 >= RPCS.length) throw error;
+        return send(chunk, (attempt || 0) + 1);
+      });
+    }
+
+    var chunks = [];
+    for (var i = 0; i < payload.length; i += CHUNK) chunks.push(payload.slice(i, i + CHUNK));
+
+    chunks.reduce(function (queue, chunk) {
+      return queue.then(function (collected) {
+        return send(chunk).then(function (answer) { return collected.concat(answer); });
+      });
+    }, Promise.resolve([])).then(function (results) {
+      var byId = {};
+      results.forEach(function (item) { byId[item.id] = item; });
+
+      var balances = {};
+      WALLETS.forEach(function (wallet) {
+        balances[wallet.address.toLowerCase()] = { eth: 0, usdc: 0, luko: 0, byko: 0 };
+      });
+      var block = null;
+      calls.forEach(function (call, index) {
+        var item = byId[index];
+        var value = item && !item.error ? item.result : null;
+        if (call.meta === "block") { block = value ? parseInt(value, 16) : null; return; }
+        balances[call.wallet.toLowerCase()][call.key] = toAmount(value, call.decimals);
+      });
+
+      render(balances);
+      var stamp = new Date().toLocaleString("en-GB", { hour12: false });
+      document.getElementById("meta").textContent =
+        stamp + (block ? " · block " + block.toLocaleString("en-US") : "") + " · live from Base";
+    }).catch(function (error) {
+      document.getElementById("meta").innerHTML =
+        '<span class="err">could not read balances: ' + String(error.message || error) + "</span>";
+    }).then(function () {
+      button.disabled = false;
+    });
+  }
+
+  document.getElementById("refresh").addEventListener("click", load);
+  render(null);
+  load();
+})();
+</script>
+</body>
+</html>
