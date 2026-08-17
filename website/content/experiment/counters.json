@@ -30,12 +30,12 @@
     },
     {
       "id": "institutions",
-      "value": "9",
-      "label": "Institutions tested",
+      "value": "3",
+      "label": "Institutions petitioned",
       "kind": "result",
       "asOf": "2026-08-17",
-      "counts": "Organisations and automated systems that BYKO was submitted to, or that issued a verdict on it — each one recorded in the diary with the quote, the case number or the screenshot: BaseScan, Crypto.com, Coinbase (support and the Base app), MetaMask, Blockaid, GoPlus, De.Fi, honeypot.is and RugCheck. Counted once per organisation, however many rounds it took to get an answer.",
-      "excludes": "Services whose price list or requirements were only read, with nothing submitted — DexScreener, DEXTools and Trust Wallet — and tools used for the site rather than the token."
+      "counts": "Organisations where BYKO submitted an application or opened a support case, and a response was received or awaited. That criterion, and nothing looser: BaseScan (token information form, 4 Aug, three waves of refusals), Crypto.com (support, four rounds on the missing icon, later the \"fake\" conversation) and Coinbase (support, case #27207505). Counted once per organisation, however many rounds it took.",
+      "excludes": "Systems that issued a verdict on BYKO without ever being petitioned: MetaMask and Blockaid dropped the liquidity flag after rescanning the burn — in the diary's own words, \"no email, no form, no appeal\" — and the Blockaid mistake-report form is a planned next move, not a filed one. Also excluded: free scanners the study ran itself (counted separately below), and services whose price list or requirements were only read — DexScreener, DEXTools, Trust Wallet."
     },
     {
       "id": "transactions-audited",
@@ -54,6 +54,16 @@
       "asOf": "2026-08-17",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared."
+    },
+    {
+      "id": "security-scanners",
+      "value": "4",
+      "label": "Security scanners run",
+      "kind": "result",
+      "home": false,
+      "asOf": "2026-08-04",
+      "counts": "Free security scanners the study pointed at BYKO itself, with the result recorded in the diary: GoPlus (not a honeypot, open source, zero tax), De.Fi (no rug-pull risk), honeypot.is (clean) and RugCheck (28 out of 100, points lost on pool size, transactions and age — not on the contract). Running a public scanner is a check the study performed, not an institution it petitioned, which is why these are counted here and not in Institutions petitioned.",
+      "excludes": "Scanners whose verdict arrived without being asked for — the wallet flags come from providers the study never filed with — and any rerun of the same scanner: it counts once."
     },
     {
       "id": "listing-rejections",
