@@ -1,6 +1,6 @@
 # BYKO — Specification
 
-Version 1.2 · 2026-08-12
+Version 1.3 · 2026-08-17
 
 This document describes the BYKO token and the systems around it. Where this
 document and the deployed contract disagree, the contract prevails — the
@@ -106,7 +106,42 @@ a donation card.
 - A card confers no rights, no yield and no claim on anything.
   It records that a donation happened. That is all it does.
 
-## 7. Public read APIs
+## 7. Settlement in BYKO
+
+The author accepts BYKO in payment for his own professional work. This
+section describes that arrangement precisely, because it is the one place
+where the token meets something outside the chain.
+
+Two levels, deliberately kept apart:
+
+- **The token.** Unchanged by this section. The contract has no built-in
+  functionality, holders acquire no rights, and the issuer owes nobody
+  anything. Nothing here is enforced by, or recorded in, the contract.
+- **One person's decision.** The author, and only the author, has chosen to
+  accept the token in settlement of his own invoices. It binds no other
+  party, present or future.
+
+The mechanics:
+
+- **Base currency is the euro.** Work is priced in EUR. No price list is
+  ever denominated in BYKO.
+- **Rate at the invoice date.** The amount of BYKO is derived from the
+  market rate on the date of the invoice: the reserve ratio of the
+  BYKO/USDC pool on Base at one specific block, read from the chain the
+  same way the project site reads the price. The block number is stated on
+  the invoice, so the conversion is reproducible by anyone afterwards.
+- **No fixed rate.** No rate is ever announced, guaranteed, or held. There
+  is no aggregator and no third-party quote in the path.
+- **Tokens received are kept.** Accepting them creates no commitment to
+  convert, sell, or support the price.
+- **Scope and refusal.** Which engagements are accepted, and whether a
+  given invoice is settled in BYKO at all, remains the author's decision.
+  No obligation to accept any particular volume arises.
+- **No floor.** Because the price is denominated in euro, a lower token
+  price means only that an invoice takes more tokens. This arrangement
+  puts no floor under the price of BYKO and is not intended to.
+
+## 8. Public read APIs
 
 Provided by the project site, best-effort, no SLA:
 
@@ -118,7 +153,7 @@ Provided by the project site, best-effort, no SLA:
 
 These endpoints read chain state and never write to it.
 
-## 8. Versioning
+## 9. Versioning
 
 This specification lives at `docs/specification.md` in the
 [bykovas/byko](https://github.com/bykovas/byko) repository. Changes are made
@@ -129,13 +164,16 @@ authoritative among project documents — after the contract.
 
 | Version | Date | Change |
 |---|---|---|
+| 1.3 | 2026-08-17 | Settlement in BYKO added (§7); the disclaimer now separates the token from one person's decision to accept it |
 | 1.2 | 2026-08-12 | Wording: liquidity is burned, not locked |
 | 1.1 | 2026-08-07 | LP burn recorded: pool liquidity permanently locked |
 | 1.0 | 2026-08-06 | Initial specification |
 
 ## Disclaimer
 
-BYKO is a token with no utility, no yield and no promises. It does not
-represent equity, debt or any claim on anything. Nothing in this document is
-financial advice. Verify the contract on BaseScan before interacting.
-1 BYKO = 1 BYKO.
+BYKO is a token with no built-in functionality, no yield and no promises,
+and it gives its holder no rights. It does not represent equity, debt or any
+claim on anything. That one person accepts it in payment for his own work
+(§7) is his decision alone: it grants holders nothing and obliges nobody
+else. Nothing in this document is financial advice. Verify the contract on
+BaseScan before interacting. 1 BYKO = 1 BYKO.

@@ -56,6 +56,16 @@
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared."
     },
     {
+      "id": "invoices-settled",
+      "value": "0",
+      "label": "Invoices settled in BYKO",
+      "kind": "result",
+      "home": false,
+      "asOf": "2026-08-17",
+      "counts": "Invoices for the author's own work that were priced in euro and actually paid in BYKO, counted once each, with the payment transaction hash recorded in the diary. The conversion uses the BYKO/USDC pool rate at the block named on the invoice, so anyone can reproduce it afterwards. Zero is the honest starting point of a new measurement, not a placeholder.",
+      "excludes": "Invoices settled in euro; quotes and conversations that never became an invoice; donations, which are a separate thing entirely and get a card instead."
+    },
+    {
       "id": "security-scanners",
       "value": "4",
       "label": "Security scanners run",

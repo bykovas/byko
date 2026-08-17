@@ -25,8 +25,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONTS = os.path.join(ROOT, "website", "assets", "fonts")
 OUT = os.path.join(ROOT, "website", "ext", "docs", "specification.pdf")
 
-VERSION = "1.2"
-DATE = "2026-08-12"
+VERSION = "1.3"
+DATE = "2026-08-17"
 
 BG = HexColor("#0B0D10")
 TEXT = HexColor("#E8EAEE")
@@ -284,7 +284,43 @@ story.append(Paragraph(
     "happened. That is all it does.", body))
 
 story.append(PageBreak())
-story += section(7, "Public read APIs")
+story += section(7, "Settlement in BYKO")
+story.append(Paragraph("Priced in euro, payable in tokens", h2))
+story.append(Paragraph(
+    "The author accepts BYKO in payment for his own professional work. This section describes "
+    "that arrangement precisely, because it is the one place where the token meets something "
+    "outside the chain. Two levels are deliberately kept apart.", body))
+for head, text in [
+    ("The token.", "Unchanged by this section. The contract has no built-in functionality, "
+     "holders acquire no rights, and the issuer owes nobody anything. Nothing here is enforced "
+     "by, or recorded in, the contract."),
+    ("One person's decision.", "The author, and only the author, has chosen to accept the token "
+     "in settlement of his own invoices. It binds no other party, present or future."),
+]:
+    story.append(Paragraph(f"·&nbsp;&nbsp;{strong(head)} {text}", bullet))
+story.append(Spacer(1, 8))
+for head, text in [
+    ("Base currency is the euro.", "Work is priced in EUR. No price list is ever denominated "
+     "in BYKO."),
+    ("Rate at the invoice date.", "The amount of BYKO is derived from the market rate on the "
+     "date of the invoice: the reserve ratio of the BYKO/USDC pool on Base at one specific "
+     "block, read from the chain the same way the project site reads the price. The block "
+     "number is stated on the invoice, so the conversion is reproducible by anyone afterwards."),
+    ("No fixed rate.", "No rate is ever announced, guaranteed or held. There is no aggregator "
+     "and no third-party quote in the path."),
+    ("Tokens received are kept.", "Accepting them creates no commitment to convert, sell or "
+     "support the price."),
+    ("Scope and refusal.", "Which engagements are accepted, and whether a given invoice is "
+     "settled in BYKO at all, remains the author's decision. No obligation to accept any "
+     "particular volume arises."),
+    ("No floor.", "Because the price is denominated in euro, a lower token price means only "
+     "that an invoice takes more tokens. This arrangement puts no floor under the price of "
+     "BYKO and is not intended to."),
+]:
+    story.append(Paragraph(f"·&nbsp;&nbsp;{strong(head)} {text}", bullet))
+
+story.append(PageBreak())
+story += section(8, "Public read APIs")
 story.append(Paragraph("Best effort, no SLA", h2))
 story.append(facts_table([
     ("GET /api/holders", "Holder count and supply distribution across BaseScan-style tiers "
@@ -295,7 +331,7 @@ story.append(facts_table([
 story.append(Spacer(1, 8))
 story.append(Paragraph("These endpoints read chain state and never write to it.", body))
 
-story += section(8, "Versioning")
+story += section(9, "Versioning")
 story.append(Paragraph("Every change is a commit", h2))
 story.append(Paragraph(
     f"This specification lives at {mono('docs/specification.md')} in the "
@@ -303,6 +339,7 @@ story.append(Paragraph(
     "script versioned alongside. Changes are made by commit only, so the full history of "
     "every revision is public.", body))
 story.append(facts_table([
+    ("1.3 · 2026-08-17", "Settlement in BYKO added (\u00a77); disclaimer separates the token from one person\u2019s decision to accept it"),
     ("1.2 · 2026-08-12", "Wording: liquidity is burned, not locked"),
     ("1.1 · 2026-08-07", "LP burn recorded: pool liquidity permanently locked"),
     ("1.0 · 2026-08-06", "Initial specification"),
@@ -310,7 +347,9 @@ story.append(facts_table([
 
 story.append(Spacer(1, 22))
 story.append(Paragraph(
-    "BYKO IS A TOKEN WITH NO UTILITY, NO YIELD AND NO PROMISES. IT DOES NOT REPRESENT EQUITY, "
+    "BYKO IS A TOKEN WITH NO BUILT-IN FUNCTIONALITY, NO YIELD AND NO PROMISES, AND IT GIVES ITS "
+    "HOLDER NO RIGHTS. THAT ONE PERSON ACCEPTS IT IN PAYMENT FOR HIS OWN WORK IS HIS DECISION "
+    "ALONE. IT DOES NOT REPRESENT EQUITY, "
     "DEBT OR ANY CLAIM ON ANYTHING. NOTHING IN THIS DOCUMENT IS FINANCIAL ADVICE. VERIFY THE "
     "CONTRACT ON BASESCAN BEFORE INTERACTING. 1 BYKO = 1 BYKO.", note))
 

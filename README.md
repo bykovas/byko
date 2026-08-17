@@ -48,6 +48,9 @@ the license covers this repository.
 
 ## Disclaimer
 
-BYKO is a token with no utility, no yield and no promises. It does not represent
-equity, debt or any claim on anything. Nothing in this repository is financial
-advice. Verify the contract on BaseScan before interacting.
+BYKO is a token with no built-in functionality, no yield and no promises, and it
+gives its holder no rights. It does not represent equity, debt or any claim on
+anything. That one person accepts it in payment for his own work (specification
+§7) is his decision alone: it grants holders nothing and obliges nobody else.
+Nothing in this repository is financial advice. Verify the contract on BaseScan
+before interacting.

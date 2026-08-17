@@ -555,6 +555,26 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <div class="row"><div class="k">Status</div><div class="v"><span class="status">verified · running</span></div></div>
     </div>
 
+    <section id="settlement">
+      <span class="kicker">Settlement</span>
+      <h2>Invoices can be settled in BYKO</h2>
+      <p style="color:var(--text-2);margin:16px 0 0">The author accepts BYKO in payment for his own work. The price is set in euro; the token is only how that price can be paid.</p>
+      <div class="rows">
+        <div class="row"><div class="k">Base currency</div><div class="v">Euro. Work is quoted in EUR and never in tokens — there is no rate card denominated in BYKO, and there will not be one.</div></div>
+        <div class="row"><div class="k">Rate</div><div class="v">The market rate on the invoice date, taken from the BYKO/USDC pool on Base — the reserve ratio at one specific block, with that block number written on the invoice. Read from the chain, the same way this site reads the price. Not from an aggregator, not from a quote, never fixed in advance.</div></div>
+        <!-- TODO: confirm the exact list of services with the author before merging. -->
+        <div class="row"><div class="k">Scope</div><div class="v">Consulting and architecture work, by prior agreement. Which engagements are accepted, and whether any given one is, stays the author's decision.</div></div>
+        <!-- TODO: the author decides which address receives invoice payments — a new
+             dedicated one, the ops address 0x4287…c1D6 (currently the donation address,
+             which would mix donations and invoices), or the main 0xe8fc…21eb. Publish it
+             here before the first invoice. -->
+        <div class="row"><div class="k">Receiving address</div><div class="v mono">not published yet <span class="note">it goes here, on this page, before the first invoice is issued</span></div></div>
+        <div class="row"><div class="k">What happens to the tokens</div><div class="v">They are kept. No commitment to convert them, sell them, or support the price follows from accepting them.</div></div>
+        <div class="row"><div class="k">No floor</div><div class="v">Because the price is in euro, a lower token price simply means more tokens per invoice. Accepting BYKO in payment puts no floor under its price and is not meant to.</div></div>
+      </div>
+      <p class="identity-note">This is one person's decision about his own invoices, not a property of the token. It creates no obligation for anyone else, gives holders no rights, and is not a claim that BYKO is worth anything.</p>
+    </section>
+
     <div class="ref-grid" style="margin-top:56px">
       <div class="giftcard" style="display:flex;flex-direction:column;justify-content:center">
         <span class="label">Card / gift</span>
@@ -587,7 +607,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       </a>
       <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
     </div>
-    <p class="disclaimer">BYKO is a token with no utility, no yield and no promises. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+    <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
 
