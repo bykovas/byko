@@ -249,7 +249,7 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
           <h2>What the author holds, and where</h2>
         </div>
         <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply), spread across <span class="mono" id="founder-wallets-held">—</span> of <span class="mono" id="founder-wallets-total">—</span> disclosed wallets, and can sell it into the pool like any other holder. Every one of them is listed below, so that is visible too.</p>
-        <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register"><span id="wallet-reveal-label">wallets disclosed</span> →</button>
+        <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register"><span id="wallet-reveal-label">show the register</span> →</button>
         <div id="wallet-register" hidden>
           <table class="ptable">
             <thead><tr><th>Address</th><th>Role</th><th>Class</th><th class="num">BYKO</th></tr></thead>
@@ -601,7 +601,7 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
     if (open) register.removeAttribute("hidden"); else register.setAttribute("hidden", "");
     button.setAttribute("aria-expanded", open ? "true" : "false");
     var label = document.getElementById("wallet-reveal-label");
-    if (label) label.textContent = open ? "hide the register" : (label.dataset.count || "wallets disclosed");
+    if (label) label.textContent = open ? "hide the register" : (label.dataset.count || "show the register");
   });
 })();
 
@@ -630,68 +630,163 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
   observer.observe(indexPrice, { childList: true, characterData: true, subtree: true });
 })();
 
-/* The disclosed register. Address, role, class and balance all arrive from
-   /api/tally, which reads website/data/founder-wallets.json — so the list
-   lives in exactly one file and this page invents nothing. */
+/* The disclosed register, read live in the browser — the same way w.html
+   does it. The wallet list and its labels come from data/founder-wallets.json
+   (the one source this page, the tally endpoint and compute-tally.mjs share);
+   the balances come straight from balanceOf on the token contract, so the
+   figures in the sentence, the rows and the timestamp are all as of the block
+   named under the table, not of an hourly cache. If the chain cannot be
+   reached, the committed snapshot fills in and says so. */
 (function () {
   var TOKEN = "0x078bB16e24c8931fc007928c370422e5e38F4372";
+  var TOTAL_SUPPLY = 790227;
+  var RPCS = ["https://base-rpc.publicnode.com", "https://mainnet.base.org"];
+  var CHUNK = 10;   /* mainnet.base.org caps a batch at 10 calls */
 
   function short(address) {
     return address.slice(0, 6) + "…" + address.slice(-4);
   }
 
-  window.renderWalletRegister = function (holdings) {
+  function toAmount(hex) {
+    if (!hex || hex === "0x") return 0;
+    var value = BigInt(hex);
+    return Number(value / 1000000000000n) / 1e6;
+  }
+
+  function post(url, payload) {
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (response) {
+      if (!response.ok) throw new Error(String(response.status));
+      return response.json();
+    });
+  }
+
+  function send(chunk, attempt) {
+    var url = RPCS[attempt || 0];
+    return post(url, chunk).then(function (answer) {
+      if (!Array.isArray(answer)) throw new Error("unexpected reply");
+      return answer;
+    }).catch(function (error) {
+      if ((attempt || 0) + 1 >= RPCS.length) throw error;
+      return send(chunk, (attempt || 0) + 1);
+    });
+  }
+
+  function render(wallets, stamp) {
     var body = document.getElementById("wallet-rows");
     var note = document.getElementById("wallet-register-note");
     var label = document.getElementById("wallet-reveal-label");
-    if (!body || !Array.isArray(holdings)) return;
-    var held = holdings.filter(function (item) { return Number(item.balance) > 0; })
-      .sort(function (a, b) { return Number(b.balance) - Number(a.balance); });
-    body.textContent = "";
-    held.forEach(function (item) {
-      var address = String(item.address).toLowerCase();
-      var role = [item.role || "—", item["class"] || "—"];
-      var row = document.createElement("tr");
+    var computed = document.getElementById("founder-computed");
+    if (!body) return;
 
+    var held = wallets.filter(function (w) { return w.balance > 0; })
+      .sort(function (a, b) { return b.balance - a.balance; });
+    var total = wallets.reduce(function (sum, w) { return sum + w.balance; }, 0);
+
+    body.textContent = "";
+    held.forEach(function (wallet) {
+      var row = document.createElement("tr");
       var cell = document.createElement("td");
       cell.className = "hex";
       var link = document.createElement("a");
-      link.href = "https://basescan.org/token/" + TOKEN + "?a=" + address;
+      link.href = "https://basescan.org/token/" + TOKEN + "?a=" + wallet.address;
       link.target = "_blank";
       link.rel = "noopener";
-      link.textContent = short(item.address);
+      link.textContent = short(wallet.address);
       cell.appendChild(link);
       row.appendChild(cell);
-
-      [role[0], role[1]].forEach(function (text) {
+      [wallet.role || "—", wallet["class"] || "—"].forEach(function (text) {
         var td = document.createElement("td");
         td.className = "note-cell";
         td.textContent = text;
         row.appendChild(td);
       });
-
       var amount = document.createElement("td");
       amount.className = "value num";
-      amount.textContent = Number(item.balance).toLocaleString("en-US", { maximumFractionDigits: 2 });
+      amount.textContent = wallet.balance.toLocaleString("en-US", { maximumFractionDigits: 2 });
       row.appendChild(amount);
       body.appendChild(row);
     });
-    var heldCount = document.getElementById("founder-wallets-held");
-    var totalCount = document.getElementById("founder-wallets-total");
-    if (heldCount) heldCount.textContent = String(held.length);
-    if (totalCount) totalCount.textContent = String(holdings.length);
-    var empty = holdings.length - held.length;
+
+    var set = function (id, text) {
+      var node = document.getElementById(id);
+      if (node) node.textContent = text;
+    };
+    set("founder-balance", Math.round(total).toLocaleString("en-US"));
+    set("founder-pct", (Math.round(total / TOTAL_SUPPLY * 1000) / 10).toString());
+    set("founder-wallets-held", String(held.length));
+    set("founder-wallets-total", String(wallets.length));
     if (note) {
-      note.textContent = held.length + " of " + holdings.length + " disclosed wallets hold BYKO right now" +
-        (empty ? " · the other " + empty + " hold none, and stay listed anyway" : "");
+      note.textContent = held.length + " of " + wallets.length + " disclosed wallets hold BYKO right now" +
+        (wallets.length - held.length ? " · the other " + (wallets.length - held.length) +
+          " hold none, and stay listed anyway" : "");
     }
+    if (computed) computed.textContent = stamp;
     if (label) {
-      label.dataset.count = holdings.length + " wallets disclosed";
+      label.dataset.count = "show the register";
       if (document.getElementById("wallet-register").hasAttribute("hidden")) {
         label.textContent = label.dataset.count;
       }
     }
-  };
+  }
+
+  fetch("data/founder-wallets.json").then(function (response) {
+    if (!response.ok) throw new Error("wallet config");
+    return response.json();
+  }).then(function (config) {
+    var wallets = config.wallets.map(function (wallet) {
+      return {
+        address: String(wallet.address).toLowerCase(),
+        role: wallet.role,
+        "class": wallet["class"],
+        balance: 0
+      };
+    });
+    var calls = wallets.map(function (wallet, index) {
+      return {
+        jsonrpc: "2.0", id: index, method: "eth_call",
+        params: [{ to: TOKEN, data: "0x70a08231" + "000000000000000000000000" + wallet.address.slice(2) }, "latest"]
+      };
+    });
+    calls.push({ jsonrpc: "2.0", id: wallets.length, method: "eth_blockNumber", params: [] });
+
+    var chunks = [];
+    for (var i = 0; i < calls.length; i += CHUNK) chunks.push(calls.slice(i, i + CHUNK));
+
+    return chunks.reduce(function (queue, chunk) {
+      return queue.then(function (collected) {
+        return send(chunk).then(function (answer) { return collected.concat(answer); });
+      });
+    }, Promise.resolve([])).then(function (results) {
+      var byId = {};
+      results.forEach(function (item) { byId[item.id] = item; });
+      wallets.forEach(function (wallet, index) {
+        var item = byId[index];
+        wallet.balance = item && !item.error ? toAmount(item.result) : 0;
+      });
+      var blockItem = byId[wallets.length];
+      var block = blockItem && blockItem.result ? parseInt(blockItem.result, 16) : null;
+      var now = new Date();
+      render(wallets, "read from the chain" + (block ? " at block " + block.toLocaleString("en-US") : "") +
+        " · " + now.toISOString().slice(11, 16) + " UTC");
+    });
+  }).catch(function () {
+    /* no chain, no config — fall back to the committed snapshot and label it */
+    fetch("data/tally.json").then(function (response) { return response.json(); })
+      .then(function (snapshot) {
+        var holdings = snapshot && snapshot.founder && snapshot.founder.holdings;
+        if (!Array.isArray(holdings) || !holdings.length) return;
+        render(holdings.map(function (item) {
+          return {
+            address: String(item.address).toLowerCase(), role: item.role,
+            "class": item["class"], balance: Number(item.balance) || 0
+          };
+        }), "from the committed snapshot — the chain could not be reached");
+      }).catch(function () {});
+  });
 })();
 
 /* Referendum tally + founder disclosure. Computed server-side by
@@ -731,10 +826,8 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       set("tally-notcounted", "not counted: " + data.notCounted.dust + " below the floor · " +
         data.notCounted.contracts + " contracts · " + data.notCounted.giftOnly + " gift-only (never bought)");
     }
-    if (data.founder) {
-      set("founder-balance", fmt(data.founder.balance));
-      set("founder-pct", String(data.founder.pct));
-      set("founder-computed", "balances computed " + stamp(data.updated));
+    /* the disclosure block reads its own figures live from the chain */
+    if (false) {
       /* An endpoint that predates the per-wallet split (or a cached answer
          from one) has no holdings; fall back to the committed snapshot
          rather than rendering an empty register that reads as "0 of 0". */
