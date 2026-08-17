@@ -123,13 +123,16 @@ async function loadFonts(origin) {
   return fontPromise;
 }
 
+/* replaceAll, not replace: a template that names its own placeholders in a
+   comment would otherwise have the values substituted into the comment and
+   leave the visible fields untouched. */
 function fillTemplate(svg, data) {
   return svg
-    .replace("{{PRICE}}", data.price)
-    .replace("{{PRICE_SUB}}", data.priceSub)
-    .replace("{{HOLDERS}}", data.holders)
-    .replace("{{BLOCK}}", data.block)
-    .replace("{{DATE}}", data.date);
+    .replaceAll("{{PRICE_SUB}}", data.priceSub)
+    .replaceAll("{{PRICE}}", data.price)
+    .replaceAll("{{HOLDERS}}", data.holders)
+    .replaceAll("{{BLOCK}}", data.block)
+    .replaceAll("{{DATE}}", data.date);
 }
 
 async function staticFallback(origin) {

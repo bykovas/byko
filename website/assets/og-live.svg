@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<!-- Placeholders filled at request time by functions/api/og.js:
-     {{PRICE}} {{PRICE_SUB}} {{HOLDERS}} {{BLOCK}} {{DATE}} -->
+<!-- Price, holders, block and date are filled at request time by
+     functions/api/og.js. Do not name the placeholders here: they would be
+     the first match and the substitution would land in this comment. -->
 
 <rect width="1200" height="630" fill="#FAF9F5"/>
 
