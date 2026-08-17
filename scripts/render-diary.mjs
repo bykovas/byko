@@ -425,7 +425,7 @@ function renderCounters() {
      one was counted by hand. Counters say which in counters.json. */
   const band = onHome.map(counter => {
     const chain = counter.provenance === "chain";
-    return `      <a href="experiment.html#${counter.id}">` +
+    return `      <a href="/experiment#${counter.id}">` +
       `<span class="figure${chain ? " live" : ""}">${escapeHtml(counter.value)}</span>` +
       `<span class="label">${escapeHtml(counter.label)}</span>` +
       `<span class="prov${chain ? " live" : ""}">${chain ? "from the chain" : "counted by hand"}</span></a>`;
@@ -482,12 +482,12 @@ replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
    the user still sees where they are. Items without `page` (index anchors)
    stay links everywhere, including on the home page itself. */
 const NAV_ITEMS = [
-  { label: "Referendum", href: "index.html#referendum" },
-  { label: "Diary", href: "diary.html", page: "diary.html" },
-  { label: "Facts", href: "index.html#facts" },
-  { label: "Services", href: "index.html#services", className: "services" },
-  { label: "Market", href: "market.html", page: "market.html" },
-  { label: "Specification", href: "specification.html", page: "specification.html" },
+  { label: "Referendum", href: "/#referendum" },
+  { label: "Diary", href: "/diary", page: "diary.html" },
+  { label: "Facts", href: "/#facts" },
+  { label: "Services", href: "/#services", className: "services" },
+  { label: "Market", href: "/market", page: "market.html" },
+  { label: "Specification", href: "/specification", page: "specification.html" },
 ];
 const NAV_PAGES = [INDEX_PAGE, DIARY_PAGE, "website/experiment.html",
   "website/market.html", "website/specification.html"];
