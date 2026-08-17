@@ -30,9 +30,11 @@ var RPC_URLS = [
   "https://base.drpc.org"
 ];
 var FONT_PATHS = [
-  "/assets/fonts/Inter-SemiBold.ttf",
-  "/assets/fonts/Inter-ExtraLight.ttf",
-  "/assets/fonts/JetBrainsMono-Regular.ttf"
+  "/assets/fonts/Archivo-Bold.ttf",
+  "/assets/fonts/Archivo-SemiBold.ttf",
+  "/assets/fonts/Archivo-Regular.ttf",
+  "/assets/fonts/IBMPlexMono-Regular.ttf",
+  "/assets/fonts/IBMPlexMono-SemiBold.ttf"
 ];
 var DIARY_MANIFEST_PATH = "/data/diary-og.json";
 var ENTRY_CACHE_CONTROL = "public, max-age=86400, s-maxage=31536000, immutable";
@@ -147,7 +149,7 @@ async function renderPng(svg, fonts) {
     font: {
       loadSystemFonts: false,
       fontBuffers: fonts,
-      defaultFontFamily: "Inter"
+      defaultFontFamily: "Archivo"
     }
   });
   return resvg.render().asPng();

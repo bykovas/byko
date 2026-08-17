@@ -1,39 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<defs>
-<linearGradient id="g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/></linearGradient>
-<radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#7CCBFF" stop-opacity="0.26"/><stop offset="1" stop-color="#7CCBFF" stop-opacity="0"/></radialGradient>
-</defs>
+<!-- Placeholders filled at request time by functions/api/og.js:
+     {{PRICE}} {{PRICE_SUB}} {{HOLDERS}} {{BLOCK}} {{DATE}} -->
 
-<rect x="0.5" y="0.5" width="1199" height="629" fill="#0B0D10" stroke="rgba(255,255,255,.14)"/>
+<rect width="1200" height="630" fill="#FAF9F5"/>
 
-<line x1="56.5" y1="0" x2="56.5" y2="630" stroke="rgba(255,255,255,.14)"/>
-<line x1="108.5" y1="0" x2="108.5" y2="630" stroke="rgba(255,255,255,.14)"/>
-<text transform="translate(78,6) rotate(90)" font-family="JetBrains Mono" font-size="7" letter-spacing="1.5" fill="rgba(232,234,238,.45)">BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · </text>
-<text transform="translate(92,6) rotate(90)" font-family="JetBrains Mono" font-size="7" letter-spacing="1.5" fill="rgba(232,234,238,.3)">8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · 8453 · BYKO · 790227 · BASE · </text>
+<line x1="0" y1="65.25" x2="1200" y2="65.25" stroke="#0D1116" stroke-width="1.5"/>
+<circle cx="88" cy="33" r="17" fill="#7CCBFF"/>
+<g transform="translate(77,22) scale(0.229)" fill="none" stroke="#0D1116" stroke-width="15" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
+<text x="118" y="41" font-family="Archivo" font-weight="700" font-size="25" letter-spacing="-1" fill="#0D1116">BYKO</text>
+<text x="1128" y="40" font-family="Archivo" font-weight="600" font-size="11" letter-spacing="1.8" fill="#5A6068" text-anchor="end">GENESIS ERC-20 · BASE · CHAIN 8453</text>
 
-<g transform="translate(152,58) scale(0.5)" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
-<text x="216" y="93" font-family="Inter" font-weight="600" font-size="30" letter-spacing="-0.6" fill="#E8EAEE">BYKO</text>
-<text x="1144" y="88" font-family="Inter" font-weight="600" font-size="11" letter-spacing="2.6" fill="rgba(232,234,238,.35)" text-anchor="end">GENESIS ERC-20 · BASE / CHAIN 8453</text>
+<circle cx="985" cy="270" r="105" fill="#7CCBFF"/>
+<g transform="translate(917,202) scale(1.417)" fill="none" stroke="#0D1116" stroke-width="15" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
 
-<circle cx="960" cy="308" r="205" fill="url(#glow)"/>
-<circle cx="960" cy="308" r="128" fill="#7CCBFF"/>
-<g transform="translate(877.3,223.5) scale(1.76)" fill="none" stroke="#0B0D10" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
+<text x="72" y="140" font-family="Archivo" font-weight="700" font-size="46" letter-spacing="-1.4" fill="#0D1116">How much does legitimacy cost?</text>
+<text x="72" y="176" font-family="Archivo" font-weight="400" font-size="19" fill="#333A43">The diary of an honest token</text>
 
-<text x="152" y="216" font-family="Inter" font-weight="600" font-size="11" letter-spacing="2.6" fill="rgba(232,234,238,.35)">PRICE / USDC PER 100 BYKO</text>
-<text x="146" y="368" font-family="Inter" font-weight="200" font-size="152" letter-spacing="-2.3" fill="#FFB088">{{PRICE}}</text>
-<text x="152" y="424" font-family="JetBrains Mono" font-size="21" fill="rgba(232,234,238,.72)">1 BYKO = {{PRICE_SUB}} USDC</text>
+<line x1="72" y1="222" x2="856" y2="222" stroke="#7CCBFF" stroke-width="3"/>
 
-<line x1="152" y1="486.5" x2="1144" y2="486.5" stroke="rgba(255,255,255,.08)"/>
-<line x1="483.5" y1="486" x2="483.5" y2="566" stroke="rgba(255,255,255,.08)"/>
-<line x1="814.5" y1="486" x2="814.5" y2="566" stroke="rgba(255,255,255,.08)"/>
+<text x="72" y="292" font-family="IBM Plex Mono" font-weight="600" font-size="52" letter-spacing="-2" fill="#0D1116">$0</text>
+<text x="72" y="322" font-family="Archivo" font-weight="600" font-size="11" letter-spacing="1.6" fill="#5A6068">PAID FOR LEGITIMACY</text>
+<text x="72" y="348" font-family="Archivo" font-weight="400" font-size="14" fill="#333A43">counted by hand</text>
 
-<text x="152" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">790,227</text>
-<text x="152" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">FIXED SUPPLY</text>
-<text x="513" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">{{HOLDERS}}</text>
-<text x="513" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">HOLDERS</text>
-<text x="844" y="536" font-family="JetBrains Mono" font-size="27" fill="#E8EAEE">{{BLOCK}}</text>
-<text x="844" y="562" font-family="Inter" font-weight="600" font-size="10" letter-spacing="2.4" fill="rgba(232,234,238,.35)">BLOCK</text>
+<line x1="352" y1="240" x2="352" y2="360" stroke="#DCD8CD"/>
+<text x="392" y="292" font-family="IBM Plex Mono" font-weight="600" font-size="52" letter-spacing="-2" fill="#0D1116">99.5 h</text>
+<text x="392" y="322" font-family="Archivo" font-weight="600" font-size="11" letter-spacing="1.6" fill="#5A6068">HOURS LOGGED</text>
+<text x="392" y="348" font-family="Archivo" font-weight="400" font-size="14" fill="#333A43">± 0.5 h · resolution of the log</text>
 
-<text x="152" y="602" font-family="JetBrains Mono" font-size="12" fill="rgba(232,234,238,.45)">byko.bykovas.lt · {{DATE}} UTC</text>
-<text x="1144" y="602" font-family="JetBrains Mono" font-size="12" fill="rgba(232,234,238,.45)" text-anchor="end">1 BYKO = 1 BYKO</text>
+<line x1="72" y1="410" x2="1128" y2="410" stroke="#DCD8CD"/>
+
+<rect x="72" y="410" width="3" height="120" fill="#7CCBFF"/>
+<text x="92" y="472" font-family="IBM Plex Mono" font-weight="600" font-size="46" letter-spacing="-1.8" fill="#0A5C8F">{{PRICE_SUB}}</text>
+<text x="92" y="500" font-family="Archivo" font-weight="600" font-size="11" letter-spacing="1.6" fill="#5A6068">PRICE, PER BYKO IN USDC · READ FROM THE CHAIN</text>
+<text x="92" y="524" font-family="Archivo" font-weight="400" font-size="14" fill="#333A43">{{PRICE}} USDC per 100 BYKO · {{HOLDERS}} holders · block {{BLOCK}}</text>
+
+<line x1="72" y1="566" x2="1128" y2="566" stroke="#DCD8CD"/>
+<text x="72" y="600" font-family="IBM Plex Mono" font-size="13" fill="#5A6068">byko.bykovas.lt · {{DATE}} UTC</text>
+<text x="1128" y="600" font-family="IBM Plex Mono" font-size="13" fill="#5A6068" text-anchor="end">1 BYKO = 1 BYKO</text>
 </svg>

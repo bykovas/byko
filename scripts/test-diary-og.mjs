@@ -9,9 +9,11 @@ import {
 
 const manifest = JSON.parse(readFileSync("website/data/diary-og.json", "utf8"));
 await initWasm(readFileSync("functions/lib/resvg.wasm"));
+/* the same faces the generator and /api/og load, in the same order */
 const fonts = [
-  readFileSync("website/assets/fonts/Inter-SemiBold.ttf"),
-  readFileSync("website/assets/fonts/JetBrainsMono-Regular.ttf"),
+  readFileSync("website/assets/fonts/Archivo-Bold.ttf"),
+  readFileSync("website/assets/fonts/Archivo-SemiBold.ttf"),
+  readFileSync("website/assets/fonts/IBMPlexMono-Regular.ttf"),
 ];
 
 for (const entry of manifest.entries) {
@@ -27,7 +29,7 @@ for (const entry of manifest.entries) {
   assert.doesNotMatch(svg, /…|\.\.\./, `${entry.slug}: no ellipsis`);
   const expectedPng = new Resvg(svg, {
     fitTo: { mode: "width", value: 1200 },
-    font: { loadSystemFonts: false, fontBuffers: fonts, defaultFontFamily: "Inter" },
+    font: { loadSystemFonts: false, fontBuffers: fonts, defaultFontFamily: "Archivo" },
   }).render().asPng();
   const staticPng = readFileSync(
     `website/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`
@@ -53,7 +55,7 @@ assert.equal(forcedThree.lines.length, 3);
 assert.equal(forcedThree.lines.join(" "), forcedThree.title);
 
 const forcedFour = layoutTitle(
-  "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty",
+  "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twentyone",
   { fontSizes: [48], maximumLines: () => 4 }
 );
 assert.equal(forcedFour.lines.length, 4);
