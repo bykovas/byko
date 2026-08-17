@@ -150,8 +150,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 
 /* sections */
 section{padding:80px 0 0}
-#identity,#referendum,#services{scroll-margin-top:84px}
-#diary,#facts{scroll-margin-top:4px}
+/* the 80px section padding already clears the header — anything more than a
+   few px on top of it lands the section below a gap */
+#identity,#referendum,#services,#diary,#facts{scroll-margin-top:4px}
 
 /* data rows */
 .rows{margin-top:40px;border-top:1px solid var(--line)}
