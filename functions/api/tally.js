@@ -371,9 +371,15 @@ async function computeTally(env) {
   }
 
   var founderBalance = 0;
+  var founderHoldings = [];
+  var walletBalance;
   var i;
   for (i = 0; i < DISCLOSURE_WALLETS.length; i++) {
-    founderBalance += toByko(state.balances.get(DISCLOSURE_WALLETS[i]) || 0n);
+    walletBalance = toByko(state.balances.get(DISCLOSURE_WALLETS[i]) || 0n);
+    founderBalance += walletBalance;
+    /* the split, so the page can show where the disclosed total sits without
+       reading the chain a second time and drifting from this number */
+    founderHoldings.push({ address: DISCLOSURE_WALLETS[i], balance: walletBalance });
   }
 
   if (scanned) await writeCheckpoint(env, state);
@@ -386,6 +392,7 @@ async function computeTally(env) {
     notCounted: notCounted,
     founder: {
       wallets: DISCLOSURE_WALLETS,
+      holdings: founderHoldings,
       balance: Math.round(founderBalance * 100) / 100,
       pct: Math.round(founderBalance / TOTAL_SUPPLY * 1000) / 10
     },

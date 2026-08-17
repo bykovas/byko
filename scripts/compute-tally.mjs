@@ -214,9 +214,13 @@ for (const address of [...seen].sort()) {
 }
 
 /* 5. Founder balances for the disclosure line. */
-const founder = { wallets: DISCLOSURE_WALLETS, balance: 0, pct: 0 };
+const founder = { wallets: DISCLOSURE_WALLETS, holdings: [], balance: 0, pct: 0 };
 for (const wallet of DISCLOSURE_WALLETS) {
-  founder.balance += toByko(balances.get(wallet.toLowerCase()) || 0n);
+  const walletBalance = toByko(balances.get(wallet.toLowerCase()) || 0n);
+  founder.balance += walletBalance;
+  /* the split, so the disclosure table on the page and the total above it
+     can never come from two different reads of the chain */
+  founder.holdings.push({ address: wallet, balance: walletBalance });
 }
 founder.balance = Math.round(founder.balance * 100) / 100;
 founder.pct = Math.round(founder.balance / TOTAL_SUPPLY * 1000) / 10;

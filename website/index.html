@@ -249,26 +249,15 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
           <h2>What the author holds, and where</h2>
         </div>
         <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply) and can sell it into the pool like any other holder. The wallets are listed, so that is visible too.</p>
-        <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register">12 wallets disclosed →</button>
+        <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register"><span id="wallet-reveal-label">wallets disclosed</span> →</button>
         <div id="wallet-register" hidden>
           <table class="ptable">
-            <thead><tr><th>Address</th><th>Role</th><th>Class</th></tr></thead>
-            <tbody>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x624056460437cb4c63f7a3cf0c5a554df3375222" target="_blank" rel="noopener">0x6240…5222</a></td><td class="note-cell">deployer</td><td class="note-cell">primary</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" target="_blank" rel="noopener">0x4287…c1D6</a></td><td class="note-cell">ops · donation address</td><td class="note-cell">primary</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fc8769934f9461f7adf6f440ff3883e28021eb" target="_blank" rel="noopener">0xe8fC…21Eb</a></td><td class="note-cell">trading, invoices</td><td class="note-cell">primary</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" target="_blank" rel="noopener">0xE1E1…0A16</a></td><td class="note-cell">buyer</td><td class="note-cell">primary</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" target="_blank" rel="noopener">0x1533…CB4C</a></td><td class="note-cell">buyer, retired</td><td class="note-cell">retired</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" target="_blank" rel="noopener">0x2F66…95b9</a></td><td class="note-cell">farcaster</td><td class="note-cell">primary</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" target="_blank" rel="noopener">0xf0Ad…109e</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xbC170538038ADC0651292e28A42Dab4286641e02" target="_blank" rel="noopener">0xbC17…1e02</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x33D857fb6f06aaFc498De09654Da82A8f68BE233" target="_blank" rel="noopener">0x33D8…E233</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" target="_blank" rel="noopener">0x46BC…C68E</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" target="_blank" rel="noopener">0xE5BF…68A2</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x7D9766F447a6B86Cf589A31db5b5535e379863E7" target="_blank" rel="noopener">0x7D97…63E7</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
-            </tbody>
+            <thead><tr><th>Address</th><th>Role</th><th>Class</th><th class="num">BYKO</th></tr></thead>
+            <tbody id="wallet-rows"></tbody>
           </table>
+          <p class="fine" id="wallet-register-note">reading balances…</p>
           <p class="fine" id="founder-computed"></p>
+        </div>
         </div>
       </div>
       <div class="apparatus">
@@ -612,7 +601,8 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
     var open = register.hasAttribute("hidden");
     if (open) register.removeAttribute("hidden"); else register.setAttribute("hidden", "");
     button.setAttribute("aria-expanded", open ? "true" : "false");
-    button.textContent = open ? "hide the register" : "12 wallets disclosed →";
+    var label = document.getElementById("wallet-reveal-label");
+    if (label) label.textContent = open ? "hide the register" : (label.dataset.count || "wallets disclosed");
   });
 })();
 
@@ -639,6 +629,81 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
     priceDisplay.textContent = indexPrice.textContent;
   });
   observer.observe(indexPrice, { childList: true, characterData: true, subtree: true });
+})();
+
+/* The disclosed register. Roles and classes are the page's own labels; the
+   balances come from /api/tally — the same read that produced the total
+   above, so the two can never disagree. Wallets holding nothing are counted
+   in a line under the table rather than padding it with zeros. */
+(function () {
+  var ROLES = {
+    "0x624056460437cb4c63f7a3cf0c5a554df3375222": ["deployer", "primary"],
+    "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6": ["ops · donation address", "primary"],
+    "0xe8fc8769934f9461f7adf6f440ff3883e28021eb": ["trading, invoices", "primary"],
+    "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16": ["buyer", "primary"],
+    "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c": ["buyer, retired", "retired"],
+    "0x2f66cab27ad9a62561df741cad01f908ca7295b9": ["farcaster", "primary"],
+    "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e": ["neighbouring project", "same owner"],
+    "0xbc170538038adc0651292e28a42dab4286641e02": ["neighbouring project", "same owner"],
+    "0x33d857fb6f06aafc498de09654da82a8f68be233": ["neighbouring project", "same owner"],
+    "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e": ["neighbouring project", "same owner"],
+    "0xe5bf5007a56b83faf325e69ccd83af932d0168a2": ["neighbouring project", "same owner"],
+    "0x7d9766f447a6b86cf589a31db5b5535e379863e7": ["neighbouring project", "same owner"]
+  };
+  var TOKEN = "0x078bB16e24c8931fc007928c370422e5e38F4372";
+
+  function short(address) {
+    return address.slice(0, 6) + "…" + address.slice(-4);
+  }
+
+  window.renderWalletRegister = function (holdings) {
+    var body = document.getElementById("wallet-rows");
+    var note = document.getElementById("wallet-register-note");
+    var label = document.getElementById("wallet-reveal-label");
+    if (!body || !Array.isArray(holdings)) return;
+    var held = holdings.filter(function (item) { return Number(item.balance) > 0; })
+      .sort(function (a, b) { return Number(b.balance) - Number(a.balance); });
+    body.textContent = "";
+    held.forEach(function (item) {
+      var address = String(item.address).toLowerCase();
+      var role = ROLES[address] || ["—", "—"];
+      var row = document.createElement("tr");
+
+      var cell = document.createElement("td");
+      cell.className = "hex";
+      var link = document.createElement("a");
+      link.href = "https://basescan.org/token/" + TOKEN + "?a=" + address;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = short(item.address);
+      cell.appendChild(link);
+      row.appendChild(cell);
+
+      [role[0], role[1]].forEach(function (text) {
+        var td = document.createElement("td");
+        td.className = "note-cell";
+        td.textContent = text;
+        row.appendChild(td);
+      });
+
+      var amount = document.createElement("td");
+      amount.className = "value num";
+      amount.textContent = Number(item.balance).toLocaleString("en-US", { maximumFractionDigits: 2 });
+      row.appendChild(amount);
+      body.appendChild(row);
+    });
+    var empty = holdings.length - held.length;
+    if (note) {
+      note.textContent = held.length + " of " + holdings.length + " disclosed wallets hold BYKO right now" +
+        (empty ? " · the other " + empty + " hold none, and stay listed anyway" : "");
+    }
+    if (label) {
+      label.dataset.count = holdings.length + " wallets disclosed";
+      if (document.getElementById("wallet-register").hasAttribute("hidden")) {
+        label.textContent = label.dataset.count;
+      }
+    }
+  };
 })();
 
 /* Referendum tally + founder disclosure. Computed server-side by
@@ -682,6 +747,7 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       set("founder-balance", fmt(data.founder.balance));
       set("founder-pct", String(data.founder.pct));
       set("founder-computed", "balances computed " + stamp(data.updated));
+      if (window.renderWalletRegister) window.renderWalletRegister(data.founder.holdings || []);
     }
   }
   fetch("/api/tally").then(function (response) {
