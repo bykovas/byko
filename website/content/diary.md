@@ -28,6 +28,24 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Two hundred and twenty-seven, to anyone who asks — 17 August 2026
+
+For two weeks BYKO had almost no holders. That was the honest result of the experiment, and I published it. Now I want to change that number the only way that doesn't compromise the measurement: by giving the token away to people who ask for it.
+
+227 BYKO to the first 100 people who ask. The genesis supply is 790,227 — my birthday, split in two. You're getting the second half. At today's price it is worth about six cents, so nobody should mistake this for an opportunity.
+
+The rules are deliberately boring. Reply publicly with a wallet address. I send the tokens from bykocoin.base.eth, an address I have publicly verified as mine. There is no claim contract, no site to connect your wallet to, no approval to sign, no form to fill in. Nothing here can drain anything, because there is nothing to interact with.
+
+One thing to expect: some wallets will show the balance as $0.00, and some will show a warning. That is the whole subject of this diary — a fixed-supply token with no owner, no mint and burned liquidity still looks like a scam to the infrastructure. You can check the price on GeckoTerminal and the contract on Basescan.
+
+Why do it at all: a token with three holders cannot pass the criteria data providers and exchanges apply, and I have already refused to buy my way past them. Real holders are the one input I can obtain honestly.
+
+Everything, including the full list of recipients, gets published afterwards.
+
+---
+**Teaser:** 227 BYKO to the first 100 people who ask for them — no claim contract, no wallet connection, just a transfer.
+**X:** Giving away 227 BYKO to the first 100 people who reply with a wallet address. No claim contract, no wallet connection, no forms — just a transfer. Worth about $0.06. The point isn't the money, it's whether an honest token can find real holders.
+
 ## The site is leaving the dark — 17 August 2026
 
 The site is leaving the dark.
