@@ -92,6 +92,8 @@ Third: the holder numbers were wrong. The diary had recorded roughly 229,000 tok
 
 Getting the record wrong and then correcting it in public, with the receipts, is exactly what this diary is supposed to do.
 
+**Superseded, 17 August 2026:** the holdings figure above no longer matches the chain. Read live from Base at block 50,091,885, the author's disclosed addresses hold 278,173 BYKO — 35.2% of supply, not 260,599 and 32.98%. The wallets were consolidated the same day: [BYKO now sits in exactly two wallets](https://byko.bykovas.lt/d/byko-now-sits-in-exactly-two-wallets).
+
 ---
 **Teaser:** An on-chain audit of BYKO's full history just debunked three things this diary had recorded as fact.
 **X:** Full on-chain audit: 100 transactions, all reconciled to the supply. It debunked three things this diary had recorded as fact — including holder numbers that were wrong. Correcting the record in public is the whole point of this experiment.

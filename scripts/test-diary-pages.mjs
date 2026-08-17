@@ -30,7 +30,7 @@ assert.match(publisher, /twitter:image must be a same-origin versioned static di
   "publisher must reject dynamic or cross-origin X images");
 assert.match(publisher, /"User-Agent": "facebookexternalhit\/1\.1"/,
   "publisher must verify the page the way a crawler receives it, without asking for revalidation");
-assert.match(publisher, /scrape: "true"/,
+assert.match(publisher, /params\.scrape = "true"/,
   "publisher must force a Facebook crawl before the post exists");
 assert.match(publisher, /await primeFacebookPreview\(entry\)/,
   "publisher must prime the Facebook preview before posting");
@@ -42,6 +42,12 @@ assert.match(publisher, /commitMessage\.includes\("\[skip-facebook\]"\)/,
   "publisher must honour a per-commit Facebook skip");
 assert.match(publisher, /commitMessage\.includes\("\[skip-x\]"\)/,
   "publisher must honour a per-commit X skip");
+assert.match(publisher, /settling \$\{SETTLE_S\}s before inviting the crawlers/,
+  "publisher must let the deploy propagate before any crawler is invited");
+assert.match(publisher, /that URL is now cached as such and any post would carry it/,
+  "publisher must refuse to post once Facebook has crawled a 404 for the share URL");
+assert.match(publisher, /facebookObjectTitle\(url, \{ rescrape: false \}\)/,
+  "publisher must read back what Facebook stores, not only what it just crawled");
 assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-age=31536000, immutable/,
   "versioned static X images must have immutable cache headers");
 

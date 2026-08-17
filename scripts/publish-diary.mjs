@@ -47,6 +47,7 @@ const PAUSE_S = 45;            /* between outbound posts */
 const POLL_INTERVAL_S = 10;
 const POLL_TIMEOUT_S = 180;
 const SCRAPE_TIMEOUT_S = 120;  /* how long Facebook gets to crawl a usable card */
+const SETTLE_S = 60;           /* deploy propagation slack before any crawler is invited */
 const X_TEXT_MAX = 250;        /* leaves room for the t.co-wrapped link */
 
 const MONTHS = ["January", "February", "March", "April", "May", "June",
@@ -323,31 +324,45 @@ async function resolveFbPageId() {
    it keeps whatever it got the first time. One unlucky crawl during the deploy
    window is enough to publish a post whose card reads "BYKO — 404" forever, so
    the scrape is forced and its result inspected before the post exists. */
+async function facebookObjectTitle(url, { rescrape }) {
+  const params = { id: url, access_token: process.env.FB_BYKO_PAGE_ACCESS_TOKEN };
+  if (rescrape) params.scrape = "true";
+  const response = await fetch("https://graph.facebook.com/v19.0/?" + new URLSearchParams(params),
+    rescrape ? { method: "POST" } : {});
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(`graph ${response.status}: ${JSON.stringify(payload.error && payload.error.message || payload)}`);
+  }
+  return payload.title || (payload.og_object && payload.og_object.title) || "";
+}
+
 async function primeFacebookPreview(entry) {
   const url = entryUrl(entry);
-  const deadline = Date.now() + SCRAPE_TIMEOUT_S * 1000;
-  for (;;) {
-    const response = await fetch("https://graph.facebook.com/v19.0/?" + new URLSearchParams({
-      id: url, scrape: "true", access_token: process.env.FB_BYKO_PAGE_ACCESS_TOKEN,
-    }), { method: "POST" });
-    const payload = await response.json().catch(() => ({}));
-    const title = payload.title || (payload.og_object && payload.og_object.title) || "";
-    if (response.ok && title && !/\b404\b/.test(title)) {
-      if (title.trim() !== entry.title.trim()) {
-        console.log(`facebook scraped a different title than expected: ${JSON.stringify(title)}`);
-      }
-      console.log(`facebook preview primed: ${JSON.stringify(title)}`);
-      return;
-    }
-    const problem = response.ok
-      ? `scraped title ${JSON.stringify(title) || "(empty)"}`
-      : `graph ${response.status}: ${JSON.stringify(payload.error && payload.error.message || payload)}`;
-    if (Date.now() > deadline) {
-      throw new Error(`facebook never scraped ${url} into a usable card (${problem}) — refusing to post a broken preview`);
-    }
-    console.log(`waiting for facebook to scrape the entry: ${problem}`);
-    await sleep(POLL_INTERVAL_S);
+  const canonical = canonicalEntryUrl(entry);
+  const title = await facebookObjectTitle(url, { rescrape: true });
+  /* Retrying a poisoned URL does not help: once Facebook has crawled the 404
+     it keeps serving that object to new posts even after a later scrape reads
+     the real page. The URL is spent, so fail and let a fresh commit — with a
+     fresh ?v= — carry the post. */
+  if (!title || /\b404\b/.test(title)) {
+    throw new Error(`facebook crawled ${url} as ${JSON.stringify(title) || "(empty)"}; that URL is now cached as such and any post would carry it. Re-share from a new commit instead.`);
   }
+  if (title.trim() !== entry.title.trim()) {
+    console.log(`facebook scraped a different title than expected: ${JSON.stringify(title)}`);
+  }
+  /* The card is attached by canonical identity, so check the identity the
+     page declares, not only the URL we happen to share. */
+  const canonicalTitle = await facebookObjectTitle(canonical, { rescrape: true });
+  if (!canonicalTitle || /\b404\b/.test(canonicalTitle)) {
+    throw new Error(`facebook holds ${canonical} as ${JSON.stringify(canonicalTitle) || "(empty)"} — the canonical object is poisoned, so the post would show it`);
+  }
+  /* Read back what Facebook stores, without asking it to crawl again: this is
+     what the post will actually attach. */
+  const stored = await facebookObjectTitle(url, { rescrape: false });
+  if (!stored || /\b404\b/.test(stored)) {
+    throw new Error(`facebook stores ${url} as ${JSON.stringify(stored) || "(empty)"} despite a good crawl — refusing to post`);
+  }
+  console.log(`facebook preview primed: ${JSON.stringify(stored)} (canonical ${JSON.stringify(canonicalTitle)})`);
 }
 
 async function postFacebook(entry) {
@@ -440,6 +455,15 @@ if (dryRun) {
 }
 
 await pollSiteForEntries(newEntries);
+
+/* The deploy check can pass at one edge seconds before another has the page:
+   the run that shipped a "BYKO — 404" card had Facebook crawl a 404 thirteen
+   seconds after our own crawler-style check came back clean. Let propagation
+   finish before any crawler is invited near the URL. */
+if (!dryRun) {
+  console.log(`deploy verified — settling ${SETTLE_S}s before inviting the crawlers`);
+  await sleep(SETTLE_S);
+}
 
 const published = [];
 let first = true;
