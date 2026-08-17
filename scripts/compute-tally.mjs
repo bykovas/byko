@@ -27,7 +27,7 @@
 
    Usage: node scripts/compute-tally.mjs [--rpc https://...] */
 
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -41,24 +41,15 @@ const POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
 const ZERO = "0x0000000000000000000000000000000000000000";
 const DEAD = "0x000000000000000000000000000000000000dead";
 
-/* Founder wallets — keep in sync with functions/api/tally.js and the
-   footnote list in website/index.html. */
-const FOUNDER_WALLETS = [
-  "0x624056460437cb4c63f7a3cf0c5a554df3375222", // deployer, omenas.base.eth
-  "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6", // ops / donation wallet (spec §6)
-  "0xe8fc8769934f9461f7adf6f440ff3883e28021eb", // founder trading wallet (funded from deployer)
-  "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", // buyer
-  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c", // buyer, retired
-  "0x2f66cab27ad9a62561df741cad01f908ca7295b9", // farcaster (built-in wallet)
-  // founder wallets from the neighbouring project — same owner, so they
-  // can never count as votes either
-  "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
-  "0xbc170538038adc0651292e28a42dab4286641e02",
-  "0x33d857fb6f06aafc498de09654da82a8f68be233",
-  "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-  "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
-  "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
-];
+/* Founder wallets come from website/data/founder-wallets.json — the single
+   source this script, functions/api/tally.js and the home page all read, so
+   a new wallet is added in exactly one place. */
+const WALLET_CONFIG = JSON.parse(readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), "..", "website", "data", "founder-wallets.json"), "utf8"));
+const FOUNDER_WALLET_META = WALLET_CONFIG.wallets.map(w => ({
+  address: String(w.address).toLowerCase(), role: w.role, class: w["class"],
+}));
+const FOUNDER_WALLETS = FOUNDER_WALLET_META.map(w => w.address);
 // The disclosure line sums the same set: every founder-owned wallet is
 // both excluded from the tally and counted in the holdings disclosure.
 const DISCLOSURE_WALLETS = FOUNDER_WALLETS;
@@ -220,7 +211,11 @@ for (const wallet of DISCLOSURE_WALLETS) {
   founder.balance += walletBalance;
   /* the split, so the disclosure table on the page and the total above it
      can never come from two different reads of the chain */
-  founder.holdings.push({ address: wallet, balance: walletBalance });
+  const meta = FOUNDER_WALLET_META.find(w => w.address === wallet.toLowerCase());
+  founder.holdings.push({
+    address: wallet, balance: walletBalance,
+    role: meta ? meta.role : "", class: meta ? meta["class"] : "",
+  });
 }
 founder.balance = Math.round(founder.balance * 100) / 100;
 founder.pct = Math.round(founder.balance / TOTAL_SUPPLY * 1000) / 10;

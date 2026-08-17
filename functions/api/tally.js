@@ -43,27 +43,41 @@ var MIN_VOTE = 100; /* BYKO — config, published on the page */
 var MIN_VOTE_WEI = BigInt(MIN_VOTE) * WEI;
 var RULE_TEXT = MIN_VOTE + "+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers";
 
-/* Founder wallets — keep in sync with scripts/compute-tally.mjs and the
-   footnote list in website/index.html. */
-var FOUNDER_WALLETS = [
-  "0x624056460437cb4c63f7a3cf0c5a554df3375222", /* deployer, omenas.base.eth */
-  "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6", /* ops / donation wallet (spec §6) */
-  "0xe8fc8769934f9461f7adf6f440ff3883e28021eb", /* founder trading wallet (funded from deployer) */
-  "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16", /* buyer */
-  "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c", /* buyer, retired */
-  "0x2f66cab27ad9a62561df741cad01f908ca7295b9", /* farcaster (built-in wallet) */
-  /* founder wallets from the neighbouring project — same owner, so they
-     can never count as votes either */
-  "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
-  "0xbc170538038adc0651292e28a42dab4286641e02",
-  "0x33d857fb6f06aafc498de09654da82a8f68be233",
-  "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-  "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
-  "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
-];
-/* The disclosure line sums the same set: every founder-owned wallet is
-   both excluded from the tally and counted in the holdings disclosure. */
-var DISCLOSURE_WALLETS = FOUNDER_WALLETS;
+/* Founder wallets live in website/data/founder-wallets.json — one source for
+   this endpoint, scripts/compute-tally.mjs and the home page. The list below
+   is only the shape of a failure: if the config cannot be read, the tally
+   would silently count the author's own wallets as votes, so the request
+   fails instead. */
+var walletConfigPromise = null;
+var FOUNDER_WALLET_META = [];
+var FOUNDER_WALLETS = [];
+var DISCLOSURE_WALLETS = [];
+
+async function loadFounderWallets(origin) {
+  if (!walletConfigPromise) {
+    walletConfigPromise = fetch(origin + "/data/founder-wallets.json").then(async function (response) {
+      if (!response.ok) throw new Error("founder wallet config → " + response.status);
+      var data = await response.json();
+      if (!data || !Array.isArray(data.wallets) || data.wallets.length === 0) {
+        throw new Error("founder wallet config is empty");
+      }
+      return data.wallets.map(function (wallet) {
+        return {
+          address: String(wallet.address).toLowerCase(),
+          role: wallet.role || "",
+          klass: wallet["class"] || ""
+        };
+      });
+    }).catch(function (error) {
+      walletConfigPromise = null;
+      throw error;
+    });
+  }
+  FOUNDER_WALLET_META = await walletConfigPromise;
+  FOUNDER_WALLETS = FOUNDER_WALLET_META.map(function (wallet) { return wallet.address; });
+  DISCLOSURE_WALLETS = FOUNDER_WALLETS;
+  return FOUNDER_WALLET_META;
+}
 var KNOWN_ROUTERS = [
   "0x111111125421ca6dc452d289314280a0f8842a65", /* 1inch v6 */
   "0x1231deb6f5749ef6ce6943a275a1d3e7486f4eae", /* LI.FI diamond */
@@ -287,7 +301,8 @@ function toByko(wei) {
   return Number(wei / 1000000000000n) / 1e6;
 }
 
-async function computeTally(env) {
+async function computeTally(env, origin) {
+  await loadFounderWallets(origin);
   var key = env && env.ETHERSCAN_API_KEY;
   var state = (await readCheckpoint(env)) || newState();
   var from = state.block + 1;
@@ -379,7 +394,12 @@ async function computeTally(env) {
     founderBalance += walletBalance;
     /* the split, so the page can show where the disclosed total sits without
        reading the chain a second time and drifting from this number */
-    founderHoldings.push({ address: DISCLOSURE_WALLETS[i], balance: walletBalance });
+    founderHoldings.push({
+      address: DISCLOSURE_WALLETS[i],
+      balance: walletBalance,
+      role: FOUNDER_WALLET_META[i] ? FOUNDER_WALLET_META[i].role : "",
+      "class": FOUNDER_WALLET_META[i] ? FOUNDER_WALLET_META[i].klass : ""
+    });
   }
 
   if (scanned) await writeCheckpoint(env, state);
@@ -407,7 +427,7 @@ export async function onRequestGet(context) {
   var response;
   if (cached) return cached;
   try {
-    var payload = await computeTally(context.env);
+    var payload = await computeTally(context.env, new URL(context.request.url).origin);
     if (payload.syncing) {
       /* mid-rescan progress report — never cache it */
       return json(payload, 200, { "Cache-Control": "no-store" });

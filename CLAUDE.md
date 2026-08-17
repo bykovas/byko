@@ -66,6 +66,17 @@ an en dash or hyphen breaks the parse; commit only complete entries (header
 + field block); edits to existing entries never re-post to social; never
 force-push (it destroys the publish workflow's diff baseline).
 
+## Founder wallets
+
+- `website/data/founder-wallets.json` is the single source: address, role and
+  class. `functions/api/tally.js` fetches it (and refuses to answer if it
+  cannot, rather than counting the author's own wallets as votes),
+  `scripts/compute-tally.mjs` reads it from disk, and the home page renders
+  the register from whatever the tally reports — no second list anywhere.
+- Adding or removing a wallet is a one-file change, **plus** a bump of
+  `CHECKPOINT_KEY` in `functions/api/tally.js`: the stored checkpoint was
+  folded with the previous list and would keep the old exclusions.
+
 ## Counters data (hours / dollars / stat bar)
 
 - `website/content/hours.md` and `dollars.md` — one line per diary entry

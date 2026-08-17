@@ -167,7 +167,7 @@ section{padding:var(--byko-sp-9) 0 0}
 /* ── section heads & rules ─────────────────────────────────────────────── */
 .section-head{border-bottom:var(--byko-rule-heavy);padding-bottom:10px;margin-bottom:18px}
 .section-head h2{margin-top:6px}
-.section-intro{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:0 0 18px;max-width:60ch}
+.section-intro{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:0 0 18px}
 .rule-section{border-top:var(--byko-rule-section)}
 
 /* ── two-column document: claim left, apparatus right ──────────────────── */
@@ -309,7 +309,7 @@ a.log-row .ep{font:var(--byko-data);color:var(--byko-live-ink);text-align:right}
 .site-foot .row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:baseline}
 .site-foot .links{font:var(--byko-body-sm);color:var(--byko-ink-2)}
 .site-foot .eq{font:var(--byko-data);color:var(--byko-label)}
-.disclaimer{font:400 14.5px/1.65 var(--byko-font-sans);color:var(--byko-ink-2);margin-top:20px;max-width:80ch}
+.disclaimer{font:400 14.5px/1.65 var(--byko-font-sans);color:var(--byko-ink-2);margin-top:20px}
 
 /* ── responsive ────────────────────────────────────────────────────────── */
 @media (max-width:900px){

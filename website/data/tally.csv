@@ -22,4 +22,4 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0xe5bf5007a56b83faf325e69ccd83af932d0168a2,excluded,0,false,false,,"founder wallet"
 0xe8fc8769934f9461f7adf6f440ff3883e28021eb,excluded,256000,true,true,,"founder wallet"
 0xf0adec1e81c31bbb253b819c67cbb1826fb7109e,excluded,0,false,false,,"founder wallet"
-# computed 2026-08-17T20:04:46.439Z at block 50103857 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
+# computed 2026-08-17T20:16:59.036Z at block 50104223 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers

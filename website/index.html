@@ -19,7 +19,7 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="stylesheet" href="assets/byko.css?v=20260817">
+<link rel="stylesheet" href="assets/byko.css?v=20260817a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -57,7 +57,7 @@
 /* page-specific composition; the system itself lives in assets/byko.css */
 .hero{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:44px;align-items:start;padding-top:34px}
 .hero h1{margin:14px 0 0}
-.hero h1 .edge{color:var(--byko-live-edge)}
+.hero h1 .edge{color:var(--byko-live-edge);font-style:italic}
 .hero .sub{font:italic 400 18px/1.4 var(--byko-font-sans);color:var(--byko-ink-2);margin:12px 0 0}
 .hero .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:16px 0 0}
 .hero .band{margin-top:28px}
@@ -257,7 +257,6 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
           </table>
           <p class="fine" id="wallet-register-note">reading balances…</p>
           <p class="fine" id="founder-computed"></p>
-        </div>
         </div>
       </div>
       <div class="apparatus">
@@ -631,25 +630,10 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
   observer.observe(indexPrice, { childList: true, characterData: true, subtree: true });
 })();
 
-/* The disclosed register. Roles and classes are the page's own labels; the
-   balances come from /api/tally — the same read that produced the total
-   above, so the two can never disagree. Wallets holding nothing are counted
-   in a line under the table rather than padding it with zeros. */
+/* The disclosed register. Address, role, class and balance all arrive from
+   /api/tally, which reads website/data/founder-wallets.json — so the list
+   lives in exactly one file and this page invents nothing. */
 (function () {
-  var ROLES = {
-    "0x624056460437cb4c63f7a3cf0c5a554df3375222": ["deployer", "primary"],
-    "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6": ["ops · donation address", "primary"],
-    "0xe8fc8769934f9461f7adf6f440ff3883e28021eb": ["trading, invoices", "primary"],
-    "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16": ["buyer", "primary"],
-    "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c": ["buyer, retired", "retired"],
-    "0x2f66cab27ad9a62561df741cad01f908ca7295b9": ["farcaster", "primary"],
-    "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e": ["neighbouring project", "same owner"],
-    "0xbc170538038adc0651292e28a42dab4286641e02": ["neighbouring project", "same owner"],
-    "0x33d857fb6f06aafc498de09654da82a8f68be233": ["neighbouring project", "same owner"],
-    "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e": ["neighbouring project", "same owner"],
-    "0xe5bf5007a56b83faf325e69ccd83af932d0168a2": ["neighbouring project", "same owner"],
-    "0x7d9766f447a6b86cf589a31db5b5535e379863e7": ["neighbouring project", "same owner"]
-  };
   var TOKEN = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 
   function short(address) {
@@ -666,7 +650,7 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
     body.textContent = "";
     held.forEach(function (item) {
       var address = String(item.address).toLowerCase();
-      var role = ROLES[address] || ["—", "—"];
+      var role = [item.role || "—", item["class"] || "—"];
       var row = document.createElement("tr");
 
       var cell = document.createElement("td");

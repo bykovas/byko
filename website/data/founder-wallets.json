@@ -1,0 +1,65 @@
+{
+  "note": "Every founder-owned wallet, in one place. This file is the single source: the tally endpoint and compute-tally.mjs both read it to exclude these addresses from the vote, and the home page renders the roles from it. Adding a wallet here is the whole change — but bump CHECKPOINT_KEY in functions/api/tally.js at the same time, because the stored checkpoint was folded with the old list and would keep the old exclusions.",
+  "wallets": [
+    {
+      "address": "0x624056460437cb4c63f7a3cf0c5a554df3375222",
+      "role": "deployer",
+      "class": "primary"
+    },
+    {
+      "address": "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6",
+      "role": "ops · donation address",
+      "class": "primary"
+    },
+    {
+      "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
+      "role": "trading, invoices",
+      "class": "primary"
+    },
+    {
+      "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
+      "role": "buyer",
+      "class": "primary"
+    },
+    {
+      "address": "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c",
+      "role": "buyer, retired",
+      "class": "retired"
+    },
+    {
+      "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
+      "role": "farcaster",
+      "class": "primary"
+    },
+    {
+      "address": "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
+      "role": "neighbouring project",
+      "class": "same owner"
+    },
+    {
+      "address": "0xbc170538038adc0651292e28a42dab4286641e02",
+      "role": "neighbouring project",
+      "class": "same owner"
+    },
+    {
+      "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
+      "role": "neighbouring project",
+      "class": "same owner"
+    },
+    {
+      "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "role": "neighbouring project",
+      "class": "same owner"
+    },
+    {
+      "address": "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
+      "role": "neighbouring project",
+      "class": "same owner"
+    },
+    {
+      "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+      "role": "neighbouring project",
+      "class": "same owner"
+    }
+  ]
+}
