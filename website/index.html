@@ -248,7 +248,7 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
           <span class="kicker">Disclosure</span>
           <h2>What the author holds, and where</h2>
         </div>
-        <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply) and can sell it into the pool like any other holder. The wallets are listed, so that is visible too.</p>
+        <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply), spread across <span class="mono" id="founder-wallets-held">—</span> of <span class="mono" id="founder-wallets-total">—</span> disclosed wallets, and can sell it into the pool like any other holder. Every one of them is listed below, so that is visible too.</p>
         <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register"><span id="wallet-reveal-label">wallets disclosed</span> →</button>
         <div id="wallet-register" hidden>
           <table class="ptable">
@@ -692,6 +692,10 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       row.appendChild(amount);
       body.appendChild(row);
     });
+    var heldCount = document.getElementById("founder-wallets-held");
+    var totalCount = document.getElementById("founder-wallets-total");
+    if (heldCount) heldCount.textContent = String(held.length);
+    if (totalCount) totalCount.textContent = String(holdings.length);
     var empty = holdings.length - held.length;
     if (note) {
       note.textContent = held.length + " of " + holdings.length + " disclosed wallets hold BYKO right now" +
