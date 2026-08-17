@@ -247,87 +247,14 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/byko.css?v=20260817">
 <style>
-:root{
-  --bg:#0B0D10;
-  --bg-2:#11141A;
-  --bg-3:#171B22;
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
-  --text:#E8EAEE;
-  --text-2:rgba(232,234,238,.72);
-  --muted:rgba(232,234,238,.45);
-  --accent:#7CCBFF;
-  --accent-2:#FFB088;
-  --ok:#7CE3A6;
-  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
-
-.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
-.mono{font-family:'JetBrains Mono',monospace}
-
-header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:24px;height:64px}
-.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
-.wordmark:hover{text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
-.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-links span[aria-current="page"]{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
-.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
-.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
-
-.page{padding:136px 0 0}
-h1{font:600 40px/1.1 Inter,sans-serif;letter-spacing:-.025em;margin:16px 0 0}
-h3{font:600 17px Inter,sans-serif;letter-spacing:-.01em;margin:14px 0 8px}
-.lede{font-size:17px;color:var(--text-2);margin:16px 0 0}
-.publish-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:16px 0 0}
-
-.entries{margin-top:32px;border-top:1px solid var(--line)}
-.entry{padding:28px 0;border-bottom:1px solid var(--line);scroll-margin-top:84px}
-.entry-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.entry-head h2{font:600 20px/1.3 Inter,sans-serif;letter-spacing:-.01em;margin:0}
-.entry-head h2 a{color:var(--text)}
-.entry-head h2 a:hover{color:var(--accent);text-decoration:none}
-.entry-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto}
-.entry p{margin:12px 0 0;font-size:14px;line-height:1.7;color:var(--text-2)}
-.entry ul{margin:12px 0 0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--text-2)}
-.entry code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
-.entry figure{margin:16px 0 0}
-.entry figure img{display:block;margin:0 auto;max-width:100%;max-height:520px;width:auto;height:auto;border:1px solid var(--line);border-radius:8px;background:var(--bg-3)}
-.entry figcaption{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--muted);margin:8px auto 0;text-align:center}
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
-.card{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:24px;transition:.15s;scroll-margin-top:84px}
-.card:hover{background:var(--bg-3);border-color:var(--line-2)}
-.card p{color:var(--text-2);margin:0;font-size:14px}
-.card .label{display:block}
-.status-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;border-radius:99px;border:1px solid var(--line);color:var(--accent-2);display:inline-block;white-space:nowrap}
-.card .plan{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;line-height:1.6}
-.card .cliffhanger{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px}
-.loading-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:48px}
-
-footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.foot .mono{font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
-
-@media (max-width:900px){
-  .cards3{grid-template-columns:1fr}
-  h1{font-size:32px}
-  .nav-links{gap:14px}
-  .nav-links .status{display:none}
-  .nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}
-}
+.page-head{padding-top:34px}
+.page-head h1{margin:12px 0 0}
+.page-head .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:16px 0 0}
+.page-head .publish-note{font:var(--byko-data);color:var(--byko-label);margin:14px 0 0}
+.log{margin-top:26px}
+.follow{margin-top:var(--byko-sp-9);padding-top:20px;border-top:var(--byko-rule-section)}
 </style>
 <script
   src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js"
@@ -336,20 +263,11 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 </head>
 <body>
 
-<header>
-  <div class="wrap nav">
-    <a class="wordmark" href="index.html">
-      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
-        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
-        </linearGradient></defs>
-        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-        </g>
-      </svg>
-      BYKO
-    </a>
-    <nav class="nav-links">
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
 <!-- nav:begin -->
       <a href="index.html#referendum">Referendum</a>
       <span aria-current="page">Diary</span>
@@ -358,269 +276,152 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <a href="market.html">Market</a>
       <a href="specification.html">Specification</a>
 <!-- nav:end -->
-      <span class="status">running</span>
+      <span class="lamp">running</span>
     </nav>
   </div>
 </header>
 
-<div class="wrap page">
-  <span class="kicker">Diary / the log</span>
-  <h1>The diary of an honest token</h1>
-  <p class="lede" id="diary-intro">A log of what it takes for a token with nothing to hide to stop looking like a scam — every rejection, flag and support round, with dates and receipts.</p>
-  <p class="publish-note" id="publish-note">episodes publish here first, then in the repository</p>
+<main class="wrap">
+  <div class="page-head">
+    <span class="kicker">Diary · the log</span>
+    <h1>The diary of an honest token</h1>
+    <p class="lede" id="diary-intro">A log of what it takes for a token with nothing to hide to stop looking like a scam — every rejection, flag and support round, with dates and receipts.</p>
+    <p class="publish-note" id="publish-note">episodes publish here first, then in the repository · entries are published when the thing they describe has finished, and nothing is scheduled</p>
+  </div>
 
-  <div class="entries">
+  <div class="log">
 <!-- diary:begin -->
-<article class="entry" id="every-buy-but-one-was-mine">
-  <div class="entry-head">
-    <h2><a href="/d/every-buy-but-one-was-mine">Every buy but one was mine</a></h2>
-    <span class="entry-date">16 August 2026</span>
-  </div>
-<p>The on-chain audit turned up one more number this diary hadn't published: $49.27.</p>
-<p>That's the total of every buy ever made from the BYKO pool. Thirty-three transactions across two weeks, and all but one of them were mine, made from project wallets. In that time the price went from $0.000100 to $0.000252 — up 152%. That entire move was made with my own money. Four small sells returned $5.57.</p>
-<p>So the chart on the site is real and verifiable, and almost meaningless as a price. It is a record of one person buying from himself in a pool a hundred dollars deep. In two weeks, exactly one purchase came from outside the project: $9.91, on 14 August.</p>
-<p>The spend counter was wrong too. It read $85. The real figure is $123.29 — $74.02 put into the pool and burned along with the LP tokens, plus $49.27 of buys that never made it into the tally. The counter now shows the corrected number.</p>
-<p>From today, the buying stops. An instrument that moves its own needle measures nothing. Whatever the price does next, it will not be me doing it.</p>
-<p>Which brings this to the part I cannot do alone.</p>
-<p>BYKO is not an investment and never will be. Fixed supply, no owner, no mint, liquidity permanently burned to a dead address — there is nothing to grow and nobody who can promise you anything. What it is, is a measurement: how much does it cost for a provably honest token to stop being treated as a scam?</p>
-<p>Two weeks in, the answer so far reads: $123.29 spent, about 100 hours of work, three refusals from Basescan, one security flag removed, one wallet that still hides the token as a scam, and one person who bought in.</p>
-<p>If you want to move this experiment, there are three ways, and two of them are free:</p>
-<ul><li>Read the diary and tell me where I am wrong. Every correction so far came from auditing my own claims. Outside eyes are better than mine.</li><li>Share it. Reach is the one thing this project will not buy.</li><li>Or hold one BYKO. Not as an investment — as a data point. A second independent holder changes a number that no amount of writing can change.</li></ul>
-<p>All of it is verifiable on-chain. That is the entire point.</p>
-</article>
-<article class="entry" id="on-chain-audit-100-transactions-three-debunked-facts">
-  <div class="entry-head">
-    <h2><a href="/d/on-chain-audit-100-transactions-three-debunked-facts">On-chain audit: 100 transactions, three debunked facts</a></h2>
-    <span class="entry-date">16 August 2026</span>
-  </div>
-<p>This week, a full on-chain audit ran through BYKO's entire transaction history: 100 Transfer events since deploy, every one classified — mints, LP adds, buys, sells, LP removals, plain transfers. The reconciled balances matched on-chain balances exactly, down to the decimal, and the total matched the fixed supply of 790,227.</p>
-<p>It also debunked three things this diary had recorded as fact.</p>
-<p>First: an earlier note claimed Farcaster rewards had gone out to real people, building toward 20 holders. They hadn't — every address that looked external turned out to be DEX routing infrastructure (1inch, LI.FI) passing tokens through in the same transaction, net effect zero.</p>
-<p>Second: a recorded $1.35 micro-sell from August 4th. It doesn't exist anywhere in the transaction history — there were no sells that day at all, only two small buys. The closest real transaction is a $1.36 purchase five days later.</p>
-<p>Third: the holder numbers were wrong. The diary had recorded roughly 229,000 tokens for the author. The real figure across the author's wallets is 260,599 — 32.98% of supply.</p>
-<p>Getting the record wrong and then correcting it in public, with the receipts, is exactly what this diary is supposed to do.</p>
-</article>
-<article class="entry" id="metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price">
-  <div class="entry-head">
-    <h2><a href="/d/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price">MetaMask values a malicious token at $1,032 — while BYKO still has no price</a></h2>
-    <span class="entry-date">15 August 2026</span>
-  </div>
-<p>MetaMask says this token is <strong>Malicious</strong> — and still counts <strong>$1,032.23</strong> of it in my portfolio balance.</p>
-<p>In the same wallet, BYKO is labelled <strong>Risky</strong> and shown with no value at all — no price, no portfolio line — even though it has a real on-chain BYKO/USDC market.</p>
-<p>That contrast is exactly why BYKO exists: not to hype another token, but to document how crypto systems decide what looks legitimate, valuable, suspicious, or invisible.</p>
-<p>One wallet. Two completely different signals.</p>
-<p>A malicious token gets a four-digit valuation. A transparent token with a real market gets none.</p>
-<p>The screenshots are now part of the public diary.</p>
-<figure class="shot"><img src="/assets/diary/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price/metamask-malicious-token-1032.png" alt="MetaMask, account BYKOVAS LUKO: www.bopx.club is flagged Malicious and still counted as $1,032.23 of a $1,033.17 balance" width="720" height="1564" loading="lazy" decoding="async"><figcaption>MetaMask, account BYKOVAS LUKO: www.bopx.club is flagged Malicious and still counted as $1,032.23 of a $1,033.17 balance</figcaption></figure>
-<figure class="shot"><img src="/assets/diary/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price/metamask-byko-risky-no-price.png" alt="MetaMask, account BYKOVAS: BYKO is flagged Risky and its 262,159.22 tokens are shown with no price and no value" width="720" height="1564" loading="lazy" decoding="async"><figcaption>MetaMask, account BYKOVAS: BYKO is flagged Risky and its 262,159.22 tokens are shown with no price and no value</figcaption></figure>
-</article>
-<article class="entry" id="the-first-real-vote-for-legitimacy">
-  <div class="entry-head">
-    <h2><a href="/d/the-first-real-vote-for-legitimacy">The first real vote for legitimacy</a></h2>
-    <span class="entry-date">14 August 2026</span>
-  </div>
-<p>The first real vote is in.</p>
-<p>Someone outside the BYKO project independently chose to buy and hold BYKO — a token that promises no returns, no roadmap and no future utility. The only proposition was simple: holding BYKO is an on-chain signature for honesty, transparency and legitimacy over hype.</p>
-<p>Today somebody actually signed it.</p>
-<p>Wallet: 0x30Fd96C5AE61f0fB3d97e6159ab023710163eFBF</p>
-<p>I don't know who controls it, and that is exactly how it should be. The blockchain records the fact; the identity does not matter.</p>
-<p>Thank you to the first real supporter. Whatever happens next, this address is now permanently part of the BYKO diary as the first external vote for legitimacy.</p>
-</article>
-<article class="entry" id="fake-worthless-decentralized-case-closed">
-  <div class="entry-head">
-    <h2><a href="/d/fake-worthless-decentralized-case-closed">Fake, worthless, decentralized — case closed</a></h2>
-    <span class="entry-date">14 August 2026</span>
-  </div>
-<p>Crypto.com support called BYKO “fake.” Their proof: BaseScan shows $0.00.</p>
-<p>Fine. I stopped arguing about price and asked a much simpler question: if BYKO is worth $0 in your own reasoning, why does Crypto.com Onchain Wallet show nothing instead of $0, while other zero-value assets show $0?</p>
-<p>The final answer: “we don't have access to that as the Onchain wallet is a decentralized wallet.” Then the conversation was closed.</p>
-<p>A decentralized wallet apparently explains why its own UI renders one token differently from another. Incredible.</p>
-<p>I came to support with a missing price field. I left with BYKO declared fake, then worthless, then protected from debugging by decentralization.</p>
-<p>Full transcript in today’s diary entry. Thank you to the support agent for contributing an unusually pure specimen to the experiment.</p>
-</article>
-<article class="entry" id="the-market-s-first-reply-a-price-tag">
-  <div class="entry-head">
-    <h2><a href="/d/the-market-s-first-reply-a-price-tag">The market's first reply: a price tag</a></h2>
-    <span class="entry-date">13 August 2026</span>
-  </div>
-<p>BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.</p>
-<p>Honestly, we're a bit flattered. It means someone is reading. A coin with a hundred-dollar pool and a handful of holders already has an audience — even if the first readers arrived with a price list.</p>
-<p>No hard feelings — it's just not our genre. BYKO is an experiment in what legitimacy costs when you don't buy it. Paid attention would break the instrument.</p>
-<p>But free help is a different story. Honest feedback, a repost, a word of advice, or simply reading the diary — welcome. That's exactly the signal this experiment is built to measure.</p>
-</article>
-<article class="entry" id="turns-out-i-can-t-count">
-  <div class="entry-head">
-    <h2><a href="/d/turns-out-i-can-t-count">Turns out I can't count</a></h2>
-    <span class="entry-date">13 August 2026</span>
-  </div>
-<p>For a while, holder votes were being tracked by hand — spreadsheets, notes on paper, counted manually.</p>
-<p>Turns out the count was wrong. After cleaning up the wallets, it became clear that of all the holders being tracked, exactly one actually exists: the person running the experiment. Votes: zero against zero. 😂</p>
-<p>A little embarrassing, but the site now shows the truth instead of the earlier miscount. The experiment keeps going — still waiting on real voters, just with the math done correctly this time.</p>
-<p><strong>Update, 16 August 2026:</strong> a full on-chain audit went further and put the author's real holdings at 260,599 BYKO, 32.98% of supply — the token count in this entry was off too: <a href="https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts" target="_blank" rel="noopener">On-chain audit: 100 transactions, three debunked facts</a>.</p>
-</article>
-<article class="entry" id="signed-by-the-deployer">
-  <div class="entry-head">
-    <h2><a href="/d/signed-by-the-deployer">Signed by the deployer</a></h2>
-    <span class="entry-date">13 August 2026</span>
-  </div>
-<p>The website has always said BYKO's author is Denisas Bykovas. Until today, that claim rested on things that proved intent, not identity: a statement on a domain, basenames chosen by the same person, a private verification only Basescan's own system could see.</p>
-<p>Today that changed. A message was signed with the private key of the address that deployed the BYKO contract — 0x624056460437Cb4c63F7A3CF0c5a554dF3375222, the deployer wallet — and published on Basescan. The message states the name, the LinkedIn profile, the deployer address, and the BYKO contract address, all in one line. Anyone can verify it against the signature, byte for byte, at basescan.org/verifySig/95926.</p>
-<p>The signing wallet was chosen deliberately: not the main wallet, which carries a smart-account delegation that would make a plain signature check fail and look like a red flag instead of proof. The deployer address is a clean externally-owned account, so the signature verifies with any standard tool — not just Basescan's.</p>
-<p>What it proves: control of that one key, nothing more. It doesn't cover the rest of the wallet cluster, and that's left as is on purpose. What it removes is the need to just trust the page. Cost: $0 — no transaction, no gas, a few minutes to sign. The link, once published, can't be revoked — only lost, which would be worse.</p>
-<p>A matching note now also lives on LinkedIn, pointing back at the site — so the identity claim runs both directions.</p>
-</article>
-<article class="entry" id="bykocoin-now-official">
-  <div class="entry-head">
-    <h2><a href="/d/bykocoin-now-official">Bykocoin: now official</a></h2>
-    <span class="entry-date">12 August 2026</span>
-  </div>
-<p>BYKO now has official channels: Telegram, X, and Facebook.</p>
-<p>Telegram: t.me/bykocoin X: x.com/bykocoin (@bykocoin) Facebook: this page</p>
-<p>The handle — bykocoin — matches the on-chain basename bykocoin.base.eth and the distribution wallet's profile in the Base app.</p>
-</article>
-<article class="entry" id="the-site-that-answered-200-to-everything">
-  <div class="entry-head">
-    <h2><a href="/d/the-site-that-answered-200-to-everything">The site that answered 200 to everything</a></h2>
-    <span class="entry-date">12 August 2026</span>
-  </div>
-<p>Registered the site in Google Search Console — free, fifteen minutes, and the first thing it did was point at something embarrassing.</p>
-<p>Every non-existent URL on byko.bykovas.lt returned 200 OK with the homepage. Not a 404 — a confident &quot;yes, this page exists, here it is&quot;. A default fallback that switches itself on when there's no 404 page, and it meant a site whose entire argument is &quot;check everything yourself&quot; was quietly claiming that every address it doesn't have, exists.</p>
-<p>Nobody would have noticed. Search engines would have: infinite duplicates of one page, under infinite addresses.</p>
-<p>While there, a few more gaps: the raw markdown files behind the site were being served and indexed as duplicates of the pages they generate; canonical links and og:url were missing entirely; sitemap didn't exist; one page had no social preview tags at all.</p>
-<p>All fixed, all free. Total spent on this episode: $0 and 90 minutes.</p>
-<p>The part worth keeping: I've spent two weeks documenting other people's automated verdicts about my token. The first tool I pointed at my own site immediately found my own sloppiness. Which is the deal — if the argument is that everything should be checkable, it has to be checkable when it's inconvenient too.</p>
-</article>
-<article class="entry" id="coinbase-cannot-remove-its-own-flag">
-  <div class="entry-head">
-    <h2><a href="/d/coinbase-cannot-remove-its-own-flag">Coinbase cannot remove its own flag</a></h2>
-    <span class="entry-date">12 August 2026</span>
-  </div>
-<p>First real answer from anyone, after eight days of disputes: Coinbase Support, case #27207505, 12 August.</p>
-<p>The key sentence, quoted exactly: &quot;the security warnings displayed in Coinbase Wallet are generated by independent, third-party security signal providers. Our support team does not have the ability to manually override, remove, or modify these classifications.&quot;</p>
-<p>And then the part that makes it structural rather than annoying: they cannot confirm which provider flagged the token. Their recommendation is that I research the security scanners commonly used in the Base ecosystem and submit the contract to them myself.</p>
-<p>So, plainly: a wallet displays a warning that hides a token from its owner's portfolio, and the company running that wallet can neither remove the warning nor say who issued it. Not &quot;won't&quot; — cannot.</p>
-<p>This mirrors the conclusion from the Crypto.com rounds almost word for word: the fix never lives with the support desk. It lives in data directories and scanner databases, filed elsewhere, with no accountable human at the other end.</p>
-<p>The complaint was logged and escalated internally. The next move is what they suggested — going directly to the providers, starting with the Blockaid mistake-report form.</p>
-<p>Credit where it's due: this is the first response in this entire experiment that was written by a person rather than a template, and it says something true, even if the truth is uncomfortable.</p>
-</article>
-<article class="entry" id="burning-the-liquidity-and-the-first-flag-that-moved">
-  <div class="entry-head">
-    <h2><a href="/d/burning-the-liquidity-and-the-first-flag-that-moved">Burning the liquidity, and the first flag that moved</a></h2>
-    <span class="entry-date">7 August 2026</span>
-  </div>
-<p>On 7 August I burned the liquidity. All of it.</p>
-<p>Two transactions: first 3.07% as a rehearsal — to watch exactly what happens and confirm nothing breaks — then the remaining 96.93%. The LP tokens now sit at 0x…dEaD, which is an address nobody holds the keys to. The pool cannot be withdrawn by anyone. Including me. Especially me.</p>
-<p>Burned, not locked. A lock has an expiry date and a service you have to trust; burning has neither. The proof isn't a promise, it's a holder list: on the LP token's page, the dead address holds 100%.</p>
-<p>The next day, MetaMask dropped its &quot;Low locked liquidity&quot; warning. Blockaid had rescanned, seen the burn and counted it — in roughly twenty-four hours, with no email, no form, no appeal.</p>
-<p>That is the first measurable result of this whole experiment: one flag, removed by evidence rather than by argument. The other one, &quot;Unstable price&quot;, stays. It goes away only with trading history, and no amount of writing changes that.</p>
-<p>Cost of the burn: a few cents of gas. Cost of what was burned: the pool is now permanently beyond reach — which was the entire point.</p>
-</article>
-<article class="entry" id="the-diary-started-with-two-things-i-got-wrong">
-  <div class="entry-head">
-    <h2><a href="/d/the-diary-started-with-two-things-i-got-wrong">The diary started with two things I got wrong</a></h2>
-    <span class="entry-date">6 August 2026</span>
-  </div>
-<p>This project turned into a diary because of two things I got wrong.</p>
-<p>While redesigning the site, I wrote that &quot;the money never reaches the author&quot;. It sounded good. It is also false: I hold BYKO, and I can sell it into the same pool that buyers pay into. The liquidity can never be withdrawn — that part is true and provable — but the sentence as written claimed something stronger than the facts support.</p>
-<p>The second one: the stat bar showing hours and dollars spent had placeholder numbers in it. On a page whose entire argument is &quot;counted, dated, published&quot;, invented figures are the one thing that cannot ship.</p>
-<p>Both were caught before going live, which is the only reason this is a diary entry and not an apology.</p>
-<p>That's when the format became obvious. Not a product launch, not a roadmap — a log of what it actually takes for a token with nothing to hide to stop looking like a scam. Hours, emails, dollars, days of waiting. Measured, dated, published, including the parts where I'm the one who got it wrong.</p>
-<p>BYKO isn't a product. It's a measuring instrument, and the first thing it measured was me.</p>
-</article>
-<article class="entry" id="the-price-list-for-being-seen">
-  <div class="entry-head">
-    <h2><a href="/d/the-price-list-for-being-seen">The price list for being seen</a></h2>
-    <span class="entry-date">5 August 2026</span>
-  </div>
-<p>Every door in this ecosystem has a price on it. Here is the list I've been quoted so far, and what I did about it.</p>
-<p>DexScreener Enhanced Token Info: $299. DEXTools listing: $195. CoinGecko and CoinMarketCap price data, via the paid routes people quote: around $5,000. BaseScan Priority Support, which does not promise approval — only a faster answer — has its own Make Payment page.</p>
-<p>All declined. Total spent on visibility: $0.</p>
-<p>Trust Wallet's asset repository is free, and out of reach for a different reason: the requirements list a whitepaper, a roadmap, an audit, a CoinMarketCap listing and ten thousand holders. BYKO has none of those, deliberately — the absence of a roadmap is a design decision, not an oversight.</p>
-<p>Even the giveaway had a price: distributing 27 BYKO through Sablier would have cost roughly $2 per claim, to hand out something worth a fraction of a cent. Declined too.</p>
-<p>I'm not refusing to pay because $299 is unaffordable. I'm refusing because the moment I pay it, the experiment stops measuring anything. The question was never whether legitimacy can be bought — obviously it can. The question is what it costs to earn it without paying, and that number only stays honest while the receipts stay empty.</p>
-<p>For the record, I do use the free DEXTools widget on the market page. Refusing to buy visibility isn't the same as refusing to use what's given away.</p>
-</article>
-<article class="entry" id="four-rounds-with-a-script">
-  <div class="entry-head">
-    <h2><a href="/d/four-rounds-with-a-script">Four rounds with a script</a></h2>
-    <span class="entry-date">5 August 2026</span>
-  </div>
-<p>Four rounds with Crypto.com support, on a question with a one-line answer.</p>
-<p>The issue: BYKO showed in the wallet without an icon and without a USD value. The wallet was reading the token fine — it just had nothing to display next to it.</p>
-<p>Round one, I explained the problem. Round two, they asked me to confirm the wallet address. Round three, they told me the wallet is non-custodial and they have no visibility into my funds — which is true, and had nothing to do with the question. Round four, the same sentence again.</p>
-<p>The answer, which no round produced: none of this is fixed by support. The icon comes from token data directories that wallets read; the USD value comes from a price feed the token isn't in yet. Both are paperwork, filed elsewhere, with nobody to talk to.</p>
-<p>By 9 August the icon appeared — because the data directory updated, not because the conversation went anywhere. The USD value is still missing, and will stay missing until a price source picks the token up.</p>
-<p>The useful part isn't the outcome. It's that four rounds of a polite, patient script cost more time than reading the documentation would have — and the script never once said &quot;this isn't something we can fix&quot;.</p>
-</article>
-<article class="entry" id="three-refusals-zero-signed-reasons">
-  <div class="entry-head">
-    <h2><a href="/d/three-refusals-zero-signed-reasons">Three refusals, zero signed reasons</a></h2>
-    <span class="entry-date">4 August 2026</span>
-  </div>
-<p>On 4 August I verified ownership of the BYKO contract on BaseScan and submitted the token information form: website, icon, GitHub, LinkedIn, price data link. Everything the form asks for.</p>
-<p>The first wave of refusals arrived the same day. The stated reasons, template-picked, included: the sender's email is not the project's official domain; the information provided is false or misrepresents public entities; the token name or symbol may be susceptible to brand impersonation.</p>
-<p>The email came from bykovas@bykovas.lt. The site is byko.bykovas.lt. The founder is named on the site, with a LinkedIn link. The contract is verified as an exact match, and &quot;BYKO&quot; impersonates a brand that does not exist. Three reasons that contradict the submission and each other.</p>
-<p>The second refusal came on 5 August, the third on 11 August, both with the same sentence: &quot;unable to process the update at this time. This is usually due to a lack of information about the token.&quot; No specifics, no signature on the decision, nothing to fix.</p>
-<p>The pattern is consistent: one or two days from submission to a template. Which is the honest measurement here — not that they said no, but that nobody had to say why.</p>
-<p>Next move is a reply in the existing thread rather than a fourth form.</p>
-</article>
-<article class="entry" id="flagged-what-the-scanners-actually-measure">
-  <div class="entry-head">
-    <h2><a href="/d/flagged-what-the-scanners-actually-measure">Flagged: what the scanners actually measure</a></h2>
-    <span class="entry-date">4 August 2026</span>
-  </div>
-<p>Within days of existing, BYKO was flagged.</p>
-<p>MetaMask, via Blockaid: &quot;Low locked liquidity&quot; and &quot;Unstable price&quot;. Base app: &quot;Flagged as a scam&quot; — with no button anywhere to dispute it.</p>
-<p>So I ran the token through the scanners myself. GoPlus: not a honeypot, open source, zero tax. De.Fi: no rug-pull risk. honeypot.is: clean. RugCheck scored it 28 out of 100 — and the breakdown is the interesting part: the contract itself passed everything, the points were lost on Pool size, Transactions and Creation date. Translated: the token is small and new. Not dangerous — small.</p>
-<p>That is the actual finding. The automated verdict everyone reads as &quot;is this safe?&quot; mostly answers a different question: &quot;is this big?&quot;</p>
-<p>Since then MetaMask has dropped the liquidity flag — the LP tokens were burned, and that one is now measurably false. &quot;Unstable price&quot; stays; in a $150 pool it's not wrong. Base app still says scam, and as of 11 August has removed BYKO from portfolio view entirely.</p>
-<p>The appeal channels exist, they are just not where you'd look: report.blockaid.io/mistake, a report form inside MetaMask, security@coinbase.com.</p>
-</article>
-<article class="entry" id="twenty-holders-and-a-1-35-sell">
-  <div class="entry-head">
-    <h2><a href="/d/twenty-holders-and-a-1-35-sell">Twenty holders and a $1.35 sell</a></h2>
-    <span class="entry-date">3 August 2026</span>
-  </div>
-<p><strong>Correction, 16 August 2026:</strong> both numbers in this entry are wrong. A full on-chain audit of every BYKO transfer found that the twenty holders were DEX routing contracts passing tokens through in the same transaction, not people, and that the $1.35 sell never happened — there were no sells that day at all. The audit, with the reconciled figures: <a href="https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts" target="_blank" rel="noopener">On-chain audit: 100 transactions, three debunked facts</a>. The original text is left below, unedited.</p>
-<p>BYKO now has 20 holders. Not a typo, not a rounding of 20,000 — twenty addresses.</p>
-<p>Most of them came from small rewards handed out to real people on Farcaster. Not an airdrop campaign, no quests, no wallet-farming: just tokens sent to individuals who were actually there. A Sablier-based airdrop was considered and dropped — roughly $2 per claim to distribute something worth a fraction of a cent is its own kind of joke.</p>
-<p>I also bought BYKO out of my own pool, from a separate wallet, to see what happens. It works exactly as arithmetic says it should: in a pool this shallow, my own money moves my own price, and the fee goes to a pool whose LP tokens will end up burned. There is no clever trade here. It's a measurement.</p>
-<p>One more data point, from 4 August: a sell of $1.35 didn't leave a scratch on the price. That's the entire depth of this market in one sentence — and the honest answer to anyone who asks what this token is worth.</p>
-</article>
-<article class="entry" id="genesis-one-block-one-number-no-promises">
-  <div class="entry-head">
-    <h2><a href="/d/genesis-one-block-one-number-no-promises">Genesis: one block, one number, no promises</a></h2>
-    <span class="entry-date">2 August 2026</span>
-  </div>
-<p>BYKO exists as of block 49430937 on Base.</p>
-<p>Fixed supply: 790,227 tokens. That number is my birth date, not tokenomics — there is no model behind it, no emission schedule, nothing to explain. It was minted once, at deployment, and can never change: no mint function, no owner, no proxy, no transfer tax. Standard OpenZeppelin, compiled with solc 0.8.34, verified on BaseScan as an exact match. The source is public.</p>
-<p>93.7% of the supply — 740,227 tokens — went straight into a BYKO/USDC pool on Aerodrome, together with 74.02 USDC. The remaining 6.3% stayed in my wallet.</p>
-<p>The specification lives in the repository, not in a marketing deck: docs/specification.md in github.com/bykovas/byko. Every fact about this token is either verifiable on-chain or committed to git with a timestamp. The website reads the price straight from the pool contract — no third-party price API in the loop.</p>
-<p>What happens next is the actual experiment: what it costs for a token with nothing to hide to stop looking like a scam.</p>
-</article>
+      <a class="log-row" id="every-buy-but-one-was-mine" href="/d/every-buy-but-one-was-mine">
+        <span class="date">16 August 2026</span>
+        <span><h3>Every buy but one was mine</h3><p>Thirty-three buys moved BYKO's price 152%. All but one were mine, $49.27 in total — and the spend counter was wrong too: $85 is really $123.29.</p></span>
+        <span class="ep">EP 19</span>
+      </a>
+      <a class="log-row" id="on-chain-audit-100-transactions-three-debunked-facts" href="/d/on-chain-audit-100-transactions-three-debunked-facts">
+        <span class="date">16 August 2026</span>
+        <span><h3>On-chain audit: 100 transactions, three debunked facts</h3><p>An on-chain audit of BYKO's full history just debunked three things this diary had recorded as fact.</p></span>
+        <span class="ep">EP 18</span>
+      </a>
+      <a class="log-row" id="metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price" href="/d/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price">
+        <span class="date">15 August 2026</span>
+        <span><h3>MetaMask values a malicious token at $1,032 — while BYKO still has no price</h3><p>MetaMask counted a token it labels Malicious as $1,032.23 of portfolio value — while BYKO, labelled Risky, shows no value at all.</p></span>
+        <span class="ep">EP 17</span>
+      </a>
+      <a class="log-row" id="the-first-real-vote-for-legitimacy" href="/d/the-first-real-vote-for-legitimacy">
+        <span class="date">14 August 2026</span>
+        <span><h3>The first real vote for legitimacy</h3><p>The first real vote is in. Someone outside the project chose to buy and hold BYKO — not for a promise, but as an on-chain signature for legitimacy.</p></span>
+        <span class="ep">EP 16</span>
+      </a>
+      <a class="log-row" id="fake-worthless-decentralized-case-closed" href="/d/fake-worthless-decentralized-case-closed">
+        <span class="date">14 August 2026</span>
+        <span><h3>Fake, worthless, decentralized — case closed</h3><p>Crypto.com support called BYKO fake because BaseScan showed $0.00. Asked why their own wallet shows blank instead of $0, they answered: the wallet is decentralized.</p></span>
+        <span class="ep">EP 15</span>
+      </a>
+      <a class="log-row" id="the-market-s-first-reply-a-price-tag" href="/d/the-market-s-first-reply-a-price-tag">
+        <span class="date">13 August 2026</span>
+        <span><h3>The market's first reply: a price tag</h3><p>Someone is reading us</p></span>
+        <span class="ep">EP 14</span>
+      </a>
+      <a class="log-row" id="turns-out-i-can-t-count" href="/d/turns-out-i-can-t-count">
+        <span class="date">13 August 2026</span>
+        <span><h3>Turns out I can't count</h3><p>Thought BYKO had 20 holders. Turned out to be just one — me. 😂 The site now shows the real number.</p></span>
+        <span class="ep">EP 13</span>
+      </a>
+      <a class="log-row" id="signed-by-the-deployer" href="/d/signed-by-the-deployer">
+        <span class="date">13 August 2026</span>
+        <span><h3>Signed by the deployer</h3><p>The site said the author is Denisas Bykovas — now it's cryptographically signed and publicly verifiable on Basescan.</p></span>
+        <span class="ep">EP 12</span>
+      </a>
+      <a class="log-row" id="bykocoin-now-official" href="/d/bykocoin-now-official">
+        <span class="date">12 August 2026</span>
+        <span><h3>Bykocoin: now official</h3><p>BYKO's official channels are live — Telegram, X, and Facebook, all under one handle: bykocoin.</p></span>
+        <span class="ep">EP 11</span>
+      </a>
+      <a class="log-row" id="the-site-that-answered-200-to-everything" href="/d/the-site-that-answered-200-to-everything">
+        <span class="date">12 August 2026</span>
+        <span><h3>The site that answered 200 to everything</h3><p>A site about verifiable facts was returning 200 OK for every address that doesn't exist.</p></span>
+        <span class="ep">EP 10</span>
+      </a>
+      <a class="log-row" id="coinbase-cannot-remove-its-own-flag" href="/d/coinbase-cannot-remove-its-own-flag">
+        <span class="date">12 August 2026</span>
+        <span><h3>Coinbase cannot remove its own flag</h3><p>Coinbase confirms in writing that it cannot remove the warning in its own wallet — or say who issued it.</p></span>
+        <span class="ep">EP 9</span>
+      </a>
+      <a class="log-row" id="burning-the-liquidity-and-the-first-flag-that-moved" href="/d/burning-the-liquidity-and-the-first-flag-that-moved">
+        <span class="date">7 August 2026</span>
+        <span><h3>Burning the liquidity, and the first flag that moved</h3><p>100% of the LP burned in two transactions. A day later, the first flag came off by itself.</p></span>
+        <span class="ep">EP 8</span>
+      </a>
+      <a class="log-row" id="the-diary-started-with-two-things-i-got-wrong" href="/d/the-diary-started-with-two-things-i-got-wrong">
+        <span class="date">6 August 2026</span>
+        <span><h3>The diary started with two things I got wrong</h3><p>Two claims on this site didn't survive their own fact-check — both caught before publishing.</p></span>
+        <span class="ep">EP 7</span>
+      </a>
+      <a class="log-row" id="the-price-list-for-being-seen" href="/d/the-price-list-for-being-seen">
+        <span class="date">5 August 2026</span>
+        <span><h3>The price list for being seen</h3><p>$299, $195, ~$5,000 — the quoted price of being seen. All declined. Total spent: $0.</p></span>
+        <span class="ep">EP 6</span>
+      </a>
+      <a class="log-row" id="four-rounds-with-a-script" href="/d/four-rounds-with-a-script">
+        <span class="date">5 August 2026</span>
+        <span><h3>Four rounds with a script</h3><p>Four rounds with a support script about a missing icon. The icon appeared — for unrelated reasons.</p></span>
+        <span class="ep">EP 5</span>
+      </a>
+      <a class="log-row" id="three-refusals-zero-signed-reasons" href="/d/three-refusals-zero-signed-reasons">
+        <span class="date">4 August 2026</span>
+        <span><h3>Three refusals, zero signed reasons</h3><p>Three waves of refusals, four identical emails in one day, and not a single signed reason.</p></span>
+        <span class="ep">EP 4</span>
+      </a>
+      <a class="log-row" id="flagged-what-the-scanners-actually-measure" href="/d/flagged-what-the-scanners-actually-measure">
+        <span class="date">4 August 2026</span>
+        <span><h3>Flagged: what the scanners actually measure</h3><p>Every scanner cleared the contract. The score still said 28 — because the points measure size, not safety.</p></span>
+        <span class="ep">EP 3</span>
+      </a>
+      <a class="log-row" id="twenty-holders-and-a-1-35-sell" href="/d/twenty-holders-and-a-1-35-sell">
+        <span class="date">3 August 2026</span>
+        <span><h3>Twenty holders and a $1.35 sell</h3><p>Twenty holders, a $1.35 sell that moved nothing, and the honest depth of a market this size.</p></span>
+        <span class="ep">EP 2</span>
+      </a>
+      <a class="log-row" id="genesis-one-block-one-number-no-promises" href="/d/genesis-one-block-one-number-no-promises">
+        <span class="date">2 August 2026</span>
+        <span><h3>Genesis: one block, one number, no promises</h3><p>A token minted once, from a birth date, with 93.7% of supply going straight into the pool. Nothing left to promise.</p></span>
+        <span class="ep">EP 1</span>
+      </a>
 <!-- diary:end -->
   </div>
-  <p class="publish-note">Episodes are published when the thing they describe has actually finished. Nothing is scheduled.</p>
-</div>
 
-<footer>
+  <div class="follow">
+    <p class="note">Corrections are published as new entries, dated, with the old figure left visible. Nothing here is edited after the fact.</p>
+    <p class="fine"><a href="https://github.com/bykovas/byko/blob/main/website/content/diary.md" target="_blank" rel="noopener">the markdown source of every entry →</a></p>
+  </div>
+</main>
+
+<footer class="site-foot">
   <div class="wrap">
-    <div class="foot">
-      <a class="wordmark" href="index.html">
-        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-          </g>
-        </svg>
-        BYKO
-      </a>
-      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
     </div>
     <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
 
-
-
+<script>
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+})();
+</script>
 </body>
 </html>

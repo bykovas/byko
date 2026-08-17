@@ -76,7 +76,8 @@ for (const entry of manifest.entries) {
   assert.ok(png.byteLength < 5_000_000, `${entry.slug}: static X asset is comfortably below 5 MB`);
   assert.equal(createHash("sha256").update(png).digest("hex").slice(0, 12),
     entry.twitterImageVersion, `${entry.slug}: static X filename hash matches its bytes`);
-  assert.ok(html.includes('href="/diary">Read the full diary →</a>'), `${entry.slug}: full diary link`);
+  /* the wording of the link is the designer's; that one exists is the invariant */
+  assert.ok(html.includes('href="/diary"'), `${entry.slug}: links back to the diary index`);
   assert.ok(diary.includes(`id="${entry.slug}"`), `${entry.slug}: legacy diary anchor remains`);
   assert.ok(diary.includes(`href="/d/${entry.slug}"`), `${entry.slug}: diary links to entry page`);
   assert.equal((sitemap.match(new RegExp(`<loc>${url}</loc>`, "g")) || []).length, 1, `${entry.slug}: sitemap URL`);

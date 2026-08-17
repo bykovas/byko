@@ -58,103 +58,137 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/byko.css?v=20260817">
 <style>
-:root{
-  --bg:#0B0D10;--bg-2:#11141A;--bg-3:#171B22;
-  --line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.14);
-  --text:#E8EAEE;--text-2:rgba(232,234,238,.72);--muted:rgba(232,234,238,.45);
-  --accent:#7CCBFF;--accent-2:#FFB088;--ok:#7CE3A6;
+.entry-doc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding-top:28px}
+.back{display:inline-block;font:var(--byko-data);color:var(--byko-live-ink);margin-bottom:18px}
+.entry-meta{display:flex;gap:14px;align-items:baseline;font:var(--byko-kicker);
+  letter-spacing:var(--byko-kicker-tracking);text-transform:uppercase;color:var(--byko-live-ink)}
+.entry-doc h1{font:700 38px/1.08 var(--byko-font-sans);letter-spacing:-.03em;margin:12px 0 0}
+.entry-teaser{font:italic 400 18px/1.45 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+.entry-body{margin-top:22px;padding-top:22px;border-top:var(--byko-rule-heavy);
+  font:var(--byko-prose);max-width:var(--byko-measure-prose)}
+.entry-body p{margin:0 0 1em}
+.entry-body ul{margin:0 0 1em;padding-left:20px}
+.entry-body li{margin:0 0 .4em}
+.entry-body a{overflow-wrap:anywhere}
+.entry-body strong{font-weight:600}
+.entry-body code{font-family:var(--byko-font-mono);font-size:.88em}
+.entry-body figure.shot{margin:22px 0;max-width:none}
+.entry-body figure.shot img{display:block;width:100%;height:auto;border:1px solid var(--byko-rule)}
+.entry-body figure.shot figcaption{font:var(--byko-data);color:var(--byko-label);margin-top:8px}
+.notestrip{margin-top:26px;padding:12px 0;border-top:var(--byko-rule-hair);border-bottom:var(--byko-rule-hair);
+  font:var(--byko-note);color:var(--byko-ink-2)}
+.neighbours{margin-top:var(--byko-sp-9)}
+@media (max-width:900px){
+  .entry-doc{grid-template-columns:minmax(0,1fr);gap:32px}
+  .entry-doc h1{font-size:29px}
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
-header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:24px;height:64px}
-.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
-.wordmark:hover{text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
-.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
-.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--text);text-decoration:none}
-.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
-.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
-.page{padding:128px 0 0}.entry-shell{max-width:840px}
-.back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:30px}
-.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
-h1{font:600 44px/1.08 Inter,sans-serif;letter-spacing:-.025em;margin:18px 0 0;max-width:20ch}
-.entry-date{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:18px}
-.entry-body{margin-top:38px;padding-top:10px;border-top:1px solid var(--line)}
-.entry-body p{margin:22px 0 0;font-size:16px;line-height:1.75;color:var(--text-2)}
-.entry-body ul{margin:22px 0 0;padding-left:22px;font-size:16px;line-height:1.75;color:var(--text-2)}
-.entry-body strong{color:var(--text);font-weight:600}
-.entry-body code{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text)}
-.entry-body figure{margin:30px 0 0}
-.entry-body figure img{display:block;margin:0 auto;max-width:100%;max-height:660px;width:auto;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg-3)}
-.entry-body figcaption{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin:10px auto 0;max-width:72ch;text-align:center}
-.diary-link{display:inline-flex;margin-top:42px;padding:12px 18px;border:1px solid var(--line-2);border-radius:8px;color:var(--text);font:500 14px Inter,sans-serif;transition:.15s}
-.diary-link:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);text-decoration:none}
-footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px;max-width:72ch}
-@media(max-width:900px){h1{font-size:34px}.nav-links{gap:14px}.nav-links .status{display:none}.nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}}
-@media(max-width:600px){.wrap{padding:0 20px}.nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}.page{padding-top:112px}}
 </style>
-<script src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="wordmark" href="/">
-      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
-        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/></linearGradient></defs>
-        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
-      </svg>
-      BYKO
-    </a>
-    <nav class="nav-links">
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/"><img src="/assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
       <a href="/#referendum">Referendum</a>
-      <a href="/diary" aria-current="page">Diary</a>
+      <span aria-current="page">Diary</span>
       <a href="/#facts">Facts</a>
-      <a href="/#services">Services</a>
+      <a class="services" href="/#services">Services</a>
       <a href="/market">Market</a>
       <a href="/specification">Specification</a>
-      <span class="status">running</span>
+      <span class="lamp">running</span>
     </nav>
   </div>
 </header>
 
-<main class="wrap page">
-  <article class="entry-shell" data-diary-slug="the-market-s-first-reply-a-price-tag">
-    <a class="back" href="/diary#the-market-s-first-reply-a-price-tag">← Full diary</a><br>
-    <span class="kicker">Diary / episode</span>
-    <h1>The market's first reply: a price tag</h1>
-    <time class="entry-date" datetime="2026-08-13">13 August 2026</time>
-    <div class="entry-body">
+<main class="wrap">
+  <div class="entry-doc">
+    <article data-diary-slug="the-market-s-first-reply-a-price-tag">
+      <a class="back" href="/diary">← the whole log</a>
+      <div class="entry-meta">
+        <time datetime="2026-08-13">13 August 2026</time>
+        <span>EP 14</span>
+      </div>
+      <h1>The market's first reply: a price tag</h1>
+      <p class="entry-teaser">Someone is reading us</p>
+      <div class="entry-body">
 <p>BYKO's social channels are brand new — and the first messages have already arrived: offers of paid promotion and fast-track listings.</p>
 <p>Honestly, we're a bit flattered. It means someone is reading. A coin with a hundred-dollar pool and a handful of holders already has an audience — even if the first readers arrived with a price list.</p>
 <p>No hard feelings — it's just not our genre. BYKO is an experiment in what legitimacy costs when you don't buy it. Paid attention would break the instrument.</p>
 <p>But free help is a different story. Honest feedback, a repost, a word of advice, or simply reading the diary — welcome. That's exactly the signal this experiment is built to measure.</p>
+      </div>
+      <p class="notestrip">Figures corrected after publication stay on the page: the old number is struck, not deleted, and the entry that fixed it is dated.</p>
+    </article>
+    <aside class="apparatus">
+      <span class="label">Apparatus</span>
+      <ul>
+        <li><span class="label-sm">Published</span><br><span class="mono">13 August 2026</span></li>
+        <li><span class="label-sm">Source</span><br><a href="https://github.com/bykovas/byko/blob/main/website/content/diary.md" target="_blank" rel="noopener">diary.md →</a></li>
+        <li><span class="label-sm">Contract</span><br><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BYKO on BaseScan →</a></li>
+        <li><span class="label-sm">Deployment</span><br><span class="mono">block 49,430,937 · 2 Aug 2026</span></li>
+      </ul>
+    </aside>
+  </div>
+
+  <p class="nameplate">
+    <span><b>Instrument</b>BYKO — legitimacy meter</span>
+    <span><b>Serial</b><span class="mono">790,227</span></span>
+    <span><b>Network</b><span class="mono">Base · 8453</span></span>
+    <span><b>Rev</b><span class="mono">1.3</span></span>
+    <span><b>Status</b><span class="live">in service · running</span></span>
+  </p>
+
+  <div class="neighbours">
+    <div class="section-head">
+      <span class="kicker">Neighbouring entries</span>
+      <h2>Either side of this one</h2>
     </div>
-    <a class="diary-link" href="/diary">Read the full diary →</a>
-  </article>
+    <div class="log">
+      <a class="log-row" href="/d/fake-worthless-decentralized-case-closed">
+        <span class="date">14 August 2026</span>
+        <span><h3>Fake, worthless, decentralized — case closed</h3><p>Crypto.com support called BYKO fake because BaseScan showed $0.00. Asked why their own wallet shows blank instead of $0, they answered: the wallet is decentralized.</p></span>
+        <span class="ep">newer</span>
+      </a>
+      <a class="log-row" href="/d/turns-out-i-can-t-count">
+        <span class="date">13 August 2026</span>
+        <span><h3>Turns out I can't count</h3><p>Thought BYKO had 20 holders. Turned out to be just one — me. 😂 The site now shows the real number.</p></span>
+        <span class="ep">older</span>
+      </a>
+    </div>
+    <p class="fine" style="margin-top:14px"><a href="/diary">all episodes →</a></p>
+  </div>
 </main>
 
-<footer>
+<footer class="site-foot">
   <div class="wrap">
-    <div class="foot">
-      <a class="wordmark" href="/">
-        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g></svg>
-        BYKO
-      </a>
-      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
     </div>
     <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
+
+<script>
+(function () {
+  var toggle = document.querySelector(".nav-toggle");
+  var links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+})();
+</script>
 </body>
 </html>

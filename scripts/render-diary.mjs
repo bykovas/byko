@@ -301,9 +301,19 @@ function renderEntryPages(entries) {
   let removed = 0;
   mkdirSync(ENTRY_DIR, { recursive: true });
 
-  for (const entry of entries) {
+  for (const [index, entry] of entries.entries()) {
     const filename = `${entry.slug}.html`;
     const imageAlt = `BYKO Diary — ${entry.title}`;
+    /* entries are newest first, so the oldest episode is number one */
+    const episode = entries.length - index;
+    /* the entries either side of this one, newer first, as log rows */
+    const neighbours = [entries[index - 1], entries[index + 1]]
+      .filter(Boolean)
+      .map((near, offset) => `      <a class="log-row" href="/d/${near.slug}">
+        <span class="date">${escapeHtml(near.dateText)}</span>
+        <span><h3>${inline(near.title)}</h3><p>${inline(near.teaser)}</p></span>
+        <span class="ep">${offset === 0 && entries[index - 1] ? "newer" : "older"}</span>
+      </a>`).join("\n");
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
@@ -330,6 +340,9 @@ function renderEntryPages(entries) {
       SLUG: escapeHtml(entry.slug),
       ENTRY_TITLE: inline(entry.title),
       ENTRY_BODY: entry.bodyHtml,
+      ENTRY_TEASER: inline(entry.teaser),
+      EPISODE: `EP ${episode}`,
+      NEIGHBOURS: neighbours,
       JSON_LD: safeJsonLd(jsonLd),
     });
     writeFileSync(`${ENTRY_DIR}/${filename}`, page);
@@ -428,14 +441,12 @@ const entries = parse(readFileSync(SOURCE, "utf8"));
 prepareEntries(entries);
 const twitterImages = await renderTwitterImages(entries);
 
-/* /diary — every entry, full text */
-const diaryHtml = entries.map(entry => `<article class="entry" id="${entry.slug}">
-  <div class="entry-head">
-    <h2><a href="/d/${entry.slug}">${inline(entry.title)}</a></h2>
-    <span class="entry-date">${escapeHtml(entry.dateText)}</span>
-  </div>
-${entry.bodyHtml}
-</article>`).join("\n");
+/* /diary — the index: every entry as a log row, the text lives on /d/{slug} */
+const diaryHtml = entries.map((entry, index) => `      <a class="log-row" id="${entry.slug}" href="/d/${entry.slug}">
+        <span class="date">${escapeHtml(entry.dateText)}</span>
+        <span><h3>${inline(entry.title)}</h3><p>${inline(entry.teaser)}</p></span>
+        <span class="ep">EP ${entries.length - index}</span>
+      </a>`).join("\n");
 
 /* home page — the CARD_COUNT most recent as cards; zero entries → no block */
 const cards = entries.slice(0, CARD_COUNT).map((entry, index) => `      <a class="card" href="/d/${entry.slug}">
