@@ -134,6 +134,14 @@ The mechanics:
   is no aggregator and no third-party quote in the path.
 - **Tokens received are kept.** Accepting them creates no commitment to
   convert, sell, or support the price.
+- **Receiving address:** `0xe8fC8769934f9461F7adF6F440ff3883E28021Eb` —
+  already one of the founder wallets disclosed on the project site, so
+  anything paid in is visible inside the disclosed holdings rather than
+  arriving somewhere unlisted.
+- **Scope.** Consulting, tender and bid preparation, architecture and
+  system audits, and hands-on engineering, in the fields behind the
+  author's 25 years of enterprise work: national tax platforms, SEPA and
+  SWIFT payments, regulated manufacturing, energy, government projects.
 - **Scope and refusal.** Which engagements are accepted, and whether a
   given invoice is settled in BYKO at all, remains the author's decision.
   No obligation to accept any particular volume arises.
