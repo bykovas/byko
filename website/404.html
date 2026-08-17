@@ -32,7 +32,6 @@ a{color:var(--accent);text-decoration:none;font-family:'JetBrains Mono',monospac
 a:hover{text-decoration:underline}
 .home{display:inline-block;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
 </style>
-<script src="/analytics.js?v=20260817"></script>
 </head>
 <body>
 <main>
@@ -48,5 +47,10 @@ a:hover{text-decoration:underline}
   <p>Nothing at this address. On this site, that is verifiable.</p>
   <a class="home" href="/">back to byko.bykovas.lt</a>
 </main>
+<!-- Cloudflare Web Analytics — cookieless, no consent banner required.
+     TODO: replace PASTE_CF_BEACON_TOKEN with the real token before merging.
+     Dashboard → Web Analytics → the byko-ben.pages.dev card → "{ } JS Snippet
+     installation" hands out the tag with the token already in it. -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "PASTE_CF_BEACON_TOKEN"}'></script>
 </body>
 </html>

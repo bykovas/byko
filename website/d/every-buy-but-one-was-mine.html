@@ -105,7 +105,6 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 @media(max-width:600px){.wrap{padding:0 20px}.nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}.page{padding-top:112px}}
 </style>
 <script src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js" crossorigin="anonymous"></script>
-<script src="/analytics.js?v=20260817"></script>
 </head>
 <body>
 <header>
@@ -163,5 +162,10 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     <p class="disclaimer">BYKO is a token with no utility, no yield and no promises. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
+<!-- Cloudflare Web Analytics — cookieless, no consent banner required.
+     TODO: replace PASTE_CF_BEACON_TOKEN with the real token before merging.
+     Dashboard → Web Analytics → the byko-ben.pages.dev card → "{ } JS Snippet
+     installation" hands out the tag with the token already in it. -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "PASTE_CF_BEACON_TOKEN"}'></script>
 </body>
 </html>
