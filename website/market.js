@@ -93,6 +93,8 @@
     var marketUpdated = byId("market-updated");
     var poolBar = document.querySelector(".pool-bar");
     var indexPrice = byId("index-price");
+    /* the hero readout carries the bare figure; its unit lives in the label */
+    var indexPriceFigure = byId("index-price-figure");
 
     if (!isFinite(price) || price <= 0) throw new Error("price");
     latestBlock = data.block;
@@ -107,6 +109,7 @@
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
     if (poolBar) poolBar.style.setProperty("--split", displaySplit.toFixed(1) + "%");
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
+    if (indexPriceFigure) indexPriceFigure.textContent = price.toFixed(6);
     hideLoading("price-loading");
     updateHoldersMeta();
   }

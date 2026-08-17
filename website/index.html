@@ -19,9 +19,7 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/byko.css?v=20260817">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -56,253 +54,84 @@
 }
 </script>
 <style>
-:root{
-  --bg:#0B0D10;
-  --bg-2:#11141A;
-  --bg-3:#171B22;
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
-  --text:#E8EAEE;
-  --text-2:rgba(232,234,238,.72);
-  --muted:rgba(232,234,238,.45);
-  --accent:#7CCBFF;
-  --accent-2:#FFB088;
-  --ok:#7CE3A6;
-  --grad:linear-gradient(90deg,#7CCBFF,#FFB088);
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 Inter,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+/* page-specific composition; the system itself lives in assets/byko.css */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:44px;align-items:start;padding-top:34px}
+.hero h1{margin:14px 0 0}
+.hero h1 .edge{color:var(--byko-live-edge)}
+.hero .sub{font:italic 400 18px/1.4 var(--byko-font-sans);color:var(--byko-ink-2);margin:12px 0 0}
+.hero .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:16px 0 0}
+.hero .band{margin-top:28px}
 
-.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.kicker{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:18px;height:1px;background:var(--accent)}
-.b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mono{font-family:'JetBrains Mono',monospace}
+.coin{display:flex;justify-content:center;padding:6px 0 22px}
+.coin img{width:150px;height:150px}
 
-/* header */
-header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:24px;height:64px}
-.wordmark{display:inline-flex;align-items:center;gap:12px;font:600 17px Inter,sans-serif;letter-spacing:-.02em;color:var(--text)}
-.wordmark:hover{text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;align-items:center}
-.nav-links a{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2)}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-links span[aria-current="page"]{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.operator{background:var(--byko-paper-2);border:1px solid rgba(13,17,22,.10);border-radius:12px;padding:22px 24px 24px}
+.operator .label{display:block}
+.operator .who{display:flex;gap:16px;align-items:flex-start;margin-top:14px}
+.operator img.portrait{width:104px;height:104px;object-fit:cover;object-position:top;border-radius:8px;display:block}
+.operator .name{font:700 22px/1.15 var(--byko-font-sans);letter-spacing:-.025em}
+.operator .role{font:400 13.5px/1.4 var(--byko-font-mono);color:var(--byko-label);margin-top:6px}
+.operator .bio{font:400 15.5px/1.5 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+.operator .plate-note{margin-top:14px;padding-top:12px;border-top:var(--byko-rule-hair);font:var(--byko-data);color:var(--byko-label)}
+.operator .plate-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font:400 13.5px var(--byko-font-mono)}
 
-.status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ok);padding:6px 12px;border:1px solid var(--line);border-radius:99px}
-.status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.conditions{margin-top:var(--byko-sp-9);border-top:var(--byko-live-bar)}
+.conditions .label{display:block;margin-top:14px;color:var(--byko-live-ink)}
+.conditions ul{list-style:none;margin:12px 0 0;padding:0}
+.conditions li{display:grid;grid-template-columns:24px 1fr;gap:0 4px;padding:7px 0;border-bottom:var(--byko-rule-hair);font-size:16px}
+.conditions li:first-child{border-top:var(--byko-rule-hair)}
+.conditions li b{color:var(--byko-live-ink);font-weight:400;font-family:var(--byko-font-mono)}
+.conditions .foot{font:var(--byko-data);color:var(--byko-label);margin-top:12px}
 
-/* hero */
-.grid-bg{position:relative}
-.grid-bg::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%);
-  mask-image:radial-gradient(120% 70% at 50% 0%,#000 0%,transparent 70%)}
-.hero{padding:152px 32px 0}
-.hero-grid{display:grid;grid-template-columns:1fr 320px;gap:64px;align-items:start}
-h1{font:600 60px/1.05 Inter,sans-serif;letter-spacing:-.025em;margin:16px 0 0;max-width:15ch}
-h2{font:600 28px/1.2 Inter,sans-serif;letter-spacing:-.02em;margin:16px 0 0}
-h3{font:600 17px Inter,sans-serif;letter-spacing:-.01em;margin:14px 0 0}
-.lede{font-size:18px;color:var(--text-2);margin:16px 0 0}
-.hero-meta{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:14px}
-.cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
-.cta-actions,.cta-meta{display:flex;gap:12px;flex-basis:100%;flex-wrap:wrap;align-items:center}
+.reveal{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:6px 12px;background:var(--byko-paper);
+  border:1px solid rgba(13,17,22,.22);border-radius:var(--byko-radius-control);font:var(--byko-data);
+  color:var(--byko-ink-2);cursor:pointer;transition:var(--byko-transition)}
+.reveal:hover{background:var(--byko-paper-2);color:var(--byko-ink)}
+#wallet-register[hidden]{display:none}
+#wallet-register{margin-top:16px}
 
-.coin{display:flex;justify-content:center;filter:drop-shadow(0 0 48px rgba(124,203,255,.28))}
+.insert{border-left:var(--byko-rule-section);border-right:var(--byko-rule-section);padding:24px 30px}
 
-/* buttons */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;font:500 14px Inter,sans-serif;
-  background:var(--text);color:var(--bg);border:1px solid transparent;cursor:pointer;transition:.15s;text-decoration:none}
-.btn:hover{background:var(--accent);text-decoration:none;color:var(--bg)}
-.btn .arr{transition:.15s}.btn:hover .arr{transform:translateX(2px)}
-.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
-.btn-ghost:hover{background:var(--bg-3);border-color:rgba(255,255,255,.25);color:var(--text)}
-.btn:disabled{opacity:.55;cursor:wait}
+.tiles{display:grid;grid-template-columns:1fr 1fr;border-top:var(--byko-live-bar);border-bottom:var(--byko-rule-hair)}
+.tiles .tile{padding:18px 0 20px}
+.tiles .tile.right{text-align:right;border-left:var(--byko-rule-hair);padding-left:22px}
+.tiles .tile b{display:block;font:600 40px/1 var(--byko-font-mono);letter-spacing:-.04em;color:var(--byko-pass)}
+.tiles .tile.right b{color:var(--byko-quoted)}
+.tiles .tile .label{display:block;margin-top:10px}
+.tally-bar{position:relative;display:grid;grid-template-columns:1fr 1fr;height:10px;background:rgba(13,17,22,.05);margin-top:16px}
+.tally-bar i{display:block;height:100%}
+.tally-bar .for{background:var(--byko-pass);margin-left:auto;width:0}
+.tally-bar .withdrawn{background:var(--byko-quoted);width:0}
+.tally-bar::after{content:"";position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;background:var(--byko-ink);transform:translateX(-50%)}
+.tally-caption{display:flex;justify-content:space-between;gap:16px;margin-top:10px;font:var(--byko-data);color:var(--byko-label)}
+.tally-caption .mid{color:var(--byko-ink-2)}
 
-a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.gift{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:44px;align-items:start;margin-top:var(--byko-sp-9)}
+.gift img{display:block;width:100%;height:auto}
+.gift .caption{font:var(--byko-data);color:var(--byko-label);margin-top:10px}
 
-/* founder card */
-.founder-card{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:20px}
-.founder-card .label{display:block}
-.founder-photo{width:64px;height:64px;border-radius:12px;background:#1a1d22;border:1px solid var(--line);object-fit:cover;object-position:top}
-.founder-row{display:flex;gap:14px;align-items:center;margin-top:12px}
-.founder-info{flex:1}
-.founder-info b{display:block;font:600 16px Inter,sans-serif;letter-spacing:-.01em;margin:0}
-.founder-info .sub{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:4px 0 0}
-.founder-card p{margin:14px 0 0;font-size:13px;line-height:1.6;color:var(--text-2)}
-.founder-card .bio{margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
-.founder-links{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
-.founder-links a{font-family:'JetBrains Mono',monospace;font-size:12px}
-
-/* banner */
-.banner{margin-top:56px;padding:24px 28px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:14px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
-.banner-main{flex:1 1 100%}
-.banner p{margin:0;font:600 20px/1.3 Inter,sans-serif;letter-spacing:-.01em}
-.banner p span{color:var(--text-2);font-weight:400}
-.banner p .mono{color:var(--text);font:500 18px 'JetBrains Mono',monospace}
-.banner .banner-fine{font:400 11px/1.7 'JetBrains Mono',monospace;color:var(--muted);margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
-.banner .links{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
-.banner .links a{margin-left:8px}
-
-/* sections */
-section{padding:80px 0 0}
-/* the 80px section padding already clears the header — anything more than a
-   few px on top of it lands the section below a gap */
-#identity,#referendum,#services,#diary,#facts{scroll-margin-top:4px}
-
-/* data rows */
-.rows{margin-top:40px;border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:220px 1fr;gap:24px;padding:9px 0;border-bottom:1px solid var(--line);opacity:.86;transition:.15s}
-.row:hover{opacity:1}
-.row .k{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:3px}
-.row .v{font-size:15px}
-.row .v.mono{font-size:13px;word-break:break-all}
-.row .v .note{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;margin-left:8px}
-
-/* identity: long signed strings wrap hard, copy stays byte-exact */
-#identity .row .v.mono{font-size:12px;white-space:pre-wrap}
-.identity-note{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
-.addr{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
-.copy{font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 10px;border-radius:5px;background:var(--bg-3);
-  border:1px solid var(--line);color:var(--text-2);cursor:pointer;transition:.15s}
-.copy:hover{border-color:var(--line-2);background:var(--bg-3);color:var(--text)}
-
-/* cards */
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
-.card{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:24px;transition:.15s}
-.card:hover{background:var(--bg-3);border-color:var(--line-2)}
-a.card{display:block;color:inherit}
-a.card:hover{text-decoration:none}
-.card p{color:var(--text-2);margin:0;font-size:14px}
-.card .label{display:block}
-.card .status-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 9px;border-radius:99px;border:1px solid rgba(255,255,255,.08);color:var(--accent-2);display:inline-block}
-.card .cliffhanger{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0;border-top:1px solid var(--line);padding-top:12px}
-
-/* exp/diary stats */
-.exp-band{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:32px}
-.exp-band>*{display:block;padding:18px 16px;border-left:1px solid var(--line);color:inherit;text-decoration:none;transition:.15s}
-.exp-band>*:first-child{border-left:0}
-.exp-band>*:nth-child(3){border-left-color:var(--line-2)}
-.exp-band>a:hover{background:var(--bg-2);text-decoration:none}
-.exp-band b{display:block;font:600 24px/1.1 'JetBrains Mono',monospace;letter-spacing:-.02em}
-.exp-band .blue b{color:var(--accent)}
-.exp-band .peach b{color:var(--accent-2)}
-.exp-band span{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-
-/* gift card */
-.giftcard{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:24px}
-.giftcard h3{margin:14px 0 8px}
-.giftcard .label{display:block}
-.giftcard .desc{color:var(--text-2);margin:0;font-size:14px}
-.gift-form{display:flex;gap:12px;margin-top:16px}
-.gift-form input{flex:1;min-width:0;padding:11px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);font:400 13px 'JetBrains Mono',monospace;outline:none;transition:.15s}
-.gift-form input:focus{border-color:var(--line-2)}
-.gift-form input::placeholder{color:var(--muted)}
-.gift-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:12px 0 0}
-
-/* check-vote input */
-.check-vote{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center}
-.check-vote input{flex:1;min-width:260px;padding:11px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);font:400 13px 'JetBrains Mono',monospace;outline:none;transition:.15s}
-.check-vote input:focus{border-color:var(--line-2)}
-.check-vote input::placeholder{color:var(--muted)}
-.vote-result{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
-
-/* referendum section */
-.ref-grid{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:stretch;margin-top:32px}
-.ref-panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:28px}
-.ref-panel .label{display:block}
-.tally-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
-.tally-tile{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-.tally-tile b{display:block;font:600 34px/1 'JetBrains Mono',monospace;letter-spacing:-.02em}
-.tally-tile.for b{color:var(--ok)}
-.tally-tile span{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}
-.split-bar{display:flex;height:8px;border-radius:2px;overflow:hidden;border:1px solid var(--line);margin-top:16px}
-.split-bar .for{background:var(--ok)}
-.split-bar .withdrawn{background:var(--bg-3)}
-.split-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px}
-.ref-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:16px 0 0}
-
-.ballot-list{margin-top:16px;font-size:14px;line-height:2;color:var(--text)}
-.ballot-list div{margin:0}
-.ballot-list span{color:var(--ok);font-family:'JetBrains Mono',monospace}
-
-.check-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0}
-
-/* donation card preview */
-.card-preview{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;justify-content:center}
-.card-preview img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
-.card-preview .caption{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-align:center}
-
-/* card dialog */
-.card-dialog{width:min(560px,calc(100% - 32px))}
-.wallet-dialog{width:min(440px,calc(100% - 32px));padding:0;background:var(--bg-2);color:var(--text);
-  border:1px solid var(--line-2);border-radius:14px;box-shadow:none}
-.wallet-dialog:focus{outline:none}
-.wallet-dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
-.wallet-dialog-inner{padding:24px}
-.wallet-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
-.wallet-dialog-head h2{margin:0;font-size:20px}
-.wallet-close{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:8px;
-  background:transparent;border:0;color:var(--text-2);font:20px/1 Inter,sans-serif;cursor:pointer}
-.wallet-close:hover{background:var(--bg-3);color:var(--text)}
-.wallet-message{margin:0;color:var(--text-2)}
-.wallet-address{display:block;margin:16px 0 12px;padding:12px;border:1px solid var(--line);border-radius:8px;
-  background:var(--bg);color:var(--text);font:12px/1.6 'JetBrains Mono',monospace;overflow-wrap:anywhere}
-.wallet-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-.wallet-option{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;margin:0 0 8px;padding:10px 12px;
-  border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);font:500 14px Inter,sans-serif;
-  text-align:left;cursor:pointer;transition:.15s}
-.wallet-option:last-child{margin-bottom:0}
-.wallet-option:hover{background:var(--bg-3);border-color:var(--line-2)}
-.wallet-option img{width:24px;height:24px;border-radius:6px}
-.card-field{margin:0 0 14px}
-.card-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.card-field input,.card-field textarea{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);font:400 13px 'JetBrains Mono',monospace;outline:none;transition:.15s;resize:vertical}
-.card-field input:focus,.card-field textarea:focus{border-color:var(--line-2)}
-.card-field input::placeholder,.card-field textarea::placeholder{color:var(--muted)}
-.card-field textarea{min-height:64px;max-height:160px}
-.card-field .count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);float:right}
-.card-alt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin:16px 0 0}
-#card-tx-field{margin:20px 0 0;padding-top:20px;border-top:1px solid var(--line)}
-.card-alt a{cursor:pointer}
-#card-dialog-status{font-family:'JetBrains Mono',monospace;font-size:12px;margin:14px 0 0;display:none}
-#card-dialog-status.is-ok{display:block;color:var(--ok)}
-#card-dialog-status.is-err{display:block;color:var(--text-2)}
-#card-result{display:none;margin-top:4px}
-#card-result img{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
-#card-result .permalink{font-family:'JetBrains Mono',monospace;font-size:12px;margin:12px 0 0;word-break:break-all}
-
-/* footer */
-footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
-.foot .mono{font-size:12px;color:var(--muted)}
-.disclaimer{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);margin-top:24px}
+dialog.byko-dialog{border:1.5px solid var(--byko-ink);border-radius:var(--byko-radius-control);background:var(--byko-paper);
+  color:var(--byko-ink);max-width:520px;width:calc(100% - 28px);padding:24px}
+dialog.byko-dialog::backdrop{background:rgba(13,17,22,.45)}
+dialog.byko-dialog h2{font:var(--byko-h2)}
+dialog.byko-dialog .dialog-head{display:flex;align-items:baseline;gap:16px;border-bottom:var(--byko-rule-heavy);padding-bottom:10px}
+dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--byko-data);color:var(--byko-ink-2);cursor:pointer}
+.wallet-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.wallet-address{display:block;margin:14px 0 0;padding:10px 12px;border:var(--byko-bd-input);border-radius:var(--byko-radius-control);
+  font:var(--byko-hex);word-break:break-all}
+.card-field{margin-top:14px}
+.card-field label{display:block;margin-bottom:6px}
+.card-field input,.card-field textarea{width:100%;padding:10px 12px;background:var(--byko-paper);border:var(--byko-bd-input);
+  border-radius:var(--byko-radius-control);font:var(--byko-value);color:var(--byko-ink)}
+#card-result[hidden],#card-tx-field[hidden]{display:none}
+#card-result img{display:block;width:100%;height:auto;margin-top:14px}
 
 @media (max-width:900px){
-  .hero{padding:112px 32px 0}
-  .hero-grid{grid-template-columns:1fr}
-  h1{font-size:40px;line-height:1.08}
-  .ref-grid{grid-template-columns:1fr}
-  .cards3{grid-template-columns:1fr}
-  .exp-band{grid-template-columns:repeat(2,1fr)}
-  .exp-band>*{border-left:0}
-  .exp-band>*:nth-child(even){border-left:1px solid var(--line)}
-  .exp-band>*:nth-child(n+3){border-top:1px solid var(--line)}
-  .row{grid-template-columns:1fr;gap:6px}
-  .nav-links{gap:14px}
-  .nav-links .status{display:none}
-  .nav-links a:nth-child(1),.nav-links a:nth-child(3){display:none}
-  .check-vote{flex-direction:column}
-  .check-vote input{min-width:auto}
-  .check-vote button{width:100%}
-  .banner{flex-direction:column;gap:12px}
-  .banner p{flex:1;min-width:auto}
-  .gift-form{flex-direction:column}
-  .gift-form button{justify-content:center;width:100%}
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-top:24px}
+  .gift{grid-template-columns:minmax(0,1fr);gap:28px}
+  .insert{border-left:0;border-right:0;padding:24px 0}
+  .tiles{grid-template-columns:1fr}
+  .tiles .tile.right{text-align:left;border-left:0;border-top:var(--byko-rule-hair);padding-left:0}
 }
 </style>
 <script
@@ -312,20 +141,11 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
 </head>
 <body>
 
-<header>
-  <div class="wrap nav">
-    <a class="wordmark" href="#">
-      <svg viewBox="0 0 96 96" width="28" height="28" xmlns="http://www.w3.org/2000/svg" aria-label="BYKO mark">
-        <defs><linearGradient id="byko-g" x1="0" y1="0" x2="96" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#7CCBFF"/><stop offset="1" stop-color="#FFB088"/>
-        </linearGradient></defs>
-        <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-          <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-        </g>
-      </svg>
-      BYKO
-    </a>
-    <nav class="nav-links">
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="#"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
 <!-- nav:begin -->
       <a href="index.html#referendum">Referendum</a>
       <a href="diary.html">Diary</a>
@@ -334,343 +154,487 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
       <a href="market.html">Market</a>
       <a href="specification.html">Specification</a>
 <!-- nav:end -->
-      <span class="status">running</span>
+      <span class="lamp">running</span>
     </nav>
   </div>
 </header>
 
-<div class="grid-bg">
-  <div class="wrap hero">
-    <div class="hero-grid">
+<div class="wrap">
+
+  <div class="hero">
+    <div>
+      <span class="kicker">A study, running live / Base</span>
+      <h1>How much does <span class="edge">legitimacy</span> cost?</h1>
+      <p class="sub">The diary of an honest token</p>
+      <p class="lede">BYKO is a coin with a fixed supply, burned liquidity, 21 lines of code, no owner and zero promises — dropped into an ecosystem tuned for hype and scams. Everything it takes to stop looking like one gets measured and published.</p>
+
+      <div class="band">
+        <div>
+          <div class="figure">$0</div>
+          <span class="label">Paid for legitimacy</span>
+          <p class="say">The official price of a listing is $0. Three institutions petitioned; nothing bought.</p>
+          <p class="tol">reading held since 11 Aug 2026</p>
+        </div>
+        <div>
+          <div class="figure">99.5 h</div>
+          <span class="label">Time, the actual currency</span>
+          <p class="say">Logged to the half hour and published with the receipts. $123.29 spent in dollars.</p>
+          <p class="tol">± 0.5 h · resolution of the log</p>
+        </div>
+        <div class="cell-live">
+          <div class="figure live"><span id="index-price-figure">0.000252</span></div>
+          <span class="label">Price, per BYKO in USDC</span>
+          <p class="say">Reserve ratio of the BYKO/USDC pool on Base. No aggregator in the path.</p>
+          <p class="tol">read at this block · changes with every trade</p>
+        </div>
+      </div>
+
+      <div class="legend-key">
+        <span><i></i> read from the chain, live — verify it yourself</span>
+        <span><i class="hand"></i> counted by hand from the log</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="https://aerodrome.finance/swap?from=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&amp;to=0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">Cast a vote <span>→</span></a>
+        <button class="btn btn-outline" id="add-to-wallet" type="button">Add to wallet</button>
+      </div>
+      <p class="fine">a vote costs cents · <span id="index-price">—</span> · buying = voting</p>
+    </div>
+
+    <div>
+      <div class="coin"><img src="assets/coin.svg" alt="The BYKO coin" width="150" height="150"></div>
+      <div class="operator">
+        <span class="label">Founder</span>
+        <div class="who">
+          <img class="portrait" src="assets/portrait.png" alt="Denisas Bykovas" width="104" height="104">
+          <div>
+            <div class="name">Denisas Bykovas</div>
+            <div class="role">system architect · 25 years of experience</div>
+          </div>
+        </div>
+        <p class="bio">A career inside enterprise systems that cannot fail: national tax platforms, SEPA and SWIFT payments for central banks, oil &amp; gas, regulated manufacturing, government projects. BYKO is run with the same discipline.</p>
+        <p class="plate-note">supply 790,227 = his birth date · a birthday, not tokenomics</p>
+        <div class="plate-links">
+          <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt →</a>
+          <a href="https://www.linkedin.com/in/bykovas/" target="_blank" rel="noopener">LinkedIn →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conditions">
+    <span class="label">Operating conditions</span>
+    <ul>
+      <li><b>✓</b><span>liquidity burned, not locked</span></li>
+      <li><b>✓</b><span>the contract is immutable — the code is the whole behaviour, so nothing is left to promise</span></li>
+      <li><b>✓</b><span>every trade and every dollar is published — none of the attention was bought</span></li>
+      <li><b>✓</b><span>every line verifiable on-chain</span></li>
+    </ul>
+    <p class="foot">holding = your signature under every line · selling = withdrawing it</p>
+  </div>
+
+  <p class="nameplate">
+    <span><b>Instrument</b>BYKO — legitimacy meter</span>
+    <span><b>Serial</b><span class="mono">790,227</span></span>
+    <span><b>Network</b><span class="mono">Base · 8453</span></span>
+    <span><b>Rev</b><span class="mono">1.3</span></span>
+    <span><b>Status</b><span class="live">in service · running</span></span>
+  </p>
+
+  <section id="disclosure">
+    <div class="doc">
       <div>
-        <span class="kicker">A study, running live / Base</span>
-        <h1>How much does <span class="b">legitimacy</span> cost?</h1>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-2);margin:14px 0 0">The diary of an honest token</p>
-        <p class="lede">BYKO is a coin with a fixed supply, burned liquidity, 21 lines of code, no owner and zero promises — dropped into an ecosystem tuned for hype and scams. Everything it takes to stop looking like one gets measured and published.</p>
-        <p class="lede">The answer so far: the official price of a listing is $0, the quoted price of being seen runs from $195 to about $5,000, and this study has paid none of it. What it has spent instead is time — logged to the half hour, published with the receipts.</p>
-        <p class="lede">Holding BYKO isn't a bet — it's a signature. Every wallet that keeps it, however small, is on-chain proof of someone choosing verifiable honesty over another promise. That signature doesn't expire, can't be walked back, and needs nobody's permission to be counted.</p>
-        <p class="hero-meta">counted · dated · published · the budget is deliberately tiny — that is the point</p>
-        <div class="cta">
-          <div class="cta-actions">
-            <a class="btn" href="https://aerodrome.finance/swap?from=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&amp;to=0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">Cast a vote <span>→</span></a>
-            <button class="btn btn-ghost" id="add-to-wallet" type="button">Add to wallet</button>
-          </div>
-          <div class="cta-meta">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">a vote costs cents · <span id="index-price">—</span> · buying = voting</span>
-            <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">verify on BaseScan <span>→</span></a>
-          </div>
+        <div class="section-head">
+          <span class="kicker">Disclosure</span>
+          <h2>What the author holds, and where</h2>
+        </div>
+        <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply) and can sell it into the pool like any other holder. The wallets are listed, so that is visible too.</p>
+        <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register">12 wallets disclosed →</button>
+        <div id="wallet-register" hidden>
+          <table class="ptable">
+            <thead><tr><th>Address</th><th>Role</th><th>Class</th></tr></thead>
+            <tbody>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x624056460437cb4c63f7a3cf0c5a554df3375222" target="_blank" rel="noopener">0x6240…5222</a></td><td class="note-cell">deployer</td><td class="note-cell">primary</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" target="_blank" rel="noopener">0x4287…c1D6</a></td><td class="note-cell">ops · donation address</td><td class="note-cell">primary</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fc8769934f9461f7adf6f440ff3883e28021eb" target="_blank" rel="noopener">0xe8fC…21Eb</a></td><td class="note-cell">trading, invoices</td><td class="note-cell">primary</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" target="_blank" rel="noopener">0xE1E1…0A16</a></td><td class="note-cell">buyer</td><td class="note-cell">primary</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" target="_blank" rel="noopener">0x1533…CB4C</a></td><td class="note-cell">buyer, retired</td><td class="note-cell">retired</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" target="_blank" rel="noopener">0x2F66…95b9</a></td><td class="note-cell">farcaster</td><td class="note-cell">primary</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" target="_blank" rel="noopener">0xf0Ad…109e</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xbC170538038ADC0651292e28A42Dab4286641e02" target="_blank" rel="noopener">0xbC17…1e02</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x33D857fb6f06aaFc498De09654Da82A8f68BE233" target="_blank" rel="noopener">0x33D8…E233</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" target="_blank" rel="noopener">0x46BC…C68E</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" target="_blank" rel="noopener">0xE5BF…68A2</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+              <tr><td class="hex"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x7D9766F447a6B86Cf589A31db5b5535e379863E7" target="_blank" rel="noopener">0x7D97…63E7</a></td><td class="note-cell">neighbouring project</td><td class="note-cell">same owner</td></tr>
+            </tbody>
+          </table>
+          <p class="fine" id="founder-computed"></p>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:20px">
-        <svg viewBox="0 0 32 32" width="200" height="200" role="img" aria-label="The BYKO coin" class="coin">
-          <circle cx="16" cy="16" r="16" fill="#7CCBFF"></circle>
-          <g transform="translate(2.1875 1.25) scale(.3125)" fill="none" stroke="#0B0D10" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14V82"></path><path d="M40 20L70 48 40 76"></path></g>
-        </svg>
-        <div class="founder-card">
-          <span class="label">founder</span>
-          <div class="founder-row">
-            <img src="assets/portrait.png" alt="Denisas Bykovas" width="64" height="64" class="founder-photo">
-            <div class="founder-info">
-              <b>Denisas Bykovas</b>
-              <span class="sub">system architect · 25 years of experience</span>
-            </div>
+      <div class="apparatus">
+        <span class="label">Proof</span>
+        <ul>
+          <li><a href="https://basescan.org/tx/0x176dbc759894fa605c78e95bc7b61f0254005358fed20ee70ef85b0c657d5476" target="_blank" rel="noopener">LP burn tx 1 →</a></li>
+          <li><a href="https://basescan.org/tx/0xe47921b2208c15c8b2f95f07be37aa70269b46c7a38f7363817af8258da584c6" target="_blank" rel="noopener">LP burn tx 2 — final →</a></li>
+          <li><a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">holder list: 0x…dEaD = 100% →</a></li>
+        </ul>
+        <p class="note" style="margin-top:14px">LP tokens sent to <span class="mono">0x…dEaD</span> on 7 Aug 2026 — burned, not locked.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="identity">
+    <div class="doc">
+      <div>
+        <div class="section-head">
+          <span class="kicker">Identity</span>
+          <h2>Signed by the deployer</h2>
+        </div>
+        <p>This page says who made BYKO. Until now that was a claim you had to take on trust. Below is the same claim, signed by the private key of the address that deployed the contract.</p>
+        <div class="insert">
+          <div class="hexfield">
+            <span class="label">Address</span>
+            <span class="hex" id="identity-address">0x624056460437Cb4c63F7A3CF0c5a554dF3375222</span>
+            <button class="copy" type="button" data-copy="identity-address">copy</button>
           </div>
-          <p>A career inside enterprise systems that cannot fail: national tax platforms, SEPA and SWIFT payments for central banks, oil &amp; gas, regulated manufacturing, government projects. BYKO is run with the same discipline.</p>
-          <p class="bio">fixed supply 790,227 = his birth date · a birthday, not tokenomics</p>
-          <div class="founder-links">
-            <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt <span>→</span></a>
-            <a href="https://www.linkedin.com/in/bykovas/" target="_blank" rel="noopener">LinkedIn <span>→</span></a>
+          <!-- prettier-ignore -->
+          <!-- The message must stay on ONE source line with no whitespace between the
+               tags and the text: it renders white-space:pre-wrap, so a reformatted line
+               would change the copied bytes and ecrecover would stop returning the
+               deployer address. -->
+          <div class="hexfield">
+            <span class="label">Message</span>
+            <span class="hex" id="identity-message">I, Denisas Bykovas (linkedin.com/in/bykovas), control address 0x624056460437Cb4c63F7A3CF0c5a554dF3375222, deployer of BYKO 0x078bB16e24c8931Fc007928c370422e5e38F4372 on Base. byko.bykovas.lt / 2026-08-13</span>
+            <button class="copy" type="button" data-copy="identity-message">copy</button>
+          </div>
+          <!-- prettier-ignore -->
+          <div class="hexfield">
+            <span class="label">Signature</span>
+            <span class="hex" id="identity-signature">0xb199a91d1fd2352090c41c14097a049348843fa94877f011a04ee4b58d2e14f970d2512668f04fccc32b65479d354d8dec699208f8b49310f03e44b577448eaf1b</span>
+            <button class="copy" type="button" data-copy="identity-signature">copy</button>
           </div>
         </div>
+        <p class="note" style="margin-top:18px">The signature proves control of the key behind that address, and nothing more. Whether the name attached to it is real is checked the ordinary way — the domain, the profile, the person. What is no longer required is trust in this page.</p>
+      </div>
+      <div class="apparatus">
+        <span class="label">Method</span>
+        <ul>
+          <li>personal_sign · EIP-191 · any ecrecover tool</li>
+          <li><a href="https://basescan.org/verifySig/95926" target="_blank" rel="noopener">basescan.org/verifySig/95926 →</a></li>
+          <li><a href="https://www.linkedin.com/in/bykovas/details/projects/" target="_blank" rel="noopener">the profile links back here →</a></li>
+        </ul>
       </div>
     </div>
+  </section>
 
-    <div class="banner">
-      <div class="banner-main">
-        <p>A vote pays the pool, not the author's wallet <span>— the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">—</span> BYKO (<span id="founder-pct">—</span>% of supply) and can sell it into the pool like any other holder. The wallets are listed, so that is visible too.</span></p>
-        <p class="banner-fine">founder wallets:
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x624056460437cb4c63f7a3cf0c5a554df3375222" target="_blank" rel="noopener">0x6240…5222</a> deployer ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6" target="_blank" rel="noopener">0x4287…c1D6</a> ops ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fc8769934f9461f7adf6f440ff3883e28021eb" target="_blank" rel="noopener">0xe8fc…21eb</a> trading, invoices ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE1E16dD66b66bC471b8caFac4c71E2abE0060A16" target="_blank" rel="noopener">0xE1E1…0A16</a> buyer ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x1533897a4b46Cd1B7E34b90DFd614DAacC69CB4C" target="_blank" rel="noopener">0x1533…CB4C</a> buyer, retired ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x2F66caB27aD9A62561Df741caD01F908Ca7295b9" target="_blank" rel="noopener">0x2F66…95b9</a> farcaster ·
-          neighbouring project (same owner):
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xf0Adec1E81C31Bbb253b819C67cbB1826FB7109e" target="_blank" rel="noopener">0xf0Ad…109e</a> ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xbC170538038ADC0651292e28A42Dab4286641e02" target="_blank" rel="noopener">0xbC17…1e02</a> ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x33D857fb6f06aaFc498De09654Da82A8f68BE233" target="_blank" rel="noopener">0x33D8…E233</a> ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x46BCF5C09Ef3831020D06Ed879d69098A5a3C68E" target="_blank" rel="noopener">0x46BC…C68E</a> ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xE5BF5007a56b83FAF325E69ccd83aF932D0168A2" target="_blank" rel="noopener">0xE5BF…68A2</a> ·
-          <a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x7D9766F447a6B86Cf589A31db5b5535e379863E7" target="_blank" rel="noopener">0x7D97…63E7</a>
-          <span id="founder-computed"></span></p>
-      </div>
-      <span class="links"><a href="https://basescan.org/tx/0x176dbc759894fa605c78e95bc7b61f0254005358fed20ee70ef85b0c657d5476" target="_blank" rel="noopener">burn tx 1 →</a> · <a href="https://basescan.org/tx/0xe47921b2208c15c8b2f95f07be37aa70269b46c7a38f7363817af8258da584c6" target="_blank" rel="noopener">burn tx 2 →</a> · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener" title="live proof: 0x…dEaD = 100%">proof: 0x…dEaD = 100% →</a></span>
-    </div>
-
-    <section id="identity">
-      <span class="kicker">Identity</span>
-      <h2>Signed by the deployer</h2>
-      <p style="color:var(--text-2);margin:16px 0 0">This page says who made BYKO. Until now that was a claim you had to take on trust. Below is the same claim, signed by the private key of the address that deployed the contract.</p>
-      <div class="rows">
-        <div class="row"><div class="k">Address</div><div class="v mono">0x624056460437Cb4c63F7A3CF0c5a554dF3375222</div></div>
-        <!-- prettier-ignore -->
-        <!-- The message text below must stay on ONE source line, with no whitespace
-             between the tags and the text: the value renders white-space:pre-wrap,
-             so a reformatted line would change the copied bytes and ecrecover
-             would no longer return the deployer address. -->
-        <div class="row"><div class="k">Message</div><div class="v mono" id="identity-message">I, Denisas Bykovas (linkedin.com/in/bykovas), control address 0x624056460437Cb4c63F7A3CF0c5a554dF3375222, deployer of BYKO 0x078bB16e24c8931Fc007928c370422e5e38F4372 on Base. byko.bykovas.lt / 2026-08-13</div></div>
-        <!-- prettier-ignore -->
-        <div class="row"><div class="k">Signature</div><div class="v mono" id="identity-signature">0xb199a91d1fd2352090c41c14097a049348843fa94877f011a04ee4b58d2e14f970d2512668f04fccc32b65479d354d8dec699208f8b49310f03e44b577448eaf1b</div></div>
-        <div class="row"><div class="k">Verify</div><div class="v mono">personal_sign · EIP-191 · any ecrecover tool · <a href="https://basescan.org/verifySig/95926" target="_blank" rel="noopener">basescan.org/verifySig/95926 →</a></div></div>
-        <div class="row"><div class="k">Cross-link</div><div class="v mono">the LinkedIn profile named in the message links back to this site · <a href="https://www.linkedin.com/in/bykovas/details/projects/" target="_blank" rel="noopener">linkedin.com/in/bykovas · projects →</a></div></div>
-      </div>
-      <p class="identity-note">The signature proves control of the key behind that address, and nothing more. Whether the name attached to it is real is checked the ordinary way — the domain, the profile, the person. What is no longer required is trust in this page.</p>
-    </section>
-
-    <section id="referendum">
+  <section id="referendum">
+    <div class="section-head">
       <span class="kicker">Referendum</span>
       <h2>Buying BYKO is a vote. Honesty — or hype?</h2>
-      <p style="color:var(--text-2);margin:16px 0 0">For — hold. Withdrawn — sold to zero. Counted from the pool, address by address. Even a bought referendum becomes data for the diary.</p>
-      <div class="ref-grid">
-        <div class="ref-panel">
-          <span class="label">The tally / computed from Transfer logs</span>
-          <div class="tally-grid">
-            <div class="tally-tile for">
-              <b id="tally-for">—</b>
-              <span>for · bought and holding now</span>
-            </div>
-            <div class="tally-tile">
-              <b id="tally-withdrawn">—</b>
-              <span>withdrawn · sold below the floor</span>
-            </div>
-          </div>
-          <div class="split-bar">
-            <div class="for" id="tally-bar-for" style="width:0%"></div>
-            <div class="withdrawn" id="tally-bar-withdrawn" style="width:100%"></div>
-          </div>
-          <div class="split-labels">
-            <span id="tally-caption-for">for —</span>
-            <span id="tally-caption-withdrawn">withdrawn —</span>
-          </div>
-          <p class="ref-note" id="tally-rule">computed from Transfer logs at <span id="tally-updated">—</span> · rule: 100+ BYKO, acquired via pool, EOA only · excluded: pool, burn address, founder wallets, contracts</p>
-          <p class="ref-note" id="tally-notcounted">not counted: —</p>
-          <p class="ref-note">disclosure: the single counted holder is personally known to the author · said out loud because a tally one address wide means nothing without it · the purchase itself is real, made with their own money, and stays counted</p>
-          <p class="ref-note"><a href="data/tally.csv">raw data →</a> · <a href="data/tally.json">json →</a> · <a href="https://github.com/bykovas/byko/blob/main/scripts/compute-tally.mjs" target="_blank" rel="noopener">recount it yourself →</a></p>
-          <p class="ref-note">addresses ≠ people · the 100 BYKO floor and the EOA check filter bot and sniper dust, they do not solve sybil · sybil is data too</p>
-        </div>
-        <div class="ref-panel">
-          <span class="label">The ballot / anti-hype manifesto</span>
-          <div class="ballot-list">
-            <div><span>✓</span> liquidity burned, not locked</div>
-            <div><span>✓</span> the contract is immutable — the code is the whole behaviour, so nothing is left to promise</div>
-            <div><span>✓</span> every trade and every dollar is published — none of the attention was bought</div>
-            <div><span>✓</span> every line verifiable on-chain</div>
-          </div>
-          <p class="ref-note">holding = your signature under every line · selling = withdrawing it. Both are honest, both are visible.</p>
-        </div>
-      </div>
+    </div>
+    <p class="section-intro">For — hold. Withdrawn — sold to zero. Counted from the pool, address by address. Even a bought referendum becomes data for the diary.</p>
 
-      <div class="check-vote">
-        <input type="text" spellcheck="false" id="vote-addr" placeholder="0x… paste an address">
-        <button type="button" class="btn btn-ghost" id="check-vote-btn">Check my vote</button>
-        <span class="vote-result" id="vote-result"></span>
+    <div class="tiles">
+      <div class="tile">
+        <b id="tally-for">—</b>
+        <span class="label">For · bought and holding now</span>
       </div>
-      <p class="check-note">a vote pays the pool, not the author · counted, dated, published</p>
-    </section>
-  </div>
-</div>
+      <div class="tile right">
+        <b id="tally-withdrawn">—</b>
+        <span class="label">Withdrawn · sold to zero</span>
+      </div>
+    </div>
+    <div class="tally-bar"><i class="for" id="tally-bar-for"></i><i class="withdrawn" id="tally-bar-withdrawn"></i></div>
+    <div class="tally-caption">
+      <span id="tally-caption-for">for —</span>
+      <span class="mid" id="tally-updated">—</span>
+      <span id="tally-caption-withdrawn">withdrawn —</span>
+    </div>
+    <p class="fine" id="tally-notcounted">not counted: —</p>
+    <p class="fine">rule: 100+ BYKO, acquired via pool, EOA only · excluded: pool, burn address, founder wallets, contracts · <a href="data/tally.csv">raw data →</a> · <a href="https://github.com/bykovas/byko/blob/main/scripts/compute-tally.mjs" target="_blank" rel="noopener">recount it yourself →</a></p>
 
-<section id="diary">
-  <div class="wrap">
-    <span class="kicker">Experiment</span>
-    <h2>What was measured, and what came back</h2>
+    <div class="field">
+      <input type="text" spellcheck="false" id="vote-addr" placeholder="0x… paste an address">
+      <button type="button" class="btn btn-outline" id="check-vote-btn">Check my vote</button>
+    </div>
+    <p class="fine" id="vote-result"></p>
+
+    <p class="note" style="margin-top:18px">Disclosure: the single counted holder is personally known to the author · said out loud because a tally one address wide means nothing without it · the purchase itself is real, made with their own money, and stays counted.</p>
+  </section>
+
+  <section id="diary">
+    <div class="section-head">
+      <span class="kicker">Experiment</span>
+      <h2>What was measured, and what came back</h2>
+    </div>
 <!-- counters:begin -->
-    <div class="exp-band">
-      <a class="blue" href="experiment.html#hours"><b>99.5 h</b><span>Hours logged</span></a>
-      <a class="blue" href="experiment.html#dollars"><b>$123.29</b><span>Dollars spent</span></a>
-      <a class="peach" href="experiment.html#paid-listings"><b>$0</b><span>Paid for legitimacy</span></a>
-      <a class="peach" href="experiment.html#institutions"><b>3</b><span>Institutions petitioned</span></a>
-      <a class="peach" href="experiment.html#transactions-audited"><b>100</b><span>Transactions audited</span></a>
-      <a class="peach" href="experiment.html#episodes"><b>19</b><span>Episodes published</span></a>
+    <div class="counters">
+      <a href="experiment.html#hours"><span class="figure">99.5 h</span><span class="label">Hours logged</span><span class="prov">counted by hand</span></a>
+      <a href="experiment.html#dollars"><span class="figure">$123.29</span><span class="label">Dollars spent</span><span class="prov">counted by hand</span></a>
+      <a href="experiment.html#paid-listings"><span class="figure">$0</span><span class="label">Paid for legitimacy</span><span class="prov">counted by hand</span></a>
+      <a href="experiment.html#institutions"><span class="figure">3</span><span class="label">Institutions petitioned</span><span class="prov">counted by hand</span></a>
+      <a href="experiment.html#transactions-audited"><span class="figure live">100</span><span class="label">Transactions audited</span><span class="prov live">from the chain</span></a>
+      <a href="experiment.html#episodes"><span class="figure">19</span><span class="label">Episodes published</span><span class="prov">counted by hand</span></a>
     </div>
 <!-- counters:end -->
-    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:14px 0 0"><span style="color:var(--accent)">spent</span> / what went in · <span style="color:var(--accent-2)">result</span> / what came back · <a href="experiment.html">what the counters count →</a> · hours and dollars — summed from the log on every publish · the rest — counted by hand. The measurement is still running; whatever the next numbers turn out to be, they get published here, dated, the same way.</p>
+    <div class="legend-key">
+      <span><i></i> read from the chain</span>
+      <span><i class="hand"></i> counted by hand from the log</span>
+      <span><a href="experiment.html">what the counters count →</a></span>
+    </div>
 
+    <div class="section-head" style="margin-top:var(--byko-sp-9)">
+      <span class="kicker">Diary</span>
+      <h2>The log, newest first</h2>
+    </div>
 <!-- diary:begin -->
     <div class="cards3">
       <a class="card" href="/d/every-buy-but-one-was-mine">
-        <span class="label">16 August 2026</span>
+        <span class="head"><span class="date">16 August 2026</span><span class="ep">EP 19</span></span>
         <h3>Every buy but one was mine</h3>
         <p>Thirty-three buys moved BYKO's price 152%. All but one were mine, $49.27 in total — and the spend counter was wrong too: $85 is really $123.29.</p>
       </a>
       <a class="card" href="/d/on-chain-audit-100-transactions-three-debunked-facts">
-        <span class="label">16 August 2026</span>
+        <span class="head"><span class="date">16 August 2026</span><span class="ep">EP 18</span></span>
         <h3>On-chain audit: 100 transactions, three debunked facts</h3>
         <p>An on-chain audit of BYKO's full history just debunked three things this diary had recorded as fact.</p>
       </a>
       <a class="card" href="/d/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price">
-        <span class="label">15 August 2026</span>
+        <span class="head"><span class="date">15 August 2026</span><span class="ep">EP 17</span></span>
         <h3>MetaMask values a malicious token at $1,032 — while BYKO still has no price</h3>
         <p>MetaMask counted a token it labels Malicious as $1,032.23 of portfolio value — while BYKO, labelled Risky, shows no value at all.</p>
       </a>
       <a class="card" href="/d/the-first-real-vote-for-legitimacy">
-        <span class="label">14 August 2026</span>
+        <span class="head"><span class="date">14 August 2026</span><span class="ep">EP 16</span></span>
         <h3>The first real vote for legitimacy</h3>
         <p>The first real vote is in. Someone outside the project chose to buy and hold BYKO — not for a promise, but as an on-chain signature for legitimacy.</p>
       </a>
       <a class="card" href="/d/fake-worthless-decentralized-case-closed">
-        <span class="label">14 August 2026</span>
+        <span class="head"><span class="date">14 August 2026</span><span class="ep">EP 15</span></span>
         <h3>Fake, worthless, decentralized — case closed</h3>
         <p>Crypto.com support called BYKO fake because BaseScan showed $0.00. Asked why their own wallet shows blank instead of $0, they answered: the wallet is decentralized.</p>
       </a>
       <a class="card" href="/d/the-market-s-first-reply-a-price-tag">
-        <span class="label">13 August 2026</span>
+        <span class="head"><span class="date">13 August 2026</span><span class="ep">EP 14</span></span>
         <h3>The market's first reply: a price tag</h3>
         <p>Someone is reading us</p>
       </a>
     </div>
 <!-- diary:end -->
-    <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:20px 0 0">episodes publish in <a href="diary.html">the diary</a> first, then in the repository · subscribe to the story, not the token</p>
-    <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:10px 0 0">this site is static files and markdown in a <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">public repository</a> — deliberately: every entry, every number and every edit is a commit, so the whole history stays public and checkable, not just the current version</p>
+    <p class="fine">The measurement is still running; whatever the next numbers turn out to be, they get published here, dated, the same way. <a href="diary.html">all episodes →</a></p>
+  </section>
+
+  <section id="facts">
+    <div class="doc">
+      <div>
+        <div class="section-head">
+          <span class="kicker">Facts</span>
+          <h2>The boring part, verifiable</h2>
+        </div>
+        <table class="ptable">
+          <thead><tr><th>Parameter</th><th>Value</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Token</td><td class="value">BYKO · ERC-20</td><td class="note-cell">Base · chain 8453 · 18 decimals</td></tr>
+            <tr><td class="name">Total supply</td><td class="value">790,227 BYKO</td><td class="note-cell">fixed forever · no mint function · the number is the founder's birth date</td></tr>
+            <tr><td class="name">Contract</td><td class="hex" colspan="2"><span id="addr">0x078bB16e24c8931fc007928c370422e5e38F4372</span> <button class="copy" id="copyBtn" type="button">copy</button></td></tr>
+            <tr><td class="name">Liquidity</td><td class="value">LP burned</td><td class="note-cell">sent to 0x…dEaD on 7 Aug 2026; the position cannot be withdrawn by anyone</td></tr>
+            <tr><td class="name">Deployed</td><td class="value">2 Aug 2026</td><td class="note-cell">by omenas.base.eth · solidity v0.8.34 · OpenZeppelin 5.4.0 · 21 lines</td></tr>
+            <tr><td class="name">Price</td><td class="value live"><span id="price-display">—</span></td><td class="note-cell">reserve ratio, BYKO/USDC on Base</td></tr>
+            <tr><td class="name">Status</td><td class="value pass">verified · running</td><td class="note-cell">exact-match source verification on BaseScan</td></tr>
+          </tbody>
+        </table>
+        <div class="chips">
+          <span class="chip">21 lines</span>
+          <span class="chip">0% tax</span>
+          <span class="chip">no owner</span>
+          <span class="chip">no proxy</span>
+          <span class="chip">no mint</span>
+        </div>
+      </div>
+      <div class="apparatus">
+        <span class="label">Verify</span>
+        <ul>
+          <li><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">contract on BaseScan →</a></li>
+          <li><a href="https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">source, exact match →</a></li>
+          <li><a href="specification.html">specification v1.3 →</a></li>
+          <li><a href="market.html">market, read from the pool →</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<section id="services" class="inverse">
+  <div class="inner">
+    <div class="doc">
+      <div>
+        <span class="kicker">Services · Specification §7</span>
+        <h2 style="font-size:36px;margin-top:10px">Invoices can be settled in <span class="b">BYKO</span></h2>
+        <p class="section-intro" style="color:#C9CFD5">The author accepts BYKO in payment for his own work. The price is set in euro; the token is only how that price can be paid. This is the one function on the instrument that points forward instead of recording the past.</p>
+        <table class="ptable">
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Base currency</td><td class="note-cell">Euro. Work is quoted in EUR and never in tokens — there is no rate card denominated in BYKO, and there will not be one.</td></tr>
+            <tr><td class="name">Rate</td><td class="note-cell">The market rate on the invoice date, taken from the BYKO/USDC pool on Base — the reserve ratio at one specific block, with that block number written on the invoice. Read from the chain, never fixed in advance.</td></tr>
+            <tr><td class="name">Scope</td><td class="note-cell">Consulting, tender and bid preparation, architecture and system audits, and hands-on engineering — in the fields behind 25 years of enterprise work: national tax platforms, SEPA and SWIFT payments, regulated manufacturing, energy, government projects.</td></tr>
+            <tr><td class="name">Receiving address</td><td class="note-cell"><a class="hex" href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fC8769934f9461F7adF6F440ff3883E28021Eb" target="_blank" rel="noopener">0xe8fC8769934f9461F7adF6F440ff3883E28021Eb</a> — already one of the listed founder wallets, so anything paid in lands inside the disclosed holdings, visibly.</td></tr>
+            <tr><td class="name">What happens to the tokens</td><td class="note-cell">They are kept. No commitment to convert them, sell them, or support the price follows from accepting them.</td></tr>
+            <tr><td class="name">No floor</td><td class="note-cell">Because the price is in euro, a lower token price simply means more tokens per invoice. Accepting BYKO puts no floor under its price and is not meant to.</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:18px">This is one person's decision about his own invoices, not a property of the token. It creates no obligation for anyone else, gives holders no rights, and is not a claim that BYKO is worth anything.</p>
+      </div>
+      <div class="apparatus">
+        <span class="label">Terms at a glance</span>
+        <ul>
+          <li><span class="label-sm">Defined in</span><br>Specification §7</li>
+          <li><span class="label-sm">Priced in</span><br>EUR</li>
+          <li><span class="label-sm">Rate source</span><br><span class="mono">pool reserves @ block</span></li>
+          <li><span class="label-sm">Obligation created</span><br>none</li>
+          <li><span class="label-sm">Decision of</span><br>one person</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
-<section id="facts">
-  <div class="wrap">
-    <span class="kicker">Facts</span>
-    <h2>The boring part, verifiable</h2>
-    <div class="rows">
-      <div class="row"><div class="k">Token</div><div class="v">BYKO · ERC-20 · Base · chain 8453 · 18 decimals</div></div>
-      <div class="row"><div class="k">Total supply</div><div class="v mono">790,227 BYKO <span class="note">fixed forever · no mint function · the number is the founder's birth date</span></div></div>
-      <div class="row">
-        <div class="k">Contract</div>
-        <div class="v mono">
-          <span class="addr">
-            <span id="addr">0x078bB16e24c8931fc007928c370422e5e38F4372</span>
-            <button class="copy" id="copyBtn" type="button">copy</button>
-          </span>
-        </div>
+<div class="wrap">
+  <div class="gift">
+    <div>
+      <div class="section-head">
+        <span class="kicker">Card · gift</span>
+        <h2>BYKO donation card</h2>
       </div>
-      <div class="row"><div class="k">Liquidity</div><div class="v">LP tokens burned <span class="note">sent to 0x…dEaD on 7 Aug 2026; the pool position cannot be withdrawn · <a href="https://basescan.org/tx/0x176dbc759894fa605c78e95bc7b61f0254005358fed20ee70ef85b0c657d5476" target="_blank" rel="noopener">burn tx 1 →</a> · <a href="https://basescan.org/tx/0xe47921b2208c15c8b2f95f07be37aa70269b46c7a38f7363817af8258da584c6" target="_blank" rel="noopener">burn tx 2 →</a> · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">LP holders →</a></span></div></div>
-      <div class="row"><div class="k">Deployed</div><div class="v mono">2 Aug 2026 <span class="note">by omenas.base.eth · solidity v0.8.34 · OpenZeppelin 5.4.0 · 21 lines</span></div></div>
-      <div class="row"><div class="k">Price</div><div class="v mono" style="color:var(--accent-2)"><span id="price-display">—</span> <a href="market.html" style="font-size:12px">market →</a></div></div>
-      <div class="row"><div class="k">Status</div><div class="v"><span class="status">verified · running</span></div></div>
+      <p>One physical card per address, carrying its own serial and inscription, printed and posted. A card confers no rights, no yield and no claim on anything. It records that a donation happened. That is all it does.</p>
+      <form class="field" id="card-form">
+        <input id="card-email" type="email" name="email" placeholder="mail@example.com" autocomplete="email" required>
+        <button class="btn" type="submit">Get card <span>→</span></button>
+      </form>
+      <p class="fine">donate BYKO, receive a numbered card · sent by mail</p>
     </div>
-
-    <section id="services">
-      <span class="kicker">Services</span>
-      <h2>Invoices can be settled in BYKO</h2>
-      <p style="color:var(--text-2);margin:16px 0 0">The author accepts BYKO in payment for his own work. The price is set in euro; the token is only how that price can be paid.</p>
-      <div class="rows">
-        <div class="row"><div class="k">Base currency</div><div class="v">Euro. Work is quoted in EUR and never in tokens — there is no rate card denominated in BYKO, and there will not be one.</div></div>
-        <div class="row"><div class="k">Rate</div><div class="v">The market rate on the invoice date, taken from the BYKO/USDC pool on Base — the reserve ratio at one specific block, with that block number written on the invoice. Read from the chain, the same way this site reads the price. Not from an aggregator, not from a quote, never fixed in advance.</div></div>
-        <div class="row"><div class="k">Scope</div><div class="v">Consulting, tender and bid preparation, architecture and system audits, and hands-on engineering — in the fields behind 25 years of enterprise work: national tax platforms, SEPA and SWIFT payments, regulated manufacturing, energy, government projects. By prior agreement: which engagements are taken, and whether a given one is settled in BYKO at all, stays the author's decision.</div></div>
-        <div class="row">
-          <div class="k">Receiving address</div>
-          <div class="v mono"><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fC8769934f9461F7adF6F440ff3883E28021Eb" target="_blank" rel="noopener">0xe8fC8769934f9461F7adF6F440ff3883E28021Eb</a> <span class="note">already one of the listed founder wallets — anything paid in lands inside the disclosed holdings above, visibly</span></div>
-        </div>
-        <div class="row"><div class="k">What happens to the tokens</div><div class="v">They are kept. No commitment to convert them, sell them, or support the price follows from accepting them.</div></div>
-        <div class="row"><div class="k">No floor</div><div class="v">Because the price is in euro, a lower token price simply means more tokens per invoice. Accepting BYKO in payment puts no floor under its price and is not meant to.</div></div>
-      </div>
-      <p class="identity-note">This is one person's decision about his own invoices, not a property of the token. It creates no obligation for anyone else, gives holders no rights, and is not a claim that BYKO is worth anything.</p>
-    </section>
-
-    <div class="ref-grid" style="margin-top:56px">
-      <div class="giftcard" style="display:flex;flex-direction:column;justify-content:center">
-        <span class="label">Card / gift</span>
-        <h3>BYKO donation card</h3>
-        <p class="desc">One physical card per address: a numbered artifact from the study, carrying its own serial and inscription, printed and posted.</p>
-        <form class="gift-form" id="card-form">
-          <input id="card-email" type="email" name="email" placeholder="mail@example.com" autocomplete="email" required>
-          <button class="btn" type="submit">Get card <span>→</span></button>
-        </form>
-        <p class="gift-note">donate BYKO, receive a numbered card · sent by mail</p>
-      </div>
-      <div class="card-preview">
-        <img src="assets/donation-card-sample.svg" alt="Sample of the numbered BYKO donation card">
-        <span class="caption">sample · each card carries its own serial and inscription</span>
-      </div>
+    <div>
+      <img src="assets/donation-card-front.png" alt="The numbered BYKO donation card, front" width="1748" height="1240">
+      <p class="caption">specimen · each card carries its own serial and inscription</p>
     </div>
   </div>
-</section>
+</div>
 
-<footer>
+<footer class="site-foot">
   <div class="wrap">
-    <div class="foot">
-      <a class="wordmark" href="#">
-        <svg viewBox="0 0 96 96" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <g fill="none" stroke="url(#byko-g)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="miter">
-            <path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/>
-          </g>
-        </svg>
-        BYKO
-      </a>
-      <div class="mono">Base · chain 8453 · since 2026 · <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> · <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> · <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> · <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a></div>
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
     </div>
     <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. A vote is not an investment and buys no claim on anything. Supply is fixed at 790,227, LP tokens are burned, the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
   </div>
 </footer>
 
-<dialog class="wallet-dialog" id="wallet-dialog" aria-labelledby="wallet-dialog-title" tabindex="-1">
-  <div class="wallet-dialog-inner">
-    <div class="wallet-dialog-head">
-      <h2 id="wallet-dialog-title">Add BYKO</h2>
-      <button class="wallet-close" id="wallet-dialog-close" type="button" aria-label="Close">×</button>
-    </div>
-    <div id="wallet-dialog-body" aria-live="polite"></div>
+<dialog class="byko-dialog" id="wallet-dialog" aria-labelledby="wallet-dialog-title" tabindex="-1">
+  <div class="dialog-head">
+    <h2 id="wallet-dialog-title">Add BYKO</h2>
+    <button class="close" id="wallet-dialog-close" type="button">close</button>
+  </div>
+  <div id="wallet-dialog-body">
+    <p class="note" style="margin-top:14px">Add the token to a wallet, or copy the contract address by hand.</p>
+    <span class="wallet-address">0x078bB16e24c8931fc007928c370422e5e38F4372</span>
+    <div class="wallet-actions"></div>
   </div>
 </dialog>
 
-<dialog class="wallet-dialog card-dialog" id="card-dialog" aria-labelledby="card-dialog-title" tabindex="-1">
-  <div class="wallet-dialog-inner">
-    <div class="wallet-dialog-head">
-      <h2 id="card-dialog-title">BYKO donation card</h2>
-      <button class="wallet-close" id="card-dialog-close" type="button" aria-label="Close">×</button>
+<dialog class="byko-dialog card-dialog" id="card-dialog" aria-labelledby="card-dialog-title" tabindex="-1">
+  <div class="dialog-head">
+    <h2 id="card-dialog-title">BYKO donation card</h2>
+    <button class="close" id="card-dialog-close" type="button">close</button>
+  </div>
+  <div>
+    <p class="note" style="margin-top:14px">Send BYKO to the donation address, then paste the transaction hash. One card per transaction, forever.</p>
+    <span class="wallet-address" id="card-donate">0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6</span>
+    <div class="card-field">
+      <label class="label" for="card-amount">Amount</label>
+      <input id="card-amount" type="text" inputmode="decimal" placeholder="100">
     </div>
-    <div id="card-dialog-form">
-      <div class="card-field">
-        <label for="card-amount">Donation / BYKO</label>
-        <input id="card-amount" type="text" inputmode="decimal" placeholder="100" autocomplete="off">
-      </div>
-      <div class="card-field">
-        <label for="card-inscription">Inscription <span class="count" id="card-inscription-count">0 / 300</span></label>
-        <textarea id="card-inscription" maxlength="300" placeholder="Nothing promised. Everything recorded."></textarea>
-      </div>
-      <div class="card-field">
-        <label for="card-dialog-email">Mail / permanent link goes here</label>
-        <input id="card-dialog-email" type="email" placeholder="mail@example.com" autocomplete="email">
-      </div>
-      <div class="wallet-actions">
-        <button class="btn" id="card-donate" type="button">Donate &amp; mint card <span>→</span></button>
-        <button class="btn btn-ghost" id="card-have-tx" type="button">I already donated</button>
-      </div>
-      <div class="card-field" id="card-tx-field" hidden>
-        <label for="card-tx">Donation tx hash</label>
-        <input id="card-tx" type="text" placeholder="0x…" autocomplete="off" spellcheck="false">
-        <div class="wallet-actions">
-          <button class="btn btn-ghost" id="card-verify" type="button">Verify &amp; mint</button>
-        </div>
-      </div>
+    <div class="card-field">
+      <label class="label" for="card-inscription">Inscription <span class="fine" id="card-inscription-count"></span></label>
+      <textarea id="card-inscription" rows="2" maxlength="300" placeholder="for the system that cannot fail"></textarea>
     </div>
-    <p id="card-dialog-status" aria-live="polite"></p>
-    <div id="card-result">
+    <div class="card-field">
+      <label class="label" for="card-dialog-email">Email</label>
+      <input id="card-dialog-email" type="email" autocomplete="email" placeholder="mail@example.com">
+    </div>
+    <div class="actions">
+      <button class="btn" id="card-verify" type="button">I have sent it</button>
+      <button class="btn btn-outline" id="card-have-tx" type="button">I have the tx hash</button>
+    </div>
+    <div class="card-field" id="card-tx-field" hidden>
+      <label class="label" for="card-tx">Transaction hash</label>
+      <input id="card-tx" type="text" spellcheck="false" placeholder="0x…">
+    </div>
+    <form id="card-dialog-form">
+      <p class="fine" id="card-status" aria-live="polite"></p>
+      <p class="fine" id="card-dialog-status" aria-live="polite"></p>
+    </form>
+    <div id="card-result" hidden>
       <img id="card-image" alt="Your BYKO donation card">
-      <p class="permalink"><a id="card-permalink" target="_blank" rel="noopener"></a> <button class="copy" id="card-copy-link" type="button">copy</button></p>
+      <p class="fine"><a id="card-permalink" target="_blank" rel="noopener"></a> <button class="copy" id="card-copy-link" type="button">copy</button></p>
     </div>
   </div>
 </dialog>
 
 <script>
-/* Sync price display between hero and facts sections */
-(function() {
-  var indexPrice = document.getElementById('index-price');
-  var priceDisplay = document.getElementById('price-display');
-  if (!indexPrice || !priceDisplay) return;
+/* Mobile menu */
+(function () {
+  var toggle = document.getElementById("nav-toggle");
+  var links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+  toggle.addEventListener("click", function () {
+    var open = links.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+})();
 
-  var observer = new MutationObserver(function() {
+/* The wallet register stays on the page; only its rows fold away. */
+(function () {
+  var button = document.getElementById("wallet-reveal");
+  var register = document.getElementById("wallet-register");
+  if (!button || !register) return;
+  button.addEventListener("click", function () {
+    var open = register.hasAttribute("hidden");
+    if (open) register.removeAttribute("hidden"); else register.setAttribute("hidden", "");
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+    button.textContent = open ? "hide the register" : "12 wallets disclosed →";
+  });
+})();
+
+/* Copy controls write the exact bytes on the page. */
+(function () {
+  document.querySelectorAll("[data-copy]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var source = document.getElementById(button.getAttribute("data-copy"));
+      if (!source || !navigator.clipboard) return;
+      navigator.clipboard.writeText(source.textContent).then(function () {
+        button.textContent = "copied";
+        setTimeout(function () { button.textContent = "copy"; }, 1400);
+      });
+    });
+  });
+})();
+
+/* Sync the live price between the hero readout and the facts table. */
+(function () {
+  var indexPrice = document.getElementById("index-price");
+  var priceDisplay = document.getElementById("price-display");
+  if (!indexPrice || !priceDisplay) return;
+  var observer = new MutationObserver(function () {
     priceDisplay.textContent = indexPrice.textContent;
   });
-
   observer.observe(indexPrice, { childList: true, characterData: true, subtree: true });
 })();
 
@@ -705,8 +669,8 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     set("tally-caption-for", "for " + forCount + (total ? " · " + forPct.toFixed(1) + "%" : ""));
     set("tally-caption-withdrawn", "withdrawn " + withdrawnCount + (total ? " · " + withdrawnPct.toFixed(1) + "%" : ""));
     if (barFor) barFor.style.width = forPct + "%";
-    if (barWithdrawn) barWithdrawn.style.width = (total ? withdrawnPct : 100) + "%";
-    set("tally-updated", stamp(data.updated) + (data.block ? " · block " + data.block.toLocaleString("en-US") : ""));
+    if (barWithdrawn) barWithdrawn.style.width = (total ? withdrawnPct : 0) + "%";
+    set("tally-updated", (total ? total + " counted · " : "") + stamp(data.updated) + (data.block ? " · block " + data.block.toLocaleString("en-US") : ""));
     if (data.notCounted) {
       set("tally-notcounted", "not counted: " + data.notCounted.dust + " below the floor · " +
         data.notCounted.contracts + " contracts · " + data.notCounted.giftOnly + " gift-only (never bought)");
@@ -714,7 +678,7 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
     if (data.founder) {
       set("founder-balance", fmt(data.founder.balance));
       set("founder-pct", String(data.founder.pct));
-      set("founder-computed", "· balances computed " + stamp(data.updated));
+      set("founder-computed", "balances computed " + stamp(data.updated));
     }
   }
   fetch("/api/tally").then(function (response) {
@@ -727,11 +691,11 @@ footer{margin-top:96px;border-top:1px solid var(--line);padding:32px 0 48px}
   });
 }());
 
-document.getElementById('copyBtn').addEventListener('click',function(){
-  var btn=this;
-  navigator.clipboard.writeText(document.getElementById('addr').textContent).then(function(){
-    btn.textContent='copied';
-    setTimeout(function(){btn.textContent='copy'},1500);
+document.getElementById('copyBtn').addEventListener('click', function () {
+  var btn = this;
+  navigator.clipboard.writeText(document.getElementById('addr').textContent).then(function () {
+    btn.textContent = 'copied';
+    setTimeout(function () { btn.textContent = 'copy'; }, 1500);
   });
 });
 
@@ -788,13 +752,12 @@ async function checkVote() {
 }
 
 document.getElementById('check-vote-btn').addEventListener('click', checkVote);
-document.getElementById('vote-addr').addEventListener('keypress', function(e) {
+document.getElementById('vote-addr').addEventListener('keypress', function (e) {
   if (e.key === 'Enter') checkVote();
 });
 </script>
 <script src="wallet.js" defer></script>
-<script src="market.js?v=20260814b" defer></script>
+<script src="market.js?v=20260817" defer></script>
 <script src="card.js" defer></script>
-
 </body>
 </html>

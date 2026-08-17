@@ -8,7 +8,8 @@
       "kind": "spent",
       "asOf": "2026-08-14",
       "counts": "Working hours spent on the BYKO study since 2 Aug 2026: contract work, liquidity setup, the website, listing applications, wallet-flag appeals, support conversations, and writing. Tracked per session, rounded to the half hour. Self-reported estimate from the project diary; it will increase as the remaining episodes get logged.",
-      "excludes": "Thinking about BYKO in the shower. Only sessions with an artifact — a commit, a submitted form, a sent message — are counted."
+      "excludes": "Thinking about BYKO in the shower. Only sessions with an artifact — a commit, a submitted form, a sent message — are counted.",
+      "provenance": "hand"
     },
     {
       "id": "dollars",
@@ -17,7 +18,8 @@
       "kind": "spent",
       "asOf": "2026-08-16",
       "counts": "Direct out-of-pocket cost of the study: $74.02 — the exact, verified, irreversible pool funding, burned along with the LP tokens — plus $49.27 of BYKO bought from the pool with project wallets, every purchase reconciled against the on-chain transaction history. The founder's own buys used to be excluded here as \"votes, not costs\"; the audit of 16 Aug 2026 counted them, because money that left the wallet is a cost whatever it was buying.",
-      "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above."
+      "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above.",
+      "provenance": "hand"
     },
     {
       "id": "paid-listings",
@@ -26,7 +28,8 @@
       "kind": "result",
       "asOf": "2026-08-17",
       "counts": "Money paid for listings, promotions, fast-track reviews or any other route to visibility. Quoted so far and declined: $299 (DexScreener Enhanced Token Info), $195 (DEXTools), about $5,000 for CoinGecko and CoinMarketCap price data via the paid routes people quote, and BaseScan Priority Support, which sells a faster answer rather than an approval. The study's rule is that this number stays zero; if it ever changes, the diary explains why in full.",
-      "excludes": "Nothing. Zero means zero."
+      "excludes": "Nothing. Zero means zero.",
+      "provenance": "hand"
     },
     {
       "id": "institutions",
@@ -35,7 +38,8 @@
       "kind": "result",
       "asOf": "2026-08-17",
       "counts": "Organisations where BYKO submitted an application or opened a support case, and a response was received or awaited. That criterion, and nothing looser: BaseScan (token information form, 4 Aug, three waves of refusals), Crypto.com (support, four rounds on the missing icon, later the \"fake\" conversation) and Coinbase (support, case #27207505). Counted once per organisation, however many rounds it took.",
-      "excludes": "Systems that issued a verdict on BYKO without ever being petitioned: MetaMask and Blockaid dropped the liquidity flag after rescanning the burn — in the diary's own words, \"no email, no form, no appeal\" — and the Blockaid mistake-report form is a planned next move, not a filed one. Also excluded: free scanners the study ran itself (counted separately below), and services whose price list or requirements were only read — DexScreener, DEXTools, Trust Wallet."
+      "excludes": "Systems that issued a verdict on BYKO without ever being petitioned: MetaMask and Blockaid dropped the liquidity flag after rescanning the burn — in the diary's own words, \"no email, no form, no appeal\" — and the Blockaid mistake-report form is a planned next move, not a filed one. Also excluded: free scanners the study ran itself (counted separately below), and services whose price list or requirements were only read — DexScreener, DEXTools, Trust Wallet.",
+      "provenance": "hand"
     },
     {
       "id": "transactions-audited",
@@ -44,7 +48,8 @@
       "kind": "result",
       "asOf": "2026-08-16",
       "counts": "BYKO Transfer events classified one by one in the on-chain audit of 16 Aug 2026 — mints, liquidity adds, buys, sells, LP removals and plain transfers — covering the entire history since deployment. The reconciled balances matched the on-chain balances exactly, and their total matched the fixed supply of 790,227. The audit corrected three facts this diary had already published.",
-      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history is excluded — that is what makes the reconciliation meaningful."
+      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history is excluded — that is what makes the reconciliation meaningful.",
+      "provenance": "chain"
     },
     {
       "id": "episodes",
@@ -53,7 +58,8 @@
       "kind": "result",
       "asOf": "2026-08-17",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
-      "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared."
+      "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
+      "provenance": "hand"
     },
     {
       "id": "invoices-settled",
@@ -63,7 +69,8 @@
       "home": false,
       "asOf": "2026-08-17",
       "counts": "Invoices for the author's own work that were priced in euro and actually paid in BYKO, counted once each, with the payment transaction hash recorded in the diary. The conversion uses the BYKO/USDC pool rate at the block named on the invoice, so anyone can reproduce it afterwards. Zero is the honest starting point of a new measurement, not a placeholder.",
-      "excludes": "Invoices settled in euro; quotes and conversations that never became an invoice; donations, which are a separate thing entirely and get a card instead."
+      "excludes": "Invoices settled in euro; quotes and conversations that never became an invoice; donations, which are a separate thing entirely and get a card instead.",
+      "provenance": "hand"
     },
     {
       "id": "security-scanners",
@@ -73,7 +80,8 @@
       "home": false,
       "asOf": "2026-08-04",
       "counts": "Free security scanners the study pointed at BYKO itself, with the result recorded in the diary: GoPlus (not a honeypot, open source, zero tax), De.Fi (no rug-pull risk), honeypot.is (clean) and RugCheck (28 out of 100, points lost on pool size, transactions and age — not on the contract). Running a public scanner is a check the study performed, not an institution it petitioned, which is why these are counted here and not in Institutions petitioned.",
-      "excludes": "Scanners whose verdict arrived without being asked for — the wallet flags come from providers the study never filed with — and any rerun of the same scanner: it counts once."
+      "excludes": "Scanners whose verdict arrived without being asked for — the wallet flags come from providers the study never filed with — and any rerun of the same scanner: it counts once.",
+      "provenance": "hand"
     },
     {
       "id": "listing-rejections",
@@ -83,7 +91,8 @@
       "home": false,
       "asOf": "2026-08-12",
       "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 so far. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
-      "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid for legitimacy), and resubmissions of the same form that are still inside the review window."
+      "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid for legitimacy), and resubmissions of the same form that are still inside the review window.",
+      "provenance": "hand"
     },
     {
       "id": "wallet-flags",
@@ -93,7 +102,8 @@
       "home": false,
       "asOf": "2026-08-12",
       "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning.",
-      "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it."
+      "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it.",
+      "provenance": "hand"
     },
     {
       "id": "flags-removed",
@@ -103,7 +113,8 @@
       "home": false,
       "asOf": "2026-08-12",
       "counts": "Warnings that a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. So far one: MetaMask's \"Low locked liquidity\", dropped by Blockaid within about a day of the LP burn on 7 Aug 2026 — removed by evidence, with no email, form or appeal.",
-      "excludes": "Warnings still displayed (\"Unstable price\" in MetaMask, the Base app scam flag) and removals promised in a reply but not visible in the product — a flag counts only when the warning is gone from the screen."
+      "excludes": "Warnings still displayed (\"Unstable price\" in MetaMask, the Base app scam flag) and removals promised in a reply but not visible in the product — a flag counts only when the warning is gone from the screen.",
+      "provenance": "hand"
     }
   ]
 }

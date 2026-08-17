@@ -407,11 +407,17 @@ function renderCounters() {
   /* "home": false keeps a counter defined and dated on /experiment while
      leaving it off the home page band, which holds six cells. */
   const onHome = data.counters.filter(counter => counter.home !== false);
-  const band = onHome.map(counter =>
-    `      <a class="${counter.kind === "spent" ? "blue" : "peach"}" href="experiment.html#${counter.id}"><b>${escapeHtml(counter.value)}</b><span>${escapeHtml(counter.label)}</span></a>`
-  ).join("\n");
+  /* Provenance is the legend: a blue figure was read from the chain, a black
+     one was counted by hand. Counters say which in counters.json. */
+  const band = onHome.map(counter => {
+    const chain = counter.provenance === "chain";
+    return `      <a href="experiment.html#${counter.id}">` +
+      `<span class="figure${chain ? " live" : ""}">${escapeHtml(counter.value)}</span>` +
+      `<span class="label">${escapeHtml(counter.label)}</span>` +
+      `<span class="prov${chain ? " live" : ""}">${chain ? "from the chain" : "counted by hand"}</span></a>`;
+  }).join("\n");
   return {
-    html: `    <div class="exp-band">\n${band}\n    </div>`,
+    html: `    <div class="counters">\n${band}\n    </div>`,
     count: onHome.length,
     total: data.counters.length,
     jsonChanged,
@@ -432,8 +438,8 @@ ${entry.bodyHtml}
 </article>`).join("\n");
 
 /* home page — the CARD_COUNT most recent as cards; zero entries → no block */
-const cards = entries.slice(0, CARD_COUNT).map(entry => `      <a class="card" href="/d/${entry.slug}">
-        <span class="label">${escapeHtml(entry.dateText)}</span>
+const cards = entries.slice(0, CARD_COUNT).map((entry, index) => `      <a class="card" href="/d/${entry.slug}">
+        <span class="head"><span class="date">${escapeHtml(entry.dateText)}</span><span class="ep">EP ${entries.length - index}</span></span>
         <h3>${inline(entry.title)}</h3>
         <p>${inline(entry.teaser)}</p>
       </a>`).join("\n");
