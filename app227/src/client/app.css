@@ -534,7 +534,7 @@ textarea:focus-visible {
   width: 54px;
   height: 54px;
   overflow: hidden;
-  border: 1.5px solid var(--ink);
+  border: 3px solid var(--ink);
   border-radius: 50%;
 }
 
