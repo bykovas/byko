@@ -16,8 +16,23 @@ function routeName(): ScreenName {
 }
 
 function render(): void {
-  const screen = screens[routeName()];
+  const name = routeName();
+  const screen = screens[name];
   if (root) root.replaceChildren(screen());
+  if (name === "go") promptAddOnce();
+}
+
+/* One install prompt per visit, and only once the onboarding pitch is done —
+   the container rejects the call silently outside Farcaster. */
+let addPrompted = false;
+function promptAddOnce(): void {
+  if (addPrompted) return;
+  addPrompted = true;
+  import("@farcaster/miniapp-sdk")
+    .then(async ({ sdk }) => {
+      if (await sdk.isInMiniApp()) await sdk.actions.addMiniApp();
+    })
+    .catch(() => {});
 }
 
 addEventListener("hashchange", render);
