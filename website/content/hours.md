@@ -9,9 +9,9 @@
 - The price list for being seen — 8 h
 - The diary started with two things I got wrong — 4 h
 - Burning the liquidity, and the first flag that moved — 2 h
-- One handle, three channels — 4 h
 - Coinbase cannot remove its own flag — 0 h
 - The site that answered 200 to everything — 1.5 h
+- Bykocoin: now official — 4 h
 - Turns out I can't count — 0.05 h
 - Signed by the deployer — 1 h
 - The market's first reply: a price tag — 0.5 h
@@ -20,3 +20,4 @@
 - The flag came back, and I know what I did — 0.5 h
 - BYKO 227: fact-check my token, become part of it — 11 h
 - 227 wallets that never asked — 3 h
+- Six cents did what 908 holders could not — 4 h

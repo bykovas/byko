@@ -10,3 +10,4 @@
 - Every buy but one was mine — $38.29
 - The flag came back, and I know what I did — $0
 - 227 wallets that never asked — $0
+- Six cents did what 908 holders could not — $0
