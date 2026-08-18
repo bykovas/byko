@@ -111,9 +111,10 @@ export async function apiAdvance(): Promise<AdvanceOutcome> {
   return (await response.json()) as AdvanceOutcome;
 }
 
-/* GET /api/metrics — the public Record. */
+/* GET /api/metrics — the public Record. Always past the browser cache: the
+   screen right after an answer must show that answer, not a 15s-old copy. */
 export async function fetchMetrics(): Promise<Metrics | null> {
-  const response = await request("/api/metrics");
+  const response = await request("/api/metrics", { cache: "no-store" });
   if (!response || !response.ok) return null;
   return (await response.json()) as Metrics;
 }
