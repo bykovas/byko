@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>l</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="assets/byko.css?v=20260817a">
+<style>
+main.wrap{padding-top:28px}
+.head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head h1{font:700 25px/1.18 var(--byko-font-sans)}
+.head .btn{margin-left:auto}
+.meta{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
+.meta .err{color:var(--byko-quoted)}
+.cards{display:flex;flex-wrap:wrap;gap:0;margin-top:20px;border-top:var(--byko-rule-heavy)}
+.card{flex:1;min-width:132px;padding:12px 18px 14px 0}
+.card .k{font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase;color:var(--byko-label)}
+.card .v{font:var(--byko-value);font-size:23px;color:var(--byko-ink);margin-top:4px}
+.card .v.hot{color:var(--byko-live-ink)}
+h2{font:700 17px/1.2 var(--byko-font-sans);margin:30px 0 0}
+.scroll{overflow-x:auto;margin-top:12px}
+table{width:100%;min-width:760px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:var(--byko-cell-pad);border-bottom:var(--byko-rule-hair);white-space:nowrap}
+th{font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase;
+  color:var(--byko-label);border-bottom:var(--byko-rule-heavy)}
+th:first-child,td:first-child{padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+th.l,td.l{text-align:left}
+td{font:var(--byko-value);color:var(--byko-ink-2)}
+td.name{color:var(--byko-ink);font-family:var(--byko-font-sans);font-weight:600}
+td.hot{color:var(--byko-live-ink)}
+td.dim{color:var(--byko-label)}
+td.wrap{white-space:normal;min-width:220px;font:var(--byko-note);color:var(--byko-ink-2)}
+tbody tr:hover td{background:var(--byko-paper-3)}
+td a{font:var(--byko-data);color:var(--byko-label)}
+td a:hover{color:var(--byko-ink)}
+.empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
+.note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="head">
+    <span class="kicker">Private · not linked</span>
+    <h1>Ledger</h1>
+    <button class="btn" id="refresh" type="button">Refresh</button>
+  </div>
+  <p class="meta" id="meta">loading…</p>
+
+  <div class="cards" id="cards"></div>
+
+  <h2>Advances</h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">#</th>
+          <th class="l">Reader</th>
+          <th>BYKO</th>
+          <th class="l">Status</th>
+          <th class="l">Date</th>
+          <th class="l">To</th>
+          <th class="l">Transaction</th>
+        </tr>
+      </thead>
+      <tbody id="adv"></tbody>
+    </table>
+  </div>
+  <p class="empty" id="adv-empty" hidden>Nothing sent yet.</p>
+
+  <h2>Answers</h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">#</th>
+          <th class="l">Reader</th>
+          <th class="l">Claim</th>
+          <th class="l">Verdict</th>
+          <th class="l">Date</th>
+          <th class="l">Argument</th>
+        </tr>
+      </thead>
+      <tbody id="ans"></tbody>
+    </table>
+  </div>
+  <p class="empty" id="ans-empty" hidden>No answers yet.</p>
+
+  <p class="note">Read live from the app227 worker: advances are rows written before each transfer and resolved by receipt, answers are the verdicts as cast. Every transaction here is verifiable on BaseScan — this page only reports what the chain and the ledger already say.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var API = "https://byko-app227.bykovas.lt/api/ledger";
+  var VERDICTS = { yes: "yes", no: "no", cant: "can't verify" };
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function short(value) {
+    if (!value) return "–";
+    return value.slice(0, 6) + "…" + value.slice(-4);
+  }
+
+  function card(key, value, hot) {
+    var box = el("div", "card");
+    box.appendChild(el("div", "k", key));
+    box.appendChild(el("div", hot ? "v hot" : "v", value));
+    return box;
+  }
+
+  function link(href, text) {
+    var a = el("a", null, text);
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener";
+    return a;
+  }
+
+  function render(data) {
+    var cards = document.getElementById("cards");
+    cards.textContent = "";
+    var t = data.totals, f = data.faucet;
+    cards.appendChild(card("sent", t.sent.toLocaleString("en-US"), true));
+    cards.appendChild(card("confirmed", t.confirmed.toLocaleString("en-US")));
+    cards.appendChild(card("wallets", String(t.wallets)));
+    cards.appendChild(card("answers", String(t.answers)));
+    cards.appendChild(card("faucet", f.open ? "open" : "closed"));
+    cards.appendChild(card("per claim", f.amount + " BYKO"));
+
+    var adv = document.getElementById("adv");
+    adv.textContent = "";
+    data.advances.forEach(function (row, index) {
+      var tr = document.createElement("tr");
+      tr.appendChild(el("td", "l", String(data.advances.length - index)));
+      tr.appendChild(el("td", "l name", row.handle));
+      tr.appendChild(el("td", "hot", row.amount.toLocaleString("en-US")));
+      tr.appendChild(el("td", "l" + (row.status === "confirmed" ? "" : " dim"), row.status));
+      tr.appendChild(el("td", "l dim", row.advance_date));
+      var to = el("td", "l");
+      to.appendChild(link("https://basescan.org/address/" + row.address, short(row.address)));
+      tr.appendChild(to);
+      var tx = el("td", "l");
+      if (row.tx_hash) tx.appendChild(link("https://basescan.org/tx/" + row.tx_hash, short(row.tx_hash)));
+      else tx.appendChild(el("span", "dim", "–"));
+      tr.appendChild(tx);
+      adv.appendChild(tr);
+    });
+    document.getElementById("adv-empty").hidden = data.advances.length > 0;
+
+    var ans = document.getElementById("ans");
+    ans.textContent = "";
+    data.answers.forEach(function (row, index) {
+      var tr = document.createElement("tr");
+      tr.appendChild(el("td", "l", String(data.answers.length - index)));
+      tr.appendChild(el("td", "l name", row.handle));
+      tr.appendChild(el("td", "l dim", row.claim_id));
+      tr.appendChild(el("td", "l", VERDICTS[row.verdict] || row.verdict));
+      tr.appendChild(el("td", "l dim", row.answer_date));
+      tr.appendChild(el("td", "l wrap", row.argument || "–"));
+      ans.appendChild(tr);
+    });
+    document.getElementById("ans-empty").hidden = data.answers.length > 0;
+
+    document.getElementById("meta").textContent =
+      new Date(data.generated).toLocaleString() + " · live from the worker";
+  }
+
+  function load() {
+    document.getElementById("meta").textContent = "loading…";
+    fetch(API + "?t=" + Date.now(), { cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.json();
+      })
+      .then(render)
+      .catch(function (error) {
+        document.getElementById("meta").innerHTML =
+          '<span class="err">could not read the ledger: ' + String(error.message || error) + "</span>";
+      });
+  }
+
+  document.getElementById("refresh").addEventListener("click", load);
+  load();
+})();
+</script>
+</body>
+</html>

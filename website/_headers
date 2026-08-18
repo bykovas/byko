@@ -19,6 +19,12 @@
 /w.html
   X-Robots-Tag: noindex, nofollow
 
+# Private ledger view (advances and answers), same rule.
+/l
+  X-Robots-Tag: noindex, nofollow
+/l.html
+  X-Robots-Tag: noindex, nofollow
+
 # X failed to fetch the dynamic Worker image even though Facebook accepts it.
 # These content-hashed PNGs are immutable, static and support byte ranges.
 /assets/og/diary/*
