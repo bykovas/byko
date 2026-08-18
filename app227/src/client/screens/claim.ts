@@ -1,19 +1,14 @@
 import { apiAdvance } from "../api";
-import { buildAnchor, buildCoin, buildFooter, navigate } from "../chrome";
-import { element } from "../dom";
+import { buildAnchor, buildFooter, navigate } from "../chrome";
 import { getState, markClaimed } from "../state";
 import { buildIntro, buildProfilePlate, buildShell } from "./shared";
 
 const BEAT_MS = 900;
 const delay = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 
-/* the button steps aside; the coin rolls in from the right until the
-   treasury answers */
-function startRolling(button: HTMLButtonElement): void {
-  const strip = element("div", "rollstrip");
-  strip.append(buildCoin("coin-roll"));
-  button.style.display = "none";
-  button.parentElement?.insertBefore(strip, button);
+/* the hero coin comes alive while the treasury signs; the button just waits */
+function startRolling(): void {
+  document.querySelector(".scr .coin")?.classList.add("rolling");
 }
 
 export function claim(): HTMLElement {
@@ -35,7 +30,7 @@ export function claim(): HTMLElement {
       variant: "key",
       onClick(button) {
         button.disabled = true;
-        startRolling(button);
+        startRolling();
         /* the demo detour never touches the network */
         if (getState().noAdvance) {
           void delay(BEAT_MS).then(() => {
