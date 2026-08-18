@@ -60,8 +60,7 @@ export const FIXTURE_CHECK: Readonly<CheckData> = {
     {
       label: "byko-flow.csv",
       detail: "100 Transfer events, repo",
-      // TODO(owner): final evidence URL.
-      url: "https://github.com/bykovas/byko",
+      url: "https://github.com/bykovas/byko/blob/main/website/data/byko-flow.csv",
       live: false,
     },
     {
