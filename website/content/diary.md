@@ -28,6 +28,40 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Six cents did what 908 holders could not — 19 August 2026
+
+Before sending I predicted two things: the holder count would go up, and the automatic classifiers would like the token less. The first came true within hours. The second has not happened yet, and something I did not predict happened instead.
+
+By the end of the evening 908 wallets had each received 227 BYKO. Not the 227 I published a plan for — I sent four batches, all inside two hours. Calling that four waves would be theatre, so I will not: the plan changed mid-experiment. The entry that pre-registered it stands exactly as written, and this one amends it by addition rather than by editing, because a prediction you can revise afterwards is not a prediction.
+
+The token went from 7 holders to 916.
+
+**GoPlus noticed first.** Four minutes after the first batch it still said 8 holders. Three and a half hours later, before the second batch went out, it said 237. I know that number belongs to the first batch and to nothing else only because I took a reading in the ten minutes between them. That reading is the one thing that made the evening measurable, and I nearly skipped it as a formality.
+
+Then the part nobody planned.
+
+One recipient received its 227 BYKO at 20:10:15 and sold the lot into the pool at 20:13:23. Three minutes and eight seconds, for **$0.057**. It is not a person: the same wallet auto-dumps everything that lands in it, PEPETO and SXC and GENESIS in the hours before mine.
+
+That sale was the first trade in this token's life. Sixteen days, zero trades, and then a bot with no opinion about anything.
+
+**DexScreener listed the pair minutes later.** It had ignored BYKO through 908 holders, through liquidity whose LP tokens are 100% burned, through a verified contract and a published specification — because it indexes trades, and there had never been one. Not holders. Not disclosure. One trade, worth less than six cents.
+
+Blockscout still reports zero holders. It has never indexed this token and today changed nothing.
+
+**What about the other 907?** Every single one still holds exactly 227, untouched. I would like to read that as patience, or indifference, or consent. It is none of those. Base App, MetaMask and Rabby hide unknown tokens by default, and mine was flagged as malicious by security providers a day earlier. The recipients have not decided to keep the tokens. They have not seen them.
+
+Which kills the comparison I was most curious about. I wanted to set people who came and asked to check a claim against people handed the same 227 without being asked — same amount, opposite consent. But the asked side is no better. The second person ever to use the app was a mini-app farmer who collected 405,313 EMERGE at 19:01, my 227 BYKO at 19:06, and minted 4,880 $MOON at 19:09. He answered both verification claims four seconds apart, both yes, no argument. He verified nothing. He tapped twice to keep the money.
+
+So consent was never measured. On one side the tokens are invisible; on the other the verification is reflexive. That is not a failed experiment, it is a finding about what those two words are worth here.
+
+One more thing, recorded because leaving it out would be a lie by omission. The cohort for the last two batches was built while the previous batch was still sending, so its "holds no BYKO" filter read balances that were seconds from changing: 119 of its 454 addresses had just been paid. It was checked before the send, thrown away and rebuilt. Nobody was paid twice. But it was close, and the only reason it was caught is that the check runs before the money and never after.
+
+The evening cost 206,116 BYKO — about fifty-two dollars at pool price — and under a dollar of gas. It bought a listing that eleven days of honest disclosure had not.
+
+---
+**Teaser:** 908 wallets got 227 BYKO each and the token went from 7 holders to 916. What finally got it listed on DexScreener was none of that — it was one bot selling its share for less than six cents.
+**X:** 908 wallets received 227 BYKO each. Holders went from 7 to 916. What finally got the token listed was not the holders — it was one bot dumping its 227 for six cents, the first trade in the token's life.
+
 ## 227 wallets that never asked — 18 August 2026
 
 The next experiment is one I expect to lose.
