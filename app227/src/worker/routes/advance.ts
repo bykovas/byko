@@ -27,7 +27,7 @@ export async function advance(request: Request, env: Env): Promise<Response> {
   const row = await env.DB.prepare(
     `SELECT eth_address FROM profiles WHERE fid = ?1`,
   ).bind(identity.fid).first<string>("eth_address");
-  if (!row) return json({ advanced: false, reason: "no-address" });
+  if (!row || !/^0x[0-9a-fA-F]{40}$/.test(row)) return json({ advanced: false, reason: "no-address" });
 
   const treasury = env.FID_LOCK.get(env.FID_LOCK.idFromName("treasury"));
   const response = await treasury.fetch(new Request("https://treasury/advance", {

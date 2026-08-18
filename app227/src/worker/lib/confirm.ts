@@ -52,7 +52,16 @@ export async function confirmAdvances(env: Env): Promise<void> {
     }
   }
 
-  /* orphans: 'sending' with no tx for over an hour means the send never left */
+  /* a 'pending' whose receipt never came: after 24h the tx is either mined
+     (handled above) or gone from every mempool — the signed bytes were never
+     re-shared. The day stayed burned regardless; the lifetime slot returns. */
+  await env.DB.prepare(
+    `UPDATE advances SET status = 'failed'
+      WHERE status = 'pending' AND created_at < datetime('now', '-24 hours')`,
+  ).run();
+
+  /* orphans: pre-sign writes the hash before any broadcast, so a 'sending'
+     row with no tx genuinely means the send never left the building */
   await env.DB.prepare(
     `UPDATE advances SET status = 'failed'
       WHERE status = 'sending' AND tx_hash IS NULL

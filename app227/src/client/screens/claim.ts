@@ -25,25 +25,30 @@ export function claim(): HTMLElement {
       variant: "key",
       onClick(button) {
         button.disabled = true;
+        /* the demo detour never touches the network */
+        if (getState().noAdvance) {
+          void delay(BEAT_MS).then(() => {
+            if (button.isConnected && location.hash === "#/claim") navigate("no-advance");
+          });
+          return;
+        }
         /* ask the treasury; hold the beat either way so the moment reads */
         void Promise.all([apiAdvance(), delay(BEAT_MS)]).then(([outcome]) => {
           if (!button.isConnected || location.hash !== "#/claim") return;
-          if (getState().noAdvance) {
-            navigate("no-advance");
-            return;
-          }
           if (outcome.advanced && outcome.tx_hash) {
-            markClaimed(outcome.tx_hash);
+            markClaimed(outcome.tx_hash, outcome.tx_url ?? null);
             navigate("paid");
             return;
           }
           if (outcome.reason === "not-open" || outcome.reason === "offline") {
-            /* faucet not live yet — the prototype beat, as before */
+            /* faucet not opened yet, or the anonymous site preview —
+               the prototype beat, as before */
             markClaimed();
             navigate("paid");
             return;
           }
-          /* a real refusal: limits or a closed faucet */
+          /* refusals and unknowns: limits, closed faucet, or an authed call
+             that failed mid-flight — never a false "paid" */
           navigate("no-advance");
         });
       },

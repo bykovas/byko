@@ -8,9 +8,9 @@ const BASE = location.hostname === APP_HOST ? "" : `https://${APP_HOST}`;
 
 const TIMEOUT_MS = 5_000;
 
-async function request(path: string, init: RequestInit = {}): Promise<Response | null> {
+async function request(path: string, init: RequestInit = {}, timeoutMs = TIMEOUT_MS): Promise<Response | null> {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetch(`${BASE}${path}`, { ...init, signal: controller.signal });
   } catch {
@@ -93,17 +93,21 @@ export async function apiAnswer(claimId: string, verdict: Verdict, argument: str
 export interface AdvanceOutcome {
   advanced: boolean;
   tx_hash?: string;
+  tx_url?: string;
   reason?: "not-open" | "no-address" | "already-today" | "lifetime-limit"
-    | "faucet-cap" | "faucet-closed" | "send-failed" | "offline";
+    | "faucet-cap" | "faucet-closed" | "send-failed" | "offline" | "error";
 }
 
-/* POST /api/advance — ask the treasury for the 227. Unauthed contexts (the
-   site preview) report offline and the prototype beat takes over. */
+/* POST /api/advance — ask the treasury for the 227.
+   'offline' means ONLY "no identity" (the site preview) — the prototype beat
+   is honest there. An authed request that fails or times out is 'error':
+   money may or may not have moved, so the client must never render "paid". */
 export async function apiAdvance(): Promise<AdvanceOutcome> {
   const headers = await authHeaders();
   if (!headers) return { advanced: false, reason: "offline" };
-  const response = await request("/api/advance", { method: "POST", headers });
-  if (!response || !response.ok) return { advanced: false, reason: "offline" };
+  /* a money call behind a serialising treasury — give it real time */
+  const response = await request("/api/advance", { method: "POST", headers }, 30_000);
+  if (!response || !response.ok) return { advanced: false, reason: "error" };
   return (await response.json()) as AdvanceOutcome;
 }
 

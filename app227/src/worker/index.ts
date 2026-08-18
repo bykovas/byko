@@ -54,6 +54,8 @@ export default {
   /* wired in wrangler.toml; the queue stays empty until dispute payouts */
   async queue(_batch: unknown, _env: Env): Promise<void> {},
   async scheduled(_controller: unknown, env: Env): Promise<void> {
-    if (env.ADVANCES_OPEN === "1") await confirmAdvances(env);
+    /* the flag gates SENDING, never bookkeeping: an emergency close must not
+       stop in-flight rows from being confirmed or expired */
+    await confirmAdvances(env);
   },
 };

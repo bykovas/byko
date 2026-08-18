@@ -29,6 +29,7 @@ export interface AppState {
   dayClosedFlag: boolean;
   /* the real transfer of this visit, when the treasury sent one */
   advanceTx: string | null;
+  advanceTxUrl: string | null;
 }
 
 type StateListener = (kind: "chain" | "check" | "record") => void;
@@ -55,15 +56,17 @@ const state: AppState = {
   localAnswers: [],
   dayClosedFlag: false,
   advanceTx: null,
+  advanceTxUrl: null,
 };
 
 export function getState(): Readonly<AppState> {
   return state;
 }
 
-export function markClaimed(txHash: string | null = null): void {
+export function markClaimed(txHash: string | null = null, txUrl: string | null = null): void {
   state.claimed = true;
   state.advanceTx = txHash;
+  state.advanceTxUrl = txUrl;
 }
 
 /* Advance to the second fact of the day. Returns false when there is none. */

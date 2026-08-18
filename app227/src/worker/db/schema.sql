@@ -36,9 +36,16 @@ CREATE TABLE IF NOT EXISTS answers (
   UNIQUE (fid, claim_id)
 );
 
--- Money, shaped for phase 4. status: pending | confirmed | skipped.
--- Limits (1/day via advance_date, 5 lifetime via count per fid) will be
--- enforced when the ops wallet and the transfer land — nothing writes here yet.
+-- Money (phase 4). status: sending | pending | confirmed | failed.
+--   sending   — row written, tx not yet signed (pre-sign records the hash
+--               before any broadcast)
+--   pending   — signed and hash recorded; the cron resolves it by receipt
+--               (or expires it after 24h)
+--   confirmed — receipt final after 2 confirmations
+--   failed    — never signed, reverted, or expired
+-- Limits: ANY row burns the wallet's day (failed included — honesty over
+-- generosity); lifetime (5) and the global daily cap exclude 'failed'.
+-- All writes go through the treasury DO; the cron only demotes/promotes.
 CREATE TABLE IF NOT EXISTS advances (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   fid          INTEGER NOT NULL,
@@ -51,6 +58,10 @@ CREATE TABLE IF NOT EXISTS advances (
   created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
   confirmed_at TEXT
 );
+
+-- defence in depth for the 1/day rule: even a path that bypassed the
+-- treasury DO could not double-insert a wallet's day
+CREATE UNIQUE INDEX IF NOT EXISTS uq_advances_fid_day ON advances(fid, advance_date);
 
 -- Disputes (a 'no' the author must answer) — phase later. 790 BYKO on accept.
 CREATE TABLE IF NOT EXISTS disputes (

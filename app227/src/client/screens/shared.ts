@@ -89,11 +89,12 @@ export function buildProfilePlate(sent = false): HTMLElement {
 
   const tail = element("div", "vrow");
   if (sent) {
-    const tx = getState().advanceTx;
+    const { advanceTx: tx, advanceTxUrl: txUrl } = getState();
     const label = tx ? `tx ${tx.slice(0, 6)}…${tx.slice(-4)} ↗` : "tx 0x72a4…91f ↗";
     const transaction = element("a", "r paid-link", label);
-    if (tx) {
-      transaction.href = `https://basescan.org/tx/${tx}`;
+    if (tx && txUrl) {
+      /* the explorer matching the chain the treasury actually sent on */
+      transaction.href = txUrl;
       transaction.target = "_blank";
       transaction.rel = "noopener noreferrer";
     } else {
