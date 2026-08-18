@@ -43,6 +43,7 @@ export interface Env {
   JOBS: Queue;
   RPC_URL: string;
   CLAIMS_URL: string;
+  SENTRY_DSN: string;
   /* The money path (phase 4) — dormant until ADVANCES_OPEN = "1". */
   ADVANCES_OPEN: string;
   CHAIN_ID: string;

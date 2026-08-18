@@ -14,6 +14,8 @@
 name = "byko-app227"
 main = "src/worker/index.ts"
 compatibility_date = "2026-08-01"
+# @sentry/cloudflare needs AsyncLocalStorage
+compatibility_flags = ["nodejs_compat"]
 
 # Custom domain: the bykovas.lt zone is already on Cloudflare, so the DNS
 # record is created automatically the first time this route deploys.
@@ -30,6 +32,8 @@ preview_urls = false
 # plain configuration, not secrets
 RPC_URL = "https://mainnet.base.org"
 CLAIMS_URL = "https://byko.bykovas.lt/data/claims.json"
+# a DSN is an ingest address, not a secret — it can only write, never read
+SENTRY_DSN = "https://3203c5a1d44bb6713e370774f09c021b@o4511851212242944.ingest.de.sentry.io/4511932516401232"
 # --- the money path (phase 4). ---
 # Opened 18 Aug 2026 by the owner's call, Sepolia waived: the blast radius is
 # 227 BYKO per attempt behind the treasury's five locks. ADVANCES_OPEN = "0"

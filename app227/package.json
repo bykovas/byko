@@ -18,6 +18,7 @@
   "dependencies": {
     "@farcaster/miniapp-sdk": "^0.3.0",
     "@farcaster/quick-auth": "^0.0.8",
+    "@sentry/cloudflare": "^10.70.0",
     "viem": "^2.55.18"
   }
 }

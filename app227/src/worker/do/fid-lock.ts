@@ -13,6 +13,7 @@ import {
   type WalletClient,
 } from "viem";
 import { privateKeyToAccount, type PrivateKeyAccount } from "viem/accounts";
+import * as Sentry from "@sentry/cloudflare";
 import type { Env } from "../../shared/types";
 
 /* The treasury. One instance ("treasury") serialises EVERYTHING that moves
@@ -203,7 +204,11 @@ export class FidLock {
       const committed = parseUnits(String(unmined ?? 0), 18);
       if (stock - committed < amount + floor) return { advanced: false, reason: "faucet-closed" };
       if (gas < MIN_GAS_WEI) return { advanced: false, reason: "faucet-closed" };
-    } catch {
+    } catch (err) {
+      /* a silent faucet-closed is exactly how the EIP-55 bug hid for a day */
+      Sentry.setContext("treasury", { stage: "preflight", fid, chain: env.CHAIN_ID });
+      Sentry.captureException(err);
+      console.error("treasury preflight", err);
       return { advanced: false, reason: "faucet-closed" };
     }
 
@@ -233,6 +238,8 @@ export class FidLock {
       serialized = await wallet.signTransaction(request as never);
       hash = keccak256(serialized);
     } catch (err) {
+      Sentry.setContext("treasury", { stage: "prepare-sign", fid, to: dest });
+      Sentry.captureException(err);
       console.error("treasury prepare", err);
       await env.DB.prepare(
         `UPDATE advances SET status = 'failed'
@@ -251,6 +258,8 @@ export class FidLock {
     } catch (err) {
       /* the hash is on record; whether this broadcast landed is now solely
          the cron's question — never mark failed here */
+      Sentry.setContext("treasury", { stage: "broadcast", fid, tx: hash });
+      Sentry.captureException(err);
       console.error("treasury broadcast", err);
     }
 

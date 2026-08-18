@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/cloudflare";
 import type { Env } from "../../shared/types";
 
 /* The cron's half of the money path: promote 'pending' advances to
@@ -47,6 +48,8 @@ export async function confirmAdvances(env: Env): Promise<void> {
           ).bind(row.id).run();
         }
       } catch (err) {
+        Sentry.setContext("confirm", { tx: row.tx_hash, id: row.id });
+        Sentry.captureException(err);
         console.error("confirm", row.tx_hash, err);
       }
     }

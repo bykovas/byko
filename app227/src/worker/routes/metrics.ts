@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/cloudflare";
 import type { Env } from "../../shared/types";
 import { loadClaims } from "../lib/claims";
 import { computeMetrics } from "../lib/store";
@@ -14,6 +15,7 @@ export async function metrics(request: Request, env: Env): Promise<Response> {
     const body = await computeMetrics(env, claims);
     return json(body, 200, { "Cache-Control": "public, max-age=15" });
   } catch (err) {
+    Sentry.captureException(err);
     console.error("metrics", err);
     return error("metrics unavailable", 503);
   }
