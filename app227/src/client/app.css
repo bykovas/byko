@@ -574,23 +574,60 @@ textarea:focus-visible {
   margin-bottom: 26px;
 }
 
-/* The money moment, alive (owner-sanctioned second animation): while the
-   treasury signs, the hero coin itself rolls to the right edge and back —
-   nothing is swapped, the button just sits disabled. Rotation matched to
-   travel (218px / π·128px ≈ 0.54 turns) so it rolls, not slides. */
-.coin.rolling {
-  animation: coin-roll 1.6s ease-in-out infinite alternate;
+/* The money moment (owner-sanctioned second animation): on Claim the coin
+   rolls away to the right — off the screen, no coming back, "Nothing is owed
+   back" taken literally — and its 1:1 outline remains on the spot: the asset
+   left, the record stays. Rotation matched to travel (368px / π·128px ≈ 0.92
+   turns) so it rolls, not slides. */
+.coinspot {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 26px;
 }
 
-@keyframes coin-roll {
+.coinspot .coin {
+  position: relative;
+  margin: 0;
+}
+
+.coinspot .coin-outline {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+}
+
+.coinspot .coin-outline svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.coinspot.away .coin {
+  animation: coin-away 1.1s ease-in forwards;
+}
+
+.coinspot.away .coin-outline {
+  opacity: 1;
+  transition: opacity 0.4s 0.45s;
+}
+
+@keyframes coin-away {
   to {
-    transform: translateX(218px) rotate(195deg);
+    transform: translateX(368px) rotate(329deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .coin.rolling {
+  .coinspot.away .coin {
     animation: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .coinspot.away .coin-outline {
+    transition-delay: 0.1s;
   }
 }
 

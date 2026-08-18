@@ -1,4 +1,4 @@
-import { buildCoin } from "../chrome";
+import { buildCoin, buildCoinOutline } from "../chrome";
 import type { CheckSource } from "../data";
 import { append, element } from "../dom";
 import { getState } from "../state";
@@ -44,7 +44,12 @@ export function buildIntro(options: IntroOptions): HTMLElement {
   }
 
   const content = element("div", "z");
-  if (options.coin) content.append(buildCoin("coin"));
+  if (options.coin) {
+    /* the coin sits on its spot; when it rolls away the outline remains */
+    const spot = element("div", "coinspot");
+    append(spot, buildCoinOutline(), buildCoin("coin"));
+    content.append(spot);
+  }
   const headline = element("div", "big");
   if (options.headlineSize) headline.style.fontSize = options.headlineSize;
   if (options.headlineHtml) {

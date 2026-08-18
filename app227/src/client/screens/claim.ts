@@ -6,9 +6,10 @@ import { buildIntro, buildProfilePlate, buildShell } from "./shared";
 const BEAT_MS = 900;
 const delay = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 
-/* the hero coin comes alive while the treasury signs; the button just waits */
+/* the coin rolls away — off the screen, no coming back — and leaves its
+   outline on the spot while the treasury signs */
 function startRolling(): void {
-  document.querySelector(".scr .coin")?.classList.add("rolling");
+  document.querySelector(".scr .coinspot")?.classList.add("away");
 }
 
 export function claim(): HTMLElement {

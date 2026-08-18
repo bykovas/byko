@@ -55,6 +55,48 @@ export function buildCoin(className = "coin"): HTMLElement {
   return wrap;
 }
 
+/* The coin's 1:1 outline — the trace it leaves when it rolls away. Every
+   shape is drawn twice: a slightly wider layer in the coin's colour, then
+   the exact original geometry knocked out in the ground colour. The outline
+   is therefore always true to the real coin, no hand-traced polygons.
+   Butt caps outline nothing by themselves, so the outer strokes are extended
+   by the outline thickness at each end (precomputed below). */
+export function buildCoinOutline(className = "coin-outline"): HTMLElement {
+  const wrap = element("span", className);
+  const svg = svgElement("svg", { viewBox: "0 0 32 32", "aria-hidden": "true" });
+  /* circle: ring of 1.5 (32-box units) */
+  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "var(--coin)" }));
+  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "14.5", fill: "var(--deep)" }));
+  /* mark: outline 4.8 group-units (= 1.5 in the 32-box) around stroke 13 */
+  const outer = svgElement("g", {
+    transform: "translate(2.1875 1.25) scale(.3125)",
+    fill: "none",
+    stroke: "var(--coin)",
+    "stroke-width": "22.6",
+    "stroke-linecap": "butt",
+    "stroke-linejoin": "miter",
+  });
+  outer.append(
+    svgElement("path", { d: "M24 9.2V86.8" }),
+    svgElement("path", { d: "M36.49 16.73L70 48 36.49 79.27" }),
+  );
+  const inner = svgElement("g", {
+    transform: "translate(2.1875 1.25) scale(.3125)",
+    fill: "none",
+    stroke: "var(--deep)",
+    "stroke-width": "13",
+    "stroke-linecap": "butt",
+    "stroke-linejoin": "miter",
+  });
+  inner.append(
+    svgElement("path", { d: "M24 14V82" }),
+    svgElement("path", { d: "M40 20L70 48 40 76" }),
+  );
+  svg.append(outer, inner);
+  wrap.append(svg);
+  return wrap;
+}
+
 export function buildAnchor(status: string): HTMLElement {
   const anchor = element("header", "anchor");
   const left = element("span", "lft");
