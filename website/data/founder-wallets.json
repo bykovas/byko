@@ -60,6 +60,11 @@
       "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "role": "neighbouring project",
       "class": "same owner"
+    },
+    {
+      "address": "0x36041020857b33aa09ee7d9a99743176a7778134",
+      "role": "airdrop experiment",
+      "class": "primary"
     }
   ]
 }

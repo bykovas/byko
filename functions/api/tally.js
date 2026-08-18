@@ -91,7 +91,7 @@ var KNOWN_ROUTERS = [
 /* v2: founder wallet list extended (buyers + neighbouring-project wallets).
    The gift set is stamped during the scan, so widening the list needs a
    full rescan — hence the version bump, which abandons the v1 checkpoint. */
-var CHECKPOINT_KEY = "tally-checkpoint-v2";
+var CHECKPOINT_KEY = "tally-checkpoint-v3";
 var CHECKPOINT_CACHE_URL = "https://byko-checkpoint.invalid/" + CHECKPOINT_KEY;
 
 function json(body, status, headers) {

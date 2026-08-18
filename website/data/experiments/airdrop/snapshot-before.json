@@ -1,0 +1,2063 @@
+{
+  "label": "before",
+  "taken_at": "2026-08-18T17:47:41.291Z",
+  "finished_at": "2026-08-18T17:48:10.151Z",
+  "chain": {
+    "block": {
+      "value": 50142957,
+      "source": "eth_blockNumber"
+    },
+    "supply": {
+      "value": 790227,
+      "source": "totalSupply"
+    },
+    "pool_byko": {
+      "value": 466015.4043304237,
+      "source": "balanceOf(pool)"
+    },
+    "pool_usdc": {
+      "value": 117.57895,
+      "source": "balanceOf(pool)"
+    },
+    "price_usd": {
+      "value": 0.0002523070029604253,
+      "source": "pool reserves"
+    }
+  },
+  "holders": {
+    "count": {
+      "value": 7,
+      "source": "byko.bykovas.lt/api/holders"
+    },
+    "block": {
+      "value": 50142957,
+      "source": "byko.bykovas.lt/api/holders"
+    },
+    "tiers": {
+      "value": {
+        "whale": {
+          "count": 2,
+          "supply": 84.71
+        },
+        "shark": {
+          "count": 2,
+          "supply": 14.85
+        },
+        "dolphin": {
+          "count": 1,
+          "supply": 0.37
+        },
+        "fish": {
+          "count": 2,
+          "supply": 0.05
+        },
+        "crab": {
+          "count": 0,
+          "supply": 0
+        },
+        "shrimp": {
+          "count": 0,
+          "supply": 0
+        }
+      },
+      "source": "byko.bykovas.lt/api/holders"
+    }
+  },
+  "scanners": {
+    "goplus": {
+      "source": "api.gopluslabs.io",
+      "holder_count": "8",
+      "is_honeypot": "0",
+      "is_open_source": "1",
+      "is_mintable": "0",
+      "is_proxy": "0",
+      "creator_percent": "0.026794",
+      "owner_percent": "0",
+      "lp_holder_count": null,
+      "trust_list": null,
+      "raw": {
+        "anti_whale_modifiable": "0",
+        "buy_tax": "",
+        "cannot_buy": "0",
+        "can_take_back_ownership": "0",
+        "creator_address": "0x624056460437cb4c63f7a3cf0c5a554df3375222",
+        "creator_balance": "21173.093129684840209677",
+        "creator_percent": "0.026794",
+        "external_call": "0",
+        "hidden_owner": "0",
+        "holder_count": "8",
+        "holders": [
+          {
+            "address": "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca",
+            "tag": "",
+            "is_contract": 1,
+            "balance": "466015.404330423655147652",
+            "percent": "0.589723464688530833",
+            "is_locked": 0
+          },
+          {
+            "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "228800.000000007788970113",
+            "percent": "0.289537057073483681",
+            "is_locked": 0
+          },
+          {
+            "address": "0x30fd96c5ae61f0fb3d97e6159ab023710163efbf",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "45860.230224649226533988",
+            "percent": "0.058034248671140351",
+            "is_locked": 0
+          },
+          {
+            "address": "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "26973",
+            "percent": "0.034133230071865426",
+            "is_locked": 0
+          },
+          {
+            "address": "0x624056460437cb4c63f7a3cf0c5a554df3375222",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "21173.093129684840209677",
+            "percent": "0.026793684763599371",
+            "is_locked": 0
+          },
+          {
+            "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "1227",
+            "percent": "0.001552718396106435",
+            "is_locked": 0
+          },
+          {
+            "address": "0xa3c0941c0cf83c44e162617fad3e465206823a61",
+            "tag": "",
+            "is_contract": 1,
+            "balance": "97.12879441769845192",
+            "percent": "0.000122912523132844",
+            "is_locked": 0
+          },
+          {
+            "address": "0xcd6b980029e6e6e0733ac8ec3e02be9410d09799",
+            "tag": "",
+            "is_contract": 0,
+            "balance": "81.14352081679068665",
+            "percent": "0.000102683812141056",
+            "is_locked": 0
+          }
+        ],
+        "honeypot_with_same_creator": "0",
+        "is_anti_whale": "0",
+        "is_blacklisted": "0",
+        "is_honeypot": "0",
+        "is_in_dex": "0",
+        "is_mintable": "0",
+        "is_open_source": "1",
+        "is_proxy": "0",
+        "is_whitelisted": "0",
+        "owner_balance": "0",
+        "owner_change_balance": "0",
+        "owner_percent": "0",
+        "personal_slippage_modifiable": "0",
+        "selfdestruct": "0",
+        "sell_tax": "",
+        "slippage_modifiable": "0",
+        "token_name": "BYKO",
+        "token_symbol": "BYKO",
+        "total_supply": "790227",
+        "trading_cooldown": "0",
+        "transfer_pausable": "0",
+        "transfer_tax": ""
+      }
+    },
+    "geckoterminal": {
+      "source": "api.geckoterminal.com",
+      "price_usd": "0.000253181866",
+      "fdv_usd": "200.071146414",
+      "total_reserve_usd": "117.8203327797063933080031361165087705626314566482744461696",
+      "volume_24h": "0.0",
+      "market_cap_usd": null
+    },
+    "dexscreener": {
+      "source": "api.dexscreener.com",
+      "pairs": 0,
+      "listed": false
+    },
+    "blockscout": {
+      "source": "base.blockscout.com",
+      "token_holders_count": "0",
+      "transfers_count": "112",
+      "note": "does not index this token's holders — reports 0"
+    },
+    "manual": {
+      "note": "no public API — checked by eye, screenshots go to the diary",
+      "targets": [
+        "Base App",
+        "Coinbase Wallet",
+        "MetaMask",
+        "Rabby",
+        "Phantom"
+      ]
+    }
+  },
+  "cohorts": {
+    "asked": {
+      "summary": {
+        "wallets": 1,
+        "granted_total": 227,
+        "holding_total": 1227,
+        "held": 1,
+        "partial": 0,
+        "emptied": 0
+      },
+      "rows": [
+        {
+          "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
+          "byko": 1227,
+          "eth": 0.000197724192805783,
+          "granted": 227,
+          "handle": "@bykocoin",
+          "status": "held"
+        }
+      ]
+    },
+    "unasked": {
+      "summary": {
+        "wallets": 227,
+        "granted_total": 0,
+        "holding_total": 0,
+        "held": 0,
+        "partial": 0,
+        "emptied": 0
+      },
+      "rows": [
+        {
+          "address": "0x4c855204c4eed411a03d20ace673d08837a8f5ee",
+          "byko": 0,
+          "eth": 0.000222360084899694,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd7b4af433b9c8565202a13f1daeb7ea003ac5363",
+          "byko": 0,
+          "eth": 0.000070066955443437,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb11433b6fc63bf0a5a854ee42a225d5fcac6efb9",
+          "byko": 0,
+          "eth": 0.000250524530703389,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4eff2f739b1b0d5719662f9094a06a742ed99c43",
+          "byko": 0,
+          "eth": 0.000774004833741811,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x786842fe74724150a0a64640916123b9cdd88beb",
+          "byko": 0,
+          "eth": 5.77619937691e-7,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1a4946845340e4aea4d7b8e0b6afc12ab293ea9c",
+          "byko": 0,
+          "eth": 0.000429962020317679,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xea70aa26c59d16e7a650f3a977670fa0b5867eef",
+          "byko": 0,
+          "eth": 0.000824947051166288,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x11648ec6e43e80b704ac974a1232e52602fc59e9",
+          "byko": 0,
+          "eth": 0.00004061544836828,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4ccfe7c78b8bfbe868098109093576eab20d239a",
+          "byko": 0,
+          "eth": 0.000133351412030518,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4446adc0b8136ffc55ddb7a488ba5509ace2a5ef",
+          "byko": 0,
+          "eth": 0.01899311161344753,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x7e9636f85ecd30bf9485e1d6ce03f00bba294638",
+          "byko": 0,
+          "eth": 0.000128755309217441,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x7c26bd38d2c6d340359f5113bb83a8aeba4563d3",
+          "byko": 0,
+          "eth": 0.00244524741164367,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1258b7cbdf93863e3b0e43c9c2a5d7ad527a6b3e",
+          "byko": 0,
+          "eth": 0.000520894273379115,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdded700e72d4a6734f598c3055307ad80b85279f",
+          "byko": 0,
+          "eth": 0.003856118112600862,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb9bdf1119052f645a8c8b4b223fa14c332a90f09",
+          "byko": 0,
+          "eth": 0.002482357270846732,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xe0fbedd9ff33136ceceb24d13d7ba664e8a947e2",
+          "byko": 0,
+          "eth": 0.000006137569323243,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf3142ac12fade0eca7f961b1da24910e80ad9f5e",
+          "byko": 0,
+          "eth": 0.001054367212819807,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xfab2c82ee3af3a26a5659e8644a8ccb25404204a",
+          "byko": 0,
+          "eth": 0.000498839896081271,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3c8f6d1559d1e2e4f48d51b4bc5fdb5c783a8940",
+          "byko": 0,
+          "eth": 0.004439739683920646,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf368ec1e69332e843058281f8652a362e565d27c",
+          "byko": 0,
+          "eth": 0.000310171782922669,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd678aa4909b73dc264f66edee1e22075e055bb3c",
+          "byko": 0,
+          "eth": 0.003073611604985976,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xaadccd10fe856c2ee723268067d64a732b218571",
+          "byko": 0,
+          "eth": 0.003145600008491103,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1a28f22f423a05aeac2bfecbd89f1da32fe313a9",
+          "byko": 0,
+          "eth": 0.00001011171639305,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0bbbcf976e4d8a4ee27aaef0d7431e19d4c30b04",
+          "byko": 0,
+          "eth": 0.010193198155443265,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1c1114c9c9d3a08bde578be59ff6cb141ee4b288",
+          "byko": 0,
+          "eth": 0.000290689284433283,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5c3fbff051b2fdc863602c96cab483fd9a31fc76",
+          "byko": 0,
+          "eth": 0.002687785774449048,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd6f14caf5db98820628e0acd3e3a7009b96c8861",
+          "byko": 0,
+          "eth": 0.019335395829290204,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2d460bc9d544bd0fc08bb16d23e0849a13dd6095",
+          "byko": 0,
+          "eth": 0.00372207434169376,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb65814f30085a7510b8dccd902909455d2d112cb",
+          "byko": 0,
+          "eth": 0.007924202258260689,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2d7f5212e93740a74b99d8a0799b4514061dbda5",
+          "byko": 0,
+          "eth": 0.34981178853730244,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x61f731d33f38a1ab542eb04ac1a16ea462cf3ec2",
+          "byko": 0,
+          "eth": 0.003654712612122357,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5348d967296b3a76fc1940637299d0e6ff9f52f5",
+          "byko": 0,
+          "eth": 0.000115463880249035,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1eb968823e82e95ed43cb8e4a5f27c9a23315a39",
+          "byko": 0,
+          "eth": 0.000182403848722993,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6817a589eea463054a5dda0e938f92d6eafff8fe",
+          "byko": 0,
+          "eth": 0.000024532940985032,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x106e6e9e9b819416963dbea243d020c4089f4aeb",
+          "byko": 0,
+          "eth": 0.04512204080494758,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdf051b4f9eec425bb74806b5a26522b32aa0d09d",
+          "byko": 0,
+          "eth": 0.004240168755908571,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x23d2cdafeb8f37464f5ad8cc2a25f5c2710556e5",
+          "byko": 0,
+          "eth": 0.002363322561949361,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdadd0a026d5aa117f7a41197a38d851ed9325a22",
+          "byko": 0,
+          "eth": 0.000818938645807742,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x9c68adae98bff93e7c4f31fab49cf977713d313b",
+          "byko": 0,
+          "eth": 0.001186866218784393,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x9955348dab8ecc5e3ee0abda973bc2e258577c7e",
+          "byko": 0,
+          "eth": 0.000001018867563854,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xeec90260e0309c76fda293a2093ef2d690570219",
+          "byko": 0,
+          "eth": 0.003211178089619283,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x55ae3b6f0bb034363804b5c25ec2360e91590df3",
+          "byko": 0,
+          "eth": 0.00106968407605374,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd627158727cd253cba31d86a3da31d2baa00ff07",
+          "byko": 0,
+          "eth": 0.05679271018414593,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xea1825919ff711d42600c019b244d35172c11061",
+          "byko": 0,
+          "eth": 0.000513393775686557,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa745b4fcc97c23432fb0a63382485d056201b4f5",
+          "byko": 0,
+          "eth": 0.000010923668098201,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x98ec12455c6f66319499f765dccaab97f743d0f5",
+          "byko": 0,
+          "eth": 0.000021200964474432,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xccd917241ae046cee7e56559dd195d35aea5946e",
+          "byko": 0,
+          "eth": 0.1859245916140584,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf997d9cfe86f952ef18caef7649a11d1e7970a7c",
+          "byko": 0,
+          "eth": 0.004984784624645025,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xaef6fe8746fcef902afe168f9b5116a430df8b06",
+          "byko": 0,
+          "eth": 0.000175598310848132,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0b018f24e6a0326e404a72b1b13ce3ad78bd10c8",
+          "byko": 0,
+          "eth": 0.000401865820339581,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xbaf4b7fb24977772a08da34d48be0d3047e422bf",
+          "byko": 0,
+          "eth": 0.001002583926280406,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0ca7c168c1f82ea45786910436527f75a269860a",
+          "byko": 0,
+          "eth": 0.000586826673271791,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6629732898108f2955c78f66d202e3d6dd66bd9c",
+          "byko": 0,
+          "eth": 0.003943839698554431,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x52f0714550911c5032b29656057850aba3f34141",
+          "byko": 0,
+          "eth": 0.001751137906104932,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x379a4d106c6ee63b2b31b9df248bfc52abba9130",
+          "byko": 0,
+          "eth": 0.016173814155403404,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8e3eed7d3207e186c76bbe6a29b25ff8e2d77c3b",
+          "byko": 0,
+          "eth": 0.10384621762157993,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x57691c9136f2332ecffebbd04e87112ea1b9a413",
+          "byko": 0,
+          "eth": 0.000451859673425769,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5e7c4efe4f7943252515077ea9b6f45362cb54b0",
+          "byko": 0,
+          "eth": 0.000596885177231224,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x93faa377d83ae39a9cf785f2b2b6e17a440d9976",
+          "byko": 0,
+          "eth": 0.06586358202793598,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x97d522a16e79845417b4606c96f06141e858f5be",
+          "byko": 0,
+          "eth": 0.000012873472046727,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1cb2e5b4039c7122e7e31c54cf9cf273b7ba9780",
+          "byko": 0,
+          "eth": 0.014140046606198964,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0b98a8fdae5256c5728674f4f1e57ebd1f7b414a",
+          "byko": 0,
+          "eth": 0.011811822935190517,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8e6e1b68a1be1b320025e7922d5b8e0249842cc5",
+          "byko": 0,
+          "eth": 0.12235996981616061,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5643fdc9a46cd78e3b048fbdb25ac454b66262c4",
+          "byko": 0,
+          "eth": 0.013894498963512225,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x23f0d08797a87e63f55637b02ef25361290d52e4",
+          "byko": 0,
+          "eth": 0.011932121565644972,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8e6ac1cd00dbda08ba76103a36fa54d89595d9ea",
+          "byko": 0,
+          "eth": 0.002409250192027422,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x60c7123561e96c1c8bffa4453bda5057a601fc42",
+          "byko": 0,
+          "eth": 0.010282755150891616,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd603e06728bf321009592f4d423bda82ccca3f5b",
+          "byko": 0,
+          "eth": 0.000333374266718266,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x849c4b9db885d20faed1a2ab7d1f9d77c612b943",
+          "byko": 0,
+          "eth": 0.000003293644981059,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd9f76930d7df99aef4dc4cff48ee236d4583c28a",
+          "byko": 0,
+          "eth": 0.01127992202018694,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd2a9bae5bdcbe791ddea1c7e23f20040fc547dfe",
+          "byko": 0,
+          "eth": 0.02237275123288876,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb071a03afd3aa613271bcb39749eca3e6e456efc",
+          "byko": 0,
+          "eth": 0.004459757764911597,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8995c3bee9655f41dee4f34f9508a56589252f67",
+          "byko": 0,
+          "eth": 0.000654425577827589,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x7b0664ea37d03f00eab4a2aa980f1bbf126b9b54",
+          "byko": 0,
+          "eth": 0.000119282171932599,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x98f39d702812bbf331be8b1231dbb1747daaf1e9",
+          "byko": 0,
+          "eth": 0.005295230365327235,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa3d2b84e8a67648f10fd281e5070cca913b577ca",
+          "byko": 0,
+          "eth": 0.001101739318620741,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x376655d4008642d55be446cedeef2a4e5f496bc4",
+          "byko": 0,
+          "eth": 0.000103149631748857,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x188927e33ad27eb57da555fe99f708c98b142ee2",
+          "byko": 0,
+          "eth": 0.005823115323574845,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x876c56e9edaaa44af9bc9678784d15ad76393e97",
+          "byko": 0,
+          "eth": 0.005450399506055984,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd7be40db5a6b9d95c2bf616c05b258f13089b0e4",
+          "byko": 0,
+          "eth": 0.000298054941858021,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xeadb3f882b7dfff677bfca9384fa86ae4c31652f",
+          "byko": 0,
+          "eth": 0.000519646627368277,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x7e5fb4b5f68a651efb482daf3ec67455082a8bf6",
+          "byko": 0,
+          "eth": 0.00229310501674569,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdd22b6b1e053b08839b06f20199b45312d2ec966",
+          "byko": 0,
+          "eth": 0.29532949664973174,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x630938990464adf09bfd6b89ee058b41ef5e0ad8",
+          "byko": 0,
+          "eth": 0.000108427892760088,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf881c1fb83f11e786e2a7cd9a2ee26b2972432be",
+          "byko": 0,
+          "eth": 0.00238223829305942,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3b4bb42cf4766b2129cd5ed588c26ffbd843c232",
+          "byko": 0,
+          "eth": 0.000364126827955447,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1b068af39383410b14df77026845b15cfbcaa335",
+          "byko": 0,
+          "eth": 0.000135018892282179,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3be2e522d5ba4598e81b5932def272eb2c65c822",
+          "byko": 0,
+          "eth": 0.001041222723154863,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x91b140bebebdccca7baeea01566a986673378179",
+          "byko": 0,
+          "eth": 0.000277223937254382,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8fe38b74da3efe0f5f3d0e23449151b4bcefcbeb",
+          "byko": 0,
+          "eth": 0.012172129656418187,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x71aad1110dfd8f60249cd45ce4fb05163b6f812b",
+          "byko": 0,
+          "eth": 0.3198253583576693,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x44405846b414a76be75b50023af6870da455c3e5",
+          "byko": 0,
+          "eth": 0.000294405904800179,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x772e324fd30229fb89d247ac7625a6c97a08350d",
+          "byko": 0,
+          "eth": 1.0452312148107674,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8541c9e6eb833af3a587b658a32e560da6f9d35a",
+          "byko": 0,
+          "eth": 0.004227292617732211,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3d80ab15039ab67042d5deaec31202b7f79a275a",
+          "byko": 0,
+          "eth": 0.000070735691441354,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf45f3c4ebe9df47e324cde0f2236a71aff7bc12c",
+          "byko": 0,
+          "eth": 0.003146897870711408,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xe1f0d5b4b315a8e9b4723b98b75419b82b1e6ed0",
+          "byko": 0,
+          "eth": 0.006384579115177651,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3933b84e67d6589b23efdcedebac2c60a1785de7",
+          "byko": 0,
+          "eth": 0.01607156418686602,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4e3b692490df762dcc9046a6ce0b38394a594c0a",
+          "byko": 0,
+          "eth": 0.002387954482880917,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa3ed878b8eb8a4d8117552449412f677e37ba2cb",
+          "byko": 0,
+          "eth": 0.000425759186921009,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa60419d45c073788a1305fe0b1c90e25c02fa79b",
+          "byko": 0,
+          "eth": 0.000025916895130149,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd9ad008d5869a08f04477c66355872365e4b23a0",
+          "byko": 0,
+          "eth": 0.02740922213223298,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x1ee5518ce4c485ac9b338c7becc056e428ffaf4f",
+          "byko": 0,
+          "eth": 0.002571248219715034,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x841e1fadc3cbba190eeb5e957ff572c870a9a412",
+          "byko": 0,
+          "eth": 2.057622230097854,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xc1e074180fc4f5a073ca9fd285a38ec1bb758bf8",
+          "byko": 0,
+          "eth": 0.001876791090919906,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x996813267b320d3cad6cb39eb6c4b992fef92cf8",
+          "byko": 0,
+          "eth": 0.000343913114564065,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xcb0f8a0d37bf2fa07715d45f2d5c6af2a4ea6fa4",
+          "byko": 0,
+          "eth": 0.001018265763954556,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3c6fc21da1159209b27f2658e6207ec7d8bd4f7d",
+          "byko": 0,
+          "eth": 0.02613452095401872,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd60300feafd616a551531618e59840c0e71fb347",
+          "byko": 0,
+          "eth": 0.00001169820158332,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3ed9642b238ff10c867c7e5bf88b14165fbf26f2",
+          "byko": 0,
+          "eth": 0.001383607404660653,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x019436ed8313116343ceaaf26cf0e990b349d50b",
+          "byko": 0,
+          "eth": 6.7956495508e-8,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4787710ed3565b403e7084a7fe443f8ef32cfb34",
+          "byko": 0,
+          "eth": 0.005448868872991714,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x01011a90648ae83cae081bbaca9c362272faacd3",
+          "byko": 0,
+          "eth": 0.00094372530257231,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0464dad8e6bb2a4a7b118fa4bebec7023d91c8c0",
+          "byko": 0,
+          "eth": 0.012394749252815331,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x85d0857ea50ea97e813e80bca03c5226d7b7add0",
+          "byko": 0,
+          "eth": 0.0323150026561774,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xad279b48dcdc68c5d7c10228913d442813f141ba",
+          "byko": 0,
+          "eth": 0.000513059371027515,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf5ad66ff5a943ce0b08f3682b78b288172379534",
+          "byko": 0,
+          "eth": 0.000600046365273159,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0fcab64c9d863d07aa96607dffe3e655ab8e1daa",
+          "byko": 0,
+          "eth": 0.002693374623491208,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xe31959882e951c2895c0fd0f1d28215ca917aa8a",
+          "byko": 0,
+          "eth": 0.000593189243074324,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa8a26709c93c90f343b95b018619eb73cbf84ece",
+          "byko": 0,
+          "eth": 0.002529318809469817,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x21cd7e4fb523f7411fbeaff99518af776c560895",
+          "byko": 0,
+          "eth": 0.000588324137583324,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xc80b5b90dcc65707a18102318fb2ecd8691f84d3",
+          "byko": 0,
+          "eth": 0.000193003372938049,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x8561f21998ad77f9c7cecce0f86afe78cb245a7b",
+          "byko": 0,
+          "eth": 0.012916940510675923,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0a64234ebea2cd29385c4150b019b5f44b90485b",
+          "byko": 0,
+          "eth": 0.006245356665424825,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa1ccca0ee4fa4da94aae7f876b55a525ca5f9a6c",
+          "byko": 0,
+          "eth": 0.005805805978298526,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xaafc769f6fcd4f24a4d0ebd075303f3060e281a5",
+          "byko": 0,
+          "eth": 0.006413228409156121,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xfe85fce1a21178db20ca9634541e876a69360240",
+          "byko": 0,
+          "eth": 0.000673626416797984,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xaed8dc59219f65d496f376eec9efdb864fe31f7f",
+          "byko": 0,
+          "eth": 0.002773035934806947,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3977318f07f3c7136395397d97b710d0241a2a2e",
+          "byko": 0,
+          "eth": 0.001466972580287248,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xc4b4a7a153ab665b3b2ba5bd5a4c6c34b71e5ee6",
+          "byko": 0,
+          "eth": 0.000053450139236378,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3d5a744471810b3478bbe7701e7711d740059b8d",
+          "byko": 0,
+          "eth": 0.3020441653992803,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdeccaaa0eae16ff13940fc1b59bb954a0e43e9da",
+          "byko": 0,
+          "eth": 0.009257675233119388,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x867b9b9b294b38baf618ce5dcddede4f6bed5153",
+          "byko": 0,
+          "eth": 0.000599073164142495,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x592ba61378da41f99a7f9d3e268d377459b6a5cb",
+          "byko": 0,
+          "eth": 0.000193676544981034,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xadc358c47953da497e01bdf39b29f473c48861cd",
+          "byko": 0,
+          "eth": 0.02390677996676637,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x99e94c3e1db70747882a9201721df3d9cb224822",
+          "byko": 0,
+          "eth": 0.000182889327456714,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb1658bd148f54c1e59d85f7fda511b558533b0ca",
+          "byko": 0,
+          "eth": 0.03390610207354207,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4eeaff55fe2423708a0a9a9ae2c727d116310c88",
+          "byko": 0,
+          "eth": 0.000001985616076739,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x69ddbec69bea90d144ce302e9c9d84a7ab40d5b8",
+          "byko": 0,
+          "eth": 0.01098001624363642,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x873f7e5014a117df6e6741dfd0a9ece6eced0349",
+          "byko": 0,
+          "eth": 0.001910728577299732,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2e38b8b11a4dcb497f025cbc46f98121c5904df2",
+          "byko": 0,
+          "eth": 0.0233629882617524,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3dc6ed695b1866aef35394b43410743ffd637007",
+          "byko": 0,
+          "eth": 0.003248312369161467,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x637c3d247ad9b3d61d067dd99b571d96230eeb50",
+          "byko": 0,
+          "eth": 0.000391225505560907,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb2bbcb4588ce00ac053079433fa288712399e565",
+          "byko": 0,
+          "eth": 0.008822162758798402,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x23894992e78dcef87ad5a6610924d14bb98f6c70",
+          "byko": 0,
+          "eth": 0.006225435251657307,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x102baf4e2bfc91ad59813fce00b4fda8f75e146d",
+          "byko": 0,
+          "eth": 0.008850115899630797,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd85a810c164272d0e605d3c9910b60f65eefcd30",
+          "byko": 0,
+          "eth": 0.000042743691369287,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0c2383279640620d05676e63c725e09770a4b29e",
+          "byko": 0,
+          "eth": 0.05424795844050868,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0bac7cf080994a85456466f7bf88729ceeb1c97f",
+          "byko": 0,
+          "eth": 0.002968576193541723,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xcf9fa6aaaaf2137618512b178d6a4699b9659143",
+          "byko": 0,
+          "eth": 0.000106620774894859,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6dfdd2a1536e1d2ce0173e9c1db5a65ac32a5be1",
+          "byko": 0,
+          "eth": 7.87083159398e-7,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x12e1b8069f2e77d2285a94dc18600f3000d08fe3",
+          "byko": 0,
+          "eth": 0.000002227871808228,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xc9a62ebaebc74addedb0e03ca353d4dcc40e9abb",
+          "byko": 0,
+          "eth": 0.000592883620659974,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xbcc63f11cb0e5d08933f6a70be1f3350fb8b3bf0",
+          "byko": 0,
+          "eth": 0.000010467924502015,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb95bf23a89560835776339f9375d04fe4b191e00",
+          "byko": 0,
+          "eth": 0.022590481438332782,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x62e6a9a0804868932bc592a2ecfeb5ef6143d5d1",
+          "byko": 0,
+          "eth": 0.01111845797106269,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xef2878ad80d673dec28133201eca444bed4eacda",
+          "byko": 0,
+          "eth": 0.016338243281574835,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x9820b85924bdee23d9cec838e3fe538647384d32",
+          "byko": 0,
+          "eth": 0.000033630952170075,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xe7dfcf8097811abe89877893c54fa11ae444353a",
+          "byko": 0,
+          "eth": 0.006675137819343373,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x49bdd7691cf9eb9e552a0255ffbf5eae34f4d158",
+          "byko": 0,
+          "eth": 0.000068082869481539,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x63a8632eb8abc195345112ae9395a06ab8de5deb",
+          "byko": 0,
+          "eth": 0.000001649109539993,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x853b68307b8f6a7d36351d39746c7148a9ab5e2b",
+          "byko": 0,
+          "eth": 0.000029852858984127,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x95e2caf86b6f3ee4989cb2c151ee280d81aa9770",
+          "byko": 0,
+          "eth": 0.005204573801428069,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb5ffd5da3cab53c118a2115933689f42f0ccf8c7",
+          "byko": 0,
+          "eth": 0.000637301306363825,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2e3954966f2019e65912efd5303b5de41b869119",
+          "byko": 0,
+          "eth": 0.002155176022420694,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x24dd958f22afe8595efa99cae37fc25e470247e8",
+          "byko": 0,
+          "eth": 0.003325787475629416,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xfe7089f40965146508c8c8592c7f193b23ca1f1d",
+          "byko": 0,
+          "eth": 0.004609799246080364,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2e63fd628958cd277beeeb0cff45622e4df24c1f",
+          "byko": 0,
+          "eth": 0.001201181920645203,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xba93b8c35ea058b7b7b58cbc3b39d43540597053",
+          "byko": 0,
+          "eth": 0.000773213815789002,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x256d3353c52828e675d83d0259dcbe720f4af7ae",
+          "byko": 0,
+          "eth": 0.003114542206117356,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2e30ade5f15a8a1df1fce2e613882f8253f2b468",
+          "byko": 0,
+          "eth": 0.011504128506154006,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x91e2b058f1a730dbbefb2f12a727223143e86e0d",
+          "byko": 0,
+          "eth": 0.000020018339533171,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5b56b8f8d263b0ab2edcdb273e98cbab9cb507bb",
+          "byko": 0,
+          "eth": 0.004851585052963148,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x013cd9186f5b93472b586bd68a2d3e358ba25032",
+          "byko": 0,
+          "eth": 0.000014904792089705,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x41a1e704feadffef1ead9799daa5a87f1ec9b686",
+          "byko": 0,
+          "eth": 0.000983958531274779,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4739add580fc54c5bf1c1c197e28793f05fb6e63",
+          "byko": 0,
+          "eth": 0.03377477991919016,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x80f50e0e15354b7485f70bfd195a5d9d2b18a2c6",
+          "byko": 0,
+          "eth": 0.001090325937180352,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3e2ea408985404448a622e95562e7cd97ebc2f83",
+          "byko": 0,
+          "eth": 0.03227210568223475,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x55064a069e2e16ef7e86c594e74a2d3740a8fd95",
+          "byko": 0,
+          "eth": 0.001607648289392105,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x0d969952b21c8b186a3279f1d0f1f451ead9020f",
+          "byko": 0,
+          "eth": 0.000004363133299417,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd8c6961375290725cfd7fe8c57abb302b9590328",
+          "byko": 0,
+          "eth": 0.000003802874213518,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x00be9049af879c2e93d1437e85053db8ae9c005e",
+          "byko": 0,
+          "eth": 0.000030347053774854,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x04c8d897be7e463e48bcd06ba90e3ba108d098f6",
+          "byko": 0,
+          "eth": 0.004579943033228677,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x73f0859f844f042cd699f35bb5fe13a120f95c0f",
+          "byko": 0,
+          "eth": 0.001586016956370672,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdc108880a31eea7cfa4daacc9085a1c986490d56",
+          "byko": 0,
+          "eth": 0.006161731454186366,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x315cdec01ebdbc83b367316f788bc2bc609af86f",
+          "byko": 0,
+          "eth": 0.00289092589668302,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x74df1460b967396a1c5a29aec230df2e50eb4d3d",
+          "byko": 0,
+          "eth": 0.000015059989315825,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x784583afda2257317c593e41d13dd4d7d867c6b0",
+          "byko": 0,
+          "eth": 0.013493145498945628,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6961df37f4b4dc8380c851036e27de015e5f09b6",
+          "byko": 0,
+          "eth": 0.000015100792155054,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xdedc8baed411c0c8a590cfadbeb745ddc03717a5",
+          "byko": 0,
+          "eth": 0.000622178046988344,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xbbbc7c9c63443b35d7fe117bf67c0928ab267958",
+          "byko": 0,
+          "eth": 0.0005073294766365,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x276315a01119d13272a8dd837c345f60407f76e3",
+          "byko": 0,
+          "eth": 0.000875348245087837,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x5965f6377cc3af47827145e40dd3d2151bb03cb9",
+          "byko": 0,
+          "eth": 0.000355784487935701,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xe18e9287b583870c2af8e93471318235deebbbc9",
+          "byko": 0,
+          "eth": 0.000817439248570763,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x67085d71ac875557bdcb56c6ffa07a1e01324c69",
+          "byko": 0,
+          "eth": 0.011498399052634702,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3de5202320da53b5e916c83202810d9294d00e26",
+          "byko": 0,
+          "eth": 0.000501688447108177,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x967c29851c09900624bf49bfe04d17ae518eaa2e",
+          "byko": 0,
+          "eth": 0.000486229178780202,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x9d96896b4a0c33e70d0f67d43483dc6642e46a33",
+          "byko": 0,
+          "eth": 0.004905199514735594,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xcabfe6863070b0ded671e3149d7632db60712a8a",
+          "byko": 0,
+          "eth": 0.14056927731316357,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x194aae141c236bc87de5a5d582329b9b5eb80372",
+          "byko": 0,
+          "eth": 0.002465493793988162,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x322802f35688d3b73668e3e53dac5a339615e9ee",
+          "byko": 0,
+          "eth": 0.00002115195757761,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2a445786df76bc0058e5d662ca187785ca497119",
+          "byko": 0,
+          "eth": 0.000014970251798689,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf8033a1766843958636acdf6b97ec8358b64d3af",
+          "byko": 0,
+          "eth": 0.000014950760826979,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xed720906082383a84b088ea93f0585b28035b4c2",
+          "byko": 0,
+          "eth": 0.000015509225179597,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6e39579ee8af764f4a4dbfed803b68ceb6e21a4c",
+          "byko": 0,
+          "eth": 0.000338862278895831,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x69503ef38fa1cd11ff00e08c82fd6b38b933e33d",
+          "byko": 0,
+          "eth": 0.001156003337832107,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x63c43c3fb852739f55095656ad329b41a2d99a75",
+          "byko": 0,
+          "eth": 0.13124801382121426,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x020f734228821b0710f57ac690ac7f733bde702c",
+          "byko": 0,
+          "eth": 0.000123023438786391,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3f69557a41612032f31d5f5abd5d5cd6d17c7b41",
+          "byko": 0,
+          "eth": 0.11681639292669206,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6398133ef9d5842438fad985f8a81490e2a959de",
+          "byko": 0,
+          "eth": 0.00071615121649216,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xd99bf391c25a80f7a571f5d8ad557dbea011f200",
+          "byko": 0,
+          "eth": 0.12471073118229313,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x3e9a8d8e9ca47e3b4e6d698a198ce5421ad0f60e",
+          "byko": 0,
+          "eth": 0.11490970109392526,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xfe5dbc419d25634e3832ce36ec89cb1fe733598e",
+          "byko": 0,
+          "eth": 0.000995939922951809,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x128f101278135ccad494ad95dd4208b2cc9b07c6",
+          "byko": 0,
+          "eth": 0.01162070186855423,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xc91d47a9b6e9f900d724899fc096f0c780f2224d",
+          "byko": 0,
+          "eth": 0.000015076560354766,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6e083ae4619f7c86418e08b8f1e5ffac2c702c85",
+          "byko": 0,
+          "eth": 0.001313582417464527,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x895c51c9fb587a3d5a4dcda5562616a2d7fdb96a",
+          "byko": 0,
+          "eth": 0.000015129926756336,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x7091fca4806e289195febd624d1be119b3f21ec8",
+          "byko": 0,
+          "eth": 0.00055679187474368,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xf359e9b5143b31dc1cabca3dd837ea66390a7354",
+          "byko": 0,
+          "eth": 0.002413401461574025,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x4cfc2735027379e29443c1e0b8870f2b862f9430",
+          "byko": 0,
+          "eth": 0.023636980728018696,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x6e7d9ec163925b0351789be92dfd27380813582c",
+          "byko": 0,
+          "eth": 0.004079240815379647,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xb505ebd22e4b9b4914277c6e74ac0e3c21632a87",
+          "byko": 0,
+          "eth": 0.000006430765826398,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0xa128feb423e0637238c6e483712416de2e214770",
+          "byko": 0,
+          "eth": 0.006472027343148678,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x51876025327ba916572e826127b11169ac479f52",
+          "byko": 0,
+          "eth": 0.00032612405691722,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x257f3255ddaf50af690d11507430d954e2bc545e",
+          "byko": 0,
+          "eth": 0.000201424082045747,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x2b96d4d4842eb5eeec226011ff98a08ce5c5074a",
+          "byko": 0,
+          "eth": 0.000936996341258636,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        },
+        {
+          "address": "0x98a050c06e7d5e45fc77dc0f1451e3cd0b26a20c",
+          "byko": 0,
+          "eth": 0.03504664977950232,
+          "granted": 0,
+          "handle": null,
+          "status": "not-granted"
+        }
+      ]
+    }
+  },
+  "rpc": {
+    "calls": 460,
+    "nodes": 5
+  }
+}
