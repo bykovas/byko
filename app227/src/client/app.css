@@ -605,7 +605,7 @@ textarea:focus-visible {
 }
 
 .coinspot.away .coin {
-  animation: coin-away 1.1s ease-in forwards;
+  animation: coin-away 2.2s ease-in forwards;
 }
 
 .coinspot.away .coin-outline {

@@ -2,9 +2,11 @@ import {
   createPublicClient,
   createWalletClient,
   encodeFunctionData,
+  getAddress,
   http,
   keccak256,
   parseUnits,
+  type Address,
   type Chain,
   type Hex,
   type PublicClient,
@@ -153,6 +155,17 @@ export class FidLock {
     const wallet = this.wallet!;
     const chain = this.chain!;
 
+    /* viem checks EIP-55 strictly; config casing must not decide whether the
+       faucet works. Normalise from lowercase so the checksum is always right. */
+    let token: Address;
+    let dest: Address;
+    try {
+      token = getAddress(env.TOKEN_ADDRESS.toLowerCase());
+      dest = getAddress(to.toLowerCase());
+    } catch {
+      return { advanced: false, reason: "faucet-closed" };
+    }
+
     const day = today();
 
     /* ANY attempt today burns the day — failed included, by design */
@@ -177,7 +190,7 @@ export class FidLock {
     try {
       const [stock, gas, unmined] = await Promise.all([
         reader.readContract({
-          address: env.TOKEN_ADDRESS as Hex,
+          address: token,
           abi: ERC20_ABI,
           functionName: "balanceOf",
           args: [account.address],
@@ -213,8 +226,8 @@ export class FidLock {
       const request = await wallet.prepareTransactionRequest({
         account,
         chain,
-        to: env.TOKEN_ADDRESS as Hex,
-        data: encodeFunctionData({ abi: ERC20_ABI, functionName: "transfer", args: [to, amount] }),
+        to: token,
+        data: encodeFunctionData({ abi: ERC20_ABI, functionName: "transfer", args: [dest, amount] }),
         nonce,
       });
       serialized = await wallet.signTransaction(request as never);

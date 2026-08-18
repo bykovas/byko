@@ -64,21 +64,21 @@ export function buildCoin(className = "coin"): HTMLElement {
 export function buildCoinOutline(className = "coin-outline"): HTMLElement {
   const wrap = element("span", className);
   const svg = svgElement("svg", { viewBox: "0 0 32 32", "aria-hidden": "true" });
-  /* circle: ring of 1.5 (32-box units) */
+  /* circle: hairline ring of 0.75 (32-box units) */
   svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "var(--coin)" }));
-  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "14.5", fill: "var(--deep)" }));
-  /* mark: outline 4.8 group-units (= 1.5 in the 32-box) around stroke 13 */
+  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "15.25", fill: "var(--deep)" }));
+  /* mark: outline 2.4 group-units (= 0.75 in the 32-box) around stroke 13 */
   const outer = svgElement("g", {
     transform: "translate(2.1875 1.25) scale(.3125)",
     fill: "none",
     stroke: "var(--coin)",
-    "stroke-width": "22.6",
+    "stroke-width": "17.8",
     "stroke-linecap": "butt",
     "stroke-linejoin": "miter",
   });
   outer.append(
-    svgElement("path", { d: "M24 9.2V86.8" }),
-    svgElement("path", { d: "M36.49 16.73L70 48 36.49 79.27" }),
+    svgElement("path", { d: "M24 11.6V84.4" }),
+    svgElement("path", { d: "M38.25 18.36L70 48 38.25 77.64" }),
   );
   const inner = svgElement("g", {
     transform: "translate(2.1875 1.25) scale(.3125)",
