@@ -8,6 +8,11 @@
 /data/*
   X-Robots-Tag: noindex
 
+# app227 (the Farcaster mini-app on its own domain) reads the claims feed
+# cross-origin. Public read-only data; the header is scoped to this one file.
+/data/claims.json
+  Access-Control-Allow-Origin: *
+
 # Private wallet view: nothing links to it and it stays out of search.
 /w
   X-Robots-Tag: noindex, nofollow

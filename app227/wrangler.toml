@@ -1,0 +1,71 @@
+# byko-app227 — Farcaster mini-app on byko-app227.bykovas.lt.
+# A self-contained Worker with static assets: deployed from this directory
+# with `wrangler deploy`, fully separate from the Cloudflare Pages project
+# that serves byko.bykovas.lt (repo /website + /functions).
+#
+# No secrets in this file, ever. Production secrets go in with
+# `wrangler secret put NAME` (run from app227/); local dev values live in
+# .dev.vars — see .dev.vars.example for the list.
+#
+# Every <CREATE-ME: ...> placeholder is a resource that does not exist yet.
+# Creation commands are in README.md. wrangler refuses to deploy until the
+# real ids replace the placeholders — that is intended: nothing deploys by
+# accident from a skeleton.
+
+name = "byko-app227"
+main = "src/worker/index.ts"
+compatibility_date = "2026-08-01"
+
+# Custom domain: the bykovas.lt zone is already on Cloudflare, so the DNS
+# record is created automatically the first time this route deploys.
+routes = [
+  { pattern = "byko-app227.bykovas.lt", custom_domain = true }
+]
+
+[vars]
+# plain configuration, not secrets
+RPC_URL = "https://mainnet.base.org"
+CLAIMS_URL = "https://byko.bykovas.lt/data/claims.json"
+
+[assets]
+directory = "./dist/client"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+# API paths reach the worker first; everything else is served as an asset.
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "byko-app227"
+database_id = "<CREATE-ME: wrangler d1 create byko-app227>"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "<CREATE-ME: wrangler kv namespace create byko-app227>"
+
+# One Durable Object instance per fid — the serialisation point for anything
+# that must never run twice for the same user. SQLite-backed classes, which
+# work on every plan.
+[[durable_objects.bindings]]
+name = "FID_LOCK"
+class_name = "FidLock"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["FidLock"]
+
+[[queues.producers]]
+binding = "JOBS"
+queue = "byko-app227-jobs"
+
+[[queues.consumers]]
+queue = "byko-app227-jobs"
+max_batch_size = 10
+max_retries = 3
+
+[triggers]
+# placeholder cadence — the real schedule arrives with the logic that needs it
+crons = ["*/15 * * * *"]
+
+[observability]
+enabled = true

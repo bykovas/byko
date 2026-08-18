@@ -1,0 +1,9 @@
+# Copy to .dev.vars for local `wrangler dev`. Values never enter the repo.
+# Production: `wrangler secret put <NAME>` from app227/.
+#
+# The list is the expected minimum for the planned routes; prune or extend
+# when the routes gain their logic.
+
+NEYNAR_API_KEY=          # Farcaster reads: profiles, verified addresses
+WEBHOOK_SHARED_SECRET=   # verifies signatures on POST /api/webhook
+ADMIN_TOKEN=             # protects manual/ops endpoints

@@ -105,6 +105,7 @@ jobs:
         run: |
           node scripts/test-diary-og.mjs
           node scripts/test-diary-pages.mjs
+          node scripts/test-claims.mjs
 
       - name: Publish new entries
         if: steps.rerun.outputs.skip != 'true'
