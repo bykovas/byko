@@ -64,15 +64,14 @@ export function buildIntro(options: IntroOptions): HTMLElement {
 
 export function buildProfilePlate(sent = false): HTMLElement {
   const plate = element("div", "plate");
+  /* 3C: no avatar — one coin per screen. Handle left, wallet right. */
   const profile = element("div", "prow");
-  const identity = element("div");
   append(
-    identity,
+    profile,
     element("div", "hn", "@bykocoin"),
     /* the Farcaster-verified wallet the advances will actually come from */
-    element("div", "ad", "verified wallet · 0x2f66…95b9"),
+    element("div", "ad", "0x2f66…95b9"),
   );
-  append(profile, buildCoin(), identity);
 
   const value = element("div", "vrow");
   value.append(element("span", "v live", sent ? "227 BYKO sent" : "227 BYKO"));

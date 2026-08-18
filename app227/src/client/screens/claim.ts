@@ -9,7 +9,7 @@ export function claim(): HTMLElement {
     buildAnchor("take it · 03/04"),
     buildIntro({
       ghost: "227",
-      ghostStyle: { right: "-8px", top: "24px", fontSize: "200px" },
+      ghostStyle: { right: "-8px", bottom: "6px", fontSize: "200px" },
       coin: true,
       headline: "Take it now.",
       subline: "Before anything is asked of you.",

@@ -34,7 +34,7 @@ export function buildMark(className = "disc"): HTMLElement {
 
 /* The real coin: assets/coin.svg composition — full-bleed circle, the mark
    nearly edge to edge with its canonical offset — in the app's tokens. */
-export function buildCoin(className = "av"): HTMLElement {
+export function buildCoin(className = "coin"): HTMLElement {
   const wrap = element("span", className);
   const svg = svgElement("svg", { viewBox: "0 0 32 32", "aria-hidden": "true" });
   svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "var(--coin)" }));

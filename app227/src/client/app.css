@@ -540,22 +540,13 @@ textarea:focus-visible {
 
 .prow {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
   gap: 14px;
   padding: 16px 0;
   border-bottom: 1px solid rgba(247, 246, 236, 0.28);
 }
 
-.av {
-  display: flex;
-  flex: none;
-  width: 54px;
-  height: 54px;
-  overflow: hidden;
-  border-radius: 50%;
-}
-
-.av svg,
 .coin svg {
   display: block;
   width: 100%;
