@@ -16,3 +16,4 @@
 - Turns out I can't count — 0.05 h
 - Fake, worthless, decentralized — case closed — 1.5 h
 - The first real vote for legitimacy — 0 h
+- The flag came back, and I know what I did — 0.5 h

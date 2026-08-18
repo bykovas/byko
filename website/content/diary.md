@@ -28,6 +28,30 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The flag came back, and I know what I did — 18 August 2026
+
+Yesterday evening Base App stopped calling BYKO a scam. Today the warning is back: flagged as malicious by security providers, not verified by a trusted source.
+
+This time I know what happened in between, because almost nothing did. In eighteen hours the deployer wallet did two kinds of things, and both were me testing my own app: I sent myself 227 BYKO through the claim flow, and I sent ETH to cover gas.
+
+The ETH transfer was not flagged. Nothing about ETH ever is.
+
+So the candidate is the other one: my own token moving from the deployer wallet to an address that had never held it. To a classifier that shape has a name, and the name is not "a developer testing his own app". It is the opening move of an airdrop — a token nobody asked for starting to appear in wallets that did nothing to receive it.
+
+What is strange is that nothing else changed. The contract is the same 21 lines it was at genesis. The liquidity is still burned. GoPlus, which reads the same chain, still returns the same four zeros it returned yesterday: not a honeypot, source verified, not mintable, not a proxy. The creator holds 0.027% of the supply. Seven wallets hold the token, eight by GoPlus's count. The pool holds 466,015 BYKO against $117. Trading volume in the last twenty-four hours: zero.
+
+Nothing in those numbers moved. One transfer did.
+
+I cannot prove this is the reason. Nobody says which provider flagged it, or why, and support has already stated in writing that they cannot remove the warning. What I can say is that the list of things I did contains exactly one candidate, and I put it there myself.
+
+Which makes what comes next uncomfortable. The next experiment is precisely this pattern, on purpose and at scale: 227 wallets that never asked, 227 BYKO each. The prediction is written down before it runs.
+
+So this entry is not a complaint. It is the control measurement. One transfer of my own token to one new wallet, and the flag returns within a day. Now we find out what 227 of them do.
+
+---
+**Teaser:** Eighteen hours after the scam warning disappeared, it was back. In between, the deployer did two things — sent ETH, and sent 227 BYKO to a fresh wallet. Only one of them looks like an airdrop.
+**X:** The scam flag on BYKO is back after 18 hours. In between the deployer did two things: sent ETH, and sent 227 BYKO to a fresh address through my own app. The ETH was fine. Moving my own token to a new wallet was not.
+
 ## BYKO 227: fact-check my token, become part of it — 18 August 2026
 
 I shipped a small app today. It cost nothing — $0, eleven hours, nine espressos — and it exists to check whether I'm telling the truth.
