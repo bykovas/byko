@@ -1,13 +1,14 @@
 {
-  "accountAssociation": {
-    "header": "",
-    "payload": "",
-    "signature": ""
-  },
   "miniapp": {
     "version": "1",
     "name": "BYKO 227",
     "homeUrl": "https://byko-app227.bykovas.lt/",
-    "iconUrl": "https://byko-app227.bykovas.lt/icon.png"
+    "iconUrl": "https://byko-app227.bykovas.lt/icon.png",
+    "splashImageUrl": "https://byko-app227.bykovas.lt/splash.png",
+    "splashBackgroundColor": "#0B0B0C",
+    "subtitle": "Paid to verify one claim",
+    "description": "The founder pays you 227 BYKO first, then asks you to verify one claim about his own token against public evidence. Everything is published.",
+    "primaryCategory": "utility",
+    "tags": ["byko", "base", "verification", "experiment"]
   }
 }

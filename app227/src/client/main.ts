@@ -37,3 +37,9 @@ subscribe((kind) => {
 });
 
 startEnrichment();
+
+/* Farcaster container: hide the splash once the first screen is painted.
+   Outside the container this resolves into nothing — fire and forget. */
+import("@farcaster/miniapp-sdk")
+  .then(({ sdk }) => sdk.actions.ready())
+  .catch(() => {});
