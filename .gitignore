@@ -29,6 +29,7 @@ broadcast/
 .env.*
 *.pem
 *.key
+.claude/settings.local.json
 
 # Build / temp
 dist/
