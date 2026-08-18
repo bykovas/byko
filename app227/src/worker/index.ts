@@ -1,14 +1,20 @@
-/* byko-app227 worker — routing skeleton.
+/* byko-app227 worker.
  *
- * Every /api/* route answers 501 with its own name until implemented;
- * everything else falls through to static assets (dist/client, built by
- * vite; run_worker_first in wrangler.toml keeps /api/* on the worker). */
+ * /api/* is dispatched here by exact pathname (run_worker_first in
+ * wrangler.toml); every other request is served from the built client
+ * (dist/client) via the ASSETS binding. Each route checks its own method
+ * and answers OPTIONS for the authed POSTs.
+ *
+ * Live: auth, answer, metrics, me, profile — the identity + verdicts + Record
+ * pipeline that makes the stats and leaderboard real. Deferred: advance
+ * (phase 4, money on Sepolia first), webhook (phase 3, notifications). */
 import type { Env } from "../shared/types";
 import { auth } from "./routes/auth";
+import { answer } from "./routes/answer";
+import { metrics } from "./routes/metrics";
+import { me } from "./routes/me";
 import { profile } from "./routes/profile";
 import { advance } from "./routes/advance";
-import { checks } from "./routes/checks";
-import { metrics } from "./routes/metrics";
 import { webhook } from "./routes/webhook";
 
 export { FidLock } from "./do/fid-lock";
@@ -17,10 +23,11 @@ type Handler = (request: Request, env: Env) => Promise<Response>;
 
 const routes: Record<string, Handler> = {
   "/api/auth": auth,
+  "/api/answer": answer,
+  "/api/metrics": metrics,
+  "/api/me": me,
   "/api/profile": profile,
   "/api/advance": advance,
-  "/api/checks": checks,
-  "/api/metrics": metrics,
   "/api/webhook": webhook,
 };
 
@@ -32,7 +39,7 @@ export default {
     return env.ASSETS.fetch(request);
   },
 
-  /* wired in wrangler.toml; empty until the jobs exist */
+  /* wired in wrangler.toml; empty until the jobs exist (dispute payouts) */
   async queue(_batch: unknown, _env: Env): Promise<void> {},
   async scheduled(_controller: unknown, _env: Env): Promise<void> {},
 };

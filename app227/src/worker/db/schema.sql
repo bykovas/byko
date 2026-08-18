@@ -1,50 +1,68 @@
 -- byko-app227 D1 schema. Applied BY HAND, never by automation:
 --
---   wrangler d1 execute byko-app227 --remote --file=src/worker/db/schema.sql
+--   npx wrangler d1 execute byko-app227 --remote --file=src/worker/db/schema.sql
 --
--- NOTE: this skeleton schema is derived from the route list (auth, profile,
--- advance, checks, metrics, webhook) and the claims.json shape. Reconcile it
--- with the architecture document before the first real migration; until then
--- nothing applies it.
+-- Reconciled 18 Aug 2026 with the architecture document (§3) AND the owner's
+-- day mechanics: 227 BYKO per claim, 1 claim/day and 5/wallet lifetime,
+-- 2 answers/day/wallet, one answer per (fid, claim). Two facts open per day.
+--
+-- The money path (advances) is SHAPED here but not yet used — no transfer is
+-- sent until phase 4 (Base Sepolia first). What is live now: profiles,
+-- answers and the metrics they feed. Every statement is idempotent.
 
+-- One row per Farcaster user seen.
 CREATE TABLE IF NOT EXISTS profiles (
-  fid            INTEGER PRIMARY KEY,               -- Farcaster id
-  username       TEXT,
-  eth_address    TEXT,                              -- primary verified address
+  fid            INTEGER PRIMARY KEY,               -- Farcaster id (from Quick Auth)
+  username       TEXT,                              -- @handle, resolved via Neynar (nullable)
+  eth_address    TEXT,                              -- primary verified address (money target, phase 4)
   address_source TEXT,                              -- primary | first_verified | none
+  fid_at_launch  INTEGER NOT NULL DEFAULT 0,        -- 1 if fid < N_snapshot at first sight (measurement marker)
   created_at     TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at     TEXT
 );
 
--- one row per fid+claim: where this user stands on this fact
+-- The verdicts. One answer per (fid, claim) — enforced by the UNIQUE key,
+-- which also makes double-tap idempotent. The 2/day cap is counted on
+-- answer_date. verdict: yes | no | cant. argument is required for 'no'.
+CREATE TABLE IF NOT EXISTS answers (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  fid          INTEGER NOT NULL,
+  claim_id     TEXT    NOT NULL,                    -- id from /data/claims.json
+  verdict      TEXT    NOT NULL,                    -- yes | no | cant
+  argument     TEXT,                                -- present when verdict = no
+  answer_date  TEXT    NOT NULL,                    -- YYYY-MM-DD (UTC) — the 2/day window
+  content_hash TEXT    NOT NULL,                    -- sha256 of the answer payload (tamper-evident)
+  created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (fid, claim_id)
+);
+
+-- Money, shaped for phase 4. status: pending | confirmed | skipped.
+-- Limits (1/day via advance_date, 5 lifetime via count per fid) will be
+-- enforced when the ops wallet and the transfer land — nothing writes here yet.
 CREATE TABLE IF NOT EXISTS advances (
-  fid        INTEGER NOT NULL REFERENCES profiles(fid),
-  claim_id   TEXT    NOT NULL,                      -- id from /data/claims.json
-  state      TEXT    NOT NULL,                      -- opened | passed | failed
-  opened_at  TEXT    NOT NULL DEFAULT (datetime('now')),
-  decided_at TEXT,
-  PRIMARY KEY (fid, claim_id)
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  fid          INTEGER NOT NULL,
+  claim_id     TEXT,
+  address      TEXT,
+  amount       INTEGER,                             -- BYKO whole tokens (227)
+  tx_hash      TEXT,
+  status       TEXT    NOT NULL DEFAULT 'pending',
+  advance_date TEXT    NOT NULL,                    -- YYYY-MM-DD (UTC) — the 1/day window
+  created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
+  confirmed_at TEXT
 );
 
--- raw check results, append-only (an advance may retry; every attempt stays)
-CREATE TABLE IF NOT EXISTS checks (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  fid        INTEGER NOT NULL,
-  claim_id   TEXT    NOT NULL,
-  result     TEXT    NOT NULL,                      -- JSON payload of the check
-  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+-- Disputes (a 'no' the author must answer) — phase later. 790 BYKO on accept.
+CREATE TABLE IF NOT EXISTS disputes (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  answer_id   INTEGER NOT NULL REFERENCES answers(id),
+  status      TEXT    NOT NULL DEFAULT 'open',      -- open | accepted | rejected
+  resolution  TEXT,
+  resolved_at TEXT,
+  payout_tx   TEXT
 );
 
--- product metrics, append-only
-CREATE TABLE IF NOT EXISTS metrics_events (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  fid        INTEGER,
-  kind       TEXT NOT NULL,
-  payload    TEXT,                                  -- JSON
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
--- inbound webhook dedup: provider event id is the primary key
+-- Inbound webhook dedup (notifications, phase 3+): provider event id is the key.
 CREATE TABLE IF NOT EXISTS webhook_events (
   event_id    TEXT PRIMARY KEY,
   kind        TEXT,
@@ -52,6 +70,7 @@ CREATE TABLE IF NOT EXISTS webhook_events (
   received_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_advances_fid    ON advances(fid);
-CREATE INDEX IF NOT EXISTS idx_checks_fid      ON checks(fid, claim_id);
-CREATE INDEX IF NOT EXISTS idx_metrics_created ON metrics_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_answers_date    ON answers(answer_date);
+CREATE INDEX IF NOT EXISTS idx_answers_fid     ON answers(fid);
+CREATE INDEX IF NOT EXISTS idx_answers_claim   ON answers(claim_id);
+CREATE INDEX IF NOT EXISTS idx_advances_fid    ON advances(fid, advance_date);
