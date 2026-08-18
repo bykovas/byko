@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjMzNDY4MjcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhlOUU4QTY5MGI5NjEzNThDRkQyRkNGQzE3MjMwQzM2MmI5NEU3NGU1In0",
+    "payload": "eyJkb21haW4iOiJieWtvLWFwcDIyNy5ieWtvdmFzLmx0In0",
+    "signature": "9uTF6Nh+YEHc3j4WXaogWphd6EPfnPVHbbZpeNvwOfI32km8T8dAKEIbSdb3rXAaHHxMMCQGL+I7LHiMLaIWPxs="
+  },
   "miniapp": {
     "version": "1",
     "name": "BYKO 227",
