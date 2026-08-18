@@ -332,11 +332,16 @@ textarea:focus-visible {
   padding-top: 22px;
 }
 
-.check-screen .mid.top {
+/* The document screens can outgrow the canvas — the check with a long claim,
+   the closing page with two facts and the board. They scroll inside the
+   screen; the tape, the header and the footer stay put. */
+.check-screen .mid.top,
+.scr[data-screen="sealed"] .mid.top {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
+  padding-bottom: 12px;
 }
 
 .ghost {
@@ -914,6 +919,22 @@ textarea:focus-visible {
 .dayfact .fc .sep {
   color: var(--ink-hair);
   padding: 0 6px;
+}
+
+/* what this wallet said about the fact — printed, not scored */
+.dayfact .mine {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--ink-hair);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.dayfact .mine b {
+  font-weight: 600;
 }
 
 .lbhead {

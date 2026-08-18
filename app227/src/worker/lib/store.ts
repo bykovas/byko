@@ -52,12 +52,21 @@ export async function answeredToday(env: Env, fid: number, day = today()): Promi
   return row ?? 0;
 }
 
-/* Which claims this fid answered today — the client resumes from these. */
-export async function answeredClaimIds(env: Env, fid: number, day = today()): Promise<string[]> {
+/* What this fid answered today, with the verdicts — the client resumes from
+   these and prints them back on the closing screen. */
+export async function todayAnswers(
+  env: Env,
+  fid: number,
+  day = today(),
+): Promise<{ claim_id: string; verdict: Verdict }[]> {
   const rows = await env.DB.prepare(
-    `SELECT claim_id FROM answers WHERE fid = ?1 AND answer_date = ?2 ORDER BY id ASC`,
-  ).bind(fid, day).all<{ claim_id: string }>();
-  return rows.results.map((r) => r.claim_id);
+    `SELECT claim_id, verdict FROM answers WHERE fid = ?1 AND answer_date = ?2 ORDER BY id ASC`,
+  ).bind(fid, day).all<{ claim_id: string; verdict: Verdict }>();
+  return rows.results;
+}
+
+export async function answeredClaimIds(env: Env, fid: number, day = today()): Promise<string[]> {
+  return (await todayAnswers(env, fid, day)).map((a) => a.claim_id);
 }
 
 export async function hasAnswered(env: Env, fid: number, claimId: string): Promise<boolean> {
@@ -184,6 +193,7 @@ export interface MeState {
   answeredToday: number;
   remainingToday: number;
   answeredClaimIds: string[];
+  todayAnswers: { claim_id: string; verdict: Verdict }[];
   answersAllTime: number;
   rank: number | null;
 }
@@ -191,8 +201,9 @@ export interface MeState {
 export async function computeMe(env: Env, fid: number): Promise<MeState> {
   const day = today();
   const username = await getUsername(env, fid);
-  const answeredIds = await answeredClaimIds(env, fid, day);
-  const answered = answeredIds.length;
+  const mine = await todayAnswers(env, fid, day);
+  const answeredIds = mine.map((a) => a.claim_id);
+  const answered = mine.length;
   const allTime = await env.DB.prepare(
     `SELECT COUNT(*) AS n FROM answers WHERE fid = ?1`,
   ).bind(fid).first<number>("n") ?? 0;
@@ -214,6 +225,7 @@ export async function computeMe(env: Env, fid: number): Promise<MeState> {
     answeredToday: answered,
     remainingToday: Math.max(0, MAX_ANSWERS_PER_DAY - answered),
     answeredClaimIds: answeredIds,
+    todayAnswers: mine,
     answersAllTime: allTime,
     rank,
   };

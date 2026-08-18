@@ -1,7 +1,7 @@
 import "./app.css";
 
 import { screens } from "./screens/index";
-import { hasVisited, startEnrichment, subscribe } from "./state";
+import { dayClosed, hasVisited, startEnrichment, subscribe } from "./state";
 import { buildTape, type ScreenName } from "./tape";
 
 const screenNames = new Set<ScreenName>(Object.keys(screens) as ScreenName[]);
@@ -18,8 +18,20 @@ function routeName(): ScreenName {
   return HOME;
 }
 
-function render(): void {
+/* Once both facts are answered the check screen has nothing left to ask —
+   the day's closing page takes its place. Pure: the hash is only rewritten
+   when the screen is actually drawn, never from a subscription that a
+   mid-answer guard may skip. */
+function resolved(): ScreenName {
   const name = routeName();
+  return name === "check" && dayClosed() ? "sealed" : name;
+}
+
+function render(): void {
+  const name = resolved();
+  if (name === "sealed" && location.hash !== "#/sealed") {
+    history.replaceState(null, "", `${location.pathname}${location.search}#/sealed`);
+  }
   const screen = screens[name];
   if (root) root.replaceChildren(screen());
   if (name === "go") promptAddOnce();
@@ -43,7 +55,7 @@ render();
 
 subscribe((kind) => {
   if (!root?.firstElementChild) return;
-  const name = routeName();
+  const name = resolved();
   if (kind === "chain") {
     root.querySelector(".tape")?.replaceWith(buildTape(name));
     return;

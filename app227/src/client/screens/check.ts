@@ -9,7 +9,11 @@ function sealAfterSelection(button: HTMLButtonElement): void {
   button.classList.add("selected");
   button.setAttribute("aria-pressed", "true");
   window.setTimeout(() => {
-    if (button.isConnected && location.hash === "#/check") navigate("sealed");
+    /* still on this screen — the hash may already have been rewritten to
+       #/sealed by a day that closed while the selection was showing */
+    if (!button.isConnected) return;
+    if (location.hash === "#/sealed") dispatchEvent(new Event("hashchange"));
+    else navigate("sealed");
   }, SEAL_DELAY_MS);
 }
 

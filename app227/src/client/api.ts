@@ -49,6 +49,7 @@ export interface MeState {
   answeredToday: number;
   remainingToday: number;
   answeredClaimIds: string[];
+  todayAnswers: { claim_id: string; verdict: Verdict }[];
   answersAllTime: number;
   rank: number | null;
 }

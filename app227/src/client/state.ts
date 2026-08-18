@@ -25,6 +25,7 @@ export interface AppState {
   me: MeState | null;
   /* local fallback when unauthed (site preview): answers cast this session */
   answeredLocal: number;
+  localAnswers: { claim_id: string; verdict: Verdict }[];
   dayClosedFlag: boolean;
 }
 
@@ -49,6 +50,7 @@ const state: AppState = {
   record: null,
   me: null,
   answeredLocal: 0,
+  localAnswers: [],
   dayClosedFlag: false,
 };
 
@@ -79,9 +81,17 @@ export function dayClosed(): boolean {
 
 /* Cast the verdict: POST when authed (fire-and-report), local count either
    way so the prototype flow works everywhere. Refreshes the Record after. */
+/* What this wallet said about a fact today — from the worker when authed,
+   from the session otherwise. Null when it has not answered it. */
+export function myVerdict(claimId: string): Verdict | null {
+  const mine = state.me?.todayAnswers ?? state.localAnswers;
+  return mine.find((a) => a.claim_id === claimId)?.verdict ?? null;
+}
+
 export function castAnswer(verdict: Verdict, argument: string | null): void {
   const claimId = state.check.id;
   state.answeredLocal += 1;
+  state.localAnswers.push({ claim_id: claimId, verdict });
   void apiAnswer(claimId, verdict, argument).then((result) => {
     if (result.ok) {
       if (typeof result.answeredToday === "number" && state.me) state.me.answeredToday = result.answeredToday;

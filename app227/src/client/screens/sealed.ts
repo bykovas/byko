@@ -1,6 +1,6 @@
 import { buildAnchor, buildFollow, buildFooter, navigate } from "../chrome";
 import { append, element } from "../dom";
-import { advanceCheck, dayClosed, getState } from "../state";
+import { advanceCheck, dayClosed, getState, myVerdict } from "../state";
 import { buildShell } from "./shared";
 
 /* Screen 06 — the day, reported back. Two states:
@@ -172,6 +172,16 @@ function buildDayFacts(): HTMLElement {
     });
 
     append(row, top, text, counts);
+
+    const mine = myVerdict(fact.id);
+    if (mine) {
+      const label = mine === "cant" ? "can't verify" : mine;
+      const cls = mine === "yes" ? "v-yes" : mine === "no" ? "v-no" : "v-cant";
+      const line = element("div", "mine");
+      line.append(document.createTextNode("you said "), element("b", cls, label));
+      row.append(line);
+    }
+
     wrap.append(row);
   }
   return wrap;
