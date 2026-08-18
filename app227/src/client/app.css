@@ -468,6 +468,7 @@ textarea:focus-visible {
 
 .follow {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-top: 11px;
   color: rgba(247, 246, 236, 0.45);
@@ -475,6 +476,33 @@ textarea:focus-visible {
   font-size: 10px;
   letter-spacing: 0.14em;
   white-space: nowrap;
+}
+
+.flinks {
+  display: flex;
+  align-items: center;
+}
+
+/* 15px glyphs padded to ~41px-tall tap targets; negative margins keep the
+   row slim and the narrower horizontal padding lets all seven links fit 375px */
+.fico {
+  display: inline-flex;
+  padding: 13px 7px;
+  margin: -13px 0;
+  color: inherit;
+}
+
+.fico svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.fsite {
+  padding: 13px 0 13px 7px;
+  margin: -13px 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 .money .follow,

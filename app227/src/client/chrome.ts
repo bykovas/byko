@@ -71,9 +71,38 @@ function buildProgress(current: 1 | 2 | 3 | 4): HTMLElement {
   return cells;
 }
 
+/* Hand-drawn 24px stroke glyphs in the system's own weight — no brand kits. */
+const FOLLOW_LINKS: { label: string; href: string; paths: string[] }[] = [
+  { label: "X", href: "https://x.com/BYKOCOIN", paths: ["M5 4 L19 20", "M19 4 L5 20"] },
+  { label: "Telegram", href: "https://t.me/bykocoin", paths: ["M21 4 L3 11 L10 13.5 L12.5 20 L21 4 Z", "M10 13.5 L21 4"] },
+  { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61592828503907", paths: ["M14.5 4 H13 C10.8 4 10 5.4 10 7.5 V20", "M7.5 10.5 H13.5"] },
+  { label: "GitHub", href: "https://github.com/bykovas/byko", paths: ["M7 7 a2.2 2.2 0 1 0 0-.01", "M17 7 a2.2 2.2 0 1 0 0-.01", "M12 19 a2.2 2.2 0 1 0 0-.01", "M7 9.2 V10 C7 12 9 13 12 13 C15 13 17 12 17 10 V9.2", "M12 13 V16.8"] },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/bykovas/", paths: ["M4.75 4.75 H19.25 V19.25 H4.75 Z", "M8.5 11 V16", "M8.5 8 V8.01", "M12.5 16 V12.5 C12.5 10.5 16 10.5 16 12.5 V16"] },
+  { label: "byko.bykovas.lt", href: "https://byko.bykovas.lt", paths: ["M6.5 4.5 V19.5", "M10.5 6 L17.5 12 L10.5 18"] },
+];
+
 export function buildFollow(): HTMLElement {
   const follow = element("div", "follow");
-  append(follow, element("span", undefined, "FOLLOW"), element("span", undefined, "X · FB · GIT · BYKOVAS.LT"));
+  const links = element("span", "flinks");
+  for (const item of FOLLOW_LINKS) {
+    const link = element("a", "fico");
+    link.href = item.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("aria-label", item.label);
+    const svg = svgElement("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+    const group = svgElement("g", { fill: "none", stroke: "currentColor", "stroke-width": "1.8" });
+    for (const d of item.paths) group.append(svgElement("path", { d }));
+    svg.append(group);
+    link.append(svg);
+    links.append(link);
+  }
+  const site = element("a", "fsite", "BYKOVAS.LT");
+  site.href = "https://bykovas.lt";
+  site.target = "_blank";
+  site.rel = "noopener noreferrer";
+  links.append(site);
+  append(follow, element("span", undefined, "FOLLOW"), links);
   return follow;
 }
 

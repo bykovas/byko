@@ -65,8 +65,9 @@ export function buildProfilePlate(sent = false): HTMLElement {
   const identity = element("div");
   append(
     identity,
-    element("div", "hn", "@denis"),
-    element("div", "ad", "verified wallet · 0xe8fC…21Eb"),
+    element("div", "hn", "@bykocoin"),
+    /* the Farcaster-verified wallet the advances will actually come from */
+    element("div", "ad", "verified wallet · 0x2f66…95b9"),
   );
   append(profile, buildMark("av"), identity);
 
