@@ -1,6 +1,7 @@
 import { buildCoin } from "../chrome";
 import type { CheckSource } from "../data";
 import { append, element } from "../dom";
+import { getState } from "../state";
 import { buildTape, type ScreenName } from "../tape";
 
 export type Ground = "ink" | "money" | "doc";
@@ -62,29 +63,41 @@ export function buildIntro(options: IntroOptions): HTMLElement {
   return mid;
 }
 
+/* Fixture destination — the owner's own verified wallet; the real one comes
+   from the authed profile the moment /api/auth answers. */
+const FIXTURE_ADDRESS = "0x2F66caB27aD9A62561Df741caD01F908Ca7295b9";
+
 export function buildProfilePlate(sent = false): HTMLElement {
+  const { me } = getState();
   const plate = element("div", "plate");
-  /* 3C: no avatar — one coin per screen. Handle left, wallet right. */
-  const profile = element("div", "prow");
+
+  /* 3C: no avatar — one coin per screen. Handle left, the amount right. */
+  const head = element("div", "prow");
   append(
-    profile,
-    element("div", "hn", "@bykocoin"),
-    /* the Farcaster-verified wallet the advances will actually come from */
-    element("div", "ad", "0x2f66…95b9"),
+    head,
+    element("div", "hn", me?.handle ?? "@bykocoin"),
+    element("span", "v live", sent ? "227 BYKO sent" : "227 BYKO"),
   );
 
-  const value = element("div", "vrow");
-  value.append(element("span", "v live", sent ? "227 BYKO sent" : "227 BYKO"));
+  /* the full destination address — verifiable to the last byte */
+  const to = element("div", "to");
+  append(
+    to,
+    element("span", "k", "to"),
+    element("span", "addr", me?.address ?? FIXTURE_ADDRESS),
+  );
+
+  const tail = element("div", "vrow");
   if (sent) {
     const transaction = element("a", "r paid-link", "tx 0x72a4…91f ↗");
     transaction.href = "#";
     transaction.addEventListener("click", (event) => event.preventDefault());
-    value.append(transaction);
+    tail.append(transaction);
   } else {
-    value.append(element("span", "r", "read from your profile"));
+    tail.append(element("span", "r", "read from your profile"));
   }
 
-  append(plate, profile, value);
+  append(plate, head, to, tail);
   return plate;
 }
 

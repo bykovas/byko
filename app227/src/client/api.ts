@@ -46,6 +46,8 @@ async function authHeaders(): Promise<Record<string, string> | null> {
 export interface MeState {
   fid: number;
   handle: string;
+  /* present in the /api/auth response — the verified wallet money goes to */
+  address?: string | null;
   answeredToday: number;
   remainingToday: number;
   answeredClaimIds: string[];

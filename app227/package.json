@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@farcaster/miniapp-sdk": "^0.3.0",
-    "@farcaster/quick-auth": "^0.0.8"
+    "@farcaster/quick-auth": "^0.0.8",
+    "viem": "^2.55.18"
   }
 }
