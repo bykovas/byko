@@ -14,6 +14,16 @@
     "subtitle": "Paid to verify one claim",
     "description": "The founder pays you 227 BYKO first, then asks you to verify one claim about his own token against public evidence. Everything is published.",
     "primaryCategory": "utility",
-    "tags": ["byko", "base", "verification", "experiment"]
+    "tags": ["byko", "base", "verification", "experiment"],
+    "tagline": "Get paid first. Then check.",
+    "heroImageUrl": "https://byko-app227.bykovas.lt/hero.png",
+    "screenshotUrls": [
+      "https://byko-app227.bykovas.lt/screens/1.png",
+      "https://byko-app227.bykovas.lt/screens/2.png",
+      "https://byko-app227.bykovas.lt/screens/3.png"
+    ],
+    "ogTitle": "BYKO 227",
+    "ogDescription": "227 BYKO up front, one claim to verify against public evidence. Everything is published.",
+    "ogImageUrl": "https://byko-app227.bykovas.lt/hero.png"
   }
 }
