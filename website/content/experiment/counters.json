@@ -3,7 +3,7 @@
   "counters": [
     {
       "id": "hours",
-      "value": "103.0 h",
+      "value": "115.0 h",
       "label": "Hours logged",
       "kind": "spent",
       "asOf": "2026-08-18",
@@ -47,16 +47,16 @@
       "label": "Transactions audited",
       "kind": "result",
       "asOf": "2026-08-16",
-      "counts": "BYKO Transfer events classified one by one in the on-chain audit of 16 Aug 2026 — mints, liquidity adds, buys, sells, LP removals and plain transfers — covering the entire history since deployment. The reconciled balances matched the on-chain balances exactly, and their total matched the fixed supply of 790,227. The audit corrected three facts this diary had already published.",
-      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history is excluded — that is what makes the reconciliation meaningful.",
+      "counts": "BYKO Transfer events classified one by one in the on-chain audit of 16 Aug 2026 — mints, liquidity adds, buys, sells, LP removals and plain transfers — covering the token's entire history up to that date. The reconciled balances matched the on-chain balances exactly, and their total matched the fixed supply of 790,227. The audit corrected three facts this diary had already published. It has not been re-run since: the airdrop of 18 Aug 2026 added 908 transfers that this number does not cover, and the figure stays at 100 until the audit is repeated rather than quietly growing.",
+      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history up to 16 Aug 2026 is excluded — that is what made the reconciliation meaningful. Everything after that date is outside the audit, not inside it and uncounted.",
       "provenance": "chain"
     },
     {
       "id": "episodes",
-      "value": "24",
+      "value": "27",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-08-18",
+      "asOf": "2026-08-19",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"
