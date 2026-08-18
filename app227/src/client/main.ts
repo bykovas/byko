@@ -1,18 +1,21 @@
 import "./app.css";
 
 import { screens } from "./screens/index";
-import { startEnrichment, subscribe } from "./state";
+import { hasVisited, startEnrichment, subscribe } from "./state";
 import { buildTape, type ScreenName } from "./tape";
 
 const screenNames = new Set<ScreenName>(Object.keys(screens) as ScreenName[]);
 const root = document.getElementById("app");
 
+/* Returning users skip the onboarding and land on the claim screen. */
+const HOME: ScreenName = hasVisited() ? "claim" : "why";
+
 function routeName(): ScreenName {
   const candidate = location.hash.replace(/^#\//, "") as ScreenName;
   if (screenNames.has(candidate)) return candidate;
 
-  history.replaceState(null, "", `${location.pathname}${location.search}#/why`);
-  return "why";
+  history.replaceState(null, "", `${location.pathname}${location.search}#/${HOME}`);
+  return HOME;
 }
 
 function render(): void {
@@ -46,6 +49,7 @@ subscribe((kind) => {
     return;
   }
 
+  /* claim feed or Record updates redraw the data screens — never mid-answer */
   if ((name === "check" || name === "sealed") && !root.querySelector(".argument, .selected")) {
     render();
   }

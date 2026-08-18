@@ -1,10 +1,12 @@
 import type { Env, Verdict } from "../../shared/types";
 import { authenticate } from "../lib/auth";
 import { loadClaims, openClaims, todaysFacts } from "../lib/claims";
-import { recordAnswer } from "../lib/store";
+import { answeredClaimIds, MAX_ANSWERS_PER_DAY, recordAnswer } from "../lib/store";
 import { error, json, methodNotAllowed, preflight } from "../lib/respond";
 
 const VERDICTS: Verdict[] = ["yes", "no", "cant"];
+const MAX_ARGUMENT_CHARS = 1_000;
+const MAX_CLAIM_ID_CHARS = 200;
 
 /* POST /api/answer — cast a verdict on an open fact.
    Body: { claim_id, verdict: "yes"|"no"|"cant", argument?: string }
@@ -27,11 +29,17 @@ export async function answer(request: Request, env: Env): Promise<Response> {
   const claimId = typeof body.claim_id === "string" ? body.claim_id : "";
   const verdict = body.verdict as Verdict;
   const argument = typeof body.argument === "string" ? body.argument.trim() : "";
-  if (!claimId) return error("claim_id required", 400);
+  if (!claimId || claimId.length > MAX_CLAIM_ID_CHARS) return error("claim_id required", 400);
   if (!VERDICTS.includes(verdict)) return error("verdict must be yes, no or cant", 400);
   if (verdict === "no" && argument.length === 0) return error("a 'no' needs an argument", 400);
+  if (argument.length > MAX_ARGUMENT_CHARS) return error("argument too long", 400);
 
-  const claims = await loadClaims(env);
+  let claims;
+  try {
+    claims = await loadClaims(env);
+  } catch {
+    return error("claims feed unavailable", 503);
+  }
   const claim = openClaims(claims).find((c) => c.id === claimId);
   if (!claim) return error("claim is not open", 404);
 
@@ -41,10 +49,13 @@ export async function answer(request: Request, env: Env): Promise<Response> {
     return error("daily answer limit reached", 429);
   }
 
-  const factsToday = todaysFacts(claims).length;
+  /* the day is closed when the cap is hit OR every fact of today is answered
+     (backlog answers count toward the cap but not toward "done for today") */
+  const answered = new Set(await answeredClaimIds(env, identity.fid));
+  const allToday = todaysFacts(claims).every((c) => answered.has(c.id));
   return json({
     ok: true,
     answeredToday: result.answeredToday,
-    dayClosed: result.answeredToday >= Math.min(2, factsToday),
+    dayClosed: result.answeredToday >= MAX_ANSWERS_PER_DAY || allToday,
   });
 }

@@ -63,9 +63,9 @@ export function buildAnchor(status: string): HTMLElement {
   return anchor;
 }
 
-export function buildPlainHeader(): HTMLElement {
+export function buildPlainHeader(left: string, right: string): HTMLElement {
   const header = element("header", "plainhead");
-  append(header, element("span", undefined, "check #038"), element("span", undefined, "2 of 3 readers"));
+  append(header, element("span", undefined, left), element("span", undefined, right));
   return header;
 }
 

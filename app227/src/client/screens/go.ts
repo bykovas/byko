@@ -1,7 +1,10 @@
 import { buildAnchor, buildFooter } from "../chrome";
+import { markVisited } from "../state";
 import { buildIntro, buildShell } from "./shared";
 
 export function go(): HTMLElement {
+  /* the pitch has been seen to the end — next visit skips the onboarding */
+  markVisited();
   return buildShell(
     "go",
     "ink",

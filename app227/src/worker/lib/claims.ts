@@ -30,10 +30,13 @@ export async function loadClaims(env: Env): Promise<Claim[]> {
     } catch { /* fall through to refetch */ }
   }
 
-  const response = await fetch(env.CLAIMS_URL);
-  if (!response.ok) throw new Error(`claims feed ${response.status}`);
+  const response = await fetch(env.CLAIMS_URL, { signal: AbortSignal.timeout(3_000) });
+  if (!response.ok) throw new Error("claims feed unavailable");
   const feed = (await response.json()) as Feed;
   const claims = Array.isArray(feed.claims) ? feed.claims.filter(isClaim) : [];
+  /* an empty or wrong-shaped feed is a broken deploy, not a truth — never
+     cache it, never serve it as the state of the world */
+  if (claims.length === 0) throw new Error("claims feed empty");
   await env.KV.put(CACHE_KEY, JSON.stringify({ version: 1, claims }), { expirationTtl: CACHE_TTL_S })
     .catch(() => { /* cache is best-effort */ });
   return claims;
@@ -54,7 +57,3 @@ export function todaysFacts(claims: Claim[]): Claim[] {
   return open.filter((c) => c.opens_at === latest);
 }
 
-/* 1-based position of a claim in the full feed — the "check #NNN" the UI shows. */
-export function claimNumber(claims: Claim[], id: string): number {
-  return claims.findIndex((c) => c.id === id) + 1;
-}

@@ -20,6 +20,11 @@ compatibility_date = "2026-08-01"
 routes = [
   { pattern = "byko-app227.bykovas.lt", custom_domain = true }
 ]
+# The custom domain is the app's identity (signed accountAssociation) and the
+# Quick Auth audience. No alias origins: workers.dev and per-version preview
+# URLs stay off so tokens only ever bind to the one real domain.
+workers_dev = false
+preview_urls = false
 
 [vars]
 # plain configuration, not secrets

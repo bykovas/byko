@@ -9,6 +9,7 @@
  * pipeline that makes the stats and leaderboard real. Deferred: advance
  * (phase 4, money on Sepolia first), webhook (phase 3, notifications). */
 import type { Env } from "../shared/types";
+import { error } from "./lib/respond";
 import { auth } from "./routes/auth";
 import { answer } from "./routes/answer";
 import { metrics } from "./routes/metrics";
@@ -35,7 +36,17 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const handler = routes[url.pathname];
-    if (handler) return handler(request, env);
+    if (handler) {
+      /* every route failure yields the same JSON+CORS shape, never a raw 500 */
+      try {
+        return await handler(request, env);
+      } catch (err) {
+        console.error(url.pathname, err);
+        return error("internal error", 500);
+      }
+    }
+    /* an unknown /api/* path is a 404, not the SPA's index.html */
+    if (url.pathname.startsWith("/api/")) return error("not found", 404);
     return env.ASSETS.fetch(request);
   },
 

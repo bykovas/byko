@@ -1,6 +1,7 @@
-/* JSON responses with the CORS the mini-app needs: the client is served from
-   the same worker, but the Farcaster webview and the debug tool may call from
-   elsewhere, so GETs are open and the auth'd POSTs echo the request origin. */
+/* JSON responses with the CORS the mini-app needs. Everything answers with
+   Access-Control-Allow-Origin: * — safe here because auth is a Bearer token,
+   never a cookie, and Allow-Credentials is never set: a cross-origin caller
+   gains nothing without a valid token of its own. */
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=UTF-8" };
 

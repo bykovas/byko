@@ -1,6 +1,6 @@
 import { buildButton, buildPlainHeader, navigate } from "../chrome";
 import { append, element } from "../dom";
-import { getState } from "../state";
+import { castAnswer, getState } from "../state";
 import { buildShell, buildSource } from "./shared";
 
 const SEAL_DELAY_MS = 400;
@@ -14,7 +14,13 @@ function sealAfterSelection(button: HTMLButtonElement): void {
 }
 
 export function check(): HTMLElement {
-  const { check: claim } = getState();
+  const { check: claim, checks, checkIndex } = getState();
+  /* which fact of the day this is — never the yes-count: consensus shown
+     before the answer would nudge the answer */
+  const header = buildPlainHeader(
+    `check #${String(claim.number).padStart(3, "0")}`,
+    `fact ${checkIndex + 1} of ${checks.length} today`,
+  );
   const mid = element("div", "mid top");
   append(mid, element("div", "lab", `claim · diary ${claim.entry}`), element("div", "claim", claim.text));
 
@@ -43,10 +49,12 @@ export function check(): HTMLElement {
 
   yes.addEventListener("click", () => {
     if (!choose(yes)) return;
+    castAnswer("yes", null);
     sealAfterSelection(yes);
   });
   cannotVerify.addEventListener("click", () => {
     if (!choose(cannotVerify)) return;
+    castAnswer("cant", null);
     sealAfterSelection(cannotVerify);
   });
   no.addEventListener("click", () => {
@@ -58,8 +66,10 @@ export function check(): HTMLElement {
     input.setAttribute("aria-label", "No — and I'll say why");
     /* not once: the empty-value guard must not consume the only listener */
     const send = buildButton("Send", "default", (button) => {
-      if (!input.value.trim()) return;
+      const argument = input.value.trim();
+      if (!argument) return;
       button.disabled = true;
+      castAnswer("no", argument);
       if (button.isConnected && location.hash === "#/check") navigate("sealed");
     }, false);
     send.className = "argument-send";
@@ -74,5 +84,5 @@ export function check(): HTMLElement {
 
   append(answers, yes, no, cannotVerify);
   mid.append(answers);
-  return buildShell("check", "doc", buildPlainHeader(), mid, element("div", "spacer"));
+  return buildShell("check", "doc", header, mid, element("div", "spacer"));
 }

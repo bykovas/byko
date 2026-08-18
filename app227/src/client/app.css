@@ -786,6 +786,152 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
+/* ===== Screen 06 — the day, reported back =====
+   Every figure here is a RECORD number: ink, mono, never blue. */
+.today {
+  margin-top: 16px;
+  border-top: 1.5px solid var(--ink);
+}
+
+.today .cap2 {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 9px 0 8px;
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.today .figs {
+  display: flex;
+  border-top: 1px solid var(--ink-hair);
+  border-bottom: 1px solid var(--ink-hair);
+}
+
+.today .fig {
+  flex: 1;
+  padding: 8px 0 9px;
+}
+
+.today .fig .k {
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.today .fig .v {
+  margin-top: 3px;
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.bd {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--ink-hair);
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bd b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.lbhead {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-bottom: 7px;
+  border-bottom: 1.5px solid var(--ink);
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lbrow {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ink-hair);
+}
+
+.lbrow .r {
+  flex: none;
+  width: 26px;
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 12px;
+}
+
+.lbrow .h {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lbrow .n {
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 15px;
+}
+
+.lbrow.empty .h,
+.lbrow.empty .n {
+  color: rgba(11, 11, 12, 0.32);
+  font-weight: 500;
+}
+
+.lbrow.you {
+  margin-top: 6px;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.lbrow .youtag {
+  padding: 2px 5px;
+  border: 1px solid var(--ink);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+}
+
+.alltime {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--ink-hair);
+}
+
+.alltime .k {
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.alltime .v {
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
 /* A document with an anchor is the sealed state; the open check is plain. */
 .doc .anchor + .mid.top {
   padding-top: 20px;

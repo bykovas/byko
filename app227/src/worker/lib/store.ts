@@ -32,7 +32,11 @@ export async function upsertProfile(
      ON CONFLICT(fid) DO UPDATE SET
        username    = COALESCE(excluded.username, profiles.username),
        eth_address = COALESCE(excluded.eth_address, profiles.eth_address),
-       address_source = excluded.address_source,
+       /* provenance follows the address: a degraded Neynar response must not
+          stamp a stored address with source 'none' */
+       address_source = CASE WHEN excluded.eth_address IS NOT NULL
+                             THEN excluded.address_source
+                             ELSE profiles.address_source END,
        updated_at  = datetime('now')`,
   ).bind(fid, username, address, addressSource).run();
 }
@@ -41,11 +45,19 @@ export async function getUsername(env: Env, fid: number): Promise<string | null>
   return env.DB.prepare(`SELECT username FROM profiles WHERE fid = ?1`).bind(fid).first<string>("username");
 }
 
-export async function answeredToday(env: Env, fid: number): Promise<number> {
+export async function answeredToday(env: Env, fid: number, day = today()): Promise<number> {
   const row = await env.DB.prepare(
     `SELECT COUNT(*) AS n FROM answers WHERE fid = ?1 AND answer_date = ?2`,
-  ).bind(fid, today()).first<number>("n");
+  ).bind(fid, day).first<number>("n");
   return row ?? 0;
+}
+
+/* Which claims this fid answered today — the client resumes from these. */
+export async function answeredClaimIds(env: Env, fid: number, day = today()): Promise<string[]> {
+  const rows = await env.DB.prepare(
+    `SELECT claim_id FROM answers WHERE fid = ?1 AND answer_date = ?2 ORDER BY id ASC`,
+  ).bind(fid, day).all<{ claim_id: string }>();
+  return rows.results.map((r) => r.claim_id);
 }
 
 export async function hasAnswered(env: Env, fid: number, claimId: string): Promise<boolean> {
@@ -66,12 +78,15 @@ export async function recordAnswer(
   verdict: Verdict,
   argument: string | null,
 ): Promise<RecordAnswerResult> {
+  /* one clock for the whole decision: count and insert share the same day,
+     so a request straddling UTC midnight cannot split the 2/day window */
+  const day = today();
+
   if (await hasAnswered(env, fid, claim.id)) return { ok: false, reason: "duplicate" };
 
-  const count = await answeredToday(env, fid);
+  const count = await answeredToday(env, fid, day);
   if (count >= MAX_ANSWERS_PER_DAY) return { ok: false, reason: "limit" };
 
-  const day = today();
   const contentHash = await sha256Hex(
     JSON.stringify({ fid, claim_id: claim.id, verdict, argument, answer_date: day }),
   );
@@ -81,9 +96,11 @@ export async function recordAnswer(
       `INSERT INTO answers (fid, claim_id, verdict, argument, answer_date, content_hash)
        VALUES (?1, ?2, ?3, ?4, ?5, ?6)`,
     ).bind(fid, claim.id, verdict, argument, day, contentHash).run();
-  } catch {
-    /* the UNIQUE key fired between the check and the insert — treat as duplicate */
-    return { ok: false, reason: "duplicate" };
+  } catch (err) {
+    /* only the UNIQUE key is a duplicate; anything else must surface so the
+       client can retry instead of believing a lost answer was recorded */
+    if (String(err).includes("UNIQUE constraint failed")) return { ok: false, reason: "duplicate" };
+    throw err;
   }
   return { ok: true, answeredToday: count + 1 };
 }
@@ -115,28 +132,32 @@ export async function computeMetrics(env: Env, claims: Claim[]): Promise<Metrics
        FROM answers a LEFT JOIN profiles p ON p.fid = a.fid
        GROUP BY a.fid ORDER BY answers DESC, a.fid ASC LIMIT 10`,
   ).all<{ fid: number; username: string | null; answers: number }>();
-  const leaderboard: LeaderRow[] = board.results.map((row, i) => ({
-    rank: i + 1,
-    fid: row.fid,
-    handle: handle(row.username, row.fid),
-    answers: row.answers,
-  }));
+  /* competition ranking — ties share a rank, same rule as computeMe */
+  let rank = 0;
+  let prev = -1;
+  const leaderboard: LeaderRow[] = board.results.map((row, i) => {
+    if (row.answers !== prev) { rank = i + 1; prev = row.answers; }
+    return { rank, fid: row.fid, handle: handle(row.username, row.fid), answers: row.answers };
+  });
 
   /* Per-fact yes-readers for the current facts (the 06a reader slots). */
   const factStats = [];
   for (const claim of facts) {
-    const rows = await env.DB.prepare(
-      `SELECT a.verdict AS verdict, p.username AS username, a.fid AS fid
+    const totals = await env.DB.prepare(
+      `SELECT COUNT(*) AS total, SUM(verdict = 'yes') AS yes FROM answers WHERE claim_id = ?1`,
+    ).bind(claim.id).first<{ total: number; yes: number | null }>();
+    const readers = await env.DB.prepare(
+      `SELECT p.username AS username, a.fid AS fid
          FROM answers a LEFT JOIN profiles p ON p.fid = a.fid
-        WHERE a.claim_id = ?1 ORDER BY a.id ASC`,
-    ).bind(claim.id).all<{ verdict: Verdict; username: string | null; fid: number }>();
-    const yesReaders = rows.results.filter((r) => r.verdict === "yes");
+        WHERE a.claim_id = ?1 AND a.verdict = 'yes' ORDER BY a.id ASC LIMIT 3`,
+    ).bind(claim.id).all<{ username: string | null; fid: number }>();
+    const yes = totals?.yes ?? 0;
     factStats.push({
       claim_id: claim.id,
-      answers: rows.results.length,
-      yes: yesReaders.length,
-      readers: yesReaders.slice(0, 3).map((r) => handle(r.username, r.fid)),
-      sealed: yesReaders.length >= 3,
+      answers: totals?.total ?? 0,
+      yes,
+      readers: readers.results.map((r) => handle(r.username, r.fid)),
+      sealed: yes >= 3,
     });
   }
 
@@ -154,13 +175,16 @@ export interface MeState {
   handle: string;
   answeredToday: number;
   remainingToday: number;
+  answeredClaimIds: string[];
   answersAllTime: number;
   rank: number | null;
 }
 
 export async function computeMe(env: Env, fid: number): Promise<MeState> {
+  const day = today();
   const username = await getUsername(env, fid);
-  const answered = await answeredToday(env, fid);
+  const answeredIds = await answeredClaimIds(env, fid, day);
+  const answered = answeredIds.length;
   const allTime = await env.DB.prepare(
     `SELECT COUNT(*) AS n FROM answers WHERE fid = ?1`,
   ).bind(fid).first<number>("n") ?? 0;
@@ -181,6 +205,7 @@ export async function computeMe(env: Env, fid: number): Promise<MeState> {
     handle: handle(username, fid),
     answeredToday: answered,
     remainingToday: Math.max(0, MAX_ANSWERS_PER_DAY - answered),
+    answeredClaimIds: answeredIds,
     answersAllTime: allTime,
     rank,
   };

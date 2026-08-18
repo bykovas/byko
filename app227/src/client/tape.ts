@@ -1,5 +1,5 @@
 import { append, element } from "./dom";
-import { getState } from "./state";
+import { dayClosed, getState } from "./state";
 
 export type ScreenName = "why" | "how" | "claim" | "paid" | "go" | "check" | "sealed" | "no-advance";
 
@@ -10,6 +10,9 @@ type CellKey =
   | "holders"
   | "supply"
   | "status"
+  | "facts"
+  | "answers-today"
+  | "readers-today"
   | "readers"
   | "working"
   | "paid"
@@ -56,14 +59,28 @@ function chainCells(): TapeCell[] {
 }
 
 function gameCells(screen: ScreenName): TapeCell[] {
-  const { game, claimed } = getState();
+  const { game, claimed, check, checks, record } = getState();
   const cells: TapeCell[] = [];
-  if (screen === "check") cells.push({ key: "status", text: `CHECK ${padded(game.checkNumber)} OPEN` });
-  if (screen === "sealed") cells.push({ key: "status", text: `CHECK ${padded(game.checkNumber)} SEALED` });
+  const checkNo = padded(check.number);
+  if (screen === "check") cells.push({ key: "status", text: `CHECK ${checkNo} OPEN` });
+
+  /* 06: the day reported back — Record numbers ride the tape. */
+  if (screen === "sealed") {
+    cells.push({ key: "status", text: `CHECK ${checkNo} SEALED` });
+    if (dayClosed()) cells.push({ key: "facts", text: "BOTH FACTS ANSWERED" });
+    else cells.push({ key: "facts", text: `FACTS TODAY ${record?.today.facts ?? checks.length}` });
+    cells.push(
+      { key: "answers-today", text: `ANSWERS TODAY ${padded(record?.today.answers ?? 0)}` },
+      { key: "readers-today", text: `READERS TODAY ${padded(record?.today.readers ?? 0)}` },
+    );
+  } else {
+    cells.push(
+      { key: "readers", text: `READERS ${padded(game.readers)}` },
+      { key: "working", text: `WORKING ${padded(game.working + (claimed ? 1 : 0))}` },
+    );
+  }
 
   cells.push(
-    { key: "readers", text: `READERS ${padded(screen === "sealed" ? game.readers + 1 : game.readers)}` },
-    { key: "working", text: `WORKING ${padded(game.working + (claimed ? 1 : 0))}` },
     { key: "paid", text: `PAID ${padded(game.paid + (claimed ? 1 : 0))}` },
     { key: "sent", text: `SENT ${grouped(game.sent + (claimed ? 227 : 0))} BYKO` },
   );

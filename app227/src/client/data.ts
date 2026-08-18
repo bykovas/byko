@@ -25,6 +25,8 @@ export interface CheckSource {
 }
 
 export interface CheckData {
+  id: string;                          /* claim id from the feed */
+  number: number;                      /* 1-based position — "check #NNN" */
   entry: string;
   text: string;
   sources: [CheckSource, CheckSource];
@@ -54,6 +56,8 @@ export const FIXTURE_GAME: Readonly<GameFigures> = {
 };
 
 export const FIXTURE_CHECK: Readonly<CheckData> = {
+  id: "fixture-e19",
+  number: 38,
   entry: "e19",
   text: "33 of the 34 buys from the pool came from the author's own wallets.",
   sources: [
@@ -134,9 +138,10 @@ function isClaim(value: unknown): value is Claim {
 export async function fetchClaimEnrichment(): Promise<CheckData[] | null> {
   const payload = await fetchJson(new URL("../data/claims.json", location.href));
   if (!isRecord(payload) || !Array.isArray(payload.claims) || payload.claims.length === 0) return null;
+  const feed: unknown[] = payload.claims;
 
   const today = new Date().toLocaleDateString("en-CA");
-  const opened = payload.claims.filter(
+  const opened = feed.filter(
     (claim): claim is Claim & { opens_at: string } =>
       isClaim(claim) && typeof (claim as { opens_at?: unknown }).opens_at === "string" &&
       (claim as { opens_at: string }).opens_at <= today,
@@ -147,6 +152,9 @@ export async function fetchClaimEnrichment(): Promise<CheckData[] | null> {
   return opened
     .filter((claim) => claim.opens_at === latest)
     .map((claim) => ({
+      id: claim.id,
+      /* "check #NNN" — position in the FULL feed, not among today's */
+      number: feed.findIndex((c) => isClaim(c) && c.id === claim.id) + 1,
       entry: claim.entry,
       text: claim.text,
       sources: [claimSource(claim, 0), claimSource(claim, 1)],
