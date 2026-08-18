@@ -116,6 +116,35 @@ async function scanners() {
       }
     : { source: "api.geckoterminal.com", error: gecko.error };
 
+  /* The pool endpoint answers what the token endpoint cannot: how many people
+     actually traded, split into buyers and sellers. Volume alone cannot tell
+     "nobody traded" from "one whale traded"; buyers/sellers can. It is also
+     the only source that will show the airdrop's recipients selling, if they
+     ever do — the behaviour their own wallets hide from them.
+
+     locked_liquidity_percentage is recorded even though it reads null: the
+     LP tokens of this pool are 100% at the burn address, so the true answer
+     is 100. The null is the gap between what is true on chain and what the
+     scanner knows, which is the whole subject of the experiment. */
+  const pool = await tryFetch(
+    `https://api.geckoterminal.com/api/v2/networks/base/pools/${POOL}`,
+  );
+  const pa = pool.data?.data?.attributes;
+  out.geckoterminal_pool = pool.ok
+    ? {
+        source: "api.geckoterminal.com/pools",
+        pool_created_at: pa?.pool_created_at ?? null,
+        reserve_in_usd: pa?.reserve_in_usd ?? null,
+        fdv_usd: pa?.fdv_usd ?? null,
+        price_change_24h: pa?.price_change_percentage?.h24 ?? null,
+        volume_24h: pa?.volume_usd?.h24 ?? null,
+        trades_24h: pa?.transactions?.h24 ?? null,
+        trades_1h: pa?.transactions?.h1 ?? null,
+        locked_liquidity_percentage: pa?.locked_liquidity_percentage ?? null,
+        note: "LP is 100% at 0x…dEaD on chain; this field reads null",
+      }
+    : { source: "api.geckoterminal.com/pools", error: pool.error };
+
   const dex = await tryFetch(`https://api.dexscreener.com/latest/dex/tokens/${BYKO}`);
   out.dexscreener = dex.ok
     ? {
@@ -253,6 +282,8 @@ async function main() {
   console.log(`\nblock ${chain.block.value} · price $${(chain.price_usd.value ?? 0).toFixed(9)}`);
   console.log(`holders (ours): ${holderState.count.value} · goplus: ${scannerState.goplus.holder_count ?? "n/a"}`);
   console.log(`dexscreener listed: ${scannerState.dexscreener.listed ?? "n/a"} · blockscout holders: ${scannerState.blockscout.token_holders_count ?? "n/a"}`);
+  const t24 = scannerState.geckoterminal_pool?.trades_24h;
+  console.log(`pool 24h: ${t24 ? `${t24.buys} buys / ${t24.sells} sells · ${t24.buyers} buyers / ${t24.sellers} sellers` : "n/a"} · reserve $${scannerState.geckoterminal_pool?.reserve_in_usd ?? "n/a"}`);
   console.log(`asked cohort: ${askedRows.length} wallets · unasked cohort: ${unaskedRows.length} wallets`);
   console.log(`rpc calls: ${snapshot.rpc.calls}`);
   console.log(`\nwritten: ${OUT_DIR}/snapshot-${label}.json (+ .csv)`);
