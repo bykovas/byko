@@ -9,7 +9,8 @@ export function go(): HTMLElement {
     buildIntro({
       ghost: "284",
       ghostStyle: { left: "0", top: "40px", fontSize: "190px" },
-      headline: "Everything here is public.",
+      /* owner rewrite 18 Aug 2026 — reads right for new and returning users */
+      headline: "Remember — everything here is public.",
       headlineSize: "50px",
       subline: "Method, contract, transfers, checks, verdicts.",
       tiny: "byko.bykovas.lt",

@@ -1,4 +1,218 @@
 {
   "version": 1,
-  "claims": []
+  "claims": [
+    {
+      "id": "genesis-mint",
+      "entry": "genesis-one-block-one-number-no-promises",
+      "text": "BYKO 0x078b…4372 was deployed on Base in block 49,430,937, tx 0xeac11a…b9378, minting the fixed supply of 790,227 tokens once.",
+      "type": "A",
+      "sources": [
+        {
+          "label": "BaseScan — creation tx",
+          "url": "https://basescan.org/tx/0xeac11a3210328c21d1c96bb1c7dafbfdcb2f4a51b510049fa3cdf232b64b9378"
+        },
+        {
+          "label": "Diary — Genesis",
+          "url": "https://byko.bykovas.lt/d/genesis-one-block-one-number-no-promises"
+        }
+      ],
+      "opens_at": "2026-08-18"
+    },
+    {
+      "id": "goplus-clean",
+      "entry": "flagged-what-the-scanners-actually-measure",
+      "text": "GoPlus token_security for BYKO on Base (8453) returns is_honeypot 0, is_open_source 1, is_mintable 0, is_proxy 0.",
+      "type": "C",
+      "sources": [
+        {
+          "label": "GoPlus API",
+          "url": "https://api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=0x078bB16e24c8931fc007928c370422e5e38F4372"
+        },
+        {
+          "label": "Diary — Flagged",
+          "url": "https://byko.bykovas.lt/d/flagged-what-the-scanners-actually-measure"
+        }
+      ],
+      "opens_at": "2026-08-18"
+    },
+    {
+      "id": "deployer-signed",
+      "entry": "signed-by-the-deployer",
+      "text": "The signer of basescan.org/verifySig/95926 is the same address that created BYKO contract 0x078bB16e24c8931fc007928c370422e5e38F4372.",
+      "type": "A",
+      "sources": [
+        {
+          "label": "Basescan verifySig 95926",
+          "url": "https://basescan.org/verifySig/95926"
+        },
+        {
+          "label": "Contract page, Creator field",
+          "url": "https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372"
+        }
+      ],
+      "opens_at": "2026-08-19"
+    },
+    {
+      "id": "audit-correction",
+      "entry": "on-chain-audit-100-transactions-three-debunked-facts",
+      "text": "The 3 Aug entry 'Twenty holders and a $1.35 sell' opens with a correction: the holders were DEX routers, the sell never happened.",
+      "type": "C",
+      "sources": [
+        {
+          "label": "Diary — corrected entry",
+          "url": "https://byko.bykovas.lt/d/twenty-holders-and-a-1-35-sell"
+        },
+        {
+          "label": "Diary — the audit",
+          "url": "https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts"
+        }
+      ],
+      "opens_at": "2026-08-19"
+    },
+    {
+      "id": "lp-burned-100",
+      "entry": "burning-the-liquidity-and-the-first-flag-that-moved",
+      "text": "Address 0x…dEaD holds 100% of the supply of BYKO/USDC pool LP token 0x02dd42…b2a6ca on Base.",
+      "type": "B",
+      "frozen_at": {
+        "block": 50131808
+      },
+      "sources": [
+        {
+          "label": "BaseScan — LP holders",
+          "url": "https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances"
+        },
+        {
+          "label": "Spec §5",
+          "url": "https://github.com/bykovas/byko/blob/main/docs/specification.md"
+        }
+      ],
+      "opens_at": "2026-08-20"
+    },
+    {
+      "id": "contract-21-lines",
+      "entry": "genesis-one-block-one-number-no-promises",
+      "text": "The verified BYKO source is 21 lines: unmodified OpenZeppelin ERC-20 plus one MAX_SUPPLY constant — no mint, owner or proxy.",
+      "type": "A",
+      "sources": [
+        {
+          "label": "BaseScan — verified source",
+          "url": "https://basescan.org/address/0x078bB16e24c8931fc007928c370422e5e38F4372#code"
+        },
+        {
+          "label": "GitHub — BYKO.sol",
+          "url": "https://github.com/bykovas/byko/blob/main/contracts/BYKO.sol"
+        }
+      ],
+      "opens_at": "2026-08-20"
+    },
+    {
+      "id": "spec-locked-vs-burned",
+      "entry": "burning-the-liquidity-and-the-first-flag-that-moved",
+      "text": "The spec changelog: v1.1 (7 Aug) called the burned LP 'permanently locked'; v1.2 (12 Aug) corrected it to burned, not locked.",
+      "type": "C",
+      "sources": [
+        {
+          "label": "Spec §9 — version table",
+          "url": "https://github.com/bykovas/byko/blob/main/docs/specification.md"
+        },
+        {
+          "label": "GitHub — spec history",
+          "url": "https://github.com/bykovas/byko/commits/main/docs/specification.md"
+        }
+      ],
+      "opens_at": "2026-08-21"
+    },
+    {
+      "id": "tally-one-vote",
+      "entry": "the-first-real-vote-for-legitimacy",
+      "text": "The published tally counts exactly one vote for: 0x30fd…efbf, holding 45,860.23 BYKO — about 5.8% of the 790,227 supply.",
+      "type": "B",
+      "frozen_at": {
+        "block": 50104223
+      },
+      "sources": [
+        {
+          "label": "tally.json",
+          "url": "https://byko.bykovas.lt/data/tally.json"
+        },
+        {
+          "label": "Basescan — voter balance",
+          "url": "https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0x30fd96c5ae61f0fb3d97e6159ab023710163efbf"
+        }
+      ],
+      "opens_at": "2026-08-21"
+    },
+    {
+      "id": "invoice-wallet-256k",
+      "entry": "base-app-stopped-calling-it-a-scam",
+      "text": "The disclosed invoice wallet 0xe8fC8769934f9461F7adF6F440ff3883E28021Eb held exactly 256,000 BYKO on 17 Aug 2026.",
+      "type": "B",
+      "frozen_at": {
+        "block": 50131808
+      },
+      "sources": [
+        {
+          "label": "Basescan — wallet filter",
+          "url": "https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372?a=0xe8fC8769934f9461F7adF6F440ff3883E28021Eb"
+        },
+        {
+          "label": "tally.json — 'trading, invoices' role",
+          "url": "https://byko.bykovas.lt/data/tally.json"
+        }
+      ],
+      "opens_at": "2026-08-22"
+    },
+    {
+      "id": "no-sell-aug-4",
+      "entry": "on-chain-audit-100-transactions-three-debunked-facts",
+      "text": "The BYKO pool recorded no sells on 4 Aug 2026; the $1.35 sell in the 3 Aug diary entry does not exist on-chain.",
+      "type": "A",
+      "sources": [
+        {
+          "label": "Diary — the audit",
+          "url": "https://byko.bykovas.lt/d/on-chain-audit-100-transactions-three-debunked-facts"
+        },
+        {
+          "label": "Basescan — the pool",
+          "url": "https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca"
+        }
+      ],
+      "opens_at": "2026-08-22"
+    },
+    {
+      "id": "spend-corrected",
+      "entry": "every-buy-but-one-was-mine",
+      "text": "On 16 Aug 2026 the published spend total was corrected from $85 to $123.29 — $74.02 pooled and burned plus $49.27 of the author's buys.",
+      "type": "C",
+      "sources": [
+        {
+          "label": "Diary — the correction",
+          "url": "https://byko.bykovas.lt/d/every-buy-but-one-was-mine"
+        },
+        {
+          "label": "Diary — next entry repeats $123.29",
+          "url": "https://byko.bykovas.lt/d/the-site-is-leaving-the-dark"
+        }
+      ],
+      "opens_at": "2026-08-23"
+    },
+    {
+      "id": "basename-registered",
+      "entry": "bykocoin-now-official",
+      "text": "The basename bykocoin.base.eth, announced as BYKO's handle on 12 Aug 2026, is a registered Basename on Base.",
+      "type": "A",
+      "sources": [
+        {
+          "label": "base.org/name/bykocoin",
+          "url": "https://www.base.org/name/bykocoin"
+        },
+        {
+          "label": "Diary — Bykocoin",
+          "url": "https://byko.bykovas.lt/d/bykocoin-now-official"
+        }
+      ],
+      "opens_at": "2026-08-23"
+    }
+  ]
 }

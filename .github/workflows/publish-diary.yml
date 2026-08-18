@@ -42,6 +42,7 @@ on:
     branches: [main]
     paths:
       - website/content/diary.md
+      - website/content/claims.md
 
 permissions:
   contents: read

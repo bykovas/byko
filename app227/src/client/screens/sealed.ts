@@ -1,6 +1,6 @@
-import { buildAnchor, buildFooter } from "../chrome";
+import { buildAnchor, buildFooter, navigate } from "../chrome";
 import { append, element } from "../dom";
-import { getState } from "../state";
+import { advanceCheck, getState } from "../state";
 import { buildShell } from "./shared";
 
 function readerSlot(index: number, handle: string): HTMLElement {
@@ -28,7 +28,7 @@ export function sealed(): HTMLElement {
     element("div", "d", "verified by @ted · @linda · @denis"),
   );
   const open = element("a", "o", "OPEN →");
-  open.href = `https://byko.bykovas.lt/${claim.entry}`;
+  open.href = `https://byko.bykovas.lt/d/${claim.entry}`;
   open.target = "_blank";
   open.rel = "noopener noreferrer";
   open.setAttribute("aria-label", `OPEN → · byko.bykovas.lt/${claim.entry}`);
@@ -42,8 +42,12 @@ export function sealed(): HTMLElement {
     mid,
     buildFooter({
       label: "Next claim",
-      route: "check",
-      // TODO(owner): prototype loops to the same claim; real app gates on tomorrow.
+      /* second fact of the day if there is one; otherwise the same claim
+         until the sealed screen learns to say "come back tomorrow" */
+      onClick() {
+        advanceCheck();
+        navigate("check");
+      },
     }),
   );
 }

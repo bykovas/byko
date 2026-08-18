@@ -128,16 +128,28 @@ function isClaim(value: unknown): value is Claim {
   );
 }
 
-export async function fetchClaimEnrichment(): Promise<CheckData | null> {
+/* The facts of the day: every claim whose opens_at is the latest date that
+   has already arrived (local time). Two per day by design — the state layer
+   serves them one at a time, second after the first. */
+export async function fetchClaimEnrichment(): Promise<CheckData[] | null> {
   const payload = await fetchJson(new URL("../data/claims.json", location.href));
   if (!isRecord(payload) || !Array.isArray(payload.claims) || payload.claims.length === 0) return null;
 
-  const claim = payload.claims[0];
-  if (!isClaim(claim)) return null;
-  return {
-    entry: claim.entry,
-    text: claim.text,
-    sources: [claimSource(claim, 0), claimSource(claim, 1)],
-    question: FIXTURE_CHECK.question,
-  };
+  const today = new Date().toLocaleDateString("en-CA");
+  const opened = payload.claims.filter(
+    (claim): claim is Claim & { opens_at: string } =>
+      isClaim(claim) && typeof (claim as { opens_at?: unknown }).opens_at === "string" &&
+      (claim as { opens_at: string }).opens_at <= today,
+  );
+  if (opened.length === 0) return null;
+
+  const latest = opened.reduce((max, claim) => (claim.opens_at > max ? claim.opens_at : max), "");
+  return opened
+    .filter((claim) => claim.opens_at === latest)
+    .map((claim) => ({
+      entry: claim.entry,
+      text: claim.text,
+      sources: [claimSource(claim, 0), claimSource(claim, 1)],
+      question: FIXTURE_CHECK.question,
+    }));
 }
