@@ -38,7 +38,8 @@ TOKEN_ADDRESS = "0x078bB16e24c8931fc007928c370422e5e38F4372"   # BYKO
 OPS_ADDRESS = "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6"     # BYKO Ops (sender)
 ADVANCE_AMOUNT = "227"          # whole BYKO per claim
 MAX_CLAIMS_LIFETIME = "5"       # per wallet, forever
-MAX_ADVANCES_PER_DAY = "50"     # global faucet cap
+MAX_ADVANCES_PER_DAY = "200"    # global cap: the most given away while asleep;
+                                # the stock floor closes the faucet first anyway
 MIN_OPS_BALANCE = "2270"        # faucet floor: 10 advances kept as dispute margin
 
 [assets]
