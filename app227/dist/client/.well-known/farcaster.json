@@ -1,0 +1,13 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "BYKO 227",
+    "homeUrl": "https://byko-app227.bykovas.lt/",
+    "iconUrl": "https://byko-app227.bykovas.lt/icon.png"
+  }
+}

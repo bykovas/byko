@@ -23,3 +23,7 @@
 # These content-hashed PNGs are immutable, static and support byte ranges.
 /assets/og/diary/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Phase-1 UI prototype — keep out of search until launch.
+/app227/*
+  X-Robots-Tag: noindex

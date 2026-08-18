@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
    assets (see [assets] in wrangler.toml). public/ is copied verbatim —
    that is how /.well-known/farcaster.json ships. */
 export default defineConfig({
+  base: "./",
   publicDir: "public",
   build: { outDir: "dist/client", emptyOutDir: true },
 });

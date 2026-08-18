@@ -1,13 +1,39 @@
-/* Hash router over the seven stub screens. No styles, no SDK calls yet —
-   the skeleton only proves the paths and the build. */
+import "./app.css";
+
 import { screens } from "./screens/index";
+import { startEnrichment, subscribe } from "./state";
+import { buildTape, type ScreenName } from "./tape";
+
+const screenNames = new Set<ScreenName>(Object.keys(screens) as ScreenName[]);
+const root = document.getElementById("app");
+
+function routeName(): ScreenName {
+  const candidate = location.hash.replace(/^#\//, "") as ScreenName;
+  if (screenNames.has(candidate)) return candidate;
+
+  history.replaceState(null, "", `${location.pathname}${location.search}#/why`);
+  return "why";
+}
 
 function render(): void {
-  const name = location.hash.replace(/^#\//, "") || "start";
-  const screen = screens[name] ?? screens["start"];
-  const root = document.getElementById("app");
-  if (root && screen) root.replaceChildren(screen());
+  const screen = screens[routeName()];
+  if (root) root.replaceChildren(screen());
 }
 
 addEventListener("hashchange", render);
 render();
+
+subscribe((kind) => {
+  if (!root?.firstElementChild) return;
+  const name = routeName();
+  if (kind === "chain") {
+    root.querySelector(".tape")?.replaceWith(buildTape(name));
+    return;
+  }
+
+  if ((name === "check" || name === "sealed") && !root.querySelector(".argument, .selected")) {
+    render();
+  }
+});
+
+startEnrichment();

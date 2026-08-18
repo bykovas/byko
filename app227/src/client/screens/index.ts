@@ -1,13 +1,20 @@
-import { start } from "./start";
-import { auth } from "./auth";
-import { profile } from "./profile";
-import { checks } from "./checks";
 import { check } from "./check";
-import { result } from "./result";
-import { metrics } from "./metrics";
+import { claim } from "./claim";
+import { go } from "./go";
+import { how } from "./how";
+import { noAdvance } from "./no-advance";
+import { paid } from "./paid";
+import { sealed } from "./sealed";
+import { why } from "./why";
+import type { ScreenName } from "../tape";
 
-/* Seven screens, addressed as #/name. Names are provisional — rename to the
-   architecture's own vocabulary when the flows land. */
-export const screens: Record<string, () => HTMLElement> = {
-  start, auth, profile, checks, check, result, metrics,
+export const screens: Record<ScreenName, () => HTMLElement> = {
+  why,
+  how,
+  claim,
+  paid,
+  go,
+  check,
+  sealed,
+  "no-advance": noAdvance,
 };

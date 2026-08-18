@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "export:site": "npm run build && node scripts/export-site.mjs",
     "start": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
     "types": "wrangler types"
