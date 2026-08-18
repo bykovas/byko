@@ -1,70 +1,96 @@
 {
-  "note": "Every founder-owned wallet, in one place. This file is the single source: the tally endpoint and compute-tally.mjs both read it to exclude these addresses from the vote, and the home page renders the roles from it. Adding a wallet here is the whole change — but bump CHECKPOINT_KEY in functions/api/tally.js at the same time, because the stored checkpoint was folded with the old list and would keep the old exclusions.",
+  "note": "Every founder-owned wallet, in one place. This file is the single source: the tally endpoint and compute-tally.mjs both read it to exclude these addresses from the vote, and the home page renders the roles from it. Adding a wallet here is the whole change — but bump CHECKPOINT_KEY in functions/api/tally.js at the same time, because the stored checkpoint was folded with the old list and would keep the old exclusions. Names and funding come from here too: website/w.html renders this file rather than keeping its own copy.",
   "wallets": [
     {
       "address": "0x624056460437cb4c63f7a3cf0c5a554df3375222",
       "role": "deployer",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKOCOIN",
+      "funded_by": "MEETLUKO"
     },
     {
       "address": "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6",
       "role": "ops · donation address",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKO Ops",
+      "funded_by": "Kraken"
     },
     {
       "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
       "role": "trading, invoices",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKOVAS",
+      "funded_by": "Kraken"
     },
     {
       "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
       "role": "buyer",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKO Buyer",
+      "funded_by": "Kraken"
     },
     {
       "address": "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c",
       "role": "buyer, retired",
-      "class": "retired"
+      "class": "retired",
+      "name": "BYKO Buyer -r",
+      "funded_by": "BYKOCOIN"
     },
     {
       "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
       "role": "farcaster",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKOVAS Farcast ETH",
+      "funded_by": "BYKOVAS"
     },
     {
       "address": "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "MEETLUKO",
+      "funded_by": "Kraken"
     },
     {
       "address": "0xbc170538038adc0651292e28a42dab4286641e02",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "BYKOVAS LUKO Δ",
+      "funded_by": "MEETLUKO"
     },
     {
       "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "LUKO Ops",
+      "funded_by": "Kraken"
     },
     {
       "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "LUKO Buyer",
+      "funded_by": "Kraken"
     },
     {
       "address": "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "LUKO Staging",
+      "funded_by": "Kraken"
     },
     {
       "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "role": "neighbouring project",
-      "class": "same owner"
+      "class": "same owner",
+      "name": "LUKO Buyer -r",
+      "funded_by": "MEETLUKO"
     },
     {
       "address": "0x36041020857b33aa09ee7d9a99743176a7778134",
       "role": "airdrop experiment",
-      "class": "primary"
+      "class": "primary",
+      "name": "BYKO Airdrop",
+      "funded_by": "BYKOVAS"
     }
   ]
 }
