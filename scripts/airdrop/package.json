@@ -1,0 +1,9 @@
+{
+  "name": "byko-airdrop-tools",
+  "private": true,
+  "type": "module",
+  "description": "Local-only tools for the airdrop experiment. Kept out of the site build: the site has no build step and never will.",
+  "dependencies": {
+    "viem": "^2.55.18"
+  }
+}

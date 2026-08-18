@@ -37,3 +37,6 @@ build/
 *.log
 tmp/
 .wrangler/
+
+# local-only tooling deps (the site itself still has no build step)
+scripts/airdrop/node_modules/
