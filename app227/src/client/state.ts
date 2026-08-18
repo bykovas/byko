@@ -118,8 +118,13 @@ export async function refreshRecord(): Promise<void> {
 }
 
 /* Returning users skip the onboarding: the flag is set once the pitch has
-   been seen to the end (the go screen). */
+   been seen to the end (the go screen). ?fresh=1 clears it — a testing door
+   to walk the app as a first-timer again. */
 const VISITED_KEY = "byko227-visited";
+
+if (new URLSearchParams(location.search).get("fresh") === "1") {
+  try { localStorage.removeItem(VISITED_KEY); } catch { /* private mode */ }
+}
 
 export function markVisited(): void {
   try { localStorage.setItem(VISITED_KEY, "1"); } catch { /* private mode */ }
