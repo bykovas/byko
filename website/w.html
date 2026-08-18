@@ -100,6 +100,9 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     { name: "LUKAS", by: "Kraken", address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF", watched: true }
   ];
 
+  /* The order that has always opened this table. */
+  var PRINCIPALS = ["BYKOVAS", "LUKAS", "BYKOCOIN", "MEETLUKO"];
+
   var BALANCE_OF = "0x70a08231";
   var COLUMNS = ["eth", "usdc", "luko", "byko"];
 
@@ -145,7 +148,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
       var row = document.createElement("tr");
       if (wallet.watched) row.className = "watched";
       if (!wallet.watched) mine += 1;
-      [["l", wallet.watched ? "·" : String(mine)],
+      [["l", String(index + 1)],
        ["l name", wallet.name],
        ["l", wallet.watched ? wallet.by + " · not mine" : wallet.by]].forEach(function (pair) {
         var td = document.createElement("td");
@@ -221,13 +224,26 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
         return response.json();
       })
       .then(function (data) {
-        WALLETS = (data.wallets || []).map(function (wallet) {
+        var all = (data.wallets || []).map(function (wallet) {
           return {
             name: wallet.name || wallet.role || wallet.address,
             by: wallet.funded_by || "—",
             address: wallet.address,
           };
         }).concat(WATCHED);
+
+        /* The four principals first, in their own order; everything else
+           alphabetically. Row numbers follow the position, as before. */
+        WALLETS = all.slice().sort(function (a, b) {
+          var ai = PRINCIPALS.indexOf(a.name);
+          var bi = PRINCIPALS.indexOf(b.name);
+          if (ai !== -1 || bi !== -1) {
+            if (ai === -1) return 1;
+            if (bi === -1) return -1;
+            return ai - bi;
+          }
+          return a.name.localeCompare(b.name);
+        });
       });
   }
 
