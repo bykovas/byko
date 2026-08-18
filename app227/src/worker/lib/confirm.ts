@@ -12,17 +12,33 @@ interface Receipt {
   blockNumber: string;
 }
 
+/* the same node order the treasury uses: keyed first, public as overflow —
+   a rate-limited read must not stop the ledger from being reconciled */
+function nodes(env: Env): string[] {
+  return [env.DRPC_URL, env.RPC_URL, "https://base-rpc.publicnode.com", "https://base.drpc.org"]
+    .filter((u): u is string => Boolean(u))
+    .filter((u, i, all) => all.indexOf(u) === i);
+}
+
 async function rpc(env: Env, method: string, params: unknown[]): Promise<unknown> {
-  const response = await fetch(env.RPC_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (!response.ok) throw new Error(`rpc ${response.status}`);
-  const body = (await response.json()) as { result?: unknown; error?: { message?: string } };
-  if (body.error) throw new Error(body.error.message ?? "rpc error");
-  return body.result;
+  let last: unknown = null;
+  for (const url of nodes(env)) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok) throw new Error(`rpc ${response.status}`);
+      const body = (await response.json()) as { result?: unknown; error?: { message?: string } };
+      if (body.error) throw new Error(body.error.message ?? "rpc error");
+      return body.result;
+    } catch (err) {
+      last = err;
+    }
+  }
+  throw last instanceof Error ? last : new Error("rpc unavailable");
 }
 
 const CONFIRMATIONS = 2n;
