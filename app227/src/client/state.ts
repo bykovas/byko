@@ -27,6 +27,8 @@ export interface AppState {
   answeredLocal: number;
   localAnswers: { claim_id: string; verdict: Verdict }[];
   dayClosedFlag: boolean;
+  /* the real transfer of this visit, when the treasury sent one */
+  advanceTx: string | null;
 }
 
 type StateListener = (kind: "chain" | "check" | "record") => void;
@@ -52,14 +54,16 @@ const state: AppState = {
   answeredLocal: 0,
   localAnswers: [],
   dayClosedFlag: false,
+  advanceTx: null,
 };
 
 export function getState(): Readonly<AppState> {
   return state;
 }
 
-export function markClaimed(): void {
+export function markClaimed(txHash: string | null = null): void {
   state.claimed = true;
+  state.advanceTx = txHash;
 }
 
 /* Advance to the second fact of the day. Returns false when there is none. */

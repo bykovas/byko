@@ -9,6 +9,7 @@
  * pipeline that makes the stats and leaderboard real. Deferred: advance
  * (phase 4, money on Sepolia first), webhook (phase 3, notifications). */
 import type { Env } from "../shared/types";
+import { confirmAdvances } from "./lib/confirm";
 import { error } from "./lib/respond";
 import { auth } from "./routes/auth";
 import { answer } from "./routes/answer";
@@ -50,7 +51,9 @@ export default {
     return env.ASSETS.fetch(request);
   },
 
-  /* wired in wrangler.toml; empty until the jobs exist (dispute payouts) */
+  /* wired in wrangler.toml; the queue stays empty until dispute payouts */
   async queue(_batch: unknown, _env: Env): Promise<void> {},
-  async scheduled(_controller: unknown, _env: Env): Promise<void> {},
+  async scheduled(_controller: unknown, env: Env): Promise<void> {
+    if (env.ADVANCES_OPEN === "1") await confirmAdvances(env);
+  },
 };

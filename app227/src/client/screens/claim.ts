@@ -1,6 +1,10 @@
+import { apiAdvance } from "../api";
 import { buildAnchor, buildFooter, navigate } from "../chrome";
 import { getState, markClaimed } from "../state";
 import { buildIntro, buildProfilePlate, buildShell } from "./shared";
+
+const BEAT_MS = 900;
+const delay = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 
 export function claim(): HTMLElement {
   return buildShell(
@@ -21,15 +25,27 @@ export function claim(): HTMLElement {
       variant: "key",
       onClick(button) {
         button.disabled = true;
-        window.setTimeout(() => {
+        /* ask the treasury; hold the beat either way so the moment reads */
+        void Promise.all([apiAdvance(), delay(BEAT_MS)]).then(([outcome]) => {
           if (!button.isConnected || location.hash !== "#/claim") return;
           if (getState().noAdvance) {
             navigate("no-advance");
             return;
           }
-          markClaimed();
-          navigate("paid");
-        }, 900);
+          if (outcome.advanced && outcome.tx_hash) {
+            markClaimed(outcome.tx_hash);
+            navigate("paid");
+            return;
+          }
+          if (outcome.reason === "not-open" || outcome.reason === "offline") {
+            /* faucet not live yet — the prototype beat, as before */
+            markClaimed();
+            navigate("paid");
+            return;
+          }
+          /* a real refusal: limits or a closed faucet */
+          navigate("no-advance");
+        });
       },
     }),
   );

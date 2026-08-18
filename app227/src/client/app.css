@@ -596,7 +596,8 @@ textarea:focus-visible {
   border-bottom: 1px solid rgba(247, 246, 236, 0.28);
 }
 
-.vrow .v {
+.vrow .v,
+.prow .v {
   font-family: "IBM Plex Mono", Menlo, monospace;
   font-size: 17px;
   font-weight: 600;
@@ -616,12 +617,12 @@ textarea:focus-visible {
 }
 
 /* the full destination address row: label dim, address paper, one line */
+/* no rule below: the address and "read from your profile" are one thought */
 .to {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(247, 246, 236, 0.28);
+  padding: 12px 0 2px;
   font-family: "IBM Plex Mono", Menlo, monospace;
 }
 

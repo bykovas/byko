@@ -89,9 +89,17 @@ export function buildProfilePlate(sent = false): HTMLElement {
 
   const tail = element("div", "vrow");
   if (sent) {
-    const transaction = element("a", "r paid-link", "tx 0x72a4…91f ↗");
-    transaction.href = "#";
-    transaction.addEventListener("click", (event) => event.preventDefault());
+    const tx = getState().advanceTx;
+    const label = tx ? `tx ${tx.slice(0, 6)}…${tx.slice(-4)} ↗` : "tx 0x72a4…91f ↗";
+    const transaction = element("a", "r paid-link", label);
+    if (tx) {
+      transaction.href = `https://basescan.org/tx/${tx}`;
+      transaction.target = "_blank";
+      transaction.rel = "noopener noreferrer";
+    } else {
+      transaction.href = "#";
+      transaction.addEventListener("click", (event) => event.preventDefault());
+    }
     tail.append(transaction);
   } else {
     tail.append(element("span", "r", "read from your profile"));

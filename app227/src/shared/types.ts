@@ -43,11 +43,21 @@ export interface Env {
   JOBS: Queue;
   RPC_URL: string;
   CLAIMS_URL: string;
+  /* The money path (phase 4) — dormant until ADVANCES_OPEN = "1". */
+  ADVANCES_OPEN: string;
+  CHAIN_ID: string;
+  TOKEN_ADDRESS: string;
+  OPS_ADDRESS: string;
+  ADVANCE_AMOUNT: string;        /* whole tokens per claim */
+  MAX_CLAIMS_LIFETIME: string;
+  MAX_ADVANCES_PER_DAY: string;  /* global faucet cap */
+  MIN_OPS_BALANCE: string;       /* whole tokens — faucet floor */
   /* Secrets (wrangler secret put), all optional at runtime — routes degrade
      gracefully when a secret is absent so a fresh deploy never 500s. */
   NEYNAR_API_KEY?: string;
   WEBHOOK_SHARED_SECRET?: string;
   ADMIN_TOKEN?: string;
+  OPS_PRIVATE_KEY?: string;      /* the ops wallet key — the only key anywhere */
 }
 
 /* --- Domain --- */

@@ -90,6 +90,23 @@ export async function apiAnswer(claimId: string, verdict: Verdict, argument: str
   return { ok: true, answeredToday: body.answeredToday, dayClosed: body.dayClosed };
 }
 
+export interface AdvanceOutcome {
+  advanced: boolean;
+  tx_hash?: string;
+  reason?: "not-open" | "no-address" | "already-today" | "lifetime-limit"
+    | "faucet-cap" | "faucet-closed" | "send-failed" | "offline";
+}
+
+/* POST /api/advance — ask the treasury for the 227. Unauthed contexts (the
+   site preview) report offline and the prototype beat takes over. */
+export async function apiAdvance(): Promise<AdvanceOutcome> {
+  const headers = await authHeaders();
+  if (!headers) return { advanced: false, reason: "offline" };
+  const response = await request("/api/advance", { method: "POST", headers });
+  if (!response || !response.ok) return { advanced: false, reason: "offline" };
+  return (await response.json()) as AdvanceOutcome;
+}
+
 /* GET /api/metrics — the public Record. */
 export async function fetchMetrics(): Promise<Metrics | null> {
   const response = await request("/api/metrics");
