@@ -42,9 +42,9 @@ Then the part nobody planned.
 
 One recipient received its 227 BYKO at 20:10:15 and sold the lot into the pool at 20:13:23. Three minutes and eight seconds, for **$0.057**. It is not a person: the same wallet auto-dumps everything that lands in it, PEPETO and SXC and GENESIS in the hours before mine.
 
-That sale was the first trade in this token's life. Sixteen days, zero trades, and then a bot with no opinion about anything.
+I first wrote that this was the first trade in the token's life. It was not, and the correction is at the bottom of this entry: the pool has seen 38 swaps since 2 August, and almost every one of them was me buying my own token with project wallets. What was true is narrower and stranger — it was the first trade after a two-and-a-half-day silence, and the first one where the seller was somebody who had been handed the tokens without asking.
 
-**DexScreener listed the pair minutes later.** It had ignored BYKO through 908 holders, through liquidity whose LP tokens are 100% burned, through a verified contract and a published specification — because it indexes trades, and there had never been one. Not holders. Not disclosure. One trade, worth less than six cents.
+**DexScreener listed the pair minutes later.** At 19:45 it did not list the token; the sale landed at 20:13:23; by 20:16 the pair was there. It had ignored BYKO through 908 holders, through liquidity whose LP tokens are 100% burned, through a verified contract and a published specification. What I cannot honestly claim is that the six cents *caused* the listing — 908 transfers had also just landed, and I have one observation, not an experiment.
 
 Blockscout still reports zero holders. It has never indexed this token and today changed nothing.
 
@@ -56,7 +56,9 @@ So consent was never measured. On one side the tokens are invisible; on the othe
 
 One more thing, recorded because leaving it out would be a lie by omission. The cohort for the last two batches was built while the previous batch was still sending, so its "holds no BYKO" filter read balances that were seconds from changing: 119 of its 454 addresses had just been paid. It was checked before the send, thrown away and rebuilt. Nobody was paid twice. But it was close, and the only reason it was caught is that the check runs before the money and never after.
 
-The evening cost 206,116 BYKO — about fifty-two dollars at pool price — and under a dollar of gas. It bought a listing that eleven days of honest disclosure had not.
+The evening cost 206,116 BYKO — about fifty-two dollars at pool price — and under a dollar of gas. Something got the token listed that eleven days of honest disclosure had not, and I can name the candidates but not the winner.
+
+**Correction, 19 August 2026.** The first version of this entry said the bot's sale was the first trade in the token's history and that DexScreener had never had a trade to index. Both are false, and the reader who caught it was the person this diary is about. The pool has carried 38 swaps since 2 August — 33 buys and 5 sells, about $55 of volume — and nearly all of them were mine: project wallets buying my own token, which the counters page has always listed as $49.27 of buys and $5.57 returned by sells. The one outside buy was a neighbour's, for $9.90 on 14 August. I trusted a scanner's trade feed instead of reading the pool's own logs, which is exactly the mistake this study exists to document, made by the person documenting it. The title of this entry claims more than the evidence supports; it stays as published, because the URL is already in two social posts and quietly renaming a claim is worse than leaving it standing next to its correction.
 
 ---
 **Teaser:** 908 wallets got 227 BYKO each and the token went from 7 holders to 916. What finally got it listed on DexScreener was none of that — it was one bot selling its share for less than six cents.
