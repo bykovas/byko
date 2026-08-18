@@ -64,8 +64,11 @@ const FALLBACK_RPCS = [
   "https://1rpc.io/base",
 ];
 
-function transportFor(primary: string) {
-  const urls = [primary, ...FALLBACK_RPCS.filter((u) => u !== primary)];
+/* the keyed node leads when configured, the public ones catch the overflow */
+function transportFor(env: Env) {
+  const urls = [env.DRPC_URL, env.RPC_URL, ...FALLBACK_RPCS]
+    .filter((u): u is string => Boolean(u))
+    .filter((u, i, all) => all.indexOf(u) === i);
   return fallback(urls.map((url) => http(url, { retryCount: 2, timeout: 8_000 })), { rank: false });
 }
 
@@ -154,7 +157,7 @@ export class FidLock {
         nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
         rpcUrls: { default: { http: [env.RPC_URL] } },
       };
-      const transport = transportFor(env.RPC_URL);
+      const transport = transportFor(env);
       this.account = account;
       this.chain = chain;
       this.reader = createPublicClient({ chain, transport });

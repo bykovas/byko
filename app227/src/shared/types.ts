@@ -59,6 +59,7 @@ export interface Env {
   WEBHOOK_SHARED_SECRET?: string;
   ADMIN_TOKEN?: string;
   OPS_PRIVATE_KEY?: string;      /* the ops wallet key — the only key anywhere */
+  DRPC_URL?: string;             /* keyed Base RPC; leads the fallback list */
 }
 
 /* --- Domain --- */
