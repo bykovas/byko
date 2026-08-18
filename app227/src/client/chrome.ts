@@ -32,6 +32,29 @@ export function buildMark(className = "disc"): HTMLElement {
   return disc;
 }
 
+/* The real coin: assets/coin.svg composition — full-bleed circle, the mark
+   nearly edge to edge with its canonical offset — in the app's tokens. */
+export function buildCoin(className = "av"): HTMLElement {
+  const wrap = element("span", className);
+  const svg = svgElement("svg", { viewBox: "0 0 32 32", "aria-hidden": "true" });
+  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "var(--blue)" }));
+  const group = svgElement("g", {
+    transform: "translate(2.1875 1.25) scale(.3125)",
+    fill: "none",
+    stroke: "var(--ink)",
+    "stroke-width": "13",
+    "stroke-linecap": "butt",
+    "stroke-linejoin": "miter",
+  });
+  group.append(
+    svgElement("path", { d: "M24 14V82" }),
+    svgElement("path", { d: "M40 20L70 48 40 76" }),
+  );
+  svg.append(group);
+  wrap.append(svg);
+  return wrap;
+}
+
 export function buildAnchor(status: string): HTMLElement {
   const anchor = element("header", "anchor");
   const left = element("span", "lft");

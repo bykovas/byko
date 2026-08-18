@@ -1,4 +1,4 @@
-import { buildMark } from "../chrome";
+import { buildCoin } from "../chrome";
 import type { CheckSource } from "../data";
 import { append, element } from "../dom";
 import { buildTape, type ScreenName } from "../tape";
@@ -69,7 +69,7 @@ export function buildProfilePlate(sent = false): HTMLElement {
     /* the Farcaster-verified wallet the advances will actually come from */
     element("div", "ad", "verified wallet · 0x2f66…95b9"),
   );
-  append(profile, buildMark("av"), identity);
+  append(profile, buildCoin(), identity);
 
   const value = element("div", "vrow");
   value.append(element("span", "v", sent ? "227 BYKO sent" : "227 BYKO"));
