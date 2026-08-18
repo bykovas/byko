@@ -2,6 +2,7 @@ import {
   createPublicClient,
   createWalletClient,
   encodeFunctionData,
+  fallback,
   getAddress,
   http,
   keccak256,
@@ -53,6 +54,20 @@ const ERC20_ABI = [
 
 /* enough gas for a few dozen ERC-20 transfers on Base */
 const MIN_GAS_WEI = parseUnits("0.00005", 18);
+
+/* One advance costs ~7 RPC calls; a single public node rate-limits long
+   before the faucet's own caps do (that is exactly what the first live claim
+   hit). The configured URL leads, the rest catch the overflow. */
+const FALLBACK_RPCS = [
+  "https://base-rpc.publicnode.com",
+  "https://base.drpc.org",
+  "https://1rpc.io/base",
+];
+
+function transportFor(primary: string) {
+  const urls = [primary, ...FALLBACK_RPCS.filter((u) => u !== primary)];
+  return fallback(urls.map((url) => http(url, { retryCount: 2, timeout: 8_000 })), { rank: false });
+}
 
 export type AdvanceReason =
   | "not-open"          /* the flag is off — the faucet was never opened */
@@ -139,10 +154,11 @@ export class FidLock {
         nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
         rpcUrls: { default: { http: [env.RPC_URL] } },
       };
+      const transport = transportFor(env.RPC_URL);
       this.account = account;
       this.chain = chain;
-      this.reader = createPublicClient({ chain, transport: http(env.RPC_URL) });
-      this.wallet = createWalletClient({ account, chain, transport: http(env.RPC_URL) });
+      this.reader = createPublicClient({ chain, transport });
+      this.wallet = createWalletClient({ account, chain, transport });
     }
     return null;
   }
