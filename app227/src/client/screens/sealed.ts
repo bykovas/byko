@@ -67,7 +67,7 @@ function readerSlot(index: number, handle: string | null): HTMLElement {
 function sealedFirst(): HTMLElement {
   const { check: claim, checks, checkIndex, record } = getState();
   const stat = record?.facts.find((f) => f.claim_id === claim.id);
-  const second = checks[checkIndex + 1] ?? checks[checkIndex];
+  const second = checks[checkIndex + 1];
 
   const mid = element("div", "mid top");
   mid.style.paddingTop = "0";
@@ -112,7 +112,9 @@ function sealedFirst(): HTMLElement {
   const tiny = element(
     "p",
     "tiny",
-    `The second fact of today is open. Check #${pad3(second.number)} · diary ${second.entry}.`,
+    second
+      ? `The second fact of today is open. Check #${pad3(second.number)} · diary ${second.entry}.`
+      : "Next claim opens tomorrow.",
   );
   tiny.style.color = "var(--ink-dim)";
   tiny.style.marginTop = "14px";

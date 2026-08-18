@@ -98,8 +98,14 @@ async function fetchJson(url: URL): Promise<unknown> {
   }
 }
 
+/* Chain and claims data live on the SITE, not on the app's own domain —
+   relative URLs there hit the SPA fallback (index.html with a 200) and parse
+   into nothing. Absolute URLs work from both origins; the site answers with
+   open CORS for exactly these paths. */
+const SITE = "https://byko.bykovas.lt";
+
 export async function fetchHolderEnrichment(): Promise<HolderEnrichment | null> {
-  const payload = await fetchJson(new URL("../api/holders", location.href));
+  const payload = await fetchJson(new URL(`${SITE}/api/holders`));
   if (!isRecord(payload) || typeof payload.holders !== "number") return null;
 
   const excluded = payload.excluded;
@@ -136,7 +142,7 @@ function isClaim(value: unknown): value is Claim {
    has already arrived (local time). Two per day by design — the state layer
    serves them one at a time, second after the first. */
 export async function fetchClaimEnrichment(): Promise<CheckData[] | null> {
-  const payload = await fetchJson(new URL("../data/claims.json", location.href));
+  const payload = await fetchJson(new URL(`${SITE}/data/claims.json`));
   if (!isRecord(payload) || !Array.isArray(payload.claims) || payload.claims.length === 0) return null;
   const feed: unknown[] = payload.claims;
 

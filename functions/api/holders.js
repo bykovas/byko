@@ -40,6 +40,8 @@ var CHECKPOINT_CACHE_URL = "https://byko-checkpoint.invalid/" + CHECKPOINT_KEY;
 function json(body, status, headers) {
   var outputHeaders = new Headers(headers || {});
   outputHeaders.set("Content-Type", "application/json; charset=UTF-8");
+  /* public read-only data; app227 reads it cross-origin from its own domain */
+  outputHeaders.set("Access-Control-Allow-Origin", "*");
   return new Response(JSON.stringify(body), { status: status, headers: outputHeaders });
 }
 
