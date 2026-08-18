@@ -28,6 +28,26 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BYKO 227: fact-check my token, become part of it — 18 August 2026
+
+I shipped a small app today. It cost nothing — $0, eleven hours, nine espressos — and it exists to check whether I'm telling the truth.
+
+BYKO 227 is a mini-app inside Farcaster. Every day it shows two claims about my own token, taken straight from the public diary: the genesis transaction, the burned liquidity, what the scanners say, including the entries where I got things wrong. The reader's job is to spend a minute checking one claim against two open sources — BaseScan, the repository, the site itself — and answer: Yes, No with a reason, or Can't verify. The third answer weighs as much as the first two. "I couldn't check this" is a result, not a shrug.
+
+Why this exists: for two weeks every fact about the experiment has been published by me. "I audited myself and I confirm I'm honest" is worth exactly nothing. So the audit goes to whoever wants it.
+
+Every answer is recorded. The app knows you by your Farcaster account, keeps a daily count, shows how many people answered today and overall, and keeps a leaderboard — ranked by how many claims you checked, not by how many you got "right", because there are no right answers here, only checked ones. When three people independently say Yes to a claim, it is sealed, and their handles are printed under it on the site. Permanently.
+
+Then the experiment gets sharper. For the first round I pay 227 BYKO up front — before asking anyone for anything. After that, the only reward goes to whoever catches me lying. Paying for confirmations would be buying approval; paying for a caught mistake is buying an audit.
+
+Everything is public: the method, the contract, the transfers, every answer, every verdict.
+
+Small catch: anyone who helps check the experiment becomes part of it — and a BYKO holder.
+
+---
+**Teaser:** A Farcaster mini-app where readers fact-check my own token: two claims a day, open sources, three Yes seal a fact and your handle goes on the site forever. $0, 11 hours, 9 espressos.
+**X:** Shipped BYKO 227: a Farcaster mini-app where you fact-check my own token. Two claims a day, open sources, Yes / No / Can't verify. Three matching Yes seal a fact — your handle goes under it on the site, forever. Spent: $0, 11 hours, 9 espressos.
+
 ## Base App stopped calling it a scam — 17 August 2026
 
 Base App just stopped calling BYKO a scam.
