@@ -40,9 +40,9 @@ export function claim(): HTMLElement {
             navigate("paid");
             return;
           }
-          if (outcome.reason === "not-open" || outcome.reason === "offline") {
-            /* faucet not opened yet, or the anonymous site preview —
-               the prototype beat, as before */
+          if (outcome.reason === "offline") {
+            /* the anonymous site preview only — the prototype beat lives on
+               there; every authed path now answers with the truth */
             markClaimed();
             navigate("paid");
             return;

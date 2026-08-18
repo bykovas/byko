@@ -30,9 +30,11 @@ preview_urls = false
 # plain configuration, not secrets
 RPC_URL = "https://mainnet.base.org"
 CLAIMS_URL = "https://byko.bykovas.lt/data/claims.json"
-# --- the money path (phase 4). Dormant until ADVANCES_OPEN = "1". ---
-# The rule: Base Sepolia first, mainnet only after a clean dry run.
-ADVANCES_OPEN = "0"
+# --- the money path (phase 4). ---
+# Opened 18 Aug 2026 by the owner's call, Sepolia waived: the blast radius is
+# 227 BYKO per attempt behind the treasury's five locks. ADVANCES_OPEN = "0"
+# is the kill switch — one line, one deploy.
+ADVANCES_OPEN = "1"
 CHAIN_ID = "8453"
 TOKEN_ADDRESS = "0x078bB16e24c8931fc007928c370422e5e38F4372"   # BYKO
 OPS_ADDRESS = "0x42873C60bC22424dBB4518DF7bE8b7F9eF4ac1D6"     # BYKO Ops (sender)
