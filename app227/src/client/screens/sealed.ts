@@ -46,15 +46,25 @@ function buildTodayBand(withBreakdown: boolean): HTMLElement {
 
   if (withBreakdown) {
     const b = record?.today.breakdown ?? { yes: 0, no: 0, cant: 0 };
-    const bd = element("div", "bd");
-    for (const [label, value] of [["yes", b.yes], ["no", b.no], ["can't verify", b.cant]] as const) {
-      const cell = element("span");
-      cell.append(document.createTextNode(`${label} `), element("b", undefined, String(value)));
-      bd.append(cell);
-    }
-    band.append(bd);
+    band.append(buildBreakdown(b));
   }
   return band;
+}
+
+/* The verdict split. Labels stay ink; the counts carry the verdict colour. */
+function buildBreakdown(b: { yes: number; no: number; cant: number }): HTMLElement {
+  const bd = element("div", "bd");
+  const parts: [string, number, string][] = [
+    ["yes", b.yes, "v-yes"],
+    ["no", b.no, "v-no"],
+    ["can't verify", b.cant, "v-cant"],
+  ];
+  for (const [label, value, cls] of parts) {
+    const cell = element("span");
+    cell.append(document.createTextNode(`${label} `), element("b", cls, String(value)));
+    bd.append(cell);
+  }
+  return bd;
 }
 
 function readerSlot(index: number, handle: string | null): HTMLElement {
@@ -71,7 +81,7 @@ function sealedFirst(): HTMLElement {
 
   const mid = element("div", "mid top");
   mid.style.paddingTop = "0";
-  mid.append(buildTodayBand(false));
+  mid.append(buildTodayBand(true));
 
   const lab = element("div", "lab", `claim · diary ${claim.entry}`);
   lab.style.marginTop = "18px";
@@ -135,7 +145,39 @@ function sealedFirst(): HTMLElement {
   );
 }
 
-/* 06b — day closed: figures, all-time, ranks. No CTA. */
+/* Both facts of the day, each with its verdict tally — the recap that lets a
+   reader come back to what the day asked, and how the room answered. */
+function buildDayFacts(): HTMLElement {
+  const { checks, record } = getState();
+  const wrap = element("div", "dayfacts");
+  for (const fact of checks) {
+    const stat = record?.facts.find((f) => f.claim_id === fact.id);
+    const row = element("div", "dayfact");
+
+    const top = element("div", "ft");
+    const left = element("span", undefined, `check #${pad3(fact.number)} · diary ${fact.entry}`);
+    const right = element("span", stat?.sealed ? "sealed" : undefined, stat?.sealed ? "sealed" : `${stat?.answers ?? 0} answers`);
+    append(top, left, right);
+
+    const text = element("div", "fx", fact.text);
+
+    const counts = element("div", "fc");
+    const y = stat?.yes ?? 0, n = stat?.no ?? 0, c = stat?.cant ?? 0;
+    const parts: [string, number, string][] = [["yes", y, "v-yes"], ["no", n, "v-no"], ["can't verify", c, "v-cant"]];
+    parts.forEach(([label, value, cls], i) => {
+      if (i > 0) counts.append(element("span", "sep", "·"));
+      const cell = element("span");
+      cell.append(document.createTextNode(`${label} `), element("b", cls, String(value)));
+      counts.append(cell);
+    });
+
+    append(row, top, text, counts);
+    wrap.append(row);
+  }
+  return wrap;
+}
+
+/* 06b — day closed: figures, recap, all-time, ranks. No CTA. */
 function sealedDay(): HTMLElement {
   const { record, me } = getState();
 
@@ -150,6 +192,8 @@ function sealedDay(): HTMLElement {
   say.style.fontSize = "16px";
   say.style.marginTop = "10px";
   mid.append(thanks, say);
+
+  mid.append(buildDayFacts());
 
   const alltime = element("div", "alltime");
   alltime.style.marginTop = "14px";

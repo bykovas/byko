@@ -97,6 +97,8 @@ export interface FactStat {
   claim_id: string;
   answers: number;
   yes: number;
+  no: number;
+  cant: number;
   readers: string[];                   /* up to 3 handles that answered yes */
   sealed: boolean;                     /* three matching yes */
 }

@@ -140,12 +140,18 @@ export async function computeMetrics(env: Env, claims: Claim[]): Promise<Metrics
     return { rank, fid: row.fid, handle: handle(row.username, row.fid), answers: row.answers };
   });
 
-  /* Per-fact yes-readers for the current facts (the 06a reader slots). */
+  /* Per-fact verdict split + yes-readers for the current facts (06a slots,
+     06b per-fact counts). One grouped count, one capped reader read. */
   const factStats = [];
   for (const claim of facts) {
     const totals = await env.DB.prepare(
-      `SELECT COUNT(*) AS total, SUM(verdict = 'yes') AS yes FROM answers WHERE claim_id = ?1`,
-    ).bind(claim.id).first<{ total: number; yes: number | null }>();
+      `SELECT
+         SUM(verdict = 'yes')  AS yes,
+         SUM(verdict = 'no')   AS no,
+         SUM(verdict = 'cant') AS cant,
+         COUNT(*)              AS total
+       FROM answers WHERE claim_id = ?1`,
+    ).bind(claim.id).first<{ yes: number | null; no: number | null; cant: number | null; total: number }>();
     const readers = await env.DB.prepare(
       `SELECT p.username AS username, a.fid AS fid
          FROM answers a LEFT JOIN profiles p ON p.fid = a.fid
@@ -156,6 +162,8 @@ export async function computeMetrics(env: Env, claims: Claim[]): Promise<Metrics
       claim_id: claim.id,
       answers: totals?.total ?? 0,
       yes,
+      no: totals?.no ?? 0,
+      cant: totals?.cant ?? 0,
       readers: readers.results.map((r) => handle(r.username, r.fid)),
       sealed: yes >= 3,
     });

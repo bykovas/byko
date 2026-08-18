@@ -42,6 +42,14 @@
   --edge: rgba(247, 246, 236, 0.16);
   --ink-dim: rgba(11, 11, 12, 0.55);
   --ink-hair: rgba(11, 11, 12, 0.22);
+  /* Verdict colours — an owner-sanctioned exception to "no other colours".
+     Muted, ink-weighted, NOT market neon. Law: they mark verdict COUNTS and
+     verdict LABELS only (the breakdown row, per-fact tallies) — never an
+     answer button (a red "No" would nudge the reader away from it) and never
+     a chain-read figure (those stay blue). Do not "fix" this back. */
+  --yes: #1f6b3a;
+  --no: #a33524;
+  --cant: #a8760b;
 }
 
 *,
@@ -844,9 +852,68 @@ textarea:focus-visible {
   text-transform: uppercase;
 }
 
+/* the count's colour is the verdict's (see .v-* below); weight only here */
 .bd b {
-  color: var(--ink);
-  font-weight: 500;
+  font-weight: 600;
+}
+
+/* verdict counts carry the sanctioned verdict colour; labels stay ink */
+.v-yes { color: var(--yes); }
+.v-no { color: var(--no); }
+.v-cant { color: var(--cant); }
+
+/* per-fact tally block (06b): both facts of the day with their counts */
+.dayfacts {
+  margin-top: 16px;
+}
+
+.dayfact {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--ink-hair);
+}
+
+.dayfact:first-child {
+  border-top: 1.5px solid var(--ink);
+}
+
+.dayfact .ft {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink-dim);
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dayfact .ft .sealed {
+  color: var(--yes);
+}
+
+.dayfact .fx {
+  margin-top: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.dayfact .fc {
+  margin-top: 6px;
+  font-family: "IBM Plex Mono", Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.dayfact .fc b {
+  font-weight: 600;
+}
+
+.dayfact .fc .sep {
+  color: var(--ink-hair);
+  padding: 0 6px;
 }
 
 .lbhead {
