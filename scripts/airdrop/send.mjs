@@ -4,6 +4,7 @@
  *   node scripts/airdrop/send.mjs                 # dry run, prints the plan
  *   node scripts/airdrop/send.mjs --execute       # actually sends
  *   node scripts/airdrop/send.mjs --execute --resume
+ *   node scripts/airdrop/send.mjs --label wave2   # a later wave, own files
  *
  * Discipline borrowed from the treasury that pays the app's claims, because
  * the failure that matters is the same one: never let the ledger say "not
@@ -27,7 +28,6 @@ import { privateKeyToAccount } from "viem/accounts";
 import { BYKO, nowIso, readJson, toCsv } from "./lib.mjs";
 
 const OUT_DIR = "website/data/experiments/airdrop";
-const JOURNAL = `${OUT_DIR}/airdrop-journal.jsonl`;
 const AMOUNT = "227";
 const CHAIN_ID = 8453;
 
@@ -35,6 +35,13 @@ const args = process.argv.slice(2);
 const execute = args.includes("--execute");
 const resume = args.includes("--resume");
 const limit = Number(valueOf("--limit") ?? 0);
+/* Each wave keeps its own cohort, journal and report. Sharing a journal
+   across waves would let wave 2 append to wave 1's record and overwrite the
+   report that documents it — the one file that must stay true forever. */
+const label = valueOf("--label") ?? null;
+const suffix = label ? `-${label}` : "";
+const COHORT = `${OUT_DIR}/cohort${suffix}.json`;
+const JOURNAL = `${OUT_DIR}/airdrop-journal${suffix}.jsonl`;
 
 function valueOf(flag) {
   const index = args.indexOf(flag);
@@ -83,8 +90,8 @@ function note(record) {
 }
 
 async function main() {
-  const cohort = readJson(`${OUT_DIR}/cohort.json`);
-  if (!cohort?.rows?.length) throw new Error("no cohort.json — run cohort.mjs first");
+  const cohort = readJson(COHORT);
+  if (!cohort?.rows?.length) throw new Error(`no ${COHORT} — run cohort.mjs first`);
 
   const key = process.env.AIRDROP_PRIVATE_KEY?.trim();
   if (!/^0x[0-9a-fA-F]{64}$/.test(key ?? "")) throw new Error("AIRDROP_PRIVATE_KEY missing or malformed");
@@ -115,6 +122,7 @@ async function main() {
 
   console.log(`sender     ${account.address}`);
   console.log(`chain      Base (${CHAIN_ID})`);
+  console.log(`wave       ${label ?? "1 (unlabelled)"} · cohort ${COHORT}`);
   console.log(`cohort     ${cohort.rows.length} wallets · already sent ${journal.size} · to send ${targets.length}`);
   console.log(`amount     ${AMOUNT} BYKO each · ${Number(needed) / 1e18} BYKO total`);
   console.log(`stock      ${Number(stock) / 1e18} BYKO`);
@@ -145,7 +153,7 @@ async function main() {
   let failed = 0;
 
   for (const [index, row] of targets.entries()) {
-    const label = `${String(index + 1).padStart(3)}/${targets.length} ${row.address}`;
+    const line = `${String(index + 1).padStart(3)}/${targets.length} ${row.address}`;
     try {
       const request = await wallet.prepareTransactionRequest({
         account, chain, to: token, nonce,
@@ -160,11 +168,11 @@ async function main() {
       await wallet.sendRawTransaction({ serializedTransaction: serialized });
       nonce += 1;
       sent += 1;
-      console.log(`${label}  ${hash}`);
+      console.log(`${line}  ${hash}`);
     } catch (error) {
       failed += 1;
       const message = String(error.shortMessage ?? error.message ?? error).split("\n")[0];
-      console.log(`${label}  FAILED: ${message}`);
+      console.log(`${line}  FAILED: ${message}`);
       note({ address: row.address, amount: Number(AMOUNT), tx_hash: null, error: message, sent_at: nowIso() });
       /* a stale nonce is the usual cause — resync and carry on */
       nonce = await reader.getTransactionCount({ address: account.address, blockTag: "pending" });
@@ -175,12 +183,12 @@ async function main() {
 
   /* the public record of the run */
   const all = [...readJournal().values()];
-  writeFileSync(`${OUT_DIR}/airdrop-sent.json`, JSON.stringify({
+  writeFileSync(`${OUT_DIR}/airdrop-sent${suffix}.json`, JSON.stringify({
     generated: nowIso(), sender: account.address, amount: Number(AMOUNT),
     cohort_size: cohort.rows.length, rows: all,
   }, null, 2) + "\n");
   writeFileSync(
-    `${OUT_DIR}/airdrop-sent.csv`,
+    `${OUT_DIR}/airdrop-sent${suffix}.csv`,
     toCsv(all, ["address", "amount", "tx_hash", "nonce", "sent_at", "error"]),
   );
 

@@ -26,6 +26,14 @@ const size = Number(valueOf("--size") ?? 227);
 const hours = Number(valueOf("--hours") ?? 24);
 /* a wallet with a handful of transactions is a wallet, not a burner */
 const MIN_NONCE = Number(valueOf("--min-nonce") ?? 5);
+/* Wave 1 called a $0.000011 transfer a "purchase". It is not: that is dust
+   through a bridge, not somebody buying something. The threshold says what
+   counts as a buy — it does not filter bots (measured: the share of automated
+   wallets is the same above and below any threshold), it filters noise. */
+const MIN_USDC = Number(valueOf("--min-usdc") ?? 0);
+/* wave 1's files document wave 1 — never overwrite them */
+const label = valueOf("--label") ?? null;
+const suffix = label ? `-${label}` : "";
 const CHUNK = Number(valueOf("--chunk") ?? 800);
 const BLOCKS_PER_HOUR = 1800; /* Base: ~2s blocks */
 
@@ -73,11 +81,13 @@ async function main() {
     for (const log of logs.reverse()) {
       const buyer = topicToAddress(log.topics[1]);
       if (seen.has(buyer)) continue;
+      const usdc = toUnits(log.data, 6);
+      if (usdc < MIN_USDC) continue;
       seen.set(buyer, {
         address: buyer,
         buy_tx: log.transactionHash,
         buy_block: Number(hexToBig(log.blockNumber)),
-        usdc: toUnits(log.data, 6),
+        usdc,
         venue: DEX_SINKS[topicToAddress(log.topics[2])] ?? "unknown",
       });
     }
@@ -89,7 +99,10 @@ async function main() {
 
   const funnel = [];
   let pool = [...seen.values()];
-  funnel.push({ step: "unique buyers in window", after: pool.length });
+  funnel.push({
+    step: MIN_USDC > 0 ? `unique buyers in window spending >= $${MIN_USDC}` : "unique buyers in window",
+    after: pool.length,
+  });
 
   pool = pool.filter((row) => !project.has(row.address));
   funnel.push({ step: "not a project wallet", after: pool.length });
@@ -166,7 +179,9 @@ async function main() {
   const cohort = {
     generated: startedAt,
     finished: nowIso(),
+    label,
     window: { from_block: scannedTo, to_block: latest, hours },
+    min_usdc: MIN_USDC,
     size: rows.length,
     requested: size,
     filters: funnel,
@@ -174,9 +189,9 @@ async function main() {
     rows,
     rpc: rpcStats(),
   };
-  writeFileSync(`${OUT_DIR}/cohort.json`, JSON.stringify(cohort, null, 2) + "\n");
+  writeFileSync(`${OUT_DIR}/cohort${suffix}.json`, JSON.stringify(cohort, null, 2) + "\n");
   writeFileSync(
-    `${OUT_DIR}/cohort.csv`,
+    `${OUT_DIR}/cohort${suffix}.csv`,
     toCsv(rows, ["rank", "address", "wallet", "buy_tx", "buy_block", "usdc", "venue", "nonce", "eth"]),
   );
 
@@ -192,19 +207,26 @@ async function main() {
     "| --- | ---: | --- |",
     ...funnel.map((f) => `| ${f.step} | ${f.after} | ${f.note ?? ""} |`),
     "",
-    "A wallet qualifies if it spent USDC at a DEX in the window, is an ordinary EOA,",
-    `has at least ${MIN_NONCE} transactions and some ETH, and holds no BYKO. The list is`,
-    "sorted by the most recent qualifying purchase and cut to size.",
+    `A wallet qualifies if it spent ${MIN_USDC > 0 ? `at least $${MIN_USDC} of ` : ""}USDC at a DEX in the window,`,
+    `is an ordinary EOA, has at least ${MIN_NONCE} transactions and some ETH, and holds no`,
+    "BYKO. The list is sorted by the most recent qualifying purchase and cut to size.",
+    ...(MIN_USDC > 0 ? ["",
+      `The $${MIN_USDC} threshold is about what counts as a purchase, not about bots.`,
+      "Wave 1 had no threshold and let in trades as small as $0.000011 — dust through",
+      "a bridge. Transaction-rate profiling of wave 1 found the share of automated",
+      "wallets to be the same above and below every threshold, so this filter buys",
+      "honesty in the word \"buyer\", nothing more.",
+    ] : []),
     "",
     "Nobody in this list asked for anything.",
     "",
   ].join("\n");
-  writeFileSync(`${OUT_DIR}/cohort-method.md`, method);
+  writeFileSync(`${OUT_DIR}/cohort-method${suffix}.md`, method);
 
   console.log(`\ncohort: ${rows.length} wallets`);
   funnel.forEach((f) => console.log(`  ${String(f.after).padStart(5)}  ${f.step}${f.note ? " — " + f.note : ""}`));
   console.log(`\nrpc calls: ${rpcStats().calls}`);
-  console.log(`written: ${OUT_DIR}/cohort.json, cohort.csv, cohort-method.md`);
+  console.log(`written: ${OUT_DIR}/cohort${suffix}.json, cohort${suffix}.csv, cohort-method${suffix}.md`);
   console.log("\nfirst 10:");
   rows.slice(0, 10).forEach((row) =>
     console.log(`  ${String(row.rank).padStart(3)}  ${row.address}  $${row.usdc.toFixed(2).padStart(9)}  ${row.venue}`));
