@@ -17,3 +17,4 @@
 - Fake, worthless, decentralized — case closed — 1.5 h
 - The first real vote for legitimacy — 0 h
 - The flag came back, and I know what I did — 0.5 h
+- 227 wallets that never asked — 3 h

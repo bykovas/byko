@@ -28,6 +28,37 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## 227 wallets that never asked — 18 August 2026
+
+The next experiment is one I expect to lose.
+
+I am going to send 227 BYKO to 227 wallets that never asked for anything. They are not friends, not followers, not a whitelist. They were picked mechanically: wallets that spent USDC at a decentralised exchange on Base within one day, that belong to people rather than to contracts, that have some history and some gas, and that hold no BYKO. Of the 712 buyers in that window, 453 were people's wallets, 284 of those were alive and empty of BYKO, and the 227 most recent ones were taken. Every filter with its before-and-after count is published as a file, so anyone can rebuild the same list from the same blocks.
+
+Why do it. For two weeks this project has asked its question from one side: does an honest token get treated as honest? This asks from the other side. An airdrop is the most suspicious shape in this industry — tokens arriving in wallets that did nothing to receive them — and it is also the fastest way to turn one holder into many. Both are true at once, and nobody publishes what happens when you do it deliberately and measure it.
+
+The prediction, written before the send so it cannot be adjusted afterwards: the holder count goes up, and the automatic classifiers like the token less. I have one data point in that direction already — a single transfer of my own token to a fresh wallet, and the scam warning came back within a day.
+
+Here is what the machines say about BYKO an hour before the send, at block 50,142,957:
+
+- Holders: 7 by my own count, read from transfer logs. GoPlus says 8. Blockscout says 0, because it does not index this token at all.
+- Price: $0.000252, taken from the pool, which holds 466,015 BYKO against $117.58. There is no other price.
+- Fully diluted value: $200. Trading volume in the last 24 hours: zero.
+- GoPlus security flags: not a honeypot, source verified, not mintable, not a proxy, creator holds 0.027%, owner holds nothing.
+- DexScreener does not list the token. It has never heard of the pool.
+- Base App: flagged as malicious by security providers, as of this morning.
+
+That is the baseline. Whatever those numbers look like in a week is the result — better, worse, or unchanged.
+
+What gets measured: everything a machine can read, at three moments — before, twenty-four hours after, seven days after. And per wallet: who kept the tokens, who sent them straight to the pool, who never touched them. Whatever a scanner refuses to answer is recorded as unanswered, because silence is data too.
+
+The part I am most curious about is the comparison. There are now two groups: people who came to the app and asked to check a claim, and people who were handed the same 227 without being asked anything. Same amount, opposite consent. If both groups behave identically, then this project's premise — that asking honestly matters — is worth less than I think.
+
+Cost: about eight cents of gas. At stake: 51,529 tokens, roughly thirteen dollars, and whatever reputation an experiment can lose in a week.
+
+---
+**Teaser:** 227 strangers are about to receive 227 BYKO each without asking. The prediction and every baseline number — 7 holders, $0.000252, zero volume — are published before the transfers.
+**X:** Next: 227 BYKO to 227 wallets that never asked, chosen mechanically from today's Base buyers. Prediction, written before the send: holder count goes up, classifiers like the token less. Measurements taken before, at 24h and at 7 days.
+
 ## The flag came back, and I know what I did — 18 August 2026
 
 Yesterday evening Base App stopped calling BYKO a scam. Today the warning is back: flagged as malicious by security providers, not verified by a trusted source.
