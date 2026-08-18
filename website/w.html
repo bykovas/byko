@@ -32,6 +32,8 @@ tbody tr.total td{border-top:var(--byko-rule-heavy);border-bottom:0;color:var(--
 td.addr a{font:var(--byko-data);color:var(--byko-label)}
 td.addr a:hover{color:var(--byko-ink)}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
+tbody tr.watched td{color:var(--byko-label)}
+tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
 </style>
 </head>
 <body>
@@ -61,7 +63,7 @@ td.addr a:hover{color:var(--byko-ink)}
     </table>
   </div>
 
-  <p class="note">Balances are read live from Base, one batched JSON-RPC call, straight from the token contracts — no indexer, no aggregator in between. Nothing is stored here; the page holds no keys and cannot move anything.</p>
+  <p class="note">Balances are read live from Base, one batched JSON-RPC call, straight from the token contracts — no indexer, no aggregator in between. The numbered rows are the project's own wallets, taken from the same register the tally reads; the dim ones marked <em>not mine</em> belong to other people and are shown but never added to the total — one of them is the only wallet that has voted. Nothing is stored here; the page holds no keys and cannot move anything.</p>
 </main>
 
 <script>
@@ -85,10 +87,18 @@ td.addr a:hover{color:var(--byko-ink)}
     { key: "byko", address: "0x078bB16e24c8931fc007928c370422e5e38F4372", decimals: 18 }
   ];
 
-  /* The wallets come from data/founder-wallets.json — the same file the tally
-     endpoint and the home-page register read. One list, one place: a wallet
-     added there shows up here without touching this page. */
+  /* The project's own wallets come from data/founder-wallets.json — the same
+     file the tally endpoint and the home-page register read. One list, one
+     place: a wallet added there shows up here without touching this page. */
   var WALLETS = [];
+
+  /* Wallets worth watching that are NOT the project's. They must never enter
+     founder-wallets.json: that file is what the tally excludes from the vote,
+     and LUKAS is the one address that has actually voted. Kept here, shown
+     apart, counted apart. */
+  var WATCHED = [
+    { name: "LUKAS", by: "Kraken", address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF", watched: true }
+  ];
 
   var BALANCE_OF = "0x70a08231";
   var COLUMNS = ["eth", "usdc", "luko", "byko"];
@@ -130,9 +140,14 @@ td.addr a:hover{color:var(--byko-ink)}
     body.textContent = "";
     var totals = { eth: 0, usdc: 0, luko: 0, byko: 0 };
 
+    var mine = 0;
     WALLETS.forEach(function (wallet, index) {
       var row = document.createElement("tr");
-      [["l", String(index + 1)], ["l name", wallet.name], ["l", wallet.by]].forEach(function (pair) {
+      if (wallet.watched) row.className = "watched";
+      if (!wallet.watched) mine += 1;
+      [["l", wallet.watched ? "·" : String(mine)],
+       ["l name", wallet.name],
+       ["l", wallet.watched ? wallet.by + " · not mine" : wallet.by]].forEach(function (pair) {
         var td = document.createElement("td");
         td.className = pair[0];
         td.textContent = pair[1];
@@ -141,7 +156,8 @@ td.addr a:hover{color:var(--byko-ink)}
       COLUMNS.forEach(function (key) {
         var amount = balances ? balances[wallet.address.toLowerCase()][key] : null;
         cell(row, amount, key === "byko" ? "hot" : "");
-        if (amount) totals[key] += amount;
+        /* watched wallets are shown, never counted as the project's */
+        if (amount && !wallet.watched) totals[key] += amount;
       });
       var addr = document.createElement("td");
       addr.className = "l addr";
@@ -160,7 +176,7 @@ td.addr a:hover{color:var(--byko-ink)}
     var label = document.createElement("td");
     label.className = "l";
     label.colSpan = 3;
-    label.textContent = "total · " + WALLETS.length + " wallets";
+    label.textContent = "total · " + mine + " wallets · watched excluded";
     total.appendChild(label);
     COLUMNS.forEach(function (key) {
       cell(total, balances ? totals[key] : null, key === "byko" ? "hot" : "");
@@ -211,7 +227,7 @@ td.addr a:hover{color:var(--byko-ink)}
             by: wallet.funded_by || "—",
             address: wallet.address,
           };
-        });
+        }).concat(WATCHED);
       });
   }
 
