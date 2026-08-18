@@ -19,6 +19,7 @@ import { me } from "./routes/me";
 import { profile } from "./routes/profile";
 import { advance } from "./routes/advance";
 import { ledger } from "./routes/ledger";
+import { reconcile } from "./routes/reconcile";
 import { webhook } from "./routes/webhook";
 
 import { FidLock as TreasuryDO } from "./do/fid-lock";
@@ -45,6 +46,7 @@ const routes: Record<string, Handler> = {
   "/api/profile": profile,
   "/api/advance": advance,
   "/api/ledger": ledger,
+  "/api/reconcile": reconcile,
   "/api/webhook": webhook,
 };
 
