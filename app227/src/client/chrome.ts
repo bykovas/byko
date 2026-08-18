@@ -37,9 +37,7 @@ export function buildMark(className = "disc"): HTMLElement {
 export function buildCoin(className = "av"): HTMLElement {
   const wrap = element("span", className);
   const svg = svgElement("svg", { viewBox: "0 0 32 32", "aria-hidden": "true" });
-  /* #7CCBFF is the coin's own color from assets/coin.svg — the one deliberate
-     non-token color: the coin is an artifact, not UI. */
-  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "#7CCBFF" }));
+  svg.append(svgElement("circle", { cx: "16", cy: "16", r: "16", fill: "var(--coin)" }));
   const group = svgElement("g", {
     transform: "translate(2.1875 1.25) scale(.3125)",
     fill: "none",

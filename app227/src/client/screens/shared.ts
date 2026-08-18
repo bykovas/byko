@@ -23,6 +23,8 @@ export function buildShell(
 export interface IntroOptions {
   ghost?: string;
   ghostStyle?: Partial<CSSStyleDeclaration>;
+  /* 3C: the 128px coin above the headline on the money screens */
+  coin?: boolean;
   headline: string;
   headlineHtml?: string[];
   headlineSize?: string;
@@ -41,6 +43,7 @@ export function buildIntro(options: IntroOptions): HTMLElement {
   }
 
   const content = element("div", "z");
+  if (options.coin) content.append(buildCoin("coin"));
   const headline = element("div", "big");
   if (options.headlineSize) headline.style.fontSize = options.headlineSize;
   if (options.headlineHtml) {
@@ -72,7 +75,7 @@ export function buildProfilePlate(sent = false): HTMLElement {
   append(profile, buildCoin(), identity);
 
   const value = element("div", "vrow");
-  value.append(element("span", "v", sent ? "227 BYKO sent" : "227 BYKO"));
+  value.append(element("span", "v live", sent ? "227 BYKO sent" : "227 BYKO"));
   if (sent) {
     const transaction = element("a", "r paid-link", "tx 0x72a4…91f ↗");
     transaction.href = "#";

@@ -9,6 +9,7 @@ export function paid(): HTMLElement {
     buildIntro({
       ghost: "227",
       ghostStyle: { right: "-8px", top: "24px", fontSize: "200px" },
+      coin: true,
       headline: "It's yours.",
       subline: "Nothing is owed back.",
       extra: buildProfilePlate(true),

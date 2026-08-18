@@ -10,6 +10,7 @@ export function claim(): HTMLElement {
     buildIntro({
       ghost: "227",
       ghostStyle: { right: "-8px", top: "24px", fontSize: "200px" },
+      coin: true,
       headline: "Take it now.",
       subline: "Before anything is asked of you.",
       extra: buildProfilePlate(),
