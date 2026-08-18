@@ -60,7 +60,7 @@ td a:hover{color:var(--byko-ink)}
           <th class="l">Reader</th>
           <th>BYKO</th>
           <th class="l">Status</th>
-          <th class="l">Date</th>
+          <th class="l">When · LT</th>
           <th class="l">To</th>
           <th class="l">Transaction</th>
         </tr>
@@ -79,7 +79,7 @@ td a:hover{color:var(--byko-ink)}
           <th class="l">Reader</th>
           <th class="l">Claim</th>
           <th class="l">Verdict</th>
-          <th class="l">Date</th>
+          <th class="l">When · LT</th>
           <th class="l">Argument</th>
         </tr>
       </thead>
@@ -108,6 +108,18 @@ td a:hover{color:var(--byko-ink)}
   function short(value) {
     if (!value) return "–";
     return value.slice(0, 6) + "…" + value.slice(-4);
+  }
+
+  /* D1 stamps UTC ("YYYY-MM-DD HH:MM:SS"); the ledger reads in Vilnius time */
+  function when(stamp) {
+    if (!stamp) return "–";
+    var date = new Date(stamp.replace(" ", "T") + (/[Zz]|[+-]\d\d:?\d\d$/.test(stamp) ? "" : "Z"));
+    if (isNaN(date)) return stamp;
+    return date.toLocaleString("lt-LT", {
+      timeZone: "Europe/Vilnius",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit",
+    });
   }
 
   function card(key, value, hot) {
@@ -144,7 +156,7 @@ td a:hover{color:var(--byko-ink)}
       tr.appendChild(el("td", "l name", row.handle));
       tr.appendChild(el("td", "hot", row.amount.toLocaleString("en-US")));
       tr.appendChild(el("td", "l" + (row.status === "confirmed" ? "" : " dim"), row.status));
-      tr.appendChild(el("td", "l dim", row.advance_date));
+      tr.appendChild(el("td", "l dim", when(row.confirmed_at || row.created_at)));
       var to = el("td", "l");
       to.appendChild(link("https://basescan.org/address/" + row.address, short(row.address)));
       tr.appendChild(to);
@@ -164,14 +176,14 @@ td a:hover{color:var(--byko-ink)}
       tr.appendChild(el("td", "l name", row.handle));
       tr.appendChild(el("td", "l dim", row.claim_id));
       tr.appendChild(el("td", "l", VERDICTS[row.verdict] || row.verdict));
-      tr.appendChild(el("td", "l dim", row.answer_date));
+      tr.appendChild(el("td", "l dim", when(row.created_at)));
       tr.appendChild(el("td", "l wrap", row.argument || "–"));
       ans.appendChild(tr);
     });
     document.getElementById("ans-empty").hidden = data.answers.length > 0;
 
     document.getElementById("meta").textContent =
-      new Date(data.generated).toLocaleString() + " · live from the worker";
+      when(data.generated) + " · Vilnius · live from the worker";
   }
 
   function load() {
