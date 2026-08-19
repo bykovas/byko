@@ -26,7 +26,7 @@ export interface Rules {
   strategy: {
     interval_minutes: [number, number];
     trade_usdc: [number, number];
-    pivot_usdc: number;
+    band_usdc: [number, number];
     seed_usdc: number;
     slippage_bps: number;
   };

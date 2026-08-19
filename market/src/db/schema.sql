@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS wallet_state (
   halted        INTEGER NOT NULL DEFAULT 0,
   halt_reason   TEXT,
   usdc_balance  TEXT,
+  direction     TEXT,                 -- last side taken; the band keeps it until a bound is crossed
   token_balance TEXT,
   updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );

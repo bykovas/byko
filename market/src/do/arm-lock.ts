@@ -125,7 +125,7 @@ export class ArmLock {
     const token = getAddress(r.token.toLowerCase());
     const quote = getAddress(RULES.venue.quote.toLowerCase());
     const router = getAddress(RULES.venue.router.toLowerCase());
-    const pivot = RULES.strategy.pivot_usdc;
+    const [lower, upper] = RULES.strategy.band_usdc;
 
     /* read state */
     const [usdcBal, tokenBal, gas, reserves] = await Promise.all([
@@ -193,8 +193,21 @@ export class ArmLock {
       return;
     }
 
-    /* --- decide the trade --- */
-    const side: "buy" | "sell" = usdcWhole < pivot ? "sell" : "buy";
+    /* --- decide the trade ---
+       Hysteresis, not a pivot. A single threshold makes every trade near it
+       reverse direction, so the wallet alternates buy/sell/buy/sell like a
+       metronome — the most machine-shaped pattern available. A band keeps the
+       current direction until the balance leaves it, which gives runs of one
+       to three trades the same way an ordinary trader's day does. */
+    const prev = await env.DB.prepare(
+      `SELECT direction FROM wallet_state WHERE address = ?1`,
+    ).bind(r.wallet).first<string>("direction");
+    let side: "buy" | "sell" = prev === "sell" ? "sell" : "buy";
+    if (usdcWhole > upper) side = "buy";
+    else if (usdcWhole < lower) side = "sell";
+    await env.DB.prepare(
+      `UPDATE wallet_state SET direction = ?2 WHERE address = ?1`,
+    ).bind(r.wallet, side).run();
     const size = uniform(RULES.strategy.trade_usdc[0], RULES.strategy.trade_usdc[1]);
 
     let inputToken: Address;

@@ -73,7 +73,7 @@
      arm panels, every source row, one trade line and one log line. */
   function renderSkeleton() {
     var rules = $("rules"); rules.textContent = "";
-    ["declared", "interval", "size", "pivot", "slip", "hash", "switch", "commit"].forEach(function (k) {
+    ["declared", "interval", "size", "band", "slip", "hash", "switch", "commit"].forEach(function (k) {
       var span = el("span");
       span.appendChild(document.createTextNode(k + " "));
       span.appendChild(dash());
@@ -155,7 +155,7 @@
       ["declared", data.rules.declared_at],
       ["interval", s.interval_minutes[0] + "–" + s.interval_minutes[1] + "m"],
       ["size", "$" + s.trade_usdc[0] + "–$" + s.trade_usdc[1]],
-      ["pivot", "$" + s.pivot_usdc],
+      ["band", "$" + s.band_usdc[0] + "–$" + s.band_usdc[1]],
       ["slip", (s.slippage_bps / 100) + "%"],
       ["hash", data.rules.hash_ok ? "verified" : "MISMATCH"],
       ["switch", data.market_open ? "open" : "closed"],
