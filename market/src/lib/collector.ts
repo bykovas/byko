@@ -71,7 +71,12 @@ function nodeList(env: Env): string[] {
     .filter((u, i, all) => all.indexOf(u) === i);
 }
 
-async function rpcCall(env: Env, payload: unknown): Promise<unknown> {
+/* A node can answer HTTP 200 and still have refused: DRPC's free plan returns a
+   well-formed JSON-RPC array whose every element carries "Batch of more than 3
+   requests are not allowed". Accepting that as a reply is how a refusal turns
+   into a statistic, so the caller supplies a validator and a response that
+   fails it moves us to the next node instead of being believed. */
+async function rpcCall(env: Env, payload: unknown, valid: (body: unknown) => boolean): Promise<unknown> {
   let last: unknown = null;
   for (const url of nodeList(env)) {
     try {
@@ -80,36 +85,49 @@ async function rpcCall(env: Env, payload: unknown): Promise<unknown> {
         body: JSON.stringify(payload), signal: AbortSignal.timeout(10_000),
       });
       if (!res.ok) throw new Error(`http ${res.status}`);
-      return await res.json();
+      const body = await res.json();
+      if (!valid(body)) throw new Error("node refused the call");
+      return body;
     } catch (err) { last = err; }
   }
   throw last instanceof Error ? last : new Error("no node answered");
 }
 
+const WORD = 66;   /* "0x" + 32 bytes: the width of any uint256 answer */
+const isWord = (v: unknown): v is string => typeof v === "string" && v.length >= WORD;
+
 async function ethCall(env: Env, to: string, data: string): Promise<string> {
-  const body = await rpcCall(env, {
-    jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"],
-  }) as { result?: string; error?: { message?: string } };
-  if (body.error) throw new Error(body.error.message ?? "eth_call failed");
-  if (typeof body.result !== "string") throw new Error("eth_call: no result");
+  const body = await rpcCall(env,
+    { jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"] },
+    (b) => isWord((b as { result?: unknown }).result),
+  ) as { result: string };
   return body.result;
 }
 
 /* One HTTP round trip for many reads. Thirteen register wallets per arm as
    thirteen separate requests is what exhausted the keyed node in the first
    place. */
+/* DRPC's free plan caps a batch at three calls, so the register's fourteen
+   reads go out in chunks of three rather than as one rejected block. Still five
+   round trips instead of fourteen, and every chunk is validated before it is
+   believed. */
+const BATCH_MAX = 3;
+
 async function ethCallBatch(env: Env, calls: Array<{ to: string; data: string }>): Promise<string[]> {
-  if (!calls.length) return [];
-  const payload = calls.map((c, i) => ({
-    jsonrpc: "2.0", id: i, method: "eth_call", params: [{ to: c.to, data: c.data }, "latest"],
-  }));
-  const body = await rpcCall(env, payload);
-  if (!Array.isArray(body)) throw new Error("batch: not an array");
-  const out = new Array<string>(calls.length).fill("");
-  for (const item of body as Array<{ id: number; result?: string }>) {
-    if (typeof item.result === "string") out[item.id] = item.result;
+  const out: string[] = [];
+  for (let i = 0; i < calls.length; i += BATCH_MAX) {
+    const chunk = calls.slice(i, i + BATCH_MAX);
+    const payload = chunk.map((c, k) => ({
+      jsonrpc: "2.0", id: k, method: "eth_call", params: [{ to: c.to, data: c.data }, "latest"],
+    }));
+    const body = await rpcCall(env, payload, (b) =>
+      Array.isArray(b) && b.length === chunk.length &&
+      (b as Array<{ result?: unknown }>).every((x) => isWord(x.result))) as Array<{ id: number; result: string }>;
+    const slot = new Array<string>(chunk.length).fill("");
+    for (const item of body) slot[item.id] = item.result;
+    if (slot.some((x) => !x)) throw new Error("batch: missing id in response");
+    out.push(...slot);
   }
-  if (out.some((x) => x === "")) throw new Error("batch: incomplete");
   return out;
 }
 
