@@ -32,7 +32,12 @@ aside.quoted{border-left:var(--byko-rule-section);padding-left:18px}
 aside.quoted .kicker{display:block;margin-bottom:8px}
 aside.quoted ul{margin:0;padding-left:16px;font:400 14.5px/1.5 var(--byko-font-sans);color:var(--byko-ink-2)}
 aside.quoted li{margin-top:8px}
-.rules{display:flex;flex-wrap:wrap;gap:0 26px;margin-top:16px;font:var(--byko-data);color:var(--byko-label)}
+/* one line, always: the strip is a header of facts, and a wrapped header
+   reads as two thoughts. Labels are short enough that the whole band fits the
+   1120px page; if a narrow window cannot take it, it scrolls rather than folds. */
+.rules{display:flex;flex-wrap:nowrap;gap:0 18px;margin-top:16px;overflow-x:auto;
+  font:var(--byko-data);color:var(--byko-label);white-space:nowrap}
+.rules span{flex:0 0 auto}
 .rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
 .arms{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:24px;border-top:var(--byko-rule-heavy)}
 .arm{padding:14px 20px 16px 0}
@@ -77,19 +82,12 @@ td a:hover{color:var(--byko-ink)}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
 .empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
 /* Loading: the labels are known before the answer is, so they are drawn at
-   once and only the values wait. The wait is a dash running inside its own
-   cell — no fading, which the system does not allow for text. Each element is
-   given a negative delay so it starts mid-cycle; without that, a page full of
-   them beats in unison and reads as a wave rather than as many small waits. */
-.load{display:inline-block;position:relative;width:46px;height:1em;
-  vertical-align:middle;overflow:hidden}
-.load::before{content:"–";position:absolute;top:0;left:0;
-  font-family:var(--byko-font-mono);color:var(--byko-label);
-  animation:runDash 1.6s linear infinite;animation-delay:var(--phase,0s)}
-@keyframes runDash{0%{left:0}50%{left:calc(100% - .6em)}100%{left:0}}
-td .load{width:64px}
-.arm dd .load{width:54px}
-@media (prefers-reduced-motion:reduce){.load::before{animation:none;left:0}}
+   once and only the values wait. A waiting value is three monospace cells with
+   a dash moving between them — "-  ", " - ", "  -" — which occupies exactly the
+   width of what it stands in for. No fading: the system does not allow opacity
+   on text. Each element starts on a different frame, so a page of them does not
+   beat in unison and read as one wave crossing the screen. */
+.load{font-family:var(--byko-font-mono);color:var(--byko-label);white-space:pre}
 
 @media (max-width:900px){.disclose-grid{grid-template-columns:1fr;gap:26px}
   aside.quoted{border-left:0;padding-left:0;border-top:var(--byko-rule-hair);padding-top:14px}}
@@ -155,10 +153,16 @@ td .load{width:64px}
   </div>
   <p class="note" id="unmeasured" style="margin-top:14px;padding-top:0;border-top:0"></p>
 
-  <h2 class="sec">Trades<span class="n" id="trades-n"></span></h2>
-  <div class="scroll"><table id="trades"><thead><tr>
-    <th class="l">#</th><th class="l">UTC</th><th class="l">arm</th><th class="l">side</th>
-    <th>USDC</th><th>token</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  <h2 class="sec">Trades — BYKO<span class="n" id="trades-n-byko"></span></h2>
+  <div class="scroll"><table id="trades-byko"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
+    <th>USDC</th><th>BYKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <h2 class="sec">Trades — LUKO<span class="n" id="trades-n-luko"></span></h2>
+  <div class="scroll"><table id="trades-luko"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
+    <th>USDC</th><th>LUKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
   </tr></thead><tbody></tbody></table></div>
 
   <p class="note" id="scope" style="margin-top:12px;padding-top:0;border-top:0"></p>
@@ -187,6 +191,6 @@ td .load{width:64px}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260819e"></script>
+<script src="market-self.js?v=20260819f"></script>
 </body>
 </html>

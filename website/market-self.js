@@ -16,12 +16,27 @@
   }
   function short(h) { return h ? h.slice(0, 6) + "…" + h.slice(-4) : "—"; }
 
-  /* A value we have asked for but not yet received. Each one starts at a
-     random point in the cycle: identical phases would make the whole page
-     pulse together, which reads as one wave instead of many small waits. */
+  /* A value asked for but not yet received: three monospace cells with the dash
+     stepping between them. One shared ticker drives every placeholder, and each
+     starts on a random frame — identical phases would make the whole page beat
+     in unison and read as one wave rather than many small independent waits. */
+  var FRAMES = ["-  ", " - ", "  -"];
+  var loaders = [];
+  var tick = 0;
+  setInterval(function () {
+    tick += 1;
+    for (var i = 0; i < loaders.length; i++) {
+      var n = loaders[i];
+      if (!n.isConnected) { loaders.splice(i, 1); i -= 1; continue; }
+      n.textContent = FRAMES[(tick + n._phase) % FRAMES.length];
+    }
+  }, 420);
+
   function dash() {
     var n = el("span", "load");
-    n.style.setProperty("--phase", (-Math.random() * 1.6).toFixed(2) + "s");
+    n._phase = Math.floor(Math.random() * FRAMES.length);
+    n.textContent = FRAMES[n._phase];
+    loaders.push(n);
     return n;
   }
   function cellDash(cls) {
@@ -49,7 +64,7 @@
      arm panels, every source row, one trade line and one log line. */
   function renderSkeleton() {
     var rules = $("rules"); rules.textContent = "";
-    ["declared", "interval", "size", "pivot", "slippage", "hash", "kill switch"].forEach(function (k) {
+    ["declared", "interval", "size", "pivot", "slip", "hash", "switch", "commit"].forEach(function (k) {
       var span = el("span");
       span.appendChild(document.createTextNode(k + " "));
       span.appendChild(dash());
@@ -67,6 +82,7 @@
         var dd = el("dd"); dd.appendChild(dash()); dl.appendChild(dd);
       });
       box.appendChild(dl);
+      if (KEEPER_ARMS.indexOf(pair[0]) >= 0) box.appendChild(objection(pair[0], null, null));
       wrap.appendChild(box);
     });
 
@@ -93,11 +109,15 @@
       });
     });
 
-    var tb = $("trades").querySelector("tbody");
-    tb.textContent = "";
-    var tr = el("tr");
-    for (var i = 0; i < 11; i++) tr.appendChild(cellDash(i < 4 ? "l" : "mono"));
-    tb.appendChild(tr);
+    ARM_LABELS.forEach(function (pair) {
+      var t = $("trades-" + pair[0]);
+      if (!t) return;
+      var tb = t.querySelector("tbody");
+      tb.textContent = "";
+      var tr = el("tr");
+      for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i < 3 ? "l" : "mono"));
+      tb.appendChild(tr);
+    });
 
     var log = $("events"); log.textContent = "";
     var line = el("div");
@@ -123,12 +143,12 @@
     var s = data.rules.strategy, v = data.rules.venue;
     var bits = [
       ["declared", data.rules.declared_at],
-      ["interval", s.interval_minutes[0] + "–" + s.interval_minutes[1] + " min"],
+      ["interval", s.interval_minutes[0] + "–" + s.interval_minutes[1] + "m"],
       ["size", "$" + s.trade_usdc[0] + "–$" + s.trade_usdc[1]],
       ["pivot", "$" + s.pivot_usdc],
-      ["slippage", (s.slippage_bps / 100) + "%"],
+      ["slip", (s.slippage_bps / 100) + "%"],
       ["hash", data.rules.hash_ok ? "verified" : "MISMATCH"],
-      ["kill switch", data.market_open ? "open" : "closed"],
+      ["switch", data.market_open ? "open" : "closed"],
     ];
     bits.forEach(function (b) {
       var span = el("span");
@@ -138,9 +158,8 @@
     });
     if (data.rules.git_commit) {
       var a = el("span");
-      a.appendChild(document.createTextNode("rules commit "));
-      var link = el("b", null, data.rules.git_commit.slice(0, 10));
-      a.appendChild(link);
+      a.appendChild(document.createTextNode("commit "));
+      a.appendChild(el("b", null, data.rules.git_commit.slice(0, 8)));
       box.appendChild(a);
     }
   }
@@ -177,14 +196,33 @@
         box.appendChild(el("div", "st",
           "Not measured: price and LP are read from the chain, nothing is asked of any classifier, so the market fields stay empty rather than guessed."));
       }
-      if (keeper && keeper.length === 2 && Number(keeper[1]) > 0) {
-        box.appendChild(el("div", "warn",
-          "The strongest objection to this arm, stated by us: " + arm.id.toUpperCase() +
-          "'s liquidity is NOT burned. " + keeper[1] + "% of its LP tokens sit in " + keeper[0].slice(0, 10) +
-          "…, a founder wallet, and can be withdrawn at any moment — unlike BYKO's, which is 100% at 0x…dEaD and gone forever. Both figures are read live so anyone can watch that it stays untouched."));
+      if (KEEPER_ARMS.indexOf(arm.id) >= 0) {
+        box.appendChild(objection(arm.id,
+          keeper && keeper.length === 2 ? keeper[1] : null,
+          keeper && keeper.length === 2 ? keeper[0] : null));
       }
       wrap.appendChild(box);
     });
+  }
+
+  /* Arms whose liquidity is NOT burned. The sentence below never changes — it
+     is a standing disclosure, not a reading — so it is printed the moment the
+     page opens and only the two figures inside it wait for the chain. */
+  var KEEPER_ARMS = ["luko"];
+
+  function objection(armId, pct, addr) {
+    var box = el("div", "warn");
+    box.appendChild(document.createTextNode(
+      "The strongest objection to this arm, stated by us: " + armId.toUpperCase() +
+      "'s liquidity is NOT burned. "));
+    if (pct === null) box.appendChild(dash()); else box.appendChild(document.createTextNode(pct + "%"));
+    box.appendChild(document.createTextNode(" of its LP tokens sit in "));
+    if (addr === null) box.appendChild(dash());
+    else box.appendChild(document.createTextNode(addr.slice(0, 10) + "…"));
+    box.appendChild(document.createTextNode(
+      ", a founder wallet, and can be withdrawn at any moment — unlike BYKO's, which is 100% at " +
+      "0x…dEaD and gone forever. Both figures are read live so anyone can watch that it stays untouched."));
+    return box;
   }
 
   function renderChecks(data) {
@@ -256,7 +294,6 @@
       var tr = el("tr");
       tr.appendChild(el("td", "l mono", "—"));
       tr.appendChild(el("td", "l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19)));
-      tr.appendChild(el("td", "l", a.id));
       for (var i = 0; i < 6; i++) tr.appendChild(cellDash(i === 0 ? "l" : "mono"));
       var stat = el("td", "l");
       stat.appendChild(el("span", "pill", "waiting"));
@@ -267,14 +304,24 @@
   }
 
   function renderTrades(data) {
-    var tbody = $("trades").querySelector("tbody");
+    /* One table per arm: a single mixed ledger made the reader check the arm
+       column on every row to know which token a number belonged to. */
+    (data.arms || []).forEach(function (a) { renderArmTrades(data, a.id); });
+  }
+
+  function renderArmTrades(data, armId) {
+    var table = $("trades-" + armId);
+    if (!table) return;
+    var tbody = table.querySelector("tbody");
     tbody.textContent = "";
-    var rows = data.trades || [];
-    $("trades-n").textContent = rows.length + (rows.length === 1 ? " done" : " done");
-    waitingRows(data, tbody);
+    var rows = (data.trades || []).filter(function (t) { return t.arm === armId; });
+    var counter = $("trades-n-" + armId);
+    if (counter) counter.textContent = rows.length + " done";
+    var arm = (data.arms || []).filter(function (a) { return a.id === armId; })[0];
+    if (arm) waitingRows({ arms: [arm] }, tbody);
     if (!rows.length) {
       var tr = el("tr");
-      var td = el("td", "l"); td.colSpan = 11;
+      var td = el("td", "l"); td.colSpan = 10;
       td.appendChild(el("span", "empty", data.market_open
         ? "No trades yet — the first alarm has not fired."
         : "No trades yet. The parameters are pre-registered; trading begins only when the kill switch opens."));
@@ -289,7 +336,6 @@
       var tr = el("tr");
       tr.appendChild(el("td", "l mono", t.id));
       tr.appendChild(el("td", "l mono", (t.decided_at || "").replace("T", " ").slice(0, 19)));
-      tr.appendChild(el("td", "l", t.arm));
       tr.appendChild(el("td", "side " + (buy ? "buy" : "sell"), t.side));
       tr.appendChild(el("td", "mono", (buy ? "−" : "+") + n(usdcWhole, 4)));
       tr.appendChild(el("td", "mono", tok == null ? "—" : (buy ? "+" : "−") + n(tok, 0)));
