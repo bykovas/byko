@@ -1,5 +1,5 @@
 {
-  "note": "Pre-registered parameters for the disclosed self-trading experiment. AMENDED 19 Aug 2026 after five trades: a single pivot made every trade near it flip direction, so the wallet alternated buy/sell/buy/sell like a metronome. Replaced with a band — buy while the USDC balance falls, sell while it rises, reverse only at 10 and 20 — which produces runs of one to three trades in the same direction. The change is recorded as an event in the log and the rules hash changed with it, which is what the hash is for. This file is committed BEFORE the first trade; its canonical hash is written into the market D1 rules row, and the worker refuses to trade unless its bundled copy hashes to the same value. Changing anything here is a visible commit that the running worker will reject until the row is updated on purpose. See docs/drafts/wash-worker-blueprint.md and the diary entry that names this what it is: wash trading, disclosed.",
+  "note": "Pre-registered parameters for the disclosed self-trading experiment. AMENDED 19 Aug 2026 after five trades: a single pivot made every trade near it flip direction, so the wallet alternated buy/sell/buy/sell like a metronome. Replaced with a band — buy while the USDC balance falls, sell while it rises, reverse only at 10 and 20 — which produces runs of one to three trades in the same direction. seed_usdc was removed in the same amendment: it governed nothing in the worker and named a figure the wallets were never funded to. The band is self-funding — below the lower bound an arm sells tokens for USDC, above the upper it buys — so no arm ever needs topping up, and the only consumable is gas. Both changes are recorded as events in the log and the rules hash moved with them, which is what the hash is for. This file is committed BEFORE the first trade; its canonical hash is written into the market D1 rules row, and the worker refuses to trade unless its bundled copy hashes to the same value. Changing anything here is a visible commit that the running worker will reject until the row is updated on purpose. See docs/drafts/wash-worker-blueprint.md and the diary entry that names this what it is: wash trading, disclosed.",
   "declared_at": "2026-08-19",
   "chain_id": 8453,
   "venue": {
@@ -12,7 +12,6 @@
     "interval_minutes": [5, 180],
     "trade_usdc": [0.3, 9.0],
     "band_usdc": [10.0, 20.0],
-    "seed_usdc": 30.0,
     "slippage_bps": 300
   },
   "arms": [

@@ -27,7 +27,6 @@ export interface Rules {
     interval_minutes: [number, number];
     trade_usdc: [number, number];
     band_usdc: [number, number];
-    seed_usdc: number;
     slippage_bps: number;
   };
   arms: ArmRules[];
