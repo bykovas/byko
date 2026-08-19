@@ -78,7 +78,12 @@ td a:hover{color:var(--byko-ink)}
 .grid-key{margin-top:10px;font:var(--byko-note);color:var(--byko-label);display:flex;gap:18px;flex-wrap:wrap}
 .grid-key b{color:var(--byko-live-ink)}
 .events{margin-top:20px;font:var(--byko-note);color:var(--byko-ink-2)}
-.events div{padding:3px 0;border-bottom:var(--byko-rule-hair)}
+/* Event details carry transaction hashes and addresses — 66 and 42
+   characters with nothing to break on. One of them in the log made the
+   whole page scroll sideways on a phone, and what the reader found out
+   there was empty margin. Break inside the long token; ordinary words
+   still wrap at their spaces. */
+.events div{padding:3px 0;border-bottom:var(--byko-rule-hair);overflow-wrap:anywhere}
 .events .k{color:var(--byko-label);font-family:var(--byko-font-mono);margin-right:8px}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
 .empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
