@@ -36,6 +36,7 @@ aside.quoted li{margin-top:8px}
    reads as two thoughts. Labels are short enough that the whole band fits the
    1120px page; if a narrow window cannot take it, it scrolls rather than folds. */
 .rules{display:flex;flex-wrap:nowrap;gap:0 18px;margin-top:16px;overflow-x:auto;
+  min-width:0;max-width:100%;
   font:var(--byko-data);color:var(--byko-label);white-space:nowrap}
 .rules span{flex:0 0 auto}
 .rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
@@ -131,6 +132,11 @@ td a:hover{color:var(--byko-ink)}
   #checks td.g{display:none}
   #checks td.daystrip{display:flex;font-family:var(--byko-font-mono);letter-spacing:.25em}
   .grid-key{gap:10px 18px}
+  /* One line is a desktop requirement; on a 375px screen it is impossible, and
+     a header strip that has to be dragged sideways is worse than one that
+     wraps. It also cannot be allowed to push the whole page wide, which is
+     what nowrap was doing here. */
+  .rules{flex-wrap:wrap;overflow-x:visible;white-space:normal;gap:4px 18px}
 }
 </style>
 </head>
@@ -231,6 +237,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260819h"></script>
+<script src="market-self.js?v=20260819i"></script>
 </body>
 </html>
