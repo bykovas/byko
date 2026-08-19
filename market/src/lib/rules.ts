@@ -16,7 +16,7 @@ export interface ArmRules {
   token: string;
   pool: string;
   stop: { max_days: number | null; on_signal_cleared: boolean };
-  guards: { max_usdc_spent: number; max_price_deviation_pct: number; max_reserve_jump_pct: number };
+  guards: { max_gross_usdc: number; max_price_deviation_pct: number; max_reserve_jump_pct: number };
 }
 
 export interface Rules {

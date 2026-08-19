@@ -70,6 +70,21 @@ halts at its next alarm without sending. To stop one arm now:
 is also stopped simply by withdrawing its wallet's funds — the worker treats
 "cannot fund a trade" as a clean `funds-withdrawn` halt.
 
+## Recording the daily Base App check
+
+Base App has no API, so the human half of the byko arm's stop condition is
+entered by hand. Two consecutive `clean` readings halt that arm; anything else
+is just recorded.
+
+```bash
+curl -X POST https://byko-market.bykovas.lt/api/observe \
+  -H "Authorization: Bearer $ADMIN_TOKEN" -H "content-type: application/json" \
+  -d '{"arm":"byko","value":"scam","note":"screenshot 2026-08-20"}'
+```
+
+Use `"clean"` when the warning is gone. It lands in `flag_checks` beside every
+machine probe and shows up in the grid as the `base-app` row.
+
 ## Wiring the page in at launch
 
 `website/self-trading.html` exists and is in the sitemap now; it shows a

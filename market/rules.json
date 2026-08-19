@@ -23,7 +23,7 @@
       "token": "0x078bb16e24C8931Fc007928c370422e5e38F4372",
       "pool": "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca",
       "stop": { "max_days": 14, "on_signal_cleared": true },
-      "guards": { "max_usdc_spent": 40.0, "max_price_deviation_pct": 60.0, "max_reserve_jump_pct": 25.0 }
+      "guards": { "max_gross_usdc": 600.0, "max_price_deviation_pct": 60.0, "max_reserve_jump_pct": 25.0 }
     },
     {
       "id": "luko",
@@ -32,7 +32,7 @@
       "token": "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1",
       "pool": "0x2222a01b83db8c533b062aeb6de4f61d6ae792f2",
       "stop": { "max_days": null, "on_signal_cleared": false },
-      "guards": { "max_usdc_spent": 40.0, "max_price_deviation_pct": 80.0, "max_reserve_jump_pct": 25.0 }
+      "guards": { "max_gross_usdc": 600.0, "max_price_deviation_pct": 80.0, "max_reserve_jump_pct": 25.0 }
     }
   ]
 }

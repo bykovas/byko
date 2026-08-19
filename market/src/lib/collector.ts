@@ -43,8 +43,13 @@ async function metamaskPrice(token: string): Promise<Probe> {
     const j = JSON.parse(text) as Record<string, { usd?: number }> | { statusCode?: number };
     const key = token.toLowerCase();
     const price = (j as Record<string, { usd?: number }>)[key]?.usd;
-    if (typeof price === "number") return { ok: true, value: String(price), raw: text };
-    return { ok: true, value: String(status), raw: text };
+    /* Only a POSITIVE price counts as "this token can be priced". The endpoint
+       demonstrably answers 200 with usd:0 when the token is asked for beside a
+       known one, and a zero is the refusal, not the answer. Anything that is
+       not a real price is written with a non-numeric prefix so no downstream
+       reader can mistake a status code for a quote. */
+    if (typeof price === "number" && price > 0) return { ok: true, value: String(price), raw: text };
+    return { ok: true, value: `no-price:${status}`, raw: text };
   } catch (e) { return { ok: false, value: "", raw: String(e) }; }
 }
 
@@ -60,10 +65,25 @@ async function metamaskToken(token: string): Promise<Probe> {
 async function goplus(token: string): Promise<Probe & { holders: number | null }> {
   try {
     const { text } = await get(`https://api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=${token}`);
-    const j = JSON.parse(text) as { result?: Record<string, { holder_count?: string; is_in_dex?: string }> };
+    const j = JSON.parse(text) as {
+      result?: Record<string, {
+        holder_count?: string; is_in_dex?: string; is_honeypot?: string;
+        is_blacklisted?: string; is_whitelisted?: string;
+      }>;
+    };
     const r = j.result ? Object.values(j.result)[0] : undefined;
     const holders = r?.holder_count ? Number(r.holder_count) : null;
-    return { ok: true, value: `${holders ?? "?"}/${r?.is_in_dex ?? "?"}`, raw: text, holders };
+    /* The grid tracks the VERDICT, not the market. holder_count moves every
+       time anyone is paid and would light the "changed" mark for a reason that
+       has nothing to do with what the classifier thinks; it belongs in
+       market_samples, where it already goes. */
+    const verdict = [
+      `dex:${r?.is_in_dex ?? "?"}`,
+      `honeypot:${r?.is_honeypot ?? "?"}`,
+      `blacklist:${r?.is_blacklisted ?? "?"}`,
+      `whitelist:${r?.is_whitelisted ?? "?"}`,
+    ].join(" ");
+    return { ok: true, value: verdict, raw: text, holders };
   } catch (e) { return { ok: false, value: "", raw: String(e), holders: null }; }
 }
 

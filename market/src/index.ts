@@ -86,6 +86,31 @@ async function handle(request: Request, env: Env): Promise<Response> {
     return json({ halted: targets.map((a) => a.id) });
   }
 
+  /* The human half of the stop condition. Base App has no API, so the owner's
+     screenshot verdict is entered here and lands in the same flag_checks table
+     as every machine probe — otherwise the observation the experiment declared
+     as its human endpoint would be unrecordable.
+       POST /api/observe {"arm":"byko","value":"scam"|"clean","note":"..."} */
+  if (url.pathname === "/api/observe") {
+    if (request.method !== "POST") return methodNotAllowed();
+    if (!authed(request, env)) return error("unauthorized", 401);
+    const b = (await request.json().catch(() => ({}))) as
+      { arm?: string; source?: string; value?: string; note?: string };
+    const armId = b.arm ?? "";
+    if (!RULES.arms.some((a) => a.id === armId)) return error("unknown arm", 400);
+    if (!b.value) return error("value required", 400);
+    const source = b.source ?? "base-app";
+    const baseline = await env.DB.prepare(
+      `SELECT value FROM flag_checks WHERE arm = ?1 AND source = ?2 AND ok = 1 ORDER BY id ASC LIMIT 1`,
+    ).bind(armId, source).first<string>("value");
+    const changed = baseline != null && baseline !== b.value ? 1 : 0;
+    await env.DB.prepare(
+      `INSERT INTO flag_checks (checked_at, arm, source, method, ok, value, raw, changed, note)
+       VALUES (datetime('now'), ?1, ?2, 'manual', 1, ?3, NULL, ?4, ?5)`,
+    ).bind(armId, source, b.value, changed, b.note ?? null).run();
+    return json({ recorded: { arm: armId, source, value: b.value, changed: changed === 1 } });
+  }
+
   if (url.pathname.startsWith("/api/")) return error("not found", 404);
   return json({ service: "byko-market", see: "/api/wash" });
 }

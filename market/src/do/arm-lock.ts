@@ -163,7 +163,7 @@ export class ArmLock {
         return;
       }
     }
-    if (spent > r.guards.max_usdc_spent) {
+    if (spent > r.guards.max_gross_usdc) {
       await halt(env, r.wallet, arm, `spend-cap ${spent.toFixed(2)}`);
       return;
     }
@@ -297,7 +297,13 @@ export class ArmLock {
       `SELECT ok, value FROM flag_checks WHERE arm = ?1 AND source = 'metamask-price'
         ORDER BY id DESC LIMIT 1`,
     ).bind(arm).first<{ ok: number; value: string | null }>();
-    if (price && price.ok === 1 && price.value && !/^(500|err|none)/i.test(price.value)) return true;
+    /* A cleared machine signal means a real, positive quote — not merely "the
+       response was not a 500". The collector writes anything that is not a
+       price as `no-price:<status>`, which parses to NaN and can never pass. */
+    if (price && price.ok === 1 && price.value) {
+      const quoted = Number(price.value);
+      if (Number.isFinite(quoted) && quoted > 0) return true;
+    }
 
     const base = await env.DB.prepare(
       `SELECT value FROM flag_checks WHERE arm = ?1 AND source = 'base-app' AND method = 'manual'
