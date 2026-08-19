@@ -109,7 +109,8 @@ CREATE TABLE IF NOT EXISTS market_samples (
   price_usd     TEXT, fdv_usd TEXT, tvl_usd TEXT,
   reserve_token TEXT, reserve_usdc TEXT,
   vol_24h TEXT, buys_24h INTEGER, sells_24h INTEGER, holders INTEGER,
-  lp_holder TEXT, lp_locked TEXT      -- LUKO's LP is withdrawable; watched live
+  lp_holder TEXT, lp_locked TEXT,     -- lp_locked is the BURNED share; the keeper is named beside it
+  founders_pct TEXT                   -- share of total supply held by the published founder register
 );
 
 -- Everything that happened and was NOT a trade. Absence must be visible: a

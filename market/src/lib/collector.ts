@@ -60,15 +60,57 @@ function unmeasured(reason: string, raw = ""): Probe {
 
 function num(hex: string): bigint { return hex && hex !== "0x" ? BigInt(hex) : 0n; }
 
+/* Chain reads walk the node list instead of trusting one endpoint. The earlier
+   version asked a single node and returned "0x" on any failure, so a rate limit
+   arrived as a balance of zero — a refusal dressed as data, which is the one
+   thing nothing here is allowed to do. A read that cannot be made now throws,
+   and the caller records nothing rather than something false. */
+function nodeList(env: Env): string[] {
+  return [env.DRPC_URL, env.RPC_URL, "https://base-rpc.publicnode.com", "https://base.drpc.org"]
+    .filter((u): u is string => Boolean(u))
+    .filter((u, i, all) => all.indexOf(u) === i);
+}
+
+async function rpcCall(env: Env, payload: unknown): Promise<unknown> {
+  let last: unknown = null;
+  for (const url of nodeList(env)) {
+    try {
+      const res = await fetch(url, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload), signal: AbortSignal.timeout(10_000),
+      });
+      if (!res.ok) throw new Error(`http ${res.status}`);
+      return await res.json();
+    } catch (err) { last = err; }
+  }
+  throw last instanceof Error ? last : new Error("no node answered");
+}
+
 async function ethCall(env: Env, to: string, data: string): Promise<string> {
-  const node = env.DRPC_URL || env.RPC_URL;
-  const res = await fetch(node, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"] }),
-    signal: AbortSignal.timeout(8_000),
-  });
-  const body = (await res.json()) as { result?: string };
-  return body.result ?? "0x";
+  const body = await rpcCall(env, {
+    jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"],
+  }) as { result?: string; error?: { message?: string } };
+  if (body.error) throw new Error(body.error.message ?? "eth_call failed");
+  if (typeof body.result !== "string") throw new Error("eth_call: no result");
+  return body.result;
+}
+
+/* One HTTP round trip for many reads. Thirteen register wallets per arm as
+   thirteen separate requests is what exhausted the keyed node in the first
+   place. */
+async function ethCallBatch(env: Env, calls: Array<{ to: string; data: string }>): Promise<string[]> {
+  if (!calls.length) return [];
+  const payload = calls.map((c, i) => ({
+    jsonrpc: "2.0", id: i, method: "eth_call", params: [{ to: c.to, data: c.data }, "latest"],
+  }));
+  const body = await rpcCall(env, payload);
+  if (!Array.isArray(body)) throw new Error("batch: not an array");
+  const out = new Array<string>(calls.length).fill("");
+  for (const item of body as Array<{ id: number; result?: string }>) {
+    if (typeof item.result === "string") out[item.id] = item.result;
+  }
+  if (out.some((x) => x === "")) throw new Error("batch: incomplete");
+  return out;
 }
 
 /* --- per-token probes --- */
@@ -221,6 +263,31 @@ function listMembership(listText: string, token: string): Probe {
   return { ok: true, value: present ? "present" : "absent", raw: "" };
 }
 
+/* What share of a token's supply sits in the project's own published wallets.
+   The register is the same file the site's tally and home-page list read — one
+   source, never a second list — and the sum is a plain chain read, so the
+   figure on this page cannot drift from the one on the front page. */
+async function foundersShare(env: Env, token: string): Promise<string> {
+  try {
+    const res = await fetch("https://byko.bykovas.lt/data/founder-wallets.json",
+      { signal: AbortSignal.timeout(10_000) });
+    if (!res.ok) return "";
+    const raw = (await res.json()) as { wallets?: Array<{ address: string }> } | Array<{ address: string }>;
+    const list = Array.isArray(raw) ? raw : raw.wallets ?? [];
+    if (!list.length) return "";
+    const reads = await ethCallBatch(env, [
+      { to: token, data: "0x18160ddd" },
+      ...list.map((w) => ({
+        to: token, data: "0x70a08231" + w.address.slice(2).toLowerCase().padStart(64, "0"),
+      })),
+    ]);
+    const supply = num(reads[0]);
+    if (supply === 0n) return "";
+    const held = reads.slice(1).reduce((sum, r) => sum + num(r), 0n);
+    return (Number(held) * 100 / Number(supply)).toFixed(2);
+  } catch { return ""; }
+}
+
 /* price and reserves straight from the pool — no vendor in between */
 async function poolReserves(env: Env, pool: string): Promise<{ price: string; token: string; usdc: string }> {
   try {
@@ -243,20 +310,21 @@ async function poolReserves(env: Env, pool: string): Promise<{ price: string; to
  * separately. */
 async function lpState(env: Env, arm: string, pool: string):
   Promise<{ holder: string; burned: string }> {
-  const bal = async (who: string) =>
-    num(await ethCall(env, pool, "0x70a08231" + who.slice(2).toLowerCase().padStart(64, "0")));
+  const keeper = LP_KEEPER[arm];
+  const bal = (who: string) =>
+    ({ to: pool, data: "0x70a08231" + who.slice(2).toLowerCase().padStart(64, "0") });
   try {
-    const ts = num(await ethCall(env, pool, "0x18160ddd"));
-    if (ts === 0n) return { holder: LP_KEEPER[arm] ?? "", burned: "?" };
-    const burnedPct = Number(await bal(BURN)) * 100 / Number(ts);
-    const keeper = LP_KEEPER[arm];
-    let holder = "";
-    if (keeper) {
-      const keeperPct = Number(await bal(keeper)) * 100 / Number(ts);
-      holder = `${keeper}:${keeperPct.toFixed(2)}`;
-    }
+    const reads = await ethCallBatch(env, keeper
+      ? [{ to: pool, data: "0x18160ddd" }, bal(BURN), bal(keeper)]
+      : [{ to: pool, data: "0x18160ddd" }, bal(BURN)]);
+    const ts = num(reads[0]);
+    if (ts === 0n) return { holder: "", burned: "?" };
+    const burnedPct = Number(num(reads[1])) * 100 / Number(ts);
+    const holder = keeper
+      ? `${keeper}:${(Number(num(reads[2])) * 100 / Number(ts)).toFixed(2)}`
+      : "";
     return { holder, burned: burnedPct.toFixed(2) };
-  } catch { return { holder: LP_KEEPER[arm] ?? "", burned: "?" }; }
+  } catch { return { holder: "", burned: "?" }; }
 }
 
 async function record(env: Env, arm: string, source: string, method: string, p: Probe): Promise<void> {
@@ -312,6 +380,7 @@ export async function collect(env: Env): Promise<void> {
        party rate-limited us, so the sample is written either way and the
        market columns are simply left empty when the quote did not arrive. */
     const lp = await lpState(env, r.id, r.pool);
+    const founders = await foundersShare(env, token);
     const m = gk.sample;
     /* GeckoTerminal is rate-limited from the shared Workers egress often
        enough that the market row would be mostly empty; CMC's DEX side answers
@@ -324,13 +393,13 @@ export async function collect(env: Env): Promise<void> {
     const chain = (!m && !q?.price) ? await poolReserves(env, r.pool) : null;
     await env.DB.prepare(
       `INSERT INTO market_samples
-         (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked)
-       VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`,
+         (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked, founders_pct)
+       VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`,
     ).bind(r.id,
       m?.price ?? (q?.price != null ? String(q.price) : chain?.price || null),
       m?.fdv ?? (q?.fully_diluted_value != null ? String(q.fully_diluted_value) : null),
       m?.tvl ?? (q?.liquidity != null ? String(q.liquidity) : null),
       m?.vol ?? (q?.volume_24h != null ? String(q.volume_24h) : null),
-      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.burned).run();
+      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.burned, founders || null).run();
   }
 }

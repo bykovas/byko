@@ -53,7 +53,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     ).bind(r.wallet).first<Record<string, unknown>>();
     const sample = await env.DB.prepare(
       `SELECT price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders,
-              lp_holder, lp_locked, sampled_at
+              lp_holder, lp_locked, founders_pct, sampled_at
          FROM market_samples WHERE arm = ?1 ORDER BY id DESC LIMIT 1`,
     ).bind(r.id).first<Record<string, unknown>>();
 

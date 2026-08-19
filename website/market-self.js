@@ -58,7 +58,8 @@
     ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
   ];
   var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
-  var ARM_FIELDS = ["price", "FDV", "pool TVL", "holders", "USDC spent", "trades 24h", "LP burned"];
+  var ARM_FIELDS = ["price", "FDV", "pool TVL", "holders", "USDC spent", "trades 24h",
+    "LP burned", "LP held by founders", "supply held by founders"];
 
   /* Draw everything that is known without the network: the rules strip, both
      arm panels, every source row, one trade line and one log line. */
@@ -188,9 +189,15 @@
          address with no key, which nobody can withdraw. Calling the keeper's
          share "locked" would report LUKO as maximally safe while 100% of its
          LP sits in a founder wallet. */
+      /* Both arms carry both figures, always. Printing "held by founders" for
+         one arm and omitting it for the other invites the reading that the
+         silent one has nothing to declare, when what it has is a zero — and a
+         zero here is the strongest fact BYKO owns. */
       if (m.lp_locked != null) row("LP burned", m.lp_locked + "%", true);
       var keeper = m.lp_holder ? String(m.lp_holder).split(":") : null;
-      if (keeper && keeper.length === 2) row("held by founder", keeper[1] + "%", true);
+      var keeperPct = keeper && keeper.length === 2 ? keeper[1] : "0.00";
+      if (m.lp_locked != null) row("LP held by founders", keeperPct + "%", true);
+      if (m.founders_pct != null) row("supply held by founders", m.founders_pct + "%", true);
       box.appendChild(dl);
       if (arm.measured === false) {
         box.appendChild(el("div", "st",
