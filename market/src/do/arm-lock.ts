@@ -198,14 +198,27 @@ export class ArmLock {
        portfolio smaller than the upper bound cannot complete a cycle: it will
        trade a few times and then stop on token-dust, which is a true reason but
        a late one. Say it in advance instead, once. */
-    const portfolio = usdcWhole + (Number(tokenBal) / 1e18) * price;
+    /* What the token leg is worth is what the pool would actually pay for it,
+       not spot times quantity. This wallet holds a visible fraction of its own
+       pool's token side, so the spot figure overstates by double digits — and
+       a project measuring a pool precisely because it is thin has no business
+       valuing its own bag as if the pool were deep. Constant product, fee
+       included, same maths the router uses. */
+    const tokQty = Number(tokenBal) / 1e18;
+    const poolTok = Number(reserves.token) / 1e18;
+    const poolUsd = Number(reserves.usdc) / 1e6;
+    const inAfterFee = tokQty * 0.997;
+    const realisable = poolTok > 0 ? (poolUsd * inAfterFee) / (poolTok + inAfterFee) : 0;
+    const portfolio = usdcWhole + realisable;
     if (portfolio < upper * 1.15) {
       const said = await env.DB.prepare(
         `SELECT 1 AS x FROM events WHERE arm = ?1 AND kind = 'underfunded' LIMIT 1`,
       ).bind(arm).first<number>("x");
       if (said === null) {
         await event(env, arm, "underfunded",
-          `portfolio $${portfolio.toFixed(2)} against a band whose upper bound is $${upper}: ` +
+          `portfolio $${portfolio.toFixed(2)} (USDC $${usdcWhole.toFixed(2)} + $${realisable.toFixed(2)} ` +
+          `realisable for the token leg, not $${(tokQty * price).toFixed(2)} at spot) ` +
+          `against a band whose upper bound is $${upper}: ` +
           `this arm cannot sell its way to the top of the band and will stop on token-dust`);
       }
     }
