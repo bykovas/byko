@@ -131,7 +131,7 @@ Every answer is recorded. The app knows you by your Farcaster account, keeps a d
 
 Then the experiment gets sharper. For the first round I pay 227 BYKO up front — before asking anyone for anything. After that, the only reward goes to whoever catches me lying. Paying for confirmations would be buying approval; paying for a caught mistake is buying an audit.
 
-Everything is public: the method, the contract, the transfers, every answer, every verdict.
+Everything is public: the method, the contract, the transfers, every answer, every verdict. The running ledger is [here](/ledger) — every advance and every verdict, read live from the worker and verifiable on BaseScan.
 
 Small catch: anyone who helps check the experiment becomes part of it — and a BYKO holder.
 

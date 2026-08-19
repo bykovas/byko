@@ -56,6 +56,15 @@
 </script>
 <style>
 /* page-specific composition; the system itself lives in assets/byko.css */
+/* running experiments: same grid as the diary cards, but a block with two exits
+   rather than one link. No blue anywhere — nothing here is read from the chain. */
+.run{border-top:var(--byko-rule-heavy);padding:14px 0 4px}
+.run .when{font:var(--byko-data);color:var(--byko-label)}
+.run h3{margin:8px 0 0}
+.run p{font:400 14.5px/1.5 var(--byko-font-sans);color:var(--byko-ink-2);margin:8px 0 0}
+.run .exits{display:flex;flex-wrap:wrap;gap:18px;margin-top:12px;
+  font:600 14px/1.4 var(--byko-font-sans)}
+
 .hero{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:44px;align-items:start;padding-top:34px}
 .hero h1{margin:14px 0 0}
 .hero h1 .edge{color:var(--byko-live-edge);font-style:italic}
@@ -373,6 +382,22 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       <span><i></i> read from the chain</span>
       <span><i class="hand"></i> counted by hand from the log</span>
       <span><a href="/experiment">what the counters count →</a></span>
+    </div>
+
+    <div class="section-head" style="margin-top:var(--byko-sp-9)">
+      <span class="kicker">Running experiments</span>
+      <h2>What is live right now</h2>
+    </div>
+    <div class="cards3">
+      <div class="run">
+        <span class="when">since 18 August 2026</span>
+        <h3>BYKO 227 — fact-check my token</h3>
+        <p>A Farcaster mini-app that pays 227 BYKO first and asks you to check a published claim second. Every advance is written down before the money moves, and every verdict is recorded as cast.</p>
+        <span class="exits">
+          <a href="/d/byko-227-fact-check-my-token-become-part-of-it">What it is &rarr;</a>
+          <a href="/ledger">What it has paid and answered &rarr;</a>
+        </span>
+      </div>
     </div>
 
     <div class="section-head" style="margin-top:var(--byko-sp-9)">

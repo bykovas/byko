@@ -3,9 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>l</title>
-<meta name="robots" content="noindex, nofollow">
+<title>BYKO — Ledger</title>
+<meta name="description" content="Every 227 BYKO the BYKO 227 mini-app has paid out, and every verdict its readers have cast — read live from the worker and verifiable on BaseScan.">
+<meta property="og:title" content="BYKO — Ledger">
+<meta property="og:description" content="Every 227 BYKO paid out by the BYKO 227 mini-app, and every verdict cast, read live from the worker.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://byko.bykovas.lt/ledger">
+<link rel="canonical" href="https://byko.bykovas.lt/ledger">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
 <link rel="stylesheet" href="assets/byko.css?v=20260817a">
 <style>
 main.wrap{padding-top:28px}
@@ -41,9 +48,28 @@ td a:hover{color:var(--byko-ink)}
 </style>
 </head>
 <body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
+<!-- nav:begin -->
+      <a href="/#referendum">Referendum</a>
+      <a href="/diary">Diary</a>
+      <a href="/#facts">Facts</a>
+      <a class="services" href="/#services">Services</a>
+      <a href="/market">Market</a>
+      <a href="/specification">Specification</a>
+<!-- nav:end -->
+      <span class="lamp">running</span>
+    </nav>
+  </div>
+</header>
+
 <main class="wrap">
   <div class="head">
-    <span class="kicker">Private · not linked</span>
+    <span class="kicker">BYKO 227 · live from the worker</span>
     <h1>Ledger</h1>
     <button class="btn" id="refresh" type="button">Refresh</button>
   </div>
@@ -90,6 +116,24 @@ td a:hover{color:var(--byko-ink)}
 
   <p class="note">Read live from the app227 worker: advances are rows written before each transfer and resolved by receipt, answers are the verdicts as cast. Every transaction here is verifiable on BaseScan — this page only reports what the chain and the ledger already say.</p>
 </main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="mailto:hello@byko.bykovas.lt">hello@byko.bykovas.lt</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
+    </div>
+    <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
 
 <script>
 (function () {

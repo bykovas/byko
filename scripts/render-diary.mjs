@@ -29,7 +29,7 @@
  *   ## {Title} — {DD Month YYYY}
  *
  *   Long-form body: paragraphs separated by blank lines. Supported inline
- *   markup: **bold**, `code`, [text](https://url). "- " lines form lists.
+ *   markup: **bold**, `code`, [text](https://url) and [text](/path). "- " lines form lists.
  *
  *   ---
  *   **Teaser:** one or two short sentences for the home-page card.
@@ -100,7 +100,10 @@ function inline(text) {
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    /* Site-relative links stay in the tab: sending a reader to another page of
+       the same diary through a new window is a bug, not a courtesy. */
+    .replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, '<a href="$2">$1</a>');
 }
 
 function inlineToPlain(text) {
@@ -108,6 +111,7 @@ function inlineToPlain(text) {
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, "$1")
+    .replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, "$1")
     .replace(/\s+/g, " ").trim();
 }
 
@@ -489,8 +493,11 @@ const NAV_ITEMS = [
   { label: "Market", href: "/market", page: "market.html" },
   { label: "Specification", href: "/specification", page: "specification.html" },
 ];
+/* ledger.html carries the same header as the rest and is kept in sync here,
+   but it is deliberately absent from NAV_ITEMS: it is reached from the running
+   experiments block and from the diary entry it belongs to, not from the nav. */
 const NAV_PAGES = [INDEX_PAGE, DIARY_PAGE, "website/experiment.html",
-  "website/market.html", "website/specification.html"];
+  "website/market.html", "website/specification.html", "website/ledger.html"];
 
 for (const path of NAV_PAGES) {
   const file = path.split("/").pop();
@@ -535,6 +542,7 @@ const sitemapUrls = [
   { loc: `${SITE}/market` },
   { loc: `${SITE}/specification` },
   { loc: `${SITE}/experiment` },
+  { loc: `${SITE}/ledger` },
 ];
 writeFileSync(SITEMAP,
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
