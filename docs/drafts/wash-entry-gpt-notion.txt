@@ -1,0 +1,87 @@
+You have access to my Notion. Create ONE new page (a row) in the database called **BYKO**.
+
+Find it first: a database titled exactly "BYKO" whose rows are diary entries for a crypto project. Properties: Title (title), Title EN (text), Date (date), Status (status), Category (multi-select), Hours (number), USD (number), Teaser (text), XCOM POST (text), FB POST (text), Body (text), Summary (text). If more than one database is named BYKO, pick the one already containing a row with Title EN = "227 wallets that never asked".
+
+This entry is ALREADY PUBLISHED on the site and to Facebook and X. You are recording it in the base, not publishing it. Set Status to Published.
+
+Copy every value verbatim. Do not rewrite, shorten, "improve" or translate anything — the text is edited and its lengths are deliberate.
+
+THREE HARD RULES from the database's own field descriptions:
+1. Teaser must be a SINGLE line, no line breaks.
+2. XCOM POST must be a SINGLE line, at most 250 characters. The value below is 245 characters — do not append anything, not even a link.
+3. FB POST must NEVER contain a line that is exactly three hyphens. That string splits body from trailing block in the publishing pipeline. Paragraphs are separated by blank lines.
+
+=== PROPERTY VALUES ===
+
+Title:
+Blockaid: одна рекомендация невыполнима, вторая — wash trading
+
+Title EN:
+The only advice I can follow is to fake a market
+
+Date:
+2026-08-19
+
+Status:
+Published
+
+Category:
+Token, Listing
+
+Hours:
+(leave empty — the owner fills this in)
+
+USD:
+(leave empty)
+
+Teaser:
+A security team told me exactly how to clear my token's last flag. One instruction needs fifty times my entire supply; the other, for a token nobody trades, means buying from myself. So that is what I am going to do — in public, under its real name, with every trade published.
+
+XCOM POST:
+A security team told me how to clear my token's last flag: deepen liquidity, sustain two-sided trading. The first needs 50x my supply. The second, for a token nobody trades, means buying from myself. So I will, in public, publishing every trade.
+
+Summary:
+Blockaid ответил, что оставшийся сигнал у BYKO — не флаг злонамеренности, а рыночная эвристика тонкого рынка, и дал три рекомендации. Первая невыполнима арифметически: пул на $20 000 требует около 50× всего supply, зафиксированного навсегда на 790 227, потому что весь float стоит $198. Вторая противоречит сама себе при такой глубине: $10 — примерно там, где сделки перестают быть мелкими — двигают цену на 17.8%, при сигнале с названием unstable price. Третья поэтому недостижима. Плюс выяснилось, что флаг вообще не читает волатильность: цена за сутки −0.62%, а прайс-сервис MetaMask отдаёт по BYKO HTTP 500 и 0.999688 по USDC. Остаётся один рычаг, и он называется wash trading — запускаем его открыто, с предрегистрацией параметров и публикацией каждой сделки, и с записанным заранее предсказанием, что флаг не снимется.
+
+FB POST:
+I asked Blockaid to look at BYKO again. They answered properly — no template, no silence — and it is the most useful reply this project has received from anyone. Their words, published here in full and unedited:
+
+- "We can confirm that the remaining signal you're seeing is not a malice flag. It's tied to market-condition heuristics, specifically the Spam / unstable-price pattern that activates when a token's trading environment is extremely thin."
+- "Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized."
+- "Sustain two-sided trading, so price is not dominated by tiny trades."
+- "After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels."
+
+Nothing below is a complaint about Blockaid. They named the mechanism instead of hiding behind a category, and they offered a rescan. This is what happens when you take good advice seriously and do the arithmetic.
+
+**The first recommendation cannot be followed.** Not "is hard" — cannot. The pool holds 466,468 BYKO against $117 of USDC, which is what makes the price $0.00025 and the whole pool worth $235. Lifting it to a $2,000 pool would take 3.5 million BYKO. The entire supply, fixed forever at genesis, is 790,227. Reaching $20,000 — still small by any listing standard — would take about fifty times every token that will ever exist. No amount of my money fixes this, because the binding constraint is not money. The token's entire float is worth $198.
+
+**The second contradicts itself at this depth.** I measured what a trade does to the price here:
+
+- $1 moves it 1.7%
+- $5 moves it 8.7%
+- $10 moves it 17.8%
+- $20 moves it 37%
+
+Real trades in this pool have been $0.79 to $9.90, median about a dollar. So "not dominated by tiny trades" starts around $10 — and $10 is an eighteen percent jump, on a signal named *unstable price*. There is no trade size that satisfies both halves. Small enough to keep the price still is exactly the tiny trade they object to; large enough to matter is exactly the instability they flag. And the way out of that trap is the first recommendation, which is closed.
+
+So the third can never be reached. Three recommendations, and the loop has no exit.
+
+**Then I checked whether the flag reads volatility at all, and it does not.** BYKO's price moved **−0.62%** in the last day and 0% in the last six hours — steadier than almost anything that trades. Meanwhile MetaMask's own price service, asked for a BYKO price, returns **HTTP 500**. Ask it about USDC and it answers 0.999688. So "unstable price" does not mean *this price moves too much*; it means *we cannot derive a price we trust*. The operative variable is depth, exactly as their last line says. Which means the trading recommendation cannot clear the signal even if I follow it perfectly.
+
+**And that leaves one thing I can actually do.** Sustain two-sided trading in a token nobody trades means my own wallets buying and selling against the pool on a schedule. That has a name and I am going to use it: **this is wash trading**. Trading with yourself to manufacture the appearance of a market. On regulated venues it is illegal, for good reasons. Here there is no exchange, no order book and no counterparty being deceived about who stands on the other side — and I am publishing the instruction that prompted it, the parameters, and every trade. None of that makes it something else. It makes it wash trading, disclosed.
+
+**What will run.** Two wallets, both already listed in the public register on this site — no new addresses, because a sybil layer on top of wash trading would make the measurement worthless. Each draws a random delay between 5 and 180 minutes and a random size between $0.30 and $9.00, holds a $20 float, and buys when that float is above $10 and sells when it is below. That is the whole strategy: it has no view on price and will not be given one. Every parameter is committed to the repository before the first trade, hashed, and checked at runtime, so it cannot be quietly tuned mid-run. Every trade is published as it happens — time, side, size, price before and after, and the transaction hash.
+
+**Two tokens, not one, and the second one is the uncomfortable half.** BYKO's liquidity is 100% burned; nobody can withdraw it, me included. LUKO's is not: 100% of its LP tokens sit in a wallet I control, and I could pull that pool at any moment. It has thirteen holders, a quarter of its supply with its creator, and almost no sells in its history. Running the same worker on both asks whether a classifier treats a structurally clean token differently from one carrying real red flags. I am stating the objection to the LUKO arm myself, because it is the strongest one available and someone should make it: this is a founder generating volume in a token whose liquidity he can remove. The page will show that LP holder and balance live, so anyone can watch that it stays untouched.
+
+**Written before the first trade, so it cannot be adjusted afterwards.** The BYKO arm stops when MetaMask's price service returns a number instead of 500, or when Base App stops showing "scam" on two consecutive daily checks — two, because that flag already vanished and came back within eighteen hours once, and one observation is luck rather than measurement. Failing both, it stops at fourteen days. My prediction, on the record: it will not clear, because the condition Blockaid named is depth and the worker does not touch depth. Cost, about fifteen dollars in fees and gas.
+
+If I am wrong and the flag clears, then a token that changed nothing about itself — same immutable contract, same burned liquidity, same fixed supply, same 919 holders — became clean by simulating a market it does not have. I would rather be right.
+
+**One thing I found while building the instrument.** I went to check what each wallet reports about BYKO — Rabby, MetaMask, Base, Trust, Rainbow, Phantom, Zerion, Uniswap, OKX and the rest. Seventeen products, and behind them four sources: Blockaid, GoPlus, a couple of curated token lists, and the wallets' own price services. Most of them classify nothing at all; they display what someone else decided. A user opening four wallets and seeing the same warning four times feels confirmed by four independent judges. There is one judge and four windows.
+
+=== END ===
+
+Also set Body to the same text as FB POST.
+
+When done, reply with: the URL of the created page, the exact character count of the XCOM POST you saved, and confirmation that Teaser is one line and FB POST contains no line equal to three hyphens.
