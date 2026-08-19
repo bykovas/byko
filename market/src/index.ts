@@ -144,7 +144,17 @@ export default Sentry.withSentry(sentryOptions, {
   async scheduled(_c: unknown, env: Env): Promise<void> {
     /* bookkeeping runs regardless of the kill switch; only sending is gated */
     await confirmTrades(env);
-    try { await collect(env); } catch (err) { await event(env, null, "error", `collector: ${String((err as Error)?.message ?? err).slice(0, 200)}`); }
+    /* The cron ticks every 10 minutes so trades settle promptly, but the
+       classifiers are polled HOURLY as declared — asking GoPlus six times an
+       hour earns a 4029 rate limit, which is how a throttle would end up
+       recorded as if it were the classifier's opinion. */
+    const last = await env.DB.prepare(
+      `SELECT MAX(checked_at) AS t FROM flag_checks WHERE method = 'api'`,
+    ).first<string>("t");
+    const dueForCollect = !last || Date.now() - Date.parse(last.replace(" ", "T") + "Z") > 55 * 60_000;
+    if (dueForCollect) {
+      try { await collect(env); } catch (err) { await event(env, null, "error", `collector: ${String((err as Error)?.message ?? err).slice(0, 200)}`); }
+    }
     await heartbeat(env);
   },
 });
