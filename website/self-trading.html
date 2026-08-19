@@ -76,6 +76,21 @@ td a:hover{color:var(--byko-ink)}
 .events .k{color:var(--byko-label);font-family:var(--byko-font-mono);margin-right:8px}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
 .empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
+/* Loading: the labels are known before the answer is, so they are drawn at
+   once and only the values wait. The wait is a dash running inside its own
+   cell — no fading, which the system does not allow for text. Each element is
+   given a negative delay so it starts mid-cycle; without that, a page full of
+   them beats in unison and reads as a wave rather than as many small waits. */
+.load{display:inline-block;position:relative;width:46px;height:1em;
+  vertical-align:middle;overflow:hidden}
+.load::before{content:"–";position:absolute;top:0;left:0;
+  font-family:var(--byko-font-mono);color:var(--byko-label);
+  animation:runDash 1.6s linear infinite;animation-delay:var(--phase,0s)}
+@keyframes runDash{0%{left:0}50%{left:calc(100% - .6em)}100%{left:0}}
+td .load{width:64px}
+.arm dd .load{width:54px}
+@media (prefers-reduced-motion:reduce){.load::before{animation:none;left:0}}
+
 @media (max-width:900px){.disclose-grid{grid-template-columns:1fr;gap:26px}
   aside.quoted{border-left:0;padding-left:0;border-top:var(--byko-rule-hair);padding-top:14px}}
 @media (max-width:640px){.arms{grid-template-columns:1fr}.arm.right{border-left:0;padding-left:0}}
@@ -172,6 +187,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260819c"></script>
+<script src="market-self.js?v=20260819d"></script>
 </body>
 </html>

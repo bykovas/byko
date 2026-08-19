@@ -15,6 +15,96 @@
     return n;
   }
   function short(h) { return h ? h.slice(0, 6) + "…" + h.slice(-4) : "—"; }
+
+  /* A value we have asked for but not yet received. Each one starts at a
+     random point in the cycle: identical phases would make the whole page
+     pulse together, which reads as one wave instead of many small waits. */
+  function dash() {
+    var n = el("span", "load");
+    n.style.setProperty("--phase", (-Math.random() * 1.6).toFixed(2) + "s");
+    return n;
+  }
+  function cellDash(cls) {
+    var td = el("td", cls);
+    td.appendChild(dash());
+    return td;
+  }
+
+  /* What we ask each source, known before any answer arrives. The server sends
+     the same list with the data; this copy exists only so the labels can be on
+     screen while the request is in flight, and is replaced wholesale by the
+     real render. */
+  var ASKING = [
+    ["metamask-price", "price or refusal"], ["metamask-token", "aggregators"],
+    ["goplus", "risk verdict"], ["dexscreener", "pair listed"],
+    ["geckoterminal", "locked liquidity"], ["coingecko", "contract known"],
+    ["cmc-dex", "pool priced"], ["cmc-index", "ticker known"],
+    ["blockscout", "holders / reputation"], ["uniswap-list", "present"],
+    ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
+  ];
+  var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
+  var ARM_FIELDS = ["price", "FDV", "pool TVL", "holders", "USDC spent", "trades 24h", "LP burned"];
+
+  /* Draw everything that is known without the network: the rules strip, both
+     arm panels, every source row, one trade line and one log line. */
+  function renderSkeleton() {
+    var rules = $("rules"); rules.textContent = "";
+    ["declared", "interval", "size", "pivot", "slippage", "hash", "kill switch"].forEach(function (k) {
+      var span = el("span");
+      span.appendChild(document.createTextNode(k + " "));
+      span.appendChild(dash());
+      rules.appendChild(span);
+    });
+
+    var wrap = $("arms"); wrap.textContent = "";
+    ARM_LABELS.forEach(function (pair, i) {
+      var box = el("div", "arm" + (i % 2 ? " right" : ""));
+      box.appendChild(el("h3", null, pair[1] + " · " + pair[0].toUpperCase()));
+      box.appendChild(el("div", "st", "reading…"));
+      var dl = el("dl");
+      ARM_FIELDS.forEach(function (f) {
+        dl.appendChild(el("dt", null, f));
+        var dd = el("dd"); dd.appendChild(dash()); dl.appendChild(dd);
+      });
+      box.appendChild(dl);
+      wrap.appendChild(box);
+    });
+
+    var table = $("checks");
+    var thead = table.querySelector("thead"), tbody = table.querySelector("tbody");
+    thead.textContent = ""; tbody.textContent = "";
+    var htr = el("tr");
+    htr.appendChild(el("th", "l", "source"));
+    htr.appendChild(el("th", "l", "asks"));
+    htr.appendChild(el("th", "l", "now"));
+    thead.appendChild(htr);
+    ARM_LABELS.forEach(function (pair) {
+      var cap = el("tr");
+      var c0 = el("td", "src", pair[0].toUpperCase());
+      c0.colSpan = 3; c0.style.color = "var(--byko-label)";
+      c0.style.fontWeight = "400"; c0.style.paddingTop = "10px";
+      cap.appendChild(c0); tbody.appendChild(cap);
+      ASKING.forEach(function (row) {
+        var tr = el("tr");
+        tr.appendChild(el("td", "src", row[0]));
+        tr.appendChild(el("td", "asks", row[1]));
+        tr.appendChild(cellDash("now"));
+        tbody.appendChild(tr);
+      });
+    });
+
+    var tb = $("trades").querySelector("tbody");
+    tb.textContent = "";
+    var tr = el("tr");
+    for (var i = 0; i < 11; i++) tr.appendChild(cellDash(i < 4 ? "l" : "mono"));
+    tb.appendChild(tr);
+
+    var log = $("events"); log.textContent = "";
+    var line = el("div");
+    line.appendChild(el("span", "k", "reading "));
+    line.appendChild(dash());
+    log.appendChild(line);
+  }
   function n(v, d) {
     if (v === null || v === undefined || v === "") return "—";
     var x = Number(v);
@@ -237,7 +327,8 @@
   }
 
   function load() {
-    $("meta").textContent = "loading…";
+    $("meta").textContent = "reading the worker…";
+    renderSkeleton();
     fetch(API + (API.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now(), { cache: "no-store" })
       .then(function (r) {
         return r.json().then(function (body) {
