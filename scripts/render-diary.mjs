@@ -60,6 +60,8 @@ const RESVG_WASM = "functions/lib/resvg.wasm";
 const CARD_COUNT = 6;
 const BEGIN = "<!-- diary:begin -->";
 const END = "<!-- diary:end -->";
+const H_BEGIN = "<!-- hero:begin -->";
+const H_END = "<!-- hero:end -->";
 const C_BEGIN = "<!-- counters:begin -->";
 const C_END = "<!-- counters:end -->";
 const J_BEGIN = "<!-- jsonld:begin -->";
@@ -439,7 +441,45 @@ function renderCounters() {
     count: onHome.length,
     total: data.counters.length,
     jsonChanged,
+    /* the hero reads the same values, after the tally sums have been folded in */
+    byId: new Map(data.counters.map((counter) => [counter.id, counter])),
   };
+}
+
+/* The three cells at the top of the home page. Their figures were hand-written
+   HTML while the stat bar below them was generated, so they drifted: the hero
+   said 99.5 h and $123.29 while the bar said 125.0 h and $165.29 — the same
+   two claims, 25.5 hours and $42.00 apart, on one screen. Both now read the
+   same counter values. Prose stays in counters.json; a {counter-id} inside it
+   is substituted with that counter's value, so a number never gets typed
+   twice. */
+function renderHero(byId) {
+  const data = JSON.parse(readFileSync(COUNTERS_JSON, "utf8"));
+  const cells = data.hero?.cells;
+  if (!Array.isArray(cells) || cells.length === 0) throw new Error(`${COUNTERS_JSON}: no hero cells`);
+  const fill = (text) => text.replace(/\{([a-z-]+)\}/g, (whole, id) => {
+    const counter = byId.get(id);
+    if (!counter) throw new Error(`${COUNTERS_JSON}: hero refers to unknown counter "${id}"`);
+    return counter.value;
+  });
+  const html = cells.map((cell) => {
+    let figure;
+    if (cell.live === "price") {
+      /* index.js writes the live pool price into this span by id. */
+      figure = `<div class="figure live"><span id="index-price-figure">0.000252</span></div>`;
+    } else {
+      const counter = byId.get(cell.counter);
+      if (!counter) throw new Error(`${COUNTERS_JSON}: hero cell has unknown counter "${cell.counter}"`);
+      figure = `<div class="figure">${escapeHtml(counter.value)}</div>`;
+    }
+    return `        <div${cell.live ? ' class="cell-live"' : ""}>\n` +
+      `          ${figure}\n` +
+      `          <span class="label">${escapeHtml(cell.label)}</span>\n` +
+      `          <p class="say">${escapeHtml(fill(cell.say))}</p>\n` +
+      `          <p class="tol">${escapeHtml(fill(cell.tol))}</p>\n` +
+      `        </div>`;
+  }).join("\n");
+  return { html: `      <div class="band">\n${html}\n      </div>`, count: cells.length };
 }
 
 const entries = parse(readFileSync(SOURCE, "utf8"));
@@ -479,6 +519,8 @@ writeFileSync(OG_MANIFEST, JSON.stringify({
 
 const counters = renderCounters();
 replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
+const hero = renderHero(counters.byId);
+replaceBetween(INDEX_PAGE, hero.html, H_BEGIN, H_END);
 
 /* ---------- header navigation (one canonical menu on every page) ------- */
 
@@ -558,4 +600,5 @@ console.log(`rendered ${entries.length} entr${entries.length === 1 ? "y" : "ies"
 console.log(`entry pages: ${entryPages.count} → ${ENTRY_DIR}` + (entryPages.removed ? ` (${entryPages.removed} stale removed)` : ""));
 console.log(`X images: ${twitterImages.count} static PNGs → ${TWITTER_IMAGE_DIR} (${twitterImages.totalBytes} bytes)` +
   (twitterImages.removed ? `; ${twitterImages.removed} invalid stale artifact(s) removed` : ""));
+console.log(`hero band: ${hero.count} cells from the same counter values`);
 console.log(`stat bar: ${counters.count} of ${counters.total} counters on the home page` + (counters.jsonChanged ? " (counters.json values updated)" : ""));

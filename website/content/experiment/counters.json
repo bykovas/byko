@@ -1,5 +1,28 @@
 {
   "intro": "Every counter on the home page is a claim, and a claim needs a definition: what exactly is counted, what is excluded, and when the number was last true. This page is that definition, and it holds every counter the study keeps — including the ones the home page does not show. When a number changes, the change lands here first, dated.",
+  "hero": {
+    "note": "The three cells at the top of the home page. Their figures are the same counter values the stat bar uses — they were hand-written HTML and drifted 25.5 hours and $42.00 behind it. A {counter-id} in 'say' is substituted with that counter's value.",
+    "cells": [
+      {
+        "counter": "paid-listings",
+        "label": "Paid for legitimacy",
+        "say": "The official price of a listing is $0. Three institutions petitioned; nothing bought.",
+        "tol": "reading held since 11 Aug 2026"
+      },
+      {
+        "counter": "hours",
+        "label": "Time, the actual currency",
+        "say": "Logged to the half hour and published with the receipts. {dollars} spent in dollars.",
+        "tol": "± 0.5 h · resolution of the log"
+      },
+      {
+        "live": "price",
+        "label": "Price, per BYKO in USDC",
+        "say": "Reserve ratio of the BYKO/USDC pool on Base. No aggregator in the path.",
+        "tol": "read at this block · changes with every trade"
+      }
+    ]
+  },
   "counters": [
     {
       "id": "hours",
