@@ -28,6 +28,10 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    # This repo keeps its secrets in the PROD environment, not at repo level;
+    # publish-diary.yml does the same. Without this line the token resolves to
+    # an empty string and the run records nothing.
+    environment: PROD
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
