@@ -1,0 +1,36 @@
+Subject: Re: [G5ZRWG-X241X] BYKO 0x078bb16e24C8931Fc007928c370422e5e38F4372 — agreed on the signal, disputing how it is rendered
+
+Hello,
+
+Thank you — that was the most specific and most useful reply this project has had from anyone in the industry. Two responses: one agreement, one objection.
+
+THE AGREEMENT. I accept the unstable-price reading, and I want to be explicit that I am not contesting it. The pool holds about $234 in total, all of it permanently locked, and a price derived from that depth should not be trusted by a wallet. If a product tells its user "this price is unreliable", that is accurate and I have no complaint. MetaMask displays exactly that, and I consider it correct. Screenshot 1.
+
+THE OBJECTION. Base App does not display that. It displays "scam". Its support has attributed the classification to Blockaid. Screenshot 2.
+
+Your own message says the remaining signal is "not a malice flag" and is tied to market-condition heuristics. I take that at face value. But between your classification and the user's screen, a market-condition heuristic is being rendered as an accusation of intent. "Unreliable price" and "scam" are not degrees of the same statement — the first describes the market, the second describes the author.
+
+Three specific questions I would be grateful to have answered:
+
+1. What exactly does your API return for this contract — the category, the severity, and the human-readable reason string, verbatim? I would like to compare what you publish against what integrators display, and I will publish the comparison either way.
+
+2. Is "scam" a rendering that Blockaid endorses for this signal, or a downstream mapping you would consider incorrect?
+
+3. Your remediation path is to deepen liquidity and then request a rescan. For this token that path is arithmetically closed. Reaching even a $20,000 pool would require roughly 39.2 million BYKO against a fixed total supply of 790,227 — about fifty times every token that will ever exist, because the entire float is worth under $200 at pool price. There is no amount of money that resolves this; the constraint is the supply, and it is immutable. Is there any route for a token that is structurally, permanently small — or is a permanent "scam" label the intended outcome for that class of asset?
+
+To be clear about my own position: the token is not sold, not promoted, has no yield, no roadmap and grants no rights. I am not asking for a favourable classification. I am asking that a market-condition signal not reach users as an accusation of fraud, and if it must, that this be stated openly so I can publish it as the answer.
+
+Everything in this correspondence, including your previous reply in full, will be published in the project's public diary — as is every other exchange, including the ones where I turned out to be wrong.
+
+Contract: 0x078bb16e24C8931Fc007928c370422e5e38F4372 (Base, 8453)
+Pool: 0x02dd4285AD38eA93d021CA854016A839b0B2a6Ca — LP 100% at 0x…dEaD
+Site: https://byko.bykovas.lt
+Repository: https://github.com/bykovas/byko
+
+Best regards,
+Denisas Bykovas
+hello@byko.bykovas.lt
+
+Attachments:
+1. MetaMask — "Unstable price". Accurate, not disputed.
+2. Base App — "scam". Disputed.
