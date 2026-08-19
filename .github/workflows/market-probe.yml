@@ -1,0 +1,45 @@
+# Ask the three classifiers that refuse Cloudflare's shared egress.
+#
+# GoPlus, GeckoTerminal and CoinGecko rate-limit Workers far below our own
+# volume — we ask twice an hour and get 4029 / 429. From an ordinary
+# connection they answer at once. A GitHub runner is an ordinary connection,
+# so the probe lives here instead of in the Worker, and posts its readings
+# back through /api/observe with method='api-local'.
+#
+# This is also the only path by which the holder count reaches the site at
+# all: GoPlus is the sole source that reports one.
+#
+# A refusal is posted too, as ok=false — it renders '?' in the grid and never
+# becomes a baseline. The one dishonest option would be silence.
+#
+# Nothing here writes to the repository and nothing here moves money; the
+# token only authorises /api/observe.
+name: market probe
+
+on:
+  schedule:
+    - cron: "17 * * * *"       # hourly, off the hour so it never races the collector
+  workflow_dispatch:
+
+concurrency:
+  group: market-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: probe classifiers
+        env:
+          ADMIN_TOKEN: ${{ secrets.MARKET_ADMIN_TOKEN }}
+        run: |
+          if [ -z "$ADMIN_TOKEN" ]; then
+            echo "MARKET_ADMIN_TOKEN is not set — nothing was asked, nothing was recorded." >&2
+            exit 1
+          fi
+          node market/scripts/probe.mjs

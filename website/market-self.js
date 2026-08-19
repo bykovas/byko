@@ -148,6 +148,19 @@
     return isNaN(x) ? String(v) : "$" + x.toFixed(8);
   }
 
+  /* GoPlus answers an ordinary connection but not Cloudflare's shared egress,
+     so the holder count comes from a probe run outside the Worker and is
+     necessarily older than the rest of the card. Print how old rather than
+     letting it sit beside live chain reads pretending to be one of them. */
+  function ago(ts) {
+    if (!ts) return "";
+    var t = Date.parse(String(ts).replace(" ", "T") + "Z");
+    if (!isFinite(t)) return "";
+    var h = Math.floor((Date.now() - t) / 3600000);
+    if (h < 1) return "";
+    return h < 48 ? h + "h ago" : Math.floor(h / 24) + "d ago";
+  }
+
   function renderRules(data) {
     var box = $("rules"); box.textContent = "";
     var s = data.rules.strategy, v = data.rules.venue;
@@ -191,7 +204,8 @@
       row("price", price(m.price_usd));
       row("FDV", m.fdv_usd ? "$" + n(m.fdv_usd) : "—");
       row("pool TVL", m.tvl_usd ? "$" + n(m.tvl_usd) : "—");
-      row("holders", m.holders != null ? n(m.holders, 0) : "—");
+      var hAge = m.holders != null ? ago(m.holders_at) : "";
+      row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
       row("USDC spent", "$" + n(arm.usdc_spent));
       row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " + (m.sells_24h != null ? m.sells_24h : "?"));
       /* The live chain read. "Burned" is the honest word: LP tokens at an

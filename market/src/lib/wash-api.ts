@@ -56,6 +56,22 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
               lp_holder, lp_locked, founders_pct, sampled_at
          FROM market_samples WHERE arm = ?1 ORDER BY id DESC LIMIT 1`,
     ).bind(r.id).first<Record<string, unknown>>();
+    /* Holders is the one figure the Worker itself cannot fetch: GoPlus refuses
+       Cloudflare's shared egress, so the count arrives from the local probe and
+       lands on whichever sample row was newest when the probe ran. Every hourly
+       collector pass then inserts a fresh row with holders NULL — which is why
+       reading it off the latest row alone printed '—' while the number was
+       perfectly well known. Carry the last real measurement forward WITH the
+       time it was taken, so the reader gets the count and can see its age
+       instead of a dash that claims we never counted. */
+    const h = await env.DB.prepare(
+      `SELECT holders, sampled_at FROM market_samples
+        WHERE arm = ?1 AND holders IS NOT NULL ORDER BY id DESC LIMIT 1`,
+    ).bind(r.id).first<{ holders: number; sampled_at: string }>();
+    if (sample) {
+      sample.holders = h?.holders ?? null;
+      sample.holders_at = h?.sampled_at ?? null;
+    }
 
     /* the checks grid for this arm */
     const start = await env.DB.prepare(
