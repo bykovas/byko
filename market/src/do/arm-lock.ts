@@ -193,6 +193,23 @@ export class ArmLock {
       return;
     }
 
+    /* The band is crossed by SELLING the way up, so the wallet has to hold
+       enough token value to climb from the lower bound past the upper one. A
+       portfolio smaller than the upper bound cannot complete a cycle: it will
+       trade a few times and then stop on token-dust, which is a true reason but
+       a late one. Say it in advance instead, once. */
+    const portfolio = usdcWhole + (Number(tokenBal) / 1e18) * price;
+    if (portfolio < upper * 1.15) {
+      const said = await env.DB.prepare(
+        `SELECT 1 AS x FROM events WHERE arm = ?1 AND kind = 'underfunded' LIMIT 1`,
+      ).bind(arm).first<number>("x");
+      if (said === null) {
+        await event(env, arm, "underfunded",
+          `portfolio $${portfolio.toFixed(2)} against a band whose upper bound is $${upper}: ` +
+          `this arm cannot sell its way to the top of the band and will stop on token-dust`);
+      }
+    }
+
     /* --- decide the trade ---
        Hysteresis, not a pivot. A single threshold makes every trade near it
        reverse direction, so the wallet alternates buy/sell/buy/sell like a
@@ -226,7 +243,10 @@ export class ArmLock {
       if (amountIn > cap) amountIn = cap;
       const dustTokens = price > 0 ? 0.10 / price : 0;
       if (amountIn < parseUnits(dustTokens.toFixed(6), 18)) {
-        await halt(env, r.wallet, arm, arm === "luko" ? "funds-withdrawn" : "token-dust");
+        /* Running out of tokens to sell is not the owner taking the money out.
+           Only the gas check can mean that. Naming this 'funds-withdrawn' would
+           put a false claim about a person into a public log. */
+        await halt(env, r.wallet, arm, "token-dust");
         return;
       }
     }
