@@ -53,6 +53,7 @@ async function goplus(a) {
     value: [`dex:${r.is_in_dex ?? "?"}`, `honeypot:${r.is_honeypot ?? "?"}`,
             `blacklist:${r.is_blacklisted ?? "?"}`, `whitelist:${r.is_whitelisted ?? "?"}`].join(" "),
     note: `holders ${r.holder_count ?? "?"}`,
+    holders: r.holder_count ? Number(r.holder_count) : undefined,
   };
 }
 
@@ -94,6 +95,7 @@ for (const a of ARMS) {
       body: JSON.stringify({
         arm: a.arm, source, method: "api-local",
         ok: result.ok, value: result.value, note: result.note ?? null,
+        holders: result.holders,
       }),
     });
     const body = await res.json().catch(() => ({}));

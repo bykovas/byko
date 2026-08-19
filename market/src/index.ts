@@ -86,6 +86,18 @@ async function handle(request: Request, env: Env): Promise<Response> {
     return json({ halted: targets.map((a) => a.id) });
   }
 
+  /* Force a collector pass now, without waiting for the hourly window — used
+     after a deploy changes what is collected. */
+  if (url.pathname === "/api/collect") {
+    if (request.method !== "POST") return methodNotAllowed();
+    if (!authed(request, env)) return error("unauthorized", 401);
+    try { await collect(env); } catch (err) {
+      await event(env, null, "error", `collect: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
+      return error("collector failed", 500);
+    }
+    return json({ collected: true });
+  }
+
   /* The human half of the stop condition. Base App has no API, so the owner's
      screenshot verdict is entered here and lands in the same flag_checks table
      as every machine probe — otherwise the observation the experiment declared
@@ -95,7 +107,8 @@ async function handle(request: Request, env: Env): Promise<Response> {
     if (request.method !== "POST") return methodNotAllowed();
     if (!authed(request, env)) return error("unauthorized", 401);
     const b = (await request.json().catch(() => ({}))) as
-      { arm?: string; source?: string; value?: string; note?: string; method?: string; ok?: boolean };
+      { arm?: string; source?: string; value?: string; note?: string; method?: string;
+        ok?: boolean; holders?: number };
     const armId = b.arm ?? "";
     if (!RULES.arms.some((a) => a.id === armId)) return error("unknown arm", 400);
     if (!b.value) return error("value required", 400);
@@ -114,6 +127,15 @@ async function handle(request: Request, env: Env): Promise<Response> {
       `INSERT INTO flag_checks (checked_at, arm, source, method, ok, value, raw, changed, note)
        VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, NULL, ?6, ?7)`,
     ).bind(armId, source, method, ok, b.value, ok ? changed : 0, b.note ?? null).run();
+    /* GoPlus is the only source that reports a holder count and the only one
+       the Worker cannot reach, so the number arrives with the local probe or
+       not at all. It belongs to the market row, not to the verdict grid. */
+    if (typeof b.holders === "number" && Number.isFinite(b.holders)) {
+      await env.DB.prepare(
+        `UPDATE market_samples SET holders = ?2
+          WHERE id = (SELECT id FROM market_samples WHERE arm = ?1 ORDER BY id DESC LIMIT 1)`,
+      ).bind(armId, b.holders).run();
+    }
     return json({ recorded: { arm: armId, source, method, ok: ok === 1, value: b.value, changed: changed === 1 } });
   }
 
