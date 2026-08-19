@@ -15,7 +15,7 @@
  * The experiment is the comparison, not either column alone.
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import {
   BYKO, POOL, USDC, CHAIN_ID, SELECTORS, callData, field, hexToBig, nowIso,
   readJson, rpc, rpcBatch, rpcStats, toCsv, toUnits,
@@ -225,14 +225,22 @@ async function main() {
         .map((row) => ({ address: row.address.toLowerCase(), granted: row.amount, handle: row.handle }))
     : [];
 
-  /* unasked: the cohort file, when it exists (it will not for "before") */
-  const cohort = readJson(`${OUT_DIR}/cohort.json`, null);
-  const sent = readJson(`${OUT_DIR}/airdrop-sent.json`, null);
-  const sentBy = new Map((sent?.rows ?? []).map((row) => [row.address.toLowerCase(), row.amount]));
-  const unasked = (cohort?.rows ?? []).map((row) => ({
-    address: row.address.toLowerCase(),
-    granted: sentBy.get(row.address.toLowerCase()) ?? 0,
-  }));
+  /* unasked: every wallet that actually received, across all four waves.
+     This used to read the first wave's cohort.json and airdrop-sent.json
+     alone, which measured 227 of 908 recipients — it would have published a
+     24h and a 7d reading covering a quarter of the experiment as though it
+     were the whole thing, and the shortfall would have been invisible in the
+     output. The sent journals are the right source rather than the cohort
+     lists: a wallet that was picked but never sent is not a recipient, and
+     what each one was granted is recorded per row, so no baseline snapshot is
+     needed to tell whether it still holds what it was given. */
+  const sentBy = new Map();
+  for (const file of readdirSync(OUT_DIR).filter((f) => /^airdrop-sent.*\.json$/.test(f)).sort()) {
+    for (const row of readJson(`${OUT_DIR}/${file}`, null)?.rows ?? []) {
+      if (row?.address) sentBy.set(row.address.toLowerCase(), row.amount);
+    }
+  }
+  const unasked = [...sentBy].map(([address, granted]) => ({ address, granted }));
 
   const askedState = await cohortState(asked.map((a) => a.address));
   const unaskedState = await cohortState(unasked.map((a) => a.address));
