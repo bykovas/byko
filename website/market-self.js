@@ -245,15 +245,39 @@
     }
   }
 
+  /* The next fire time is known; nothing else about that trade is. Its size is
+     drawn when the alarm goes off and its side depends on the balance at that
+     moment, so the row shows the two facts we have — which arm, and when — and
+     leaves the rest as the same running dash used for any value still in
+     flight. A waiting row is a promise about the schedule, not about a trade. */
+  function waitingRows(data, tbody) {
+    (data.arms || []).forEach(function (a) {
+      if (a.halted || !a.next_fire_at) return;
+      var tr = el("tr");
+      tr.appendChild(el("td", "l mono", "—"));
+      tr.appendChild(el("td", "l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19)));
+      tr.appendChild(el("td", "l", a.id));
+      for (var i = 0; i < 6; i++) tr.appendChild(cellDash(i === 0 ? "l" : "mono"));
+      var stat = el("td", "l");
+      stat.appendChild(el("span", "pill", "waiting"));
+      tr.appendChild(stat);
+      tr.appendChild(el("td", "l mono", "—"));
+      tbody.appendChild(tr);
+    });
+  }
+
   function renderTrades(data) {
     var tbody = $("trades").querySelector("tbody");
     tbody.textContent = "";
     var rows = data.trades || [];
-    $("trades-n").textContent = rows.length + " shown";
+    $("trades-n").textContent = rows.length + (rows.length === 1 ? " done" : " done");
+    waitingRows(data, tbody);
     if (!rows.length) {
       var tr = el("tr");
       var td = el("td", "l"); td.colSpan = 11;
-      td.appendChild(el("span", "empty", "No trades yet. The parameters are pre-registered; trading begins only when the kill switch opens."));
+      td.appendChild(el("span", "empty", data.market_open
+        ? "No trades yet — the first alarm has not fired."
+        : "No trades yet. The parameters are pre-registered; trading begins only when the kill switch opens."));
       tr.appendChild(td); tbody.appendChild(tr); return;
     }
     rows.forEach(function (t) {
