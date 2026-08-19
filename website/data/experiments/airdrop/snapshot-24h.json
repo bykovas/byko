@@ -1,10 +1,10 @@
 {
   "label": "24h",
-  "taken_at": "2026-08-19T20:20:30.090Z",
-  "finished_at": "2026-08-19T20:21:29.996Z",
+  "taken_at": "2026-08-19T20:25:25.959Z",
+  "finished_at": "2026-08-19T20:26:28.840Z",
   "chain": {
     "block": {
-      "value": 50190741,
+      "value": 50190889,
       "source": "eth_blockNumber"
     },
     "supply": {
@@ -30,7 +30,7 @@
       "source": "byko.bykovas.lt/api/holders"
     },
     "block": {
-      "value": 50190741,
+      "value": 50190889,
       "source": "byko.bykovas.lt/api/holders"
     },
     "tiers": {
@@ -197,13 +197,13 @@
       "price_usd": "0.0002868205824",
       "fdv_usd": "226.6533683407",
       "total_reserve_usd": "127.25755700285290220227767466027088156654153052271578050764",
-      "volume_24h": "9.4003886235",
+      "volume_24h": "9.3432446105",
       "market_cap_usd": null
     },
     "geckoterminal_pool": {
       "source": "api.geckoterminal.com/pools",
       "pool_created_at": "2026-08-02T10:48:05Z",
-      "reserve_in_usd": "256.2147",
+      "reserve_in_usd": "256.125",
       "fdv_usd": "226.6533683682",
       "price_change_24h": "14.647",
       "volume_24h": "9.3432446105",
@@ -249,10 +249,10 @@
       "summary": {
         "wallets": 7,
         "granted_total": 1589,
-        "holding_total": 454,
-        "held": 2,
+        "holding_total": 3816,
+        "held": 6,
         "partial": 0,
-        "emptied": 5
+        "emptied": 1
       },
       "rows": [
         {
@@ -273,43 +273,43 @@
         },
         {
           "address": "0xda477f4e215c17960d37d2ca7cda41918fe0670e",
-          "byko": 0,
+          "byko": 227,
           "eth": 1.31208375125e-7,
           "granted": 227,
           "handle": "@mamiqra",
-          "status": "emptied"
+          "status": "held"
         },
         {
           "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
-          "byko": 0,
+          "byko": 1454,
           "eth": 0.000197724192805783,
           "granted": 227,
           "handle": "@bykocoin",
-          "status": "emptied"
+          "status": "held"
         },
         {
           "address": "0x431926e35b21e1668ef3bb8acfc9913a70e4ea39",
-          "byko": 0,
+          "byko": 227,
           "eth": 0.04036464284075058,
           "granted": 227,
           "handle": "@styleestileevolu",
-          "status": "emptied"
+          "status": "held"
         },
         {
           "address": "0xb6b1fa832e713bfd8998197fb7e412965362f8f1",
           "byko": 0,
-          "eth": 0.000009582033661076,
+          "eth": 0.000008877744137476,
           "granted": 227,
           "handle": "@chronor",
           "status": "emptied"
         },
         {
           "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
-          "byko": 0,
+          "byko": 1454,
           "eth": 0.000197724192805783,
           "granted": 227,
           "handle": "@bykocoin",
-          "status": "emptied"
+          "status": "held"
         }
       ]
     },
@@ -317,10 +317,10 @@
       "summary": {
         "wallets": 908,
         "granted_total": 206116,
-        "holding_total": 205208,
-        "held": 904,
+        "holding_total": 205889,
+        "held": 907,
         "partial": 0,
-        "emptied": 4
+        "emptied": 1
       },
       "rows": [
         {
@@ -750,7 +750,7 @@
         {
           "address": "0xc35190879d38e1c117e47996073b3f4dc5b0853c",
           "byko": 227,
-          "eth": 0.0073726787199963,
+          "eth": 0.007362707604208023,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -1470,7 +1470,7 @@
         {
           "address": "0xc06ebbefd94032b85424d51906e2a335efae264b",
           "byko": 227,
-          "eth": 0.005410862109563161,
+          "eth": 0.005454369871367802,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -1558,7 +1558,7 @@
         {
           "address": "0xb878a06dde8e7e8dbc61d94c89b7bc9ad6b9183d",
           "byko": 227,
-          "eth": 0.4813370740876629,
+          "eth": 0.3994526692326986,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -1574,7 +1574,7 @@
         {
           "address": "0xb72d088def563c456d6090019d9b5fe72fe7823e",
           "byko": 227,
-          "eth": 0.20955481790539862,
+          "eth": 0.240339159402488,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -1638,7 +1638,7 @@
         {
           "address": "0x73fcb2d05f2e29561b58177af7f22ac19b3b484f",
           "byko": 227,
-          "eth": 0.05526660482917927,
+          "eth": 0.055264890635672734,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -6110,7 +6110,7 @@
         {
           "address": "0xd627158727cd253cba31d86a3da31d2baa00ff07",
           "byko": 227,
-          "eth": 0.0566218758367444,
+          "eth": 0.05890456190810924,
           "granted": 227,
           "handle": null,
           "status": "held"
@@ -7565,33 +7565,33 @@
         },
         {
           "address": "0x257f3255ddaf50af690d11507430d954e2bc545e",
-          "byko": 0,
+          "byko": 227,
           "eth": 0.000201424082045747,
           "granted": 227,
           "handle": null,
-          "status": "emptied"
+          "status": "held"
         },
         {
           "address": "0x2b96d4d4842eb5eeec226011ff98a08ce5c5074a",
-          "byko": 0,
+          "byko": 227,
           "eth": 0.000936996341258636,
           "granted": 227,
           "handle": null,
-          "status": "emptied"
+          "status": "held"
         },
         {
           "address": "0x98a050c06e7d5e45fc77dc0f1451e3cd0b26a20c",
-          "byko": 0,
+          "byko": 227,
           "eth": 0.03504034166279371,
           "granted": 227,
           "handle": null,
-          "status": "emptied"
+          "status": "held"
         }
       ]
     }
   },
   "rpc": {
-    "calls": 1834,
+    "calls": 1842,
     "nodes": 4
   }
 }

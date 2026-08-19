@@ -97,8 +97,21 @@ export async function rpcBatch(calls) {
         if (!Array.isArray(body)) {
           throw new Error(`batch: ${body?.error?.message ?? "not an array"}`);
         }
-        const out = new Array(calls.length).fill(null);
+        const out = new Array(calls.length).fill(undefined);
         for (const item of body) if (!item.error) out[item.id] = item.result;
+        /* A node that refuses one element of a batch still answers HTTP 200,
+           with a per-element error, and that slot comes back empty. Returning
+           the array as-is made the caller read a missing answer as the number
+           zero: three airdrop wallets holding 227 BYKO each were published as
+           "emptied", because balanceOf never answered for them. Ask again for
+           exactly the empty slots, one call at a time, and let rpc() throw if
+           they still will not answer — a snapshot that invents a zero is worse
+           than a snapshot that did not happen. */
+        const missing = [];
+        out.forEach((value, index) => { if (value === undefined) missing.push(index); });
+        for (const index of missing) {
+          out[index] = await rpc(calls[index].method, calls[index].params ?? []);
+        }
         return out;
       } catch (error) {
         last = error;
@@ -111,7 +124,11 @@ export async function rpcBatch(calls) {
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const hexToBig = (hex) => (hex && hex !== "0x" ? BigInt(hex) : 0n);
+export const hexToBig = (hex) => {
+  /* Backstop for the same mistake one layer down: no answer is not a zero. */
+  if (hex === null || hex === undefined) throw new Error("hexToBig: nothing to convert");
+  return hex && hex !== "0x" ? BigInt(hex) : 0n;
+};
 export const toUnits = (raw, decimals) => Number(hexToBig(raw)) / 10 ** decimals;
 export const topicToAddress = (topic) => "0x" + topic.slice(-40).toLowerCase();
 
