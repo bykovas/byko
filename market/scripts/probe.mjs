@@ -60,12 +60,12 @@ async function geckoterminal(a) {
   const { status, text } = await get(
     `https://api.geckoterminal.com/api/v2/networks/base/pools/${a.pool}`);
   if (status !== 200) return { ok: false, value: `http:${status}` };
-  const a = JSON.parse(text).data?.attributes ?? {};
-  const locked = a.locked_liquidity_percentage;
+  const at = JSON.parse(text).data?.attributes ?? {};
+  const locked = at.locked_liquidity_percentage;
   return {
     ok: true,
     value: locked == null ? "null" : String(locked),
-    note: `price ${a.base_token_price_usd ?? "?"} tvl ${a.reserve_in_usd ?? "?"}`,
+    note: `price ${at.base_token_price_usd ?? "?"} tvl ${at.reserve_in_usd ?? "?"}`,
   };
 }
 
