@@ -1,0 +1,38 @@
+{
+  "note": "Pre-registered parameters for the disclosed self-trading experiment. This file is committed BEFORE the first trade; its canonical hash is written into the market D1 rules row, and the worker refuses to trade unless its bundled copy hashes to the same value. Changing anything here is a visible commit that the running worker will reject until the row is updated on purpose. See docs/drafts/wash-worker-blueprint.md and the diary entry that names this what it is: wash trading, disclosed.",
+  "declared_at": "2026-08-19",
+  "chain_id": 8453,
+  "venue": {
+    "router": "0x6Cb442acF35158D5eDa88fe602221b67B400Be3E",
+    "factory": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da",
+    "quote": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "stable": false
+  },
+  "strategy": {
+    "interval_minutes": [5, 180],
+    "trade_usdc": [0.3, 9.0],
+    "pivot_usdc": 10.0,
+    "seed_usdc": 20.0,
+    "slippage_bps": 300
+  },
+  "arms": [
+    {
+      "id": "byko",
+      "wallet": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
+      "label": "BYKO Buyer",
+      "token": "0x078bb16e24C8931Fc007928c370422e5e38F4372",
+      "pool": "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca",
+      "stop": { "max_days": 14, "on_signal_cleared": true },
+      "guards": { "max_usdc_spent": 40.0, "max_price_deviation_pct": 60.0, "max_reserve_jump_pct": 25.0 }
+    },
+    {
+      "id": "luko",
+      "wallet": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "label": "LUKO Buyer",
+      "token": "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1",
+      "pool": "0x2222a01b83db8c533b062aeb6de4f61d6ae792f2",
+      "stop": { "max_days": null, "on_signal_cleared": false },
+      "guards": { "max_usdc_spent": 40.0, "max_price_deviation_pct": 80.0, "max_reserve_jump_pct": 25.0 }
+    }
+  ]
+}

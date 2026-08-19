@@ -40,3 +40,8 @@ tmp/
 
 # local-only tooling deps (the site itself still has no build step)
 scripts/airdrop/node_modules/
+
+# market worker (self-contained; deps and dev secrets local only)
+market/node_modules/
+market/.dev.vars
+market/.wrangler/

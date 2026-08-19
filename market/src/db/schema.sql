@@ -1,0 +1,129 @@
+-- byko-market D1 schema. Applied BY HAND, never by automation:
+--
+--   cd market && npx wrangler d1 execute byko-market --remote --file=src/db/schema.sql
+--
+-- The disclosed self-trading experiment. Two arms (byko, luko) trade against
+-- their own Aerodrome pools on a schedule; every row here is meant to be
+-- published, and the repo's daily CSV export is the copy that outlives the DB.
+-- Every statement is idempotent.
+--
+-- The one rule that shapes the whole design: the record precedes the money.
+-- A trade row exists, with its tx_hash, BEFORE the transaction is broadcast,
+-- exactly as app227's advances do. A row can never claim "nothing was sent"
+-- about money that was sent.
+
+-- Pre-registration. ONE row, written before the first trade, never updated.
+-- The worker hashes its bundled rules.json and refuses to trade unless the
+-- hash matches sha256 here — parameters cannot be tuned mid-run in silence.
+CREATE TABLE IF NOT EXISTS rules (
+  id          INTEGER PRIMARY KEY CHECK (id = 1),
+  declared_at TEXT NOT NULL,
+  git_commit  TEXT NOT NULL,          -- the commit that published rules.json
+  json        TEXT NOT NULL,          -- rules.json, verbatim
+  sha256      TEXT NOT NULL,          -- canonical hash (see scripts/hash-rules.mjs)
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- The two participants. Both are already in website/data/founder-wallets.json;
+-- no address here may be one that is not in that public register.
+CREATE TABLE IF NOT EXISTS wallets (
+  address TEXT PRIMARY KEY,
+  arm     TEXT NOT NULL,              -- byko | luko
+  label   TEXT NOT NULL,              -- as printed in founder-wallets.json
+  token   TEXT NOT NULL,
+  pool    TEXT NOT NULL,
+  enabled INTEGER NOT NULL DEFAULT 1,
+  started_at   TEXT,                  -- first alarm; NULL until armed
+  start_price  TEXT,                  -- price at first trade, for the deviation guard
+  usdc_spent   TEXT NOT NULL DEFAULT '0'   -- cumulative gross USDC spent on buys
+);
+
+-- Live pacing state, one row per wallet.
+CREATE TABLE IF NOT EXISTS wallet_state (
+  address       TEXT PRIMARY KEY,
+  next_fire_at  TEXT,                 -- when the next alarm is due (NULL = not armed / halted)
+  halted        INTEGER NOT NULL DEFAULT 0,
+  halt_reason   TEXT,
+  usdc_balance  TEXT,
+  token_balance TEXT,
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- The ledger. The row exists before the transaction is broadcast.
+--   status: pending  — signed, hash recorded, broadcast attempted; confirmer resolves it
+--           confirmed — receipt final
+--           failed    — reverted, or never mined and expired
+CREATE TABLE IF NOT EXISTS trades (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  arm           TEXT NOT NULL,
+  wallet        TEXT NOT NULL,
+  token         TEXT NOT NULL,
+  decided_at    TEXT NOT NULL,
+  side          TEXT NOT NULL CHECK (side IN ('buy','sell')),
+  usdc_amount   TEXT NOT NULL,        -- the drawn size (USDC value intended)
+  delay_min     REAL NOT NULL,        -- the delay that led to this fire
+  trigger_usdc  TEXT NOT NULL,        -- the USDC balance that chose the side
+  price_before  TEXT NOT NULL,
+  reserve_token_before TEXT,
+  reserve_usdc_before  TEXT,
+  amount_in     TEXT,                 -- exact wei/uUSDC sent to the router
+  min_out       TEXT,                 -- amountOutMin the swap was signed with
+  nonce         INTEGER,
+  tx_hash       TEXT,                 -- written BEFORE broadcast
+  status        TEXT NOT NULL DEFAULT 'pending',
+  broadcast_at  TEXT,
+  confirmed_at  TEXT,
+  block_number  INTEGER,
+  token_amount  TEXT,                 -- settled from the pool Swap log
+  usdc_settled  TEXT,                 -- settled from the pool Swap log
+  price_after   TEXT,
+  fdv_after     TEXT,
+  reserve_usdc_after TEXT,
+  gas_wei       TEXT,
+  error         TEXT,
+  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- The outcome. What the classifiers say, sampled on a schedule.
+-- ok = 0 means the check itself failed and the grid must render '?', never a
+-- fabricated "unchanged". changed = 1 when the reading differs from this
+-- source's first (baseline) reading.
+CREATE TABLE IF NOT EXISTS flag_checks (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  checked_at TEXT NOT NULL,
+  arm        TEXT NOT NULL,
+  source     TEXT NOT NULL,
+  method     TEXT NOT NULL,           -- api | manual
+  ok         INTEGER NOT NULL,
+  value      TEXT,                    -- short normalised reading for the grid
+  raw        TEXT,                    -- full response, kept verbatim
+  changed    INTEGER NOT NULL DEFAULT 0,
+  note       TEXT
+);
+
+-- Market backdrop, so the outcome has something to be read against.
+CREATE TABLE IF NOT EXISTS market_samples (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  sampled_at    TEXT NOT NULL,
+  arm           TEXT NOT NULL,
+  price_usd     TEXT, fdv_usd TEXT, tvl_usd TEXT,
+  reserve_token TEXT, reserve_usdc TEXT,
+  vol_24h TEXT, buys_24h INTEGER, sells_24h INTEGER, holders INTEGER,
+  lp_holder TEXT, lp_locked TEXT      -- LUKO's LP is withdrawable; watched live
+);
+
+-- Everything that happened and was NOT a trade. Absence must be visible: a
+-- skipped fire, a tripped guard, a killswitch halt, a dead RPC all land here.
+CREATE TABLE IF NOT EXISTS events (
+  id     INTEGER PRIMARY KEY AUTOINCREMENT,
+  at     TEXT NOT NULL DEFAULT (datetime('now')),
+  arm    TEXT,
+  kind   TEXT NOT NULL,   -- halt | resume | skip | guard-trip | rules-mismatch | approve | error
+  detail TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_trades_arm    ON trades(arm, id);
+CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status);
+CREATE INDEX IF NOT EXISTS idx_checks_src    ON flag_checks(arm, source, id);
+CREATE INDEX IF NOT EXISTS idx_events_arm    ON events(arm, id);
+CREATE INDEX IF NOT EXISTS idx_samples_arm   ON market_samples(arm, id);

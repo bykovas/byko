@@ -1,0 +1,58 @@
+# byko-market — the disclosed self-trading worker on byko-market.bykovas.lt.
+#
+# A self-contained Worker, fully separate from byko-app227 (the reader faucet)
+# and from the Cloudflare Pages project that serves byko.bykovas.lt. Different
+# money, different blast radius, its own kill switch.
+#
+# No secrets in this file, ever. The trading key goes in with
+#   wrangler secret put ARM_PRIVATE_KEY_BYKO      (from market/)
+#   wrangler secret put ARM_PRIVATE_KEY_LUKO
+#   wrangler secret put DRPC_URL
+#   wrangler secret put ADMIN_TOKEN
+# Local dev values live in .dev.vars (gitignored).
+#
+# NOTHING TRADES until, in order: (1) the D1 schema is applied by hand,
+# (2) rules.json's canonical hash is inserted into the rules row, (3) both
+# arm keys are set as secrets, (4) MARKET_OPEN is flipped to "1" and deployed,
+# (5) POST /api/kick (with ADMIN_TOKEN) arms the schedulers. MARKET_OPEN="0"
+# is the kill switch — one line, one deploy, and every arm halts at its next
+# alarm without sending.
+
+name = "byko-market"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+routes = [
+  { pattern = "byko-market.bykovas.lt", custom_domain = true }
+]
+workers_dev = false
+preview_urls = false
+
+[vars]
+MARKET_OPEN = "0"                  # THE KILL SWITCH. "1" to allow sending.
+CHAIN_ID = "8453"
+RPC_URL = "https://mainnet.base.org"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "byko-market"
+database_id = "SET_AFTER_wrangler_d1_create_byko-market"
+
+# One Durable Object instance per arm — the serialisation point for that arm's
+# money and the alarm that paces it. SQLite-backed: works on every plan.
+[[durable_objects.bindings]]
+name = "ARM"
+class_name = "ArmLock"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ArmLock"]
+
+[triggers]
+# Heartbeat: settle pending trades, run the collector, and re-arm any enabled
+# arm whose alarm was lost. The alarms do the trading, not this cron.
+crons = ["*/10 * * * *"]
+
+[observability]
+enabled = true

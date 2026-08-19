@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — Self-trading</title>
+<meta name="description" content="A security vendor recommended sustaining two-sided trading to clear BYKO's last flag. For a token nobody trades, that means the founder trading with himself. This is that experiment, named as wash trading, with every parameter pre-registered and every trade published.">
+<meta property="og:title" content="BYKO — Self-trading">
+<meta property="og:description" content="The disclosed self-trading experiment: pre-registered parameters, every trade published, and a prediction on the record that the flag will not clear.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://byko.bykovas.lt/self-trading">
+<link rel="canonical" href="https://byko.bykovas.lt/self-trading">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="stylesheet" href="assets/byko.css?v=20260819">
+<style>
+main.wrap{padding-top:28px}
+.head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head h1{font:700 25px/1.18 var(--byko-font-sans)}
+.head .btn{margin-left:auto}
+.meta{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
+.meta .err{color:var(--byko-quoted)}
+.disclose{margin-top:22px;border-top:var(--byko-rule-heavy);padding-top:18px}
+.disclose h2{font:700 17px/1.2 var(--byko-font-sans);margin:0 0 8px}
+.disclose p{font:400 15.5px/1.55 var(--byko-font-sans);color:var(--byko-ink-2);margin:10px 0 0;max-width:70ch}
+.disclose .name{color:var(--byko-ink);font-weight:600}
+blockquote{margin:14px 0 0;padding:2px 0 2px 16px;border-left:var(--byko-rule-section);
+  font:400 15px/1.55 var(--byko-font-sans);color:var(--byko-ink-2)}
+blockquote ul{margin:8px 0 0;padding-left:18px}
+.rules{display:flex;flex-wrap:wrap;gap:0 26px;margin-top:16px;font:var(--byko-data);color:var(--byko-label)}
+.rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
+.arms{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:24px;border-top:var(--byko-rule-heavy)}
+.arm{padding:14px 20px 16px 0}
+.arm.right{border-left:var(--byko-rule-hair);padding-left:22px}
+.arm h3{font:700 16px/1.2 var(--byko-font-sans);margin:0}
+.arm .st{font:var(--byko-data);color:var(--byko-label);margin-top:2px}
+.arm dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:12px 0 0;font:var(--byko-data)}
+.arm dt{color:var(--byko-label);text-transform:uppercase;letter-spacing:var(--byko-label-tracking)}
+.arm dd{margin:0;color:var(--byko-ink-2);font-family:var(--byko-font-mono);text-align:right}
+.arm dd.live{color:var(--byko-live-ink)}
+.arm .warn{margin-top:12px;font:var(--byko-note);color:var(--byko-quoted)}
+h2.sec{font:700 17px/1.2 var(--byko-font-sans);margin:34px 0 0}
+h2.sec .n{font:var(--byko-data);color:var(--byko-label);font-weight:400;margin-left:8px}
+.scroll{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:var(--byko-cell-pad);border-bottom:var(--byko-rule-hair);white-space:nowrap}
+th{font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase;
+  color:var(--byko-label);border-bottom:var(--byko-rule-heavy)}
+th.l,td.l{text-align:left}
+th:first-child,td:first-child{padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+td{font:var(--byko-value);color:var(--byko-ink-2)}
+td.src{color:var(--byko-ink);font-family:var(--byko-font-sans);font-weight:600;text-align:left}
+td.asks{color:var(--byko-label);text-align:left;font:var(--byko-note)}
+td.now{font-family:var(--byko-font-mono);color:var(--byko-ink)}
+td.g{font-family:var(--byko-font-mono);text-align:center;color:var(--byko-label)}
+td.g.moved{color:var(--byko-live-ink);font-weight:700}
+td.g.miss{color:var(--byko-label)}
+td.side{text-align:left;font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase}
+td.side.buy{color:var(--byko-pass)}
+td.side.sell{color:var(--byko-quoted)}
+td.mono{font-family:var(--byko-font-mono)}
+td.pos{color:var(--byko-ink)}
+td a{font:var(--byko-data);color:var(--byko-label)}
+td a:hover{color:var(--byko-ink)}
+.pill{display:inline-block;font:var(--byko-note);padding:1px 7px;border:1px solid rgba(13,17,22,.18);border-radius:999px}
+.grid-key{margin-top:10px;font:var(--byko-note);color:var(--byko-label);display:flex;gap:18px;flex-wrap:wrap}
+.grid-key b{color:var(--byko-live-ink)}
+.events{margin-top:20px;font:var(--byko-note);color:var(--byko-ink-2)}
+.events div{padding:3px 0;border-bottom:var(--byko-rule-hair)}
+.events .k{color:var(--byko-label);font-family:var(--byko-font-mono);margin-right:8px}
+.note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
+.empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
+@media (max-width:640px){.arms{grid-template-columns:1fr}.arm.right{border-left:0;padding-left:0}}
+</style>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
+<!-- nav:begin -->
+      <a href="/#referendum">Referendum</a>
+      <a href="/diary">Diary</a>
+      <a href="/#facts">Facts</a>
+      <a class="services" href="/#services">Services</a>
+      <a href="/market">Market</a>
+      <a href="/specification">Specification</a>
+<!-- nav:end -->
+      <span class="lamp">running</span>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="head">
+    <span class="kicker">Disclosed experiment · wash trading</span>
+    <h1>Self-trading</h1>
+    <button class="btn" id="refresh" type="button">Refresh</button>
+  </div>
+  <p class="meta" id="meta">loading…</p>
+
+  <section class="disclose">
+    <h2>Why this exists</h2>
+    <p>A security vendor, <span class="name">Blockaid</span>, confirmed BYKO's remaining signal is <em>not</em> a malice flag but a thin-market heuristic, and recommended, in writing:</p>
+    <blockquote>
+      <ul>
+        <li>"Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized."</li>
+        <li>"Sustain two-sided trading, so price is not dominated by tiny trades."</li>
+        <li>"After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels."</li>
+      </ul>
+    </blockquote>
+    <p>Deepening is impossible: a $20,000 pool would take about fifty times a supply fixed forever at 790,227. That leaves sustaining two-sided trading in a token nobody else trades — which means these two wallets buying and selling against their own pools on a schedule. That has a name and this page uses it: <span class="name">this is wash trading</span>, disclosed. No exchange, no order book, no counterparty deceived about who is on the other side, and every parameter and every trade published. None of that makes it something else; it makes it wash trading in the open.</p>
+    <p>The parameters below were committed to the public repository, and their hash written into the database, <span class="name">before the first trade</span> — the running worker refuses to trade if its live parameters do not match that hash. The prediction, on the record: the flag will not clear, because the condition Blockaid named is pool depth and the worker does not touch depth.</p>
+    <div class="rules" id="rules"></div>
+  </section>
+
+  <div class="arms" id="arms"></div>
+
+  <h2 class="sec">What the classifiers say<span class="n" id="checks-n"></span></h2>
+  <div class="scroll"><table id="checks"><thead></thead><tbody></tbody></table></div>
+  <div class="grid-key">
+    <span>· unchanged from baseline</span>
+    <span><b>▲</b> changed</span>
+    <span>? not measured</span>
+  </div>
+
+  <h2 class="sec">Trades<span class="n" id="trades-n"></span></h2>
+  <div class="scroll"><table id="trades"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">arm</th><th class="l">side</th>
+    <th>USDC</th><th>token</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <h2 class="sec">Log<span class="n">everything that was not a trade</span></h2>
+  <div class="events" id="events"></div>
+
+  <p class="note">Read live from the byko-market worker. Every transaction here is verifiable on BaseScan; the CSV export in the repository is the copy that outlives the database. Signed numbers carry direction — a minus is what left the wallet. Nothing here is a price recommendation or financial advice; it is the opposite of a healthy market, run deliberately and measured.</p>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="mailto:hello@byko.bykovas.lt">hello@byko.bykovas.lt</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
+    </div>
+    <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
+
+<script src="market-self.js?v=20260819"></script>
+</body>
+</html>

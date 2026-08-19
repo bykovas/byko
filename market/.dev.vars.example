@@ -1,0 +1,6 @@
+# Copy to .dev.vars (gitignored) for local `wrangler dev`. Never commit real values.
+ARM_PRIVATE_KEY_BYKO=0x...
+ARM_PRIVATE_KEY_LUKO=0x...
+DRPC_URL=https://lb.drpc.live/base/<key>
+ADMIN_TOKEN=<a long random string>
+SENTRY_DSN=
