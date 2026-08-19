@@ -20,10 +20,12 @@
     var x = Number(v);
     return isNaN(x) ? String(v) : x.toLocaleString("en-US", { maximumFractionDigits: d === undefined ? 2 : d });
   }
+  /* Fixed decimals, not significant digits: a column of prices should line up.
+     toPrecision gave $0.0002543 beside $0.003345 and the digits never met. */
   function price(v) {
     if (v === null || v === undefined || v === "") return "—";
     var x = Number(v);
-    return isNaN(x) ? String(v) : "$" + x.toPrecision(4);
+    return isNaN(x) ? String(v) : "$" + x.toFixed(8);
   }
 
   function renderRules(data) {
@@ -194,6 +196,27 @@
     });
   }
 
+  /* These wallets existed before the worker did and traded on their own. The
+     ledger below covers the worker's trades only, so a pool chart can legally
+     show a trade this table does not — and a reader who spots that deserves to
+     have been told first, not to catch us. */
+  function renderLedgerScope(data) {
+    var box = $("scope");
+    if (!box) return;
+    box.textContent = "";
+    var started = data.arms
+      .filter(function (a) { return a.started_at; })
+      .map(function (a) { return a.id.toUpperCase() + " from " + a.started_at + " UTC"; });
+    if (!started.length) {
+      box.appendChild(document.createTextNode(
+        "The ledger records the worker's own trades. It is empty until the worker makes one."));
+      return;
+    }
+    box.appendChild(document.createTextNode(
+      "This ledger records the worker's trades only — " + started.join(", ") +
+      ". Both wallets are ordinary addresses that existed and traded before the worker was armed, so a pool chart will show earlier trades from them that are not listed here. LUKO Buyer, for one, bought $1.29 of LUKO on 18 August, the day before any of this started. Those were not the worker and are not claimed as its work."));
+  }
+
   function renderEvents(data) {
     var box = $("events"); box.textContent = "";
     var evs = data.events || [];
@@ -210,7 +233,7 @@
     $("meta").innerHTML = "read " + new Date(data.generated).toISOString().replace("T", " ").slice(0, 19) +
       " UTC · kill switch <b>" + (data.market_open ? "open" : "closed") + "</b>" +
       (data.rules.hash_ok ? "" : " · <span class=\"err\">rules hash MISMATCH — worker will not trade</span>");
-    renderRules(data); renderArms(data); renderChecks(data); renderTrades(data); renderEvents(data);
+    renderRules(data); renderArms(data); renderChecks(data); renderTrades(data); renderLedgerScope(data); renderEvents(data);
   }
 
   function load() {
