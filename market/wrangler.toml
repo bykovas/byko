@@ -37,7 +37,7 @@ RPC_URL = "https://mainnet.base.org"
 [[d1_databases]]
 binding = "DB"
 database_name = "byko-market"
-database_id = "SET_AFTER_wrangler_d1_create_byko-market"
+database_id = "93b0988f-bbac-4a64-ae7c-555e15702190"
 
 # One Durable Object instance per arm — the serialisation point for that arm's
 # money and the alarm that paces it. SQLite-backed: works on every plan.
