@@ -15,9 +15,6 @@ import { RULES } from "./rules";
  *
  * Every endpoint below was probed on 19 Aug 2026 and behaves as coded. */
 
-/* the arm whose classifiers we actually poll */
-const MEASURED_ARM = "byko";
-
 const BURN = "0x000000000000000000000000000000000000dEaD";
 
 /* The wallet that actually holds each pool's LP tokens when they are NOT
@@ -282,19 +279,6 @@ export async function collect(env: Env): Promise<void> {
   for (const r of RULES.arms) {
     const token = r.token;
 
-    /* LUKO: chain reads only — its own reserves for a price, and the LP holder
-       that this experiment discloses about itself. No third-party opinion is
-       sought, because nothing about LUKO is being measured. */
-    if (r.id !== MEASURED_ARM) {
-      const lpOnly = await lpState(env, r.id, r.pool);
-      const res = await poolReserves(env, r.pool);
-      await env.DB.prepare(
-        `INSERT INTO market_samples
-           (sampled_at, arm, price_usd, reserve_token, reserve_usdc, lp_holder, lp_locked)
-         VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6)`,
-      ).bind(r.id, res.price, res.token, res.usdc, lpOnly.holder, lpOnly.burned).run();
-      continue;
-    }
 
     /* one host at a time, with a breath between: a burst is what trips the
        shared-IP limits in the first place */
@@ -305,7 +289,7 @@ export async function collect(env: Env): Promise<void> {
     const gk = await geckoPool(r.pool);      await sleep(800);
     const cg = await coingecko(token);       await sleep(400);
     const cd = await cmcDex(env, r.pool);    await sleep(400);
-    const ci = await cmcIndex(env, "BYKO");  await sleep(400);
+    const ci = await cmcIndex(env, r.id.toUpperCase()); await sleep(400);
     const bs = await blockscout(token);
 
     await record(env, r.id, "metamask-price", "api", mp);
@@ -335,12 +319,15 @@ export async function collect(env: Env): Promise<void> {
        replied fills the row, and the LP figure — read from the chain — is
        written regardless. */
     const q = cd.q;
+    /* last resort: the pool itself. A price we can always read beats an empty
+       column filled by nobody. */
+    const chain = (!m && !q?.price) ? await poolReserves(env, r.pool) : null;
     await env.DB.prepare(
       `INSERT INTO market_samples
          (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked)
        VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`,
     ).bind(r.id,
-      m?.price ?? (q?.price != null ? String(q.price) : null),
+      m?.price ?? (q?.price != null ? String(q.price) : chain?.price || null),
       m?.fdv ?? (q?.fully_diluted_value != null ? String(q.fully_diluted_value) : null),
       m?.tvl ?? (q?.liquidity != null ? String(q.liquidity) : null),
       m?.vol ?? (q?.volume_24h != null ? String(q.volume_24h) : null),

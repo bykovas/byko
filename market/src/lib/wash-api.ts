@@ -26,9 +26,6 @@ const SOURCE_ASKS: Record<string, string> = {
   "base-app": "what the screen says (by hand)",
 };
 
-/* the arm whose classifiers are polled — the one with a flag to clear */
-const MEASURED_ARM = "byko";
-
 function dayIndex(startDate: string, d: string): number {
   const a = Date.parse(startDate + "T00:00:00Z");
   const b = Date.parse(d + "T00:00:00Z");
@@ -64,12 +61,12 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const start = await env.DB.prepare(
       `SELECT MIN(date(checked_at)) AS d FROM flag_checks WHERE arm = ?1`,
     ).bind(r.id).first<string>("d");
-    /* Only the measured arm is asked what the classifiers think. An unmeasured
-       arm must say so rather than render a grid of dashes, which would read as
-       "we looked and found nothing" instead of "we deliberately did not look". */
-    const measured = r.id === MEASURED_ARM;
+    /* Both arms are measured: the published entry compares a structurally
+       clean token against one carrying real red flags, and half a comparison
+       is worse than none. */
+    const measured = true;
     const grid = [];
-    for (const source of measured ? SOURCE_ORDER : []) {
+    for (const source of SOURCE_ORDER) {
       const now = await env.DB.prepare(
         `SELECT ok, value, checked_at FROM flag_checks WHERE arm = ?1 AND source = ?2
           ORDER BY id DESC LIMIT 1`,

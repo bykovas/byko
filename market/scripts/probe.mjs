@@ -16,9 +16,12 @@
 import { readFileSync, existsSync } from "node:fs";
 
 const BASE = process.env.MARKET_URL || "https://byko-market.bykovas.lt";
-const ARM = "byko";
-const TOKEN = "0x078bb16e24C8931Fc007928c370422e5e38F4372";
-const POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
+const ARMS = [
+  { arm: "byko", token: "0x078bb16e24C8931Fc007928c370422e5e38F4372",
+    pool: "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" },
+  { arm: "luko", token: "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1",
+    pool: "0x2222a01b83db8c533b062aeb6de4f61d6ae792f2" },
+];
 
 function adminToken() {
   if (process.env.ADMIN_TOKEN) return process.env.ADMIN_TOKEN.trim();
@@ -38,9 +41,9 @@ async function get(url) {
   return { status: res.status, text: await res.text() };
 }
 
-async function goplus() {
+async function goplus(a) {
   const { status, text } = await get(
-    `https://api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=${TOKEN}`);
+    `https://api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=${a.token}`);
   if (status !== 200) return { ok: false, value: `http:${status}` };
   const j = JSON.parse(text);
   const r = j.result ? Object.values(j.result)[0] : undefined;
@@ -53,9 +56,9 @@ async function goplus() {
   };
 }
 
-async function geckoterminal() {
+async function geckoterminal(a) {
   const { status, text } = await get(
-    `https://api.geckoterminal.com/api/v2/networks/base/pools/${POOL}`);
+    `https://api.geckoterminal.com/api/v2/networks/base/pools/${a.pool}`);
   if (status !== 200) return { ok: false, value: `http:${status}` };
   const a = JSON.parse(text).data?.attributes ?? {};
   const locked = a.locked_liquidity_percentage;
@@ -66,8 +69,8 @@ async function geckoterminal() {
   };
 }
 
-async function coingecko() {
-  const { status } = await get(`https://api.coingecko.com/api/v3/coins/base/contract/${TOKEN}`);
+async function coingecko(a) {
+  const { status } = await get(`https://api.coingecko.com/api/v3/coins/base/contract/${a.token}`);
   if (status === 200) return { ok: true, value: "known" };
   if (status === 404) return { ok: true, value: "unknown" };
   return { ok: false, value: `http:${status}` };
@@ -80,18 +83,21 @@ if (!token) {
 }
 
 const probes = { goplus, geckoterminal, coingecko };
-for (const [source, fn] of Object.entries(probes)) {
-  let result;
-  try { result = await fn(); } catch (err) { result = { ok: false, value: `error:${err.message}` }; }
-  const res = await fetch(`${BASE}/api/observe`, {
-    method: "POST",
-    headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      arm: ARM, source, method: "api-local",
-      ok: result.ok, value: result.value, note: result.note ?? null,
-    }),
-  });
-  const body = await res.json().catch(() => ({}));
-  console.log(`${source.padEnd(15)} ${result.ok ? " " : "?"} ${String(result.value).slice(0, 46).padEnd(48)} → ${res.status} ${body.recorded ? "recorded" : JSON.stringify(body).slice(0, 60)}`);
-  await new Promise((r) => setTimeout(r, 400));
+for (const a of ARMS) {
+  console.log(`[${a.arm}]`);
+  for (const [source, fn] of Object.entries(probes)) {
+    let result;
+    try { result = await fn(a); } catch (err) { result = { ok: false, value: `error:${err.message}` }; }
+    const res = await fetch(`${BASE}/api/observe`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        arm: a.arm, source, method: "api-local",
+        ok: result.ok, value: result.value, note: result.note ?? null,
+      }),
+    });
+    const body = await res.json().catch(() => ({}));
+    console.log(`  ${source.padEnd(15)} ${result.ok ? " " : "?"} ${String(result.value).slice(0, 44).padEnd(46)} → ${res.status} ${body.recorded ? "recorded" : JSON.stringify(body).slice(0, 60)}`);
+    await new Promise((r) => setTimeout(r, 500));
+  }
 }
