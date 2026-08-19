@@ -17,7 +17,8 @@
 - The market's first reply: a price tag — 0.5 h
 - Fake, worthless, decentralized — case closed — 1.5 h
 - The first real vote for legitimacy — 0 h
-- The flag came back, and I know what I did — 0.5 h
 - BYKO 227: fact-check my token, become part of it — 11 h
+- The flag came back, and I know what I did — 0.5 h
 - 227 wallets that never asked — 3 h
 - Six cents did what 908 holders could not — 4 h
+- The only advice I can follow is to fake a market — 6 h

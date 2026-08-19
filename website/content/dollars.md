@@ -11,3 +11,4 @@
 - The flag came back, and I know what I did — $0
 - 227 wallets that never asked — $0
 - Six cents did what 908 holders could not — $0
+- The only advice I can follow is to fake a market — $42

@@ -3,20 +3,20 @@
   "counters": [
     {
       "id": "hours",
-      "value": "119.0 h",
+      "value": "125.0 h",
       "label": "Hours logged",
       "kind": "spent",
-      "asOf": "2026-08-18",
+      "asOf": "2026-08-19",
       "counts": "Working hours spent on the BYKO study since 2 Aug 2026: contract work, liquidity setup, the website, listing applications, wallet-flag appeals, support conversations, and writing. Tracked per session, rounded to the half hour. Self-reported estimate from the project diary; it will increase as the remaining episodes get logged.",
       "excludes": "Thinking about BYKO in the shower. Only sessions with an artifact — a commit, a submitted form, a sent message — are counted.",
       "provenance": "hand"
     },
     {
       "id": "dollars",
-      "value": "$123.29",
+      "value": "$165.29",
       "label": "Dollars spent",
       "kind": "spent",
-      "asOf": "2026-08-16",
+      "asOf": "2026-08-19",
       "counts": "Direct out-of-pocket cost of the study: $74.02 — the exact, verified, irreversible pool funding, burned along with the LP tokens — plus $49.27 of BYKO bought from the pool with project wallets, every purchase reconciled against the on-chain transaction history. The founder's own buys used to be excluded here as \"votes, not costs\"; the audit of 16 Aug 2026 counted them, because money that left the wallet is a cost whatever it was buying.",
       "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above.",
       "provenance": "hand"
@@ -53,7 +53,7 @@
     },
     {
       "id": "episodes",
-      "value": "28",
+      "value": "29",
       "label": "Episodes published",
       "kind": "result",
       "asOf": "2026-08-19",

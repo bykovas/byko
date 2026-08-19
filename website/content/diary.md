@@ -28,6 +28,52 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## What does “lack of information” mean? — 19 August 2026
+
+I wanted a control case for the phrase Basescan has used three times when rejecting BYKO: **“lack of information about the token/project.”** Today I found one.
+
+This is IDOS, contract `0x8a6940912ab777eefd07499e0c39be62fb51d73d` on Base. Its Basescan Token Info page is fully populated: logo, website, CoinMarketCap, email, X and Telegram. I am not reporting it, calling it a scam, or asking Basescan to remove anything. I am using only what Basescan itself shows on the page, because that gives me something measurable to compare.
+
+At 13:44 UTC on 19 August, the same page showed:
+
+- 11,057 holders
+- 1,000,000,000 IDOS maximum supply
+- $0.289 displayed price
+- $0.00 volume in 24 hours
+- $0.00 circulating-supply market cap
+- 0.00 IDOS circulating supply
+- 0 transfers in 24 hours
+- Token Reputation: **UNKNOWN**
+- no submitted contract security audit
+
+The source-code tab is also unusual. It is Vyper 0.3.10 and marked **Similar Match Source Code**, pointing to another deployed contract rather than an Exact Match verification. The ABI includes `divide_numbers(a,b)` and `calculate_exponent_modulus(a,b,c,threshold)`, plus `lastFrom`, `lastTo` and `sender`. The deployed bytecode shows an external call path during `transfer` and `transferFrom` when a storage slot is populated. Basescan also exposes UI-multiplier behavior for the token, meaning displayed token amounts can be scaled by an active multiplier.
+
+Again: none of those facts make IDOS malicious. They are simply facts visible on the explorer.
+
+Now put BYKO next to it.
+
+BYKO is `0x078bB16e24c8931Fc007928c370422e5e38F4372`, deployed on Base on 2 August 2026. Its source is **Exact Match**, Solidity 0.8.34, OpenZeppelin 5.4.0, twenty-one lines, with the license declared. Supply was minted once at genesis and is fixed forever at 790,227. There is no mint function, owner, proxy, upgrade path, transfer fee, pause mechanism or external call.
+
+Its LP is 100% burned to `0x…dEaD`. The deployer has a public signed message identifying the controlling person. That identity links back through the project's website and LinkedIn. The repository is public. The wallet register is public and machine-readable. The project has an email address on its own domain, X, Telegram, Facebook and Farcaster. The issuance is disclosed down to percentages, read from the chain an hour before publishing: 56.99% in the burned pool, 11.02% held by the author across thirteen published wallets, 32.00% in independent addresses. Yesterday that middle figure was 9.09%, and it rose for a reason this diary would rather state than have noticed: the self-trading experiment's own wallet is holding tokens it bought out of the pool. At these prices a four-dollar position is two percent of the supply. There are real pool trades. There is a public diary that includes corrections of the project's own false claims.
+
+BYKO was submitted to Basescan on 4 August and rejected. Then rejected again on 5 August. Then again after another submission around 9–10 August, with the third rejection arriving on 11 August.
+
+The rejection language has stayed generic: usually a lack of information about the token/project, sender email not matching the official domain, possible false information or misrepresentation of public entities, or a name/symbol susceptible to brand impersonation.
+
+The useful part is not that one project passed and another failed. The useful part is that **“amount of public information” cannot explain the difference**. BYKO has more of it across every category I can actually count: exact source verification, deployer identity, wallet disclosure, repository, liquidity status, transaction history, issuance disclosure and project history.
+
+So I am not opening a new application. I am replying in the existing thread with one question:
+
+**Which specific piece of information is missing from BYKO?**
+
+Not “what are your criteria?” Not “why did you approve them?” Not “please reconsider.” Just one falsifiable question. If the answer is a missing field, document or condition, I can supply it. If there is no such field, then “lack of information” is not the criterion that decided the application.
+
+That distinction is the entire experiment.
+
+---
+**Teaser:** Basescan rejected BYKO three times for “lack of information.” Then I found an approved token page with Similar Match code, no submitted audit, zero 24h volume and zero circulating supply — while BYKO has Exact Match code, burned liquidity, a signed deployer, public wallets and a public repository.
+**X:** Basescan approved full Token Info for IDOS: Similar Match code, no audit, zero 24h volume, zero circulating supply. BYKO: Exact Match, fixed supply, burned LP, public repo, signed deployer — rejected three times for “lack of information.”
+
 ## The only advice I can follow is to fake a market — 19 August 2026
 
 I asked Blockaid to look at BYKO again. They answered properly — no template, no silence — and it is the most useful reply this project has received from anyone. Their words, published here in full and unedited:
