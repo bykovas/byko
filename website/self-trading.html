@@ -89,9 +89,49 @@ td a:hover{color:var(--byko-ink)}
    beat in unison and read as one wave crossing the screen. */
 .load{font-family:var(--byko-font-mono);color:var(--byko-label);white-space:pre}
 
+.daystrip{display:none}
+
 @media (max-width:900px){.disclose-grid{grid-template-columns:1fr;gap:26px}
   aside.quoted{border-left:0;padding-left:0;border-top:var(--byko-rule-hair);padding-top:14px}}
-@media (max-width:640px){.arms{grid-template-columns:1fr}.arm.right{border-left:0;padding-left:0}}
+
+@media (max-width:640px){
+  .arms{grid-template-columns:1fr}
+  .arm.right{border-left:0;padding-left:0}
+
+  /* A ten-column table on a 390px screen can only be solved two ways: cut the
+     data off the edge, or stop being a table. Horizontal scroll was the first,
+     and it loses the row's label the moment you drag — the reader ends up
+     staring at numbers with no idea which column they belong to. So on a phone
+     each row becomes its own block of label-and-value pairs, in the order the
+     header used to read. Nothing is dropped. */
+  .scroll{overflow-x:visible}
+  #checks, #trades-byko, #trades-luko,
+  #checks tbody, #trades-byko tbody, #trades-luko tbody,
+  #checks tr, #trades-byko tr, #trades-luko tr,
+  #checks td, #trades-byko td, #trades-luko td{display:block;width:auto}
+  #checks thead, #trades-byko thead, #trades-luko thead{display:none}
+  #checks tr, #trades-byko tr, #trades-luko tr{
+    border-bottom:var(--byko-rule-heavy);padding:10px 0 12px}
+  #checks td, #trades-byko td, #trades-luko td{
+    display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+    border-bottom:0;padding:3px 0;text-align:right;white-space:normal}
+  #checks td::before, #trades-byko td::before, #trades-luko td::before{
+    content:attr(data-label);flex:0 0 auto;text-align:left;
+    font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
+    text-transform:uppercase;color:var(--byko-label)}
+  /* the row's own name leads the block instead of sitting in a column */
+  #checks td.src, #trades-byko td.lead, #trades-luko td.lead{
+    font:700 15px/1.2 var(--byko-font-sans);color:var(--byko-ink);
+    padding-bottom:6px;justify-content:flex-start}
+  #checks td.src::before, #trades-byko td.lead::before, #trades-luko td.lead::before{content:none}
+  /* the arm caption row keeps its own shape */
+  #checks td[colspan]{display:block;padding-top:14px}
+  #checks td[colspan]::before{content:none}
+  /* one strip of glyphs instead of a column per day */
+  #checks td.g{display:none}
+  #checks td.daystrip{display:flex;font-family:var(--byko-font-mono);letter-spacing:.25em}
+  .grid-key{gap:10px 18px}
+}
 </style>
 </head>
 <body>
@@ -191,6 +231,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260819g"></script>
+<script src="market-self.js?v=20260819h"></script>
 </body>
 </html>

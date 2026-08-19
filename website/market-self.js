@@ -14,6 +14,13 @@
     if (text !== undefined && text !== null) n.textContent = String(text);
     return n;
   }
+  /* On a phone the header row is gone and every cell carries its own label,
+     so a cell must know what column it came from. */
+  function cell(cls, text, label) {
+    var td = el("td", cls, text);
+    if (label) td.setAttribute("data-label", label);
+    return td;
+  }
   function short(h) { return h ? h.slice(0, 6) + "…" + h.slice(-4) : "—"; }
 
   /* A value asked for but not yet received: three monospace cells with the dash
@@ -39,8 +46,9 @@
     loaders.push(n);
     return n;
   }
-  function cellDash(cls) {
+  function cellDash(cls, label) {
     var td = el("td", cls);
+    if (label) td.setAttribute("data-label", label);
     td.appendChild(dash());
     return td;
   }
@@ -103,9 +111,9 @@
       cap.appendChild(c0); tbody.appendChild(cap);
       ASKING.forEach(function (row) {
         var tr = el("tr");
-        tr.appendChild(el("td", "src", row[0]));
-        tr.appendChild(el("td", "asks", row[1]));
-        tr.appendChild(cellDash("now"));
+        tr.appendChild(cell("src", row[0]));
+        tr.appendChild(cell("asks", row[1], "asks"));
+        tr.appendChild(cellDash("now", "now"));
         tbody.appendChild(tr);
       });
     });
@@ -116,7 +124,8 @@
       var tb = t.querySelector("tbody");
       tb.textContent = "";
       var tr = el("tr");
-      for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i < 3 ? "l" : "mono"));
+      var lab = ["", "utc", "side", "usdc", pair[0].toUpperCase(), "price", "fdv", "pool usdc", "status", "tx"];
+      for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i === 0 ? "l mono lead" : (i < 3 ? "l" : "mono"), lab[i]));
       tb.appendChild(tr);
     });
 
@@ -253,7 +262,7 @@
       if (a.measured === false) return;   /* said in words below, not as dashes */
       var cap = el("tr");
       var c0 = el("td", "src", a.id.toUpperCase());
-      c0.colSpan = 3 + maxDay;
+      c0.colSpan = 4 + maxDay;
       c0.style.color = "var(--byko-label)";
       c0.style.fontWeight = "400";
       c0.style.paddingTop = "10px";
@@ -261,17 +270,22 @@
       tbody.appendChild(cap);
       (a.checks || []).forEach(function (c) {
         var tr = el("tr");
-        tr.appendChild(el("td", "src", c.source));
-        tr.appendChild(el("td", "asks", c.asks));
-        tr.appendChild(el("td", "now", c.now ? (c.now.ok ? (c.now.value || "—") : "?") : "—"));
+        tr.appendChild(cell("src", c.source));
+        tr.appendChild(cell("asks", c.asks, "asks"));
+        tr.appendChild(cell("now", c.now ? (c.now.ok ? (c.now.value || "—") : "?") : "—", "now"));
         var byDay = {};
         (c.cells || []).forEach(function (x) { byDay[x.day] = x.state; });
+        var strip = [];
         for (var d = 1; d <= maxDay; d++) {
-          var s = byDay[d];
-          var glyph = s === "changed" ? "▲" : s === "same" ? "·" : s === "missing" ? "?" : "";
-          var cls = "g" + (s === "changed" ? " moved" : s === "missing" ? " miss" : "");
-          tr.appendChild(el("td", cls, glyph));
+          var st = byDay[d];
+          var glyph = st === "changed" ? "▲" : st === "same" ? "·" : st === "missing" ? "?" : " ";
+          strip.push(glyph);
+          var cls = "g" + (st === "changed" ? " moved" : st === "missing" ? " miss" : "");
+          tr.appendChild(el("td", cls, glyph === " " ? "" : glyph));
         }
+        /* the same glyphs as one strip, for the phone layout where a column
+           per day would become a row per day */
+        if (maxDay) tr.appendChild(cell("daystrip", strip.join(""), "days 1–" + maxDay));
         tbody.appendChild(tr);
       });
     });
@@ -299,13 +313,14 @@
     (data.arms || []).forEach(function (a) {
       if (a.halted || !a.next_fire_at) return;
       var tr = el("tr");
-      tr.appendChild(el("td", "l mono", "—"));
-      tr.appendChild(el("td", "l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19)));
-      for (var i = 0; i < 6; i++) tr.appendChild(cellDash(i === 0 ? "l" : "mono"));
-      var stat = el("td", "l");
+      var labels = ["side", "usdc", "token", "price", "fdv", "pool usdc"];
+      tr.appendChild(cell("l mono lead", "next"));
+      tr.appendChild(cell("l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19), "utc"));
+      for (var i = 0; i < 6; i++) tr.appendChild(cellDash(i === 0 ? "l" : "mono", labels[i]));
+      var stat = cell("l", null, "status");
       stat.appendChild(el("span", "pill", "waiting"));
       tr.appendChild(stat);
-      tr.appendChild(el("td", "l mono", "—"));
+      tr.appendChild(cell("l mono", "—", "tx"));
       tbody.appendChild(tr);
     });
   }
@@ -341,18 +356,19 @@
       var tok = t.token_amount ? Number(t.token_amount) / 1e18 : null;
       var poolUsdc = t.reserve_usdc_after ? Number(t.reserve_usdc_after) / 1e6 : null;
       var tr = el("tr");
-      tr.appendChild(el("td", "l mono", t.id));
-      tr.appendChild(el("td", "l mono", (t.decided_at || "").replace("T", " ").slice(0, 19)));
-      tr.appendChild(el("td", "side " + (buy ? "buy" : "sell"), t.side));
-      tr.appendChild(el("td", "mono", (buy ? "−" : "+") + n(usdcWhole, 4)));
-      tr.appendChild(el("td", "mono", tok == null ? "—" : (buy ? "+" : "−") + n(tok, 0)));
-      tr.appendChild(el("td", "mono", price(t.price_after || t.price_before)));
-      tr.appendChild(el("td", "mono", t.fdv_after ? "$" + n(t.fdv_after) : "—"));
-      tr.appendChild(el("td", "mono pos", poolUsdc == null ? "—" : "$" + n(poolUsdc)));
-      var stat = el("td", "l");
+      var sym = armId === "luko" ? "LUKO" : "BYKO";
+      tr.appendChild(cell("l mono lead", "#" + t.id));
+      tr.appendChild(cell("l mono", (t.decided_at || "").replace("T", " ").slice(0, 19), "utc"));
+      tr.appendChild(cell("side " + (buy ? "buy" : "sell"), t.side, "side"));
+      tr.appendChild(cell("mono", (buy ? "−" : "+") + n(usdcWhole, 4), "usdc"));
+      tr.appendChild(cell("mono", tok == null ? "—" : (buy ? "+" : "−") + n(tok, 0), sym));
+      tr.appendChild(cell("mono", price(t.price_after || t.price_before), "price"));
+      tr.appendChild(cell("mono", t.fdv_after ? "$" + n(t.fdv_after) : "—", "fdv"));
+      tr.appendChild(cell("mono pos", poolUsdc == null ? "—" : "$" + n(poolUsdc), "pool usdc"));
+      var stat = cell("l", null, "status");
       stat.appendChild(el("span", "pill", t.status));
       tr.appendChild(stat);
-      var txtd = el("td", "l");
+      var txtd = cell("l", null, "tx");
       if (t.tx_hash) {
         var a = el("a", null, short(t.tx_hash));
         a.href = SCAN + "/tx/" + t.tx_hash; a.target = "_blank"; a.rel = "noopener";
