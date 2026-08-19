@@ -22,12 +22,16 @@ main.wrap{padding-top:28px}
 .meta{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
 .meta .err{color:var(--byko-quoted)}
 .disclose{margin-top:22px;border-top:var(--byko-rule-heavy);padding-top:18px}
+/* the same shape the home page uses for a body of text beside a panel:
+   prose on the left, the quoted recommendation on the right */
+.disclose-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:44px;align-items:start}
 .disclose h2{font:700 17px/1.2 var(--byko-font-sans);margin:0 0 8px}
-.disclose p{font:400 15.5px/1.55 var(--byko-font-sans);color:var(--byko-ink-2);margin:10px 0 0;max-width:70ch}
+.disclose p{font:400 15.5px/1.55 var(--byko-font-sans);color:var(--byko-ink-2);margin:10px 0 0}
 .disclose .name{color:var(--byko-ink);font-weight:600}
-blockquote{margin:14px 0 0;padding:2px 0 2px 16px;border-left:var(--byko-rule-section);
-  font:400 15px/1.55 var(--byko-font-sans);color:var(--byko-ink-2)}
-blockquote ul{margin:8px 0 0;padding-left:18px}
+aside.quoted{border-left:var(--byko-rule-section);padding-left:18px}
+aside.quoted .kicker{display:block;margin-bottom:8px}
+aside.quoted ul{margin:0;padding-left:16px;font:400 14.5px/1.5 var(--byko-font-sans);color:var(--byko-ink-2)}
+aside.quoted li{margin-top:8px}
 .rules{display:flex;flex-wrap:wrap;gap:0 26px;margin-top:16px;font:var(--byko-data);color:var(--byko-label)}
 .rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
 .arms{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:24px;border-top:var(--byko-rule-heavy)}
@@ -72,6 +76,8 @@ td a:hover{color:var(--byko-ink)}
 .events .k{color:var(--byko-label);font-family:var(--byko-font-mono);margin-right:8px}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
 .empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
+@media (max-width:900px){.disclose-grid{grid-template-columns:1fr;gap:26px}
+  aside.quoted{border-left:0;padding-left:0;border-top:var(--byko-rule-hair);padding-top:14px}}
 @media (max-width:640px){.arms{grid-template-columns:1fr}.arm.right{border-left:0;padding-left:0}}
 </style>
 </head>
@@ -104,17 +110,22 @@ td a:hover{color:var(--byko-ink)}
   <p class="meta" id="meta">loading…</p>
 
   <section class="disclose">
-    <h2>Why this exists</h2>
-    <p>A security vendor, <span class="name">Blockaid</span>, confirmed BYKO's remaining signal is <em>not</em> a malice flag but a thin-market heuristic, and recommended, in writing:</p>
-    <blockquote>
-      <ul>
-        <li>"Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized."</li>
-        <li>"Sustain two-sided trading, so price is not dominated by tiny trades."</li>
-        <li>"After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels."</li>
-      </ul>
-    </blockquote>
-    <p>Deepening is impossible: a $20,000 pool would take about fifty times a supply fixed forever at 790,227. That leaves sustaining two-sided trading in a token nobody else trades — which means these two wallets buying and selling against their own pools on a schedule. That has a name and this page uses it: <span class="name">this is wash trading</span>, disclosed. No exchange, no order book, no counterparty deceived about who is on the other side, and every parameter and every trade published. None of that makes it something else; it makes it wash trading in the open.</p>
-    <p>The parameters below were committed to the public repository, and their hash written into the database, <span class="name">before the first trade</span> — the running worker refuses to trade if its live parameters do not match that hash. The prediction, on the record: the flag will not clear, because the condition Blockaid named is pool depth and the worker does not touch depth.</p>
+    <div class="disclose-grid">
+      <div>
+        <h2>Why this exists</h2>
+        <p>A security vendor, <span class="name">Blockaid</span>, confirmed BYKO's remaining signal is <em>not</em> a malice flag but a thin-market heuristic, and told us how to clear it.</p>
+        <p>Deepening the pool is impossible: $20,000 of liquidity would take about fifty times a supply fixed forever at 790,227. That leaves sustaining two-sided trading in a token nobody else trades — which means these wallets buying and selling against their own pools on a schedule. That has a name and this page uses it: <span class="name">this is wash trading</span>, disclosed. No exchange, no order book, no counterparty deceived about who is on the other side, and every parameter and every trade published. None of that makes it something else; it makes it wash trading in the open.</p>
+        <p>The parameters were committed to the public repository, and their hash written into the database, <span class="name">before the first trade</span> — the worker refuses to trade if its live parameters do not match that hash. The prediction, on the record: the flag will not clear, because the condition Blockaid named is pool depth and the worker does not touch depth.</p>
+      </div>
+      <aside class="quoted">
+        <span class="kicker">Blockaid, in writing</span>
+        <ul>
+          <li>"Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized."</li>
+          <li>"Sustain two-sided trading, so price is not dominated by tiny trades."</li>
+          <li>"After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels."</li>
+        </ul>
+      </aside>
+    </div>
     <div class="rules" id="rules"></div>
   </section>
 
@@ -125,8 +136,9 @@ td a:hover{color:var(--byko-ink)}
   <div class="grid-key">
     <span>· unchanged from baseline</span>
     <span><b>▲</b> changed</span>
-    <span>? not measured</span>
+    <span>? asked, no answer</span>
   </div>
+  <p class="note" id="unmeasured" style="margin-top:14px;padding-top:0;border-top:0"></p>
 
   <h2 class="sec">Trades<span class="n" id="trades-n"></span></h2>
   <div class="scroll"><table id="trades"><thead><tr>
@@ -158,6 +170,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260819"></script>
+<script src="market-self.js?v=20260819b"></script>
 </body>
 </html>

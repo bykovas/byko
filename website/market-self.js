@@ -73,12 +73,23 @@
       row("holders", m.holders != null ? n(m.holders, 0) : "—");
       row("USDC spent", "$" + n(arm.usdc_spent));
       row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " + (m.sells_24h != null ? m.sells_24h : "?"));
-      /* the one live chain read on this page — LUKO's LP is withdrawable */
-      if (m.lp_locked != null) row("LP locked", m.lp_locked + "%", true);
+      /* The live chain read. "Burned" is the honest word: LP tokens at an
+         address with no key, which nobody can withdraw. Calling the keeper's
+         share "locked" would report LUKO as maximally safe while 100% of its
+         LP sits in a founder wallet. */
+      if (m.lp_locked != null) row("LP burned", m.lp_locked + "%", true);
+      var keeper = m.lp_holder ? String(m.lp_holder).split(":") : null;
+      if (keeper && keeper.length === 2) row("held by founder", keeper[1] + "%", true);
       box.appendChild(dl);
-      if (arm.id === "luko") {
+      if (arm.measured === false) {
+        box.appendChild(el("div", "st",
+          "Not measured: price and LP are read from the chain, nothing is asked of any classifier, so the market fields stay empty rather than guessed."));
+      }
+      if (keeper && keeper.length === 2 && Number(keeper[1]) > 0) {
         box.appendChild(el("div", "warn",
-          "The strongest objection to this arm, stated by us: LUKO's LP is not burned — it is held by a founder wallet and can be withdrawn, unlike BYKO's, which is 100% at 0x…dEaD. The figure above is read live so anyone can watch it stays untouched."));
+          "The strongest objection to this arm, stated by us: " + arm.id.toUpperCase() +
+          "'s liquidity is NOT burned. " + keeper[1] + "% of its LP tokens sit in " + keeper[0].slice(0, 10) +
+          "…, a founder wallet, and can be withdrawn at any moment — unlike BYKO's, which is 100% at 0x…dEaD and gone forever. Both figures are read live so anyone can watch that it stays untouched."));
       }
       wrap.appendChild(box);
     });
@@ -102,6 +113,7 @@
     thead.appendChild(htr);
 
     data.arms.forEach(function (a) {
+      if (a.measured === false) return;   /* said in words below, not as dashes */
       var cap = el("tr");
       var c0 = el("td", "src", a.id.toUpperCase());
       c0.colSpan = 3 + maxDay;
@@ -127,6 +139,18 @@
       });
     });
     $("checks-n").textContent = maxDay ? "day " + maxDay : "not started";
+
+    /* Name the arms nobody is asking about, so an empty row is never mistaken
+       for a measurement that came back empty. */
+    var un = data.arms.filter(function (a) { return a.measured === false; });
+    var noteBox = $("unmeasured");
+    noteBox.textContent = "";
+    if (un.length) {
+      noteBox.appendChild(document.createTextNode(
+        un.map(function (a) { return a.id.toUpperCase(); }).join(", ") +
+        (un.length > 1 ? " are" : " is") +
+        " not measured. Only the arm carrying the flag we are trying to clear is put to the classifiers; the other trades in the background and is read from the chain alone. Nothing was asked about it, so nothing is reported — the row is absent rather than empty."));
+    }
   }
 
   function renderTrades(data) {

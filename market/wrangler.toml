@@ -30,7 +30,7 @@ workers_dev = false
 preview_urls = false
 
 [vars]
-MARKET_OPEN = "0"                  # THE KILL SWITCH. "1" to allow sending.
+MARKET_OPEN = "1"                  # THE KILL SWITCH. "0" halts every arm at its next alarm.
 CHAIN_ID = "8453"
 RPC_URL = "https://mainnet.base.org"
 

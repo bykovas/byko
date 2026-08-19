@@ -18,9 +18,12 @@ import { RULES } from "./rules";
 /* the arm whose classifiers we actually poll */
 const MEASURED_ARM = "byko";
 
-const LP_HOLDER: Record<string, string> = {
-  /* byko: LP is 100% burned; luko: 100% held by MEETLUKO, withdrawable */
-  byko: "0x000000000000000000000000000000000000dEaD",
+const BURN = "0x000000000000000000000000000000000000dEaD";
+
+/* The wallet that actually holds each pool's LP tokens when they are NOT
+   burned. BYKO has none — its LP is entirely at the burn address. LUKO's sits
+   with MEETLUKO, a founder wallet, which is the whole point of disclosing it. */
+const LP_KEEPER: Record<string, string> = {
   luko: "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
 };
 
@@ -233,14 +236,30 @@ async function poolReserves(env: Env, pool: string): Promise<{ price: string; to
   } catch { return { price: "", token: "", usdc: "" }; }
 }
 
-async function lpState(env: Env, arm: string, pool: string): Promise<{ holder: string; locked: string }> {
+/* "Locked" means BURNED — LP tokens at an address with no private key, which
+ * nobody can ever withdraw. It does not mean "sitting where we expect".
+ * Measuring the designated holder's share and calling it locked would have
+ * reported LUKO as 100% locked when 100% of its LP is in a founder wallet and
+ * withdrawable at will — the exact opposite of the truth, printed under the
+ * word this experiment promised to be loudest about. So the number published
+ * is the share at the burn address, for both arms, and the keeper is named
+ * separately. */
+async function lpState(env: Env, arm: string, pool: string):
+  Promise<{ holder: string; burned: string }> {
+  const bal = async (who: string) =>
+    num(await ethCall(env, pool, "0x70a08231" + who.slice(2).toLowerCase().padStart(64, "0")));
   try {
-    const holder = LP_HOLDER[arm];
     const ts = num(await ethCall(env, pool, "0x18160ddd"));
-    const bal = num(await ethCall(env, pool, "0x70a08231" + holder.slice(2).toLowerCase().padStart(64, "0")));
-    const pct = ts > 0n ? Number(bal) * 100 / Number(ts) : 0;
-    return { holder, locked: pct.toFixed(2) };
-  } catch { return { holder: LP_HOLDER[arm] ?? "", locked: "?" }; }
+    if (ts === 0n) return { holder: LP_KEEPER[arm] ?? "", burned: "?" };
+    const burnedPct = Number(await bal(BURN)) * 100 / Number(ts);
+    const keeper = LP_KEEPER[arm];
+    let holder = "";
+    if (keeper) {
+      const keeperPct = Number(await bal(keeper)) * 100 / Number(ts);
+      holder = `${keeper}:${keeperPct.toFixed(2)}`;
+    }
+    return { holder, burned: burnedPct.toFixed(2) };
+  } catch { return { holder: LP_KEEPER[arm] ?? "", burned: "?" }; }
 }
 
 async function record(env: Env, arm: string, source: string, method: string, p: Probe): Promise<void> {
@@ -273,7 +292,7 @@ export async function collect(env: Env): Promise<void> {
         `INSERT INTO market_samples
            (sampled_at, arm, price_usd, reserve_token, reserve_usdc, lp_holder, lp_locked)
          VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6)`,
-      ).bind(r.id, res.price, res.token, res.usdc, lpOnly.holder, lpOnly.locked).run();
+      ).bind(r.id, res.price, res.token, res.usdc, lpOnly.holder, lpOnly.burned).run();
       continue;
     }
 
@@ -325,6 +344,6 @@ export async function collect(env: Env): Promise<void> {
       m?.fdv ?? (q?.fully_diluted_value != null ? String(q.fully_diluted_value) : null),
       m?.tvl ?? (q?.liquidity != null ? String(q.liquidity) : null),
       m?.vol ?? (q?.volume_24h != null ? String(q.volume_24h) : null),
-      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.locked).run();
+      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.burned).run();
   }
 }

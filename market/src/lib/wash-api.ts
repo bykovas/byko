@@ -26,6 +26,9 @@ const SOURCE_ASKS: Record<string, string> = {
   "base-app": "what the screen says (by hand)",
 };
 
+/* the arm whose classifiers are polled — the one with a flag to clear */
+const MEASURED_ARM = "byko";
+
 function dayIndex(startDate: string, d: string): number {
   const a = Date.parse(startDate + "T00:00:00Z");
   const b = Date.parse(d + "T00:00:00Z");
@@ -61,8 +64,12 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const start = await env.DB.prepare(
       `SELECT MIN(date(checked_at)) AS d FROM flag_checks WHERE arm = ?1`,
     ).bind(r.id).first<string>("d");
+    /* Only the measured arm is asked what the classifiers think. An unmeasured
+       arm must say so rather than render a grid of dashes, which would read as
+       "we looked and found nothing" instead of "we deliberately did not look". */
+    const measured = r.id === MEASURED_ARM;
     const grid = [];
-    for (const source of SOURCE_ORDER) {
+    for (const source of measured ? SOURCE_ORDER : []) {
       const now = await env.DB.prepare(
         `SELECT ok, value, checked_at FROM flag_checks WHERE arm = ?1 AND source = ?2
           ORDER BY id DESC LIMIT 1`,
@@ -90,7 +97,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       started_at: w?.started_at ?? null, start_price: w?.start_price ?? null,
       usdc_spent: w?.usdc_spent ?? "0", next_fire_at: w?.next_fire_at ?? null,
       usdc_balance: w?.usdc_balance ?? null, token_balance: w?.token_balance ?? null,
-      stop: r.stop, guards: r.guards, market: sample ?? null, checks: grid,
+      stop: r.stop, guards: r.guards, market: sample ?? null, measured, checks: grid,
     });
   }
 
