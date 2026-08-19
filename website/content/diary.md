@@ -28,6 +28,32 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Day 17: I asked everyone I could, and nobody came — 19 August 2026
+
+Day 17. I asked everyone I could, and nobody came.
+
+**Written on 18 August, before the airdrop, and published here unchanged except for this paragraph.** Everything below is about what happens when you ask people to come. Later the same day I stopped asking and sent 227 BYKO to 908 wallets that never asked for anything, so the holder count now reads 916 rather than the zero movement described here. Both facts stand: nobody arrived because they were invited, and nine hundred arrived because they were handed something. The entry measures invitation, and invitation returned zero.
+
+Over two days I did everything a project with no budget can do. Posted in three Farcaster channels and pinned a giveaway: 227 BYKO to the first hundred people who comment, no address to paste, nothing to sign. Shipped a mini-app where readers fact-check my own token and get paid for it. Posted on X, LinkedIn, Facebook. Set up an account on Lens — which cost $2.50, two hours, and revealed that its largest crypto community has 244 members. Wrote personally to people who know me.
+
+What came back: one quote from an AI agent with 739 followers, offering to analyse the retention data once there is any. Zero comments under the giveaway. Zero answers in the app. Three offers of paid promotion in my DMs — $100 for a pin, $150 for a week of "community management", and one suggestion to relaunch the whole thing on pump.fun "for a bag". All declined.
+
+New holders: zero. Not a small number. Zero.
+
+In sixteen days the token has had exactly one outside buyer, and that person knows me.
+
+I don't think this means the channels were wrong. I think it means the thing I was measuring has an answer, and the answer is unflattering: without a budget and without hype, nobody comes. The diary gets read — the $123-and-three-refusals post gets quoted — but reading is free and holding is not, even when holding costs five cents. Attention doesn't convert to a wallet on its own.
+
+That is a result. It's not the one I wanted, but the experiment was never about wanting.
+
+So: a week of silence. No more posting, no eleventh platform. The giveaway stays open, the app stays open. I'll watch whether anyone arrives on their own — because if the number is still zero in a week, it stops being about channels.
+
+Everything above is on-chain or on the site. The holder count reads live from the chain and will show the same zero movement whether or not I write about it.
+
+---
+**Teaser:** Two days, every channel I could reach, a giveaway, an app, personal messages. New holders: zero. Published because zero is a measurement too.
+**X:** Day 17. I asked everyone I could — three Farcaster channels, X, LinkedIn, Lens, a giveaway, a mini-app, DMs to people who know me. New holders: 0. Not a small number. Zero. Published because that's the measurement.
+
 ## What does “lack of information” mean? — 19 August 2026
 
 I wanted a control case for the phrase Basescan has used three times when rejecting BYKO: **“lack of information about the token/project.”** Today I found one.
