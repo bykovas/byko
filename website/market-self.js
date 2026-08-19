@@ -207,7 +207,9 @@
       var hAge = m.holders != null ? ago(m.holders_at) : "";
       row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
       row("USDC spent", "$" + n(arm.usdc_spent));
-      row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " + (m.sells_24h != null ? m.sells_24h : "?"));
+      var tAge = m.buys_24h != null ? ago(m.trades_at) : "";
+      row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " +
+        (m.sells_24h != null ? m.sells_24h : "?") + (tAge ? " · " + tAge : ""));
       /* The live chain read. "Burned" is the honest word: LP tokens at an
          address with no key, which nobody can withdraw. Calling the keeper's
          share "locked" would report LUKO as maximally safe while 100% of its

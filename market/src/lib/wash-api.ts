@@ -65,12 +65,25 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
        time it was taken, so the reader gets the count and can see its age
        instead of a dash that claims we never counted. */
     const h = await env.DB.prepare(
-      `SELECT holders, sampled_at FROM market_samples
+      `SELECT holders, COALESCE(holders_at, sampled_at) AS at FROM market_samples
         WHERE arm = ?1 AND holders IS NOT NULL ORDER BY id DESC LIMIT 1`,
-    ).bind(r.id).first<{ holders: number; sampled_at: string }>();
+    ).bind(r.id).first<{ holders: number; at: string }>();
+    /* Same story for the trade counts, from a different source: GeckoTerminal
+       reports them, the Worker cannot ask, so they arrive by probe and every
+       collector pass in between inserts a row with the columns empty. Reading
+       the newest row alone printed "? / ?" for a pool this worker is itself
+       trading in — the one number a reader would most want to check us on. */
+    const t = await env.DB.prepare(
+      `SELECT buys_24h, sells_24h, vol_24h, COALESCE(trades_at, sampled_at) AS at
+         FROM market_samples WHERE arm = ?1 AND buys_24h IS NOT NULL ORDER BY id DESC LIMIT 1`,
+    ).bind(r.id).first<Record<string, unknown>>();
     if (sample) {
       sample.holders = h?.holders ?? null;
-      sample.holders_at = h?.sampled_at ?? null;
+      sample.holders_at = h?.at ?? null;
+      sample.buys_24h = t?.buys_24h ?? null;
+      sample.sells_24h = t?.sells_24h ?? null;
+      sample.vol_24h = t?.vol_24h ?? sample.vol_24h ?? null;
+      sample.trades_at = t?.at ?? null;
     }
 
     /* the checks grid for this arm */

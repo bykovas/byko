@@ -63,10 +63,20 @@ async function geckoterminal(a) {
   if (status !== 200) return { ok: false, value: `http:${status}` };
   const at = JSON.parse(text).data?.attributes ?? {};
   const locked = at.locked_liquidity_percentage;
+  /* The same call already carries the 24h trade counts, and GeckoTerminal is
+     the only source that reports them — CMC's DEX side covers everything else
+     but not these. The Worker cannot ask (429 from the shared egress), so the
+     market row's buys/sells columns had been NULL since the first sample and
+     the page printed "? / ?" for a pool it is itself trading in. Send them
+     back with the verdict, the way the holder count already travels. */
+  const t = at.transactions?.h24 ?? {};
   return {
     ok: true,
     value: locked == null ? "null" : String(locked),
     note: `price ${at.base_token_price_usd ?? "?"} tvl ${at.reserve_in_usd ?? "?"}`,
+    buys_24h: Number.isFinite(Number(t.buys)) ? Number(t.buys) : undefined,
+    sells_24h: Number.isFinite(Number(t.sells)) ? Number(t.sells) : undefined,
+    vol_24h: at.volume_usd?.h24 ?? undefined,
   };
 }
 
@@ -96,6 +106,7 @@ for (const a of ARMS) {
         arm: a.arm, source, method: "api-local",
         ok: result.ok, value: result.value, note: result.note ?? null,
         holders: result.holders,
+        buys_24h: result.buys_24h, sells_24h: result.sells_24h, vol_24h: result.vol_24h,
       }),
     });
     const body = await res.json().catch(() => ({}));
