@@ -158,6 +158,45 @@ async function geckoPool(pool: string): Promise<Probe & { sample: GeckoSample | 
   } catch (e) { return { ...unmeasured("error", String(e)), sample: null }; }
 }
 
+/* CoinMarketCap. Two different questions, deliberately kept apart:
+   - cmc-index: does the main CMC listing know this token at all (the same
+     question CoinGecko answers, from the other big index);
+   - cmc-dex:   does its DEX side price this pool. It does — which is worth
+     recording precisely because MetaMask's price service answers 500 for the
+     same token. The price itself goes to market_samples; the grid keeps a
+     verdict that only moves when the answer changes, not when the price does. */
+interface CmcQuote { price?: number; liquidity?: number; volume_24h?: number; fully_diluted_value?: number }
+
+async function cmcDex(env: Env, pool: string): Promise<Probe & { q: CmcQuote | null }> {
+  const key = env.CMC_API_KEY;
+  if (!key) return { ...unmeasured("no-key"), q: null };
+  try {
+    const { status, text } = await get(
+      `https://pro-api.coinmarketcap.com/v4/dex/pairs/quotes/latest?network_slug=base&contract_address=${pool}`,
+      { "X-CMC_PRO_API_KEY": key });
+    if (status !== 200) return { ...unmeasured(`http:${status}`, text), q: null };
+    const j = JSON.parse(text) as { data?: Array<{ quote?: CmcQuote[] }> };
+    const q = j.data?.[0]?.quote?.[0] ?? null;
+    if (!q || typeof q.price !== "number") return { ok: true, value: "unpriced", raw: text, q: null };
+    return { ok: true, value: "priced", raw: text, q };
+  } catch (e) { return { ...unmeasured("error", String(e)), q: null }; }
+}
+
+async function cmcIndex(env: Env, symbol: string): Promise<Probe> {
+  const key = env.CMC_API_KEY;
+  if (!key) return unmeasured("no-key");
+  try {
+    const { status, text } = await get(
+      `https://pro-api.coinmarketcap.com/v1/cryptocurrency/map?symbol=${symbol}`,
+      { "X-CMC_PRO_API_KEY": key });
+    if (status === 200) return { ok: true, value: "known", raw: text.slice(0, 400) };
+    /* 400 "Invalid value for symbol" is CMC's way of saying it has never
+       heard of the ticker — a real reading, not a refusal */
+    if (status === 400) return { ok: true, value: "unknown", raw: text.slice(0, 400) };
+    return unmeasured(`http:${status}`, text.slice(0, 400));
+  } catch (e) { return unmeasured("error", String(e)); }
+}
+
 async function coingecko(token: string): Promise<Probe> {
   try {
     const { status, text } = await get(`https://api.coingecko.com/api/v3/coins/base/contract/${token}`);
@@ -246,6 +285,8 @@ export async function collect(env: Env): Promise<void> {
     const dx = await dexscreener(token);     await sleep(400);
     const gk = await geckoPool(r.pool);      await sleep(800);
     const cg = await coingecko(token);       await sleep(400);
+    const cd = await cmcDex(env, r.pool);    await sleep(400);
+    const ci = await cmcIndex(env, "BYKO");  await sleep(400);
     const bs = await blockscout(token);
 
     await record(env, r.id, "metamask-price", "api", mp);
@@ -254,6 +295,8 @@ export async function collect(env: Env): Promise<void> {
     await record(env, r.id, "dexscreener", "api", dx);
     await record(env, r.id, "geckoterminal", "api", gk);
     await record(env, r.id, "coingecko", "api", cg);
+    await record(env, r.id, "cmc-dex", "api", cd);
+    await record(env, r.id, "cmc-index", "api", ci);
     await record(env, r.id, "blockscout", "api", bs);
     await record(env, r.id, "uniswap-list", "api",
       uniList ? listMembership(uniList, token) : unmeasured("fetch-failed"));
@@ -267,11 +310,21 @@ export async function collect(env: Env): Promise<void> {
        market columns are simply left empty when the quote did not arrive. */
     const lp = await lpState(env, r.id, r.pool);
     const m = gk.sample;
+    /* GeckoTerminal is rate-limited from the shared Workers egress often
+       enough that the market row would be mostly empty; CMC's DEX side answers
+       with a key and covers the same ground except the trade counts. Whichever
+       replied fills the row, and the LP figure — read from the chain — is
+       written regardless. */
+    const q = cd.q;
     await env.DB.prepare(
       `INSERT INTO market_samples
          (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked)
        VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`,
-    ).bind(r.id, m?.price ?? null, m?.fdv ?? null, m?.tvl ?? null, m?.vol ?? null,
+    ).bind(r.id,
+      m?.price ?? (q?.price != null ? String(q.price) : null),
+      m?.fdv ?? (q?.fully_diluted_value != null ? String(q.fully_diluted_value) : null),
+      m?.tvl ?? (q?.liquidity != null ? String(q.liquidity) : null),
+      m?.vol ?? (q?.volume_24h != null ? String(q.volume_24h) : null),
       m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.locked).run();
   }
 }

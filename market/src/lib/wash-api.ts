@@ -8,16 +8,18 @@ import { json, error } from "./respond";
 
 const SOURCE_ORDER = [
   "metamask-price", "metamask-token", "goplus", "dexscreener", "geckoterminal",
-  "coingecko", "blockscout", "uniswap-list", "1inch-list", "base-app",
+  "coingecko", "cmc-dex", "cmc-index", "blockscout", "uniswap-list", "1inch-list", "base-app",
 ];
 
 const SOURCE_ASKS: Record<string, string> = {
   "metamask-price": "price or refusal",
   "metamask-token": "aggregators",
-  "goplus": "holders / in_dex",
+  "goplus": "risk verdict",
   "dexscreener": "pair listed",
   "geckoterminal": "locked liquidity",
   "coingecko": "contract known",
+  "cmc-dex": "pool priced",
+  "cmc-index": "ticker known",
   "blockscout": "holders / reputation",
   "uniswap-list": "present",
   "1inch-list": "present",

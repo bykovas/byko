@@ -55,6 +55,7 @@ export interface Env {
   ARM_PRIVATE_KEY_BYKO?: string;
   ARM_PRIVATE_KEY_LUKO?: string;
   DRPC_URL?: string;
+  CMC_API_KEY?: string;
   ADMIN_TOKEN?: string;
   SENTRY_DSN?: string;
 }
