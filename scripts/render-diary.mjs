@@ -554,6 +554,22 @@ for (const path of NAV_PAGES) {
   replaceBetween(path, nav, "<!-- nav:begin -->", "<!-- nav:end -->");
 }
 
+/* ---------- every page this run touched must still be balanced ----------
+   An unbalanced <div> does not break the build, does not warn, and does not
+   look wrong at the point of the mistake: one stray </div> after the hero
+   closed the page wrapper early, and every section below it — six of them —
+   silently lost its horizontal padding and ran to the edge of the screen on
+   every viewport. Counting tags is crude, but it catches exactly that. */
+function assertBalanced(path) {
+  const html = readFileSync(path, "utf8");
+  const open = (html.match(/<div\b/g) ?? []).length;
+  const close = (html.match(/<\/div>/g) ?? []).length;
+  if (open !== close) {
+    throw new Error(`${path}: ${open} <div> against ${close} </div> — ` +
+      `${open > close ? "something is left open" : "there is a stray close"}`);
+  }
+}
+
 /* ---------- structured data + sitemap (same source, same run) ---------- */
 
 const author = { "@type": "Person", "name": "Denisas Bykovas", "url": "https://bykovas.lt" };
@@ -600,5 +616,6 @@ console.log(`rendered ${entries.length} entr${entries.length === 1 ? "y" : "ies"
 console.log(`entry pages: ${entryPages.count} → ${ENTRY_DIR}` + (entryPages.removed ? ` (${entryPages.removed} stale removed)` : ""));
 console.log(`X images: ${twitterImages.count} static PNGs → ${TWITTER_IMAGE_DIR} (${twitterImages.totalBytes} bytes)` +
   (twitterImages.removed ? `; ${twitterImages.removed} invalid stale artifact(s) removed` : ""));
+for (const page of [INDEX_PAGE, DIARY_PAGE]) assertBalanced(page);
 console.log(`hero band: ${hero.count} cells from the same counter values`);
 console.log(`stat bar: ${counters.count} of ${counters.total} counters on the home page` + (counters.jsonChanged ? " (counters.json values updated)" : ""));
