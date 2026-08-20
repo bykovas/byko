@@ -343,7 +343,9 @@
 
       if (a.next_size_max) {
         tr.appendChild(cell("mono byrule",
-          "by rule $" + n(a.next_size_min, 2) + "–" + n(a.next_size_max, 2), labels[1]));
+          /* fixed cents, so $0.30 does not print as $0.3 next to $7.06 */
+          "by rule $" + Number(a.next_size_min).toFixed(2) + "–" + Number(a.next_size_max).toFixed(2),
+          labels[1]));
       } else tr.appendChild(cellDash("mono", labels[1]));
 
       for (var i = 2; i < 6; i++) tr.appendChild(cellDash("mono", labels[i]));
