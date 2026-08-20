@@ -27,6 +27,8 @@ export interface Rules {
     interval_minutes: [number, number];
     trade_usdc: [number, number];
     band_usdc: [number, number];
+    run_reverse_pct: number;
+    max_trade_pct_pool: number;
     slippage_bps: number;
   };
   arms: ArmRules[];

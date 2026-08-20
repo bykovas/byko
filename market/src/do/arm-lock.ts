@@ -229,16 +229,44 @@ export class ArmLock {
        metronome — the most machine-shaped pattern available. A band keeps the
        current direction until the balance leaves it, which gives runs of one
        to three trades the same way an ordinary trader's day does. */
-    const prev = await env.DB.prepare(
-      `SELECT direction FROM wallet_state WHERE address = ?1`,
-    ).bind(r.wallet).first<string>("direction");
+    const st = await env.DB.prepare(
+      `SELECT direction, run_start_price FROM wallet_state WHERE address = ?1`,
+    ).bind(r.wallet).first<{ direction: string | null; run_start_price: string | null }>();
+    const prev = st?.direction ?? null;
     let side: "buy" | "sell" = prev === "sell" ? "sell" : "buy";
     if (usdcWhole > upper) side = "buy";
     else if (usdcWhole < lower) side = "sell";
+
+    /* The band alone bounds a run by cash, not by price, and cash is whatever
+       happens to have been deposited. Funded to $34.32 against a band topping
+       out at $20, this arm was obliged to spend $24 in one direction before it
+       could reverse — $24 into a pool holding $123, which is the 64% move that
+       tripped its own deviation guard after eight buys and no sells. So a run
+       also reverses on price: once the pool has moved run_reverse_pct from
+       where this run began, the next trade goes the other way whatever the
+       balance says. The excursion is then bounded by the pool, and the 60%
+       guard goes back to being a backstop instead of something the strategy
+       walks into by design. */
+    const runStart = st?.run_start_price ? Number(st.run_start_price) : 0;
+    if (runStart > 0 && price > 0) {
+      const moved = (price - runStart) / runStart * 100;
+      if (side === "buy" && moved > RULES.strategy.run_reverse_pct) side = "sell";
+      else if (side === "sell" && moved < -RULES.strategy.run_reverse_pct) side = "buy";
+    }
+    /* A new run starts its own price clock; a continuing one keeps it. */
+    const runPrice = (side !== prev || runStart <= 0) ? price : runStart;
     await env.DB.prepare(
-      `UPDATE wallet_state SET direction = ?2 WHERE address = ?1`,
-    ).bind(r.wallet, side).run();
-    const size = uniform(RULES.strategy.trade_usdc[0], RULES.strategy.trade_usdc[1]);
+      `UPDATE wallet_state SET direction = ?2, run_start_price = ?3 WHERE address = ?1`,
+    ).bind(r.wallet, side, String(runPrice)).run();
+
+    let size = uniform(RULES.strategy.trade_usdc[0], RULES.strategy.trade_usdc[1]);
+    /* $9 was 6% of this pool and moved the price about 12% in one trade, which
+       spends a whole run in a single step; the same $9 against a deep pool
+       would be invisible. Clamp the draw to a share of what is actually in
+       there, so the instrument scales to what it is measuring. */
+    const poolUsdcNow = Number(reserves.usdc) / 1e6;
+    const cap = poolUsdcNow * RULES.strategy.max_trade_pct_pool / 100;
+    if (cap > 0 && size > cap) size = cap;
 
     let inputToken: Address;
     let amountIn: bigint;
