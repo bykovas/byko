@@ -56,12 +56,12 @@
     },
     {
       "id": "institutions",
-      "value": "3",
+      "value": "4",
       "label": "Institutions petitioned",
       "kind": "result",
-      "asOf": "2026-08-17",
-      "counts": "Organisations where BYKO submitted an application or opened a support case, and a response was received or awaited. That criterion, and nothing looser: BaseScan (token information form, 4 Aug, three waves of refusals), Crypto.com (support, four rounds on the missing icon, later the \"fake\" conversation) and Coinbase (support, case #27207505). Counted once per organisation, however many rounds it took.",
-      "excludes": "Systems that issued a verdict on BYKO without ever being petitioned: MetaMask and Blockaid dropped the liquidity flag after rescanning the burn — in the diary's own words, \"no email, no form, no appeal\" — and the Blockaid mistake-report form is a planned next move, not a filed one. Also excluded: free scanners the study ran itself (counted separately below), and services whose price list or requirements were only read — DexScreener, DEXTools, Trust Wallet.",
+      "asOf": "2026-08-20",
+      "counts": "Organisations where BYKO submitted an application or opened a support case, and a response was received or awaited. That criterion, and nothing looser: BaseScan (token information form, 4 Aug, three waves of refusals), Crypto.com (support, four rounds on the missing icon, later the \"fake\" conversation), Coinbase (support, case #27207505) and Blockaid, filed after the wallet flags and answered twice in writing, on 19 and 20 Aug 2026 — the second reply giving the verbatim category, the reason code, and the criteria for reassessment. Counted once per organisation, however many rounds it took.",
+      "excludes": "Systems that issued a verdict on BYKO without ever being petitioned: MetaMask and Blockaid dropped the liquidity flag after rescanning the burn — in the diary's own words, \"no email, no form, no appeal\" — which is a separate thing from the Blockaid case later filed and counted above. Also excluded: free scanners the study ran itself (counted separately below), and services whose price list or requirements were only read — DexScreener, DEXTools, Trust Wallet.",
       "provenance": "hand"
     },
     {
@@ -76,10 +76,10 @@
     },
     {
       "id": "episodes",
-      "value": "30",
+      "value": "31",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-08-19",
+      "asOf": "2026-08-20",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"
@@ -119,24 +119,24 @@
     },
     {
       "id": "wallet-flags",
-      "value": "1",
+      "value": "2",
       "label": "Wallet flags",
       "kind": "result",
       "home": false,
-      "asOf": "2026-08-17",
-      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning. One still stands: MetaMask's \"Unstable price\". Base App (Coinbase's wallet) dropped its \"scam\" flag on 17 Aug 2026 and now shows a price and a full trade page — it is counted under Flags removed instead.",
+      "asOf": "2026-08-20",
+      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning. Two stand. MetaMask's \"Unstable price\". And Base App's \"scam\", which was gone on 17 Aug 2026 and back by 19 Aug — screenshotted at 23:01 that evening, full-screen, on BYKO and on its control token LUKO, with the same two reasons on both. Base App's own sheet attributes the verdict to \"security providers\". Blockaid, the provider MetaMask reads, wrote on 20 Aug 2026 that for this token it returns Spam with the reason code unstable-price, that it is \"not returning Malicious/Scam for this token\", and that the Coinbase wording is \"Coinbase's own classification (different vendor/policy)\".",
       "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it.",
       "provenance": "hand"
     },
     {
       "id": "flags-removed",
-      "value": "2",
+      "value": "1",
       "label": "Flags removed",
       "kind": "result",
       "home": false,
-      "asOf": "2026-08-17",
-      "counts": "Warnings a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. Two so far: MetaMask's \"Low locked liquidity\", dropped by Blockaid about a day after the LP burn on 7 Aug 2026; and Base App's \"scam\" flag, gone on 17 Aug 2026 — the token now shows a price and a full trade page. Both removed with no email, form or appeal; the one support case actually opened was never answered.",
-      "excludes": "Warnings still displayed — MetaMask's \"Unstable price\" — and removals promised in a reply but not visible in the product: a flag counts only when the warning is gone from the screen.",
+      "asOf": "2026-08-20",
+      "counts": "Warnings a wallet or scanner has actually stopped showing, counted per warning at the product where a user sees it, verified by reopening the token there. One: MetaMask's \"Low locked liquidity\", dropped by Blockaid about a day after the LP burn on 7 Aug 2026, with no email, form or appeal. This counter read two until 20 Aug 2026; the second was Base App's \"scam\" flag, gone on 17 Aug. It came back by 19 Aug and is on the screen now, so by this counter's own rule — a flag counts only when the warning is gone from the screen — it no longer qualifies and moves back to Wallet flags. A removal that was reversed is not a removal, and leaving it counted would have been the single most flattering error available.",
+      "excludes": "Warnings still displayed — MetaMask's \"Unstable price\" and Base App's \"scam\" — and removals promised in a reply but not visible in the product: a flag counts only when the warning is gone from the screen.",
       "provenance": "hand"
     }
   ]

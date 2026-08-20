@@ -28,6 +28,34 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The wallet blames security providers. The provider says it is not them — 20 August 2026
+
+Base App shows BYKO with a red banner: **Flagged as a scam. You may lose your funds.** Tap it and a full-screen sheet gives two reasons: *flagged as malicious by security providers*, and *not verified by a trusted source*. I screenshotted it on 19 August at 23:01, and then on LUKO — the deliberately worse control token, whose liquidity is not burned and whose founder holds half the supply — at 23:02. Identical banner, identical two reasons, on a token that cannot be rugged and a token that can.
+
+So I wrote to the security provider and asked three questions: what does your API actually return for this contract, verbatim; is "scam" a rendering you endorse; and is there any route at all for a token that is permanently small.
+
+Blockaid answered all three on 20 August.
+
+- "This contract is under the Category of **Spam**, returning the verbatim reason code **unstable-price**." The rationale is thin liquidity in the Aerodrome pool. Their words for it: "extreme market depth risk".
+- "**Blockaid is not returning Malicious/Scam for this token.**" The Coinbase wording is, verbatim, "Coinbase's own classification (different vendor/policy)". They suggested I take it up with Coinbase.
+- Reassessment requires two things: "substantially deepen liquidity in the main trading pool so the asset is no longer thinly capitalized, and to sustain healthier two-sided trading activity to prevent price manipulation from micro-trades."
+
+The first two answers together are the finding. A wallet tells its users that a token was flagged as malicious by security providers. The named security provider — the one MetaMask reads, which surfaces the same signal as the mild "Unstable Token Price" — says in writing that it is not calling this token malicious, and that the harsher word belongs to the wallet, not to them. The verdict is presented as the judgement of outside experts. The outside expert says it is not his.
+
+One detail worth keeping. Blockaid cites the pool as "product reserves sit around $136 and DexScreener reports roughly $270". Both figures are correct and they describe the same pool: one side of it, and both sides added together. The number that triggers the automated verdict is therefore not a fixed quantity but a choice of convention, and nobody along the chain has to state which one they used.
+
+I have to correct my own numbers too, and the correction is unflattering. This site counted Base App's scam flag as removed on 17 August. It came back. Under my own definition — a flag counts as removed only when the warning is gone from the screen — a removal that was reversed is not a removal. Flags removed goes from two to one, wallet flags from one to two, both dated today. Leaving it as it stood would have been the most flattering error available to me, which is exactly why it had to go first.
+
+There is one more thing, and it is uncomfortable in a useful way. The second condition Blockaid names for reassessment is sustained two-sided trading, so that price is not dominated by micro-trades. Since 19 August this project runs a disclosed wash-trading worker that produces exactly that: small buys and sells against its own pool, on a random schedule, every parameter published and hashed before the first trade. It satisfies the second half of their test by construction. It cannot touch the first half — depth would need roughly fifty times a supply fixed forever at 790,227 — and it does not try to.
+
+So the prediction made before the first trade stands unchanged, and now it is measured against their own sentences rather than my summary of them: the flag will not clear, because the condition that produced it is depth, and depth is the one thing here that cannot move.
+
+Coinbase has not been asked yet. That petition goes out next, and it gets counted when it is filed, not when it is answered.
+
+---
+**Teaser:** Base App says BYKO was flagged as malicious by security providers. I asked the security provider. Blockaid, in writing: it is not returning Malicious or Scam for this token, and the wording is Coinbase's own.
+**X:** Base App calls BYKO a scam and blames "security providers". So I asked the provider. Blockaid, in writing: "Blockaid is not returning Malicious/Scam for this token." Their verdict is Spam, code unstable-price. Thin liquidity, nothing more.
+
 ## Day 17: I asked everyone I could, and nobody came — 19 August 2026
 
 Day 17. I asked everyone I could, and nobody came.

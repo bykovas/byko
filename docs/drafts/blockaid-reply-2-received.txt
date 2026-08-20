@@ -1,0 +1,42 @@
+Blockaid Security Team — second reply, received 20 August 2026 (via Zendesk).
+Answers to the three questions sent with the two Base App screenshots.
+Quoted verbatim; the site quotes only from this file.
+
+---
+
+Hello ,
+
+Thank you for reaching out with your questions regarding the contract
+classification. Please find our response to your inquiry detailed below.
+
+1. What does your API return for this contract — category, severity, and
+human-readable reason string, verbatim?
+
+This contract is under the Category of Spam, returning the verbatim reason
+code unstable-price. The rationale behind this signal is thin live liquidity
+in the primary Aerodrome pool, where product reserves sit around $136 and
+DexScreener reports roughly $270. Because of this extreme market depth risk,
+our automated detector marks the token as Spam.
+
+2. Is "scam" a rendering that Blockaid endorses for this signal, or a
+downstream mapping you consider incorrect?
+
+Coinbase app showing your token as "scam"; this is Coinbase's own
+classification (different vendor/policy). Blockaid is not returning
+Malicious/Scam for this token, from the first question, we return Spam
+(portfolio-risk), which MetaMask surfaces as Unstable Token Price. Please
+reach out to them(Coinbase) directly to address this issue.
+
+3. Is there any route for a token that is structurally, permanently small, or
+is a permanent "scam" label the intended outcome?
+
+To qualify for reassessment, a token must meet specific liquidity and volume
+criteria. The primary requirements are to substantially deepen liquidity in
+the main trading pool so the asset is no longer thinly capitalized, and to
+sustain healthier two-sided trading activity to prevent price manipulation
+from micro-trades.
+
+Thank you for your understanding and cooperation.
+
+Best regards,
+Blockaid Security Team

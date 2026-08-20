@@ -180,13 +180,16 @@ td a:hover{color:var(--byko-ink)}
     <div class="disclose-grid">
       <div>
         <h2>Why this exists</h2>
-        <p>A security vendor, <span class="name">Blockaid</span>, confirmed BYKO's remaining signal is <em>not</em> a malice flag but a thin-market heuristic, and told us how to clear it.</p>
+        <p>A security vendor, <span class="name">Blockaid</span>, confirmed BYKO's remaining signal is <em>not</em> a malice flag but a thin-market heuristic, and told us how to clear it. Asked again on 20 August for the verbatim API output, they named it: category <span class="mono">Spam</span>, reason code <span class="mono">unstable-price</span> — and said the "scam" wording in Coinbase's wallet is not theirs.</p>
         <p>Deepening the pool is impossible: $20,000 of liquidity would take about fifty times a supply fixed forever at 790,227. That leaves sustaining two-sided trading in a token nobody else trades — which means these wallets buying and selling against their own pools on a schedule. That has a name and this page uses it: <span class="name">this is wash trading</span>, disclosed. No exchange, no order book, no counterparty deceived about who is on the other side, and every parameter and every trade published. None of that makes it something else; it makes it wash trading in the open.</p>
         <p>The parameters were committed to the public repository, and their hash written into the database, <span class="name">before the first trade</span> — the worker refuses to trade if its live parameters do not match that hash. The prediction, on the record: the flag will not clear, because the condition Blockaid named is pool depth and the worker does not touch depth.</p>
       </div>
       <aside class="quoted">
         <span class="kicker">Blockaid, in writing</span>
         <ul>
+          <li>"This contract is under the Category of Spam, returning the verbatim reason code unstable-price… Because of this extreme market depth risk, our automated detector marks the token as Spam."</li>
+          <li>"Blockaid is not returning Malicious/Scam for this token… Coinbase app showing your token as \"scam\"; this is Coinbase's own classification (different vendor/policy)."</li>
+          <li>"The primary requirements are to substantially deepen liquidity in the main trading pool so the asset is no longer thinly capitalized, and to sustain healthier two-sided trading activity to prevent price manipulation from micro-trades."</li>
           <li>"Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized."</li>
           <li>"Sustain two-sided trading, so price is not dominated by tiny trades."</li>
           <li>"After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels."</li>
