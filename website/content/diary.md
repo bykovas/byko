@@ -56,6 +56,34 @@ Coinbase has not been asked yet. That petition goes out next, and it gets counte
 **Teaser:** Base App says BYKO was flagged as malicious by security providers. I asked the security provider. Blockaid, in writing: it is not returning Malicious or Scam for this token, and the wording is Coinbase's own.
 **X:** Base App calls BYKO a scam and blames "security providers". So I asked the provider. Blockaid, in writing: "Blockaid is not returning Malicious/Scam for this token." Their verdict is Spam, code unstable-price. Thin liquidity, nothing more.
 
+## The fee is paid in the token, and no one can ever collect it — 19 August 2026
+
+I started wash trading to test whether a market classifier could be satisfied. Then I found something I had not accounted for: the experiment slowly removes BYKO from circulation.
+
+Aerodrome charges 0.3% on the input token of every swap. I assumed those fees stayed in the pool and increased liquidity. They do not. The pool's k has stayed exactly the same through the swaps I checked. The fee is transferred out to a separate fee contract.
+
+That matters because on a BYKO sale, the input token is BYKO.
+
+So every sale sends 0.3% of the sold BYKO to the fee contract. Normally LP holders can collect those fees. BYKO has no LP holder: 100% of the LP tokens were sent to the dead address. Nobody can ever claim what accumulates there.
+
+The fee contract already holds 98.49 BYKO from the pool's entire history. That is tiny. The worker changes the scale.
+
+At its current parameters, fourteen days of simulated two-sided trading would move roughly 3,977 BYKO into that unreachable contract — about 0.50% of the entire fixed supply. Keep the same process running and 1% disappears from usable circulation in about 26 days; 10% in about 258.
+
+totalSupply() would still say 790,227. The contract would still be telling the truth. But an increasing part of that number would belong to nobody and could never return to circulation.
+
+Which creates a fairly absurd result: I started generating trades to see whether a classifier would consider the token more market-like, and the procedure itself slowly makes the token less economically alive.
+
+There is also a useful control. The same effect does not apply to LUKO in the same way, because its LP tokens are held by a wallet that can collect the fees. Same trading procedure, different ownership of the LP, different economics.
+
+So this is now part of the experiment too. Not just whether simulated activity changes how external systems classify BYKO, but what that simulation physically does to the asset while I am trying to improve its appearance.
+
+**Added at publication, 20 August 2026.** The fee contract held 98.49 BYKO when this was written. A day later it holds 241.09 — 142.60 BYKO in roughly twenty-four hours, or 0.018% of supply per day. That is the paragraph above measured instead of projected, and it is running at about half the estimated pace. The estimate assumed a trade mix and a size range that have since been amended twice: a run now reverses at a percentage drawn from 5 to 15 rather than at a fixed balance, and every trade is capped at 2.5% of the pool's USDC side. Only sales pay the fee in BYKO, so the rate follows the ratio of sales to purchases, and both amendments changed that ratio. The real figure will be published from the ledger rather than re-projected here.
+
+---
+**Teaser:** Aerodrome takes 0.3% of every swap out of the pool, not into it. On a BYKO sale that 0.3% is BYKO, sent to a fee contract nobody can ever claim, because the LP was burned. The experiment eats its own token.
+**X:** I started wash trading to test a market classifier. Then I found the experiment has a physical cost: every BYKO sale sends 0.3% of the sold tokens somewhere nobody can ever collect. At the current pace, 14 days removes about 0.5% of supply forever.
+
 ## Day 17: I asked everyone I could, and nobody came — 19 August 2026
 
 Day 17. I asked everyone I could, and nobody came.
