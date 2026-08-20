@@ -39,15 +39,18 @@ function nextByRule(
   if (!Number.isFinite(balance)) return {};
   const [lower, upper] = RULES.strategy.band_usdc;
   let side: "buy" | "sell" = w.direction === "sell" ? "sell" : "buy";
+  /* Same order the worker uses: the drawn percentage turns the run, then the
+     band overrides it if the balance would leave 10–20. */
+  const runStart = w.run_start_price ? Number(w.run_start_price) : 0;
+  const runTarget = w.run_target_pct ? Number(w.run_target_pct) : 0;
+  const price = sample?.price_usd ? Number(sample.price_usd) : 0;
+  if (runStart > 0 && runTarget > 0 && price > 0) {
+    const moved = (price - runStart) / runStart * 100;
+    if (side === "buy" && moved > runTarget) side = "sell";
+    else if (side === "sell" && moved < -runTarget) side = "buy";
+  }
   if (balance > upper) side = "buy";
   else if (balance < lower) side = "sell";
-  const runStart = w.run_start_price ? Number(w.run_start_price) : 0;
-  const price = sample?.price_usd ? Number(sample.price_usd) : 0;
-  if (runStart > 0 && price > 0) {
-    const moved = (price - runStart) / runStart * 100;
-    if (side === "buy" && moved > RULES.strategy.run_reverse_pct) side = "sell";
-    else if (side === "sell" && moved < -RULES.strategy.run_reverse_pct) side = "buy";
-  }
   const poolUsdc = sample?.tvl_usd ? Number(sample.tvl_usd) : 0;
   const [sizeMin, sizeMax] = RULES.strategy.trade_usdc;
   const cap = poolUsdc > 0 ? poolUsdc * RULES.strategy.max_trade_pct_pool / 100 : 0;
@@ -56,6 +59,7 @@ function nextByRule(
     next_size_min: sizeMin,
     next_size_max: cap > 0 ? Math.min(sizeMax, cap) : sizeMax,
     next_run_start_price: runStart > 0 ? String(runStart) : null,
+    next_run_target_pct: runTarget > 0 ? runTarget : null,
   };
 }
 
@@ -81,7 +85,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
               s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
-              s.direction, s.run_start_price
+              s.direction, s.run_start_price, s.run_target_pct
          FROM wallets w LEFT JOIN wallet_state s ON s.address = w.address
         WHERE w.address = ?1`,
     ).bind(r.wallet).first<Record<string, unknown>>();

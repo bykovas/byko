@@ -46,6 +46,15 @@ CREATE TABLE IF NOT EXISTS wallet_state (
   halt_reason   TEXT,
   usdc_balance  TEXT,
   direction     TEXT,                 -- last side taken; the band keeps it until a bound is crossed
+  -- Added by hand, 20 Aug 2026, with the fourth amendment:
+  --   ALTER TABLE wallet_state ADD COLUMN run_start_price TEXT;
+  --   ALTER TABLE wallet_state ADD COLUMN run_target_pct  TEXT;
+  -- A run turns when the price has moved run_target_pct from run_start_price.
+  -- The target is DRAWN from the published range and written here before the
+  -- run's first trade, so the figure is committed in advance rather than
+  -- chosen once the outcome is known.
+  run_start_price TEXT,
+  run_target_pct  TEXT,
   token_balance TEXT,
   updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );

@@ -156,13 +156,11 @@ export class ArmLock {
     const startPrice = row?.start_price ? Number(row.start_price) : null;
     const spent = row?.usdc_spent ? Number(row.usdc_spent) : 0;
 
-    if (startPrice && startPrice > 0) {
-      const dev = Math.abs(price - startPrice) / startPrice * 100;
-      if (dev > r.guards.max_price_deviation_pct) {
-        await halt(env, r.wallet, arm, `price-deviation ${dev.toFixed(1)}%`);
-        return;
-      }
-    }
+    /* Signed, and judged only once the side is known — see below. An arm that
+       reached this limit used to be unable to trade in ANY direction, which
+       froze the price it had just run up and made recovery impossible: the
+       guard blocked the unwind exactly as hard as it blocked the abuse. */
+    const dev = startPrice && startPrice > 0 ? (price - startPrice) / startPrice * 100 : 0;
     if (spent > r.guards.max_gross_usdc) {
       await halt(env, r.wallet, arm, `spend-cap ${spent.toFixed(2)}`);
       return;
@@ -230,8 +228,8 @@ export class ArmLock {
        current direction until the balance leaves it, which gives runs of one
        to three trades the same way an ordinary trader's day does. */
     const st = await env.DB.prepare(
-      `SELECT direction, run_start_price FROM wallet_state WHERE address = ?1`,
-    ).bind(r.wallet).first<{ direction: string | null; run_start_price: string | null }>();
+      `SELECT direction, run_start_price, run_target_pct FROM wallet_state WHERE address = ?1`,
+    ).bind(r.wallet).first<{ direction: string | null; run_start_price: string | null; run_target_pct: string | null }>();
     const prev = st?.direction ?? null;
     let side: "buy" | "sell" = prev === "sell" ? "sell" : "buy";
     if (usdcWhole > upper) side = "buy";
@@ -248,16 +246,52 @@ export class ArmLock {
        guard goes back to being a backstop instead of something the strategy
        walks into by design. */
     const runStart = st?.run_start_price ? Number(st.run_start_price) : 0;
-    if (runStart > 0 && price > 0) {
+    const runTarget = st?.run_target_pct ? Number(st.run_target_pct) : 0;
+    if (runStart > 0 && runTarget > 0 && price > 0) {
       const moved = (price - runStart) / runStart * 100;
-      if (side === "buy" && moved > RULES.strategy.run_reverse_pct) side = "sell";
-      else if (side === "sell" && moved < -RULES.strategy.run_reverse_pct) side = "buy";
+      if (side === "buy" && moved > runTarget) side = "sell";
+      else if (side === "sell" && moved < -runTarget) side = "buy";
     }
-    /* A new run starts its own price clock; a continuing one keeps it. */
-    const runPrice = (side !== prev || runStart <= 0) ? price : runStart;
+    /* The band has the last word. A drawn percentage says when a run turns; it
+       does not get to walk the balance out of 10–20. Written the other way
+       round the trigger overrode its own constraint. */
+    if (usdcWhole > upper) side = "buy";
+    else if (usdcWhole < lower) side = "sell";
+
+    /* A new run gets its own price clock AND its own turning point, drawn from
+       the published range and written down before the run begins. A single
+       fixed percentage is a pattern in itself: every run would turn at exactly
+       the same distance, drawing a metronome on the chart the way the single
+       pivot did, only slower. */
+    const newRun = side !== prev || runStart <= 0 || runTarget <= 0;
+    const runPrice = newRun ? price : runStart;
+    const target = newRun
+      ? uniform(RULES.strategy.run_reverse_pct[0], RULES.strategy.run_reverse_pct[1])
+      : runTarget;
     await env.DB.prepare(
-      `UPDATE wallet_state SET direction = ?2, run_start_price = ?3 WHERE address = ?1`,
-    ).bind(r.wallet, side, String(runPrice)).run();
+      `UPDATE wallet_state SET direction = ?2, run_start_price = ?3, run_target_pct = ?4
+        WHERE address = ?1`,
+    ).bind(r.wallet, side, String(runPrice), String(target)).run();
+    if (newRun) {
+      await event(env, arm, "run-start",
+        `${side} run begins at ${price.toPrecision(9)}, turning at ${target.toFixed(2)}% ` +
+        `(drawn from ${RULES.strategy.run_reverse_pct[0]}–${RULES.strategy.run_reverse_pct[1]}%, ` +
+        `recorded before the first trade of the run)`);
+    }
+
+    /* Now the deviation guard can tell an abuse from an unwind. Value
+       untouched; what changes is that past the limit only the corrective
+       direction is allowed through. */
+    if (Math.abs(dev) > r.guards.max_price_deviation_pct) {
+      const worsens = (side === "buy" && dev > 0) || (side === "sell" && dev < 0);
+      if (worsens) {
+        await halt(env, r.wallet, arm, `price-deviation ${dev.toFixed(1)}%`);
+        return;
+      }
+      await event(env, arm, "guard-trip",
+        `price-deviation ${dev.toFixed(1)}% is past ${r.guards.max_price_deviation_pct}%, ` +
+        `but this ${side} moves the price back toward the start — allowed`);
+    }
 
     let size = uniform(RULES.strategy.trade_usdc[0], RULES.strategy.trade_usdc[1]);
     /* $9 was 6% of this pool and moved the price about 12% in one trade, which

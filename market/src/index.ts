@@ -63,15 +63,22 @@ async function handle(request: Request, env: Env): Promise<Response> {
     if (request.method !== "POST") return methodNotAllowed();
     if (!authed(request, env)) return error("unauthorized", 401);
     await seedRows(env);
+    /* Optional {"arm":"byko"} resumes one arm. Without it this kicked both,
+       which re-armed a healthy arm's alarm and moved a fire time already
+       published on the page — a schedule should not shift because a different
+       arm was being restarted. Mirrors /api/halt, which has always taken it. */
+    const body = (await request.json().catch(() => ({}))) as { arm?: string };
+    const targets = body.arm ? RULES.arms.filter((a) => a.id === body.arm) : RULES.arms;
+    if (targets.length === 0) return error("unknown arm", 400);
     /* clear a deliberate halt so a re-open resumes, then arm each enabled arm */
-    for (const r of RULES.arms) {
+    for (const r of targets) {
       await env.DB.prepare(
         `UPDATE wallet_state SET halted = 0, halt_reason = NULL WHERE address = ?1`,
       ).bind(r.wallet).run();
       await arm(env, r.id);
     }
-    await event(env, null, "resume", `kicked ${RULES.arms.map((a) => a.id).join(", ")}`);
-    return json({ kicked: RULES.arms.map((a) => a.id), market_open: env.MARKET_OPEN === "1" });
+    await event(env, body.arm ?? null, "resume", `kicked ${targets.map((a) => a.id).join(", ")}`);
+    return json({ kicked: targets.map((a) => a.id), market_open: env.MARKET_OPEN === "1" });
   }
 
   if (url.pathname === "/api/halt") {
