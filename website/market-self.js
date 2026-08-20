@@ -338,7 +338,13 @@
       tr.appendChild(cell("l mono lead", "next"));
       tr.appendChild(cell("l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19), "utc"));
 
-      if (a.next_side) tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase(), labels[0]));
+      if (a.next_side) {
+        /* The turning point is drawn per run and written down before the run's
+           first trade, so it is a committed figure rather than a forecast —
+           show it beside the side it governs. */
+        var turn = a.next_run_target_pct ? " · turns at " + Number(a.next_run_target_pct).toFixed(2) + "%" : "";
+        tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase() + turn, labels[0]));
+      }
       else tr.appendChild(cellDash("l", labels[0]));
 
       if (a.next_size_max) {
