@@ -26,6 +26,39 @@ const SOURCE_ASKS: Record<string, string> = {
   "base-app": "what the screen says (by hand)",
 };
 
+/* The side the band and the run-reversal rule select right now. Same three
+   inputs the worker uses: the USDC balance, the direction of the current run,
+   and how far the pool has moved since that run began. */
+function nextByRule(
+  r: { guards: unknown },
+  w: Record<string, unknown> | null,
+  sample: Record<string, unknown> | null,
+): Record<string, unknown> {
+  if (!w || w.halted === 1 || !w.next_fire_at || w.usdc_balance == null) return {};
+  const balance = Number(w.usdc_balance) / 1e6;
+  if (!Number.isFinite(balance)) return {};
+  const [lower, upper] = RULES.strategy.band_usdc;
+  let side: "buy" | "sell" = w.direction === "sell" ? "sell" : "buy";
+  if (balance > upper) side = "buy";
+  else if (balance < lower) side = "sell";
+  const runStart = w.run_start_price ? Number(w.run_start_price) : 0;
+  const price = sample?.price_usd ? Number(sample.price_usd) : 0;
+  if (runStart > 0 && price > 0) {
+    const moved = (price - runStart) / runStart * 100;
+    if (side === "buy" && moved > RULES.strategy.run_reverse_pct) side = "sell";
+    else if (side === "sell" && moved < -RULES.strategy.run_reverse_pct) side = "buy";
+  }
+  const poolUsdc = sample?.tvl_usd ? Number(sample.tvl_usd) : 0;
+  const [sizeMin, sizeMax] = RULES.strategy.trade_usdc;
+  const cap = poolUsdc > 0 ? poolUsdc * RULES.strategy.max_trade_pct_pool / 100 : 0;
+  return {
+    next_side: side,
+    next_size_min: sizeMin,
+    next_size_max: cap > 0 ? Math.min(sizeMax, cap) : sizeMax,
+    next_run_start_price: runStart > 0 ? String(runStart) : null,
+  };
+}
+
 function dayIndex(startDate: string, d: string): number {
   const a = Date.parse(startDate + "T00:00:00Z");
   const b = Date.parse(d + "T00:00:00Z");
@@ -47,7 +80,8 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
   for (const r of RULES.arms) {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
-              s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at
+              s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
+              s.direction, s.run_start_price
          FROM wallets w LEFT JOIN wallet_state s ON s.address = w.address
         WHERE w.address = ?1`,
     ).bind(r.wallet).first<Record<string, unknown>>();
@@ -124,6 +158,12 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       usdc_spent: w?.usdc_spent ?? "0", next_fire_at: w?.next_fire_at ?? null,
       usdc_balance: w?.usdc_balance ?? null, token_balance: w?.token_balance ?? null,
       stop: r.stop, guards: r.guards, market: sample ?? null, measured, checks: grid,
+      /* What the published rule yields at the balance and price printed on the
+         same page — not a claim about a trade that has not happened. The size
+         is drawn at fire time, so only its range is knowable; the range itself
+         moves, because it is clamped to a share of the pool. Anyone can redo
+         this arithmetic from the figures on the card, which is the point. */
+      ...nextByRule(r, w, sample),
     });
   }
 

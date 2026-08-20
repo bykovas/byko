@@ -320,11 +320,16 @@
     }
   }
 
-  /* The next fire time is known; nothing else about that trade is. Its size is
-     drawn when the alarm goes off and its side depends on the balance at that
-     moment, so the row shows the two facts we have — which arm, and when — and
-     leaves the rest as the same running dash used for any value still in
-     flight. A waiting row is a promise about the schedule, not about a trade. */
+  /* The waiting row used to show the fire time and five dashes. More than that
+     is knowable: the side is not random — the band and the run-reversal rule
+     pick it from the balance and the price, both printed on this page — and
+     the size, while drawn at fire time, is drawn from a range that is clamped
+     to a share of the pool and so is a number too. Those are shown as "by
+     rule", because they are what the published rule yields right now and not
+     a claim about a trade that has not happened; if the balance or the pool
+     moves before the alarm, so does the answer. What genuinely cannot be known
+     until the receipt — the exact amounts, the price it fills at — stays a
+     dash. */
   function waitingRows(data, tbody) {
     (data.arms || []).forEach(function (a) {
       if (a.halted || !a.next_fire_at) return;
@@ -332,7 +337,16 @@
       var labels = ["side", "usdc", "token", "price", "fdv", "pool usdc"];
       tr.appendChild(cell("l mono lead", "next"));
       tr.appendChild(cell("l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19), "utc"));
-      for (var i = 0; i < 6; i++) tr.appendChild(cellDash(i === 0 ? "l" : "mono", labels[i]));
+
+      if (a.next_side) tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase(), labels[0]));
+      else tr.appendChild(cellDash("l", labels[0]));
+
+      if (a.next_size_max) {
+        tr.appendChild(cell("mono byrule",
+          "by rule $" + n(a.next_size_min, 2) + "–" + n(a.next_size_max, 2), labels[1]));
+      } else tr.appendChild(cellDash("mono", labels[1]));
+
+      for (var i = 2; i < 6; i++) tr.appendChild(cellDash("mono", labels[i]));
       var stat = cell("l", null, "status");
       stat.appendChild(el("span", "pill", "waiting"));
       tr.appendChild(stat);
