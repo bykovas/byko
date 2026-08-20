@@ -66,7 +66,7 @@
     ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
   ];
   var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
-  var ARM_FIELDS = ["price", "FDV", "pool TVL", "holders", "USDC spent", "trades 24h",
+  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC spent", "trades 24h",
     "LP burned", "LP held by founders", "supply held by founders"];
 
   /* Draw everything that is known without the network: the rules strip, both
@@ -203,7 +203,12 @@
       }
       row("price", price(m.price_usd));
       row("FDV", m.fdv_usd ? "$" + n(m.fdv_usd) : "—");
-      row("pool TVL", m.tvl_usd ? "$" + n(m.tvl_usd) : "—");
+      /* Read from the chain, so it means one thing. The vendors' own "TVL"
+         does not: GeckoTerminal counts both sides of the pool, CMC counts one,
+         and whichever answered filled the column — which printed $140 for one
+         arm and $578 for the other while the chain said $140 and $290, on two
+         cards placed side by side to be compared. */
+      row("pool USDC", m.reserve_usdc ? "$" + n(Number(m.reserve_usdc) / 1e6) : "—", true);
       var hAge = m.holders != null ? ago(m.holders_at) : "";
       row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
       row("USDC spent", "$" + n(arm.usdc_spent));

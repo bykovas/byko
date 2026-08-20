@@ -51,7 +51,11 @@ function nextByRule(
   }
   if (balance > upper) side = "buy";
   else if (balance < lower) side = "sell";
-  const poolUsdc = sample?.tvl_usd ? Number(sample.tvl_usd) : 0;
+  /* The chain figure, not tvl_usd: the vendors disagree about whether that
+     counts one side of the pool or both, and this clamp is a share of the
+     USDC side. Using theirs made luko's published range twice as wide as the
+     worker would ever draw — the worker reads reserves itself. */
+  const poolUsdc = sample?.reserve_usdc ? Number(sample.reserve_usdc) / 1e6 : 0;
   const [sizeMin, sizeMax] = RULES.strategy.trade_usdc;
   const cap = poolUsdc > 0 ? poolUsdc * RULES.strategy.max_trade_pct_pool / 100 : 0;
   return {
@@ -91,7 +95,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     ).bind(r.wallet).first<Record<string, unknown>>();
     const sample = await env.DB.prepare(
       `SELECT price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders,
-              lp_holder, lp_locked, founders_pct, sampled_at
+              lp_holder, lp_locked, founders_pct, sampled_at, reserve_token, reserve_usdc
          FROM market_samples WHERE arm = ?1 ORDER BY id DESC LIMIT 1`,
     ).bind(r.id).first<Record<string, unknown>>();
     /* Holders is the one figure the Worker itself cannot fetch: GoPlus refuses

@@ -408,16 +408,27 @@ export async function collect(env: Env): Promise<void> {
     const q = cd.q;
     /* last resort: the pool itself. A price we can always read beats an empty
        column filled by nobody. */
-    const chain = (!m && !q?.price) ? await poolReserves(env, r.pool) : null;
+    /* Read the reserves EVERY pass, not only when both vendors are silent.
+       tvl_usd was filled by whichever of them answered, and they do not report
+       the same quantity: GeckoTerminal's reserve_in_usd counts both sides of
+       the pool, CMC's liquidity counts one. So the column held $140 for byko
+       and $578 for luko while the chain said $140 and $290 — the same column
+       meaning two different things depending on who replied, published on two
+       cards side by side for comparison. The chain answer is unambiguous and
+       is now stored in its own columns; tvl_usd keeps whatever the vendor
+       said, and nothing computes against it. */
+    const chain = await poolReserves(env, r.pool);
     await env.DB.prepare(
       `INSERT INTO market_samples
-         (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked, founders_pct)
-       VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`,
+         (sampled_at, arm, price_usd, fdv_usd, tvl_usd, vol_24h, buys_24h, sells_24h, holders, lp_holder, lp_locked, founders_pct,
+          reserve_token, reserve_usdc)
+       VALUES (datetime('now'), ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)`,
     ).bind(r.id,
       m?.price ?? (q?.price != null ? String(q.price) : chain?.price || null),
       m?.fdv ?? (q?.fully_diluted_value != null ? String(q.fully_diluted_value) : null),
       m?.tvl ?? (q?.liquidity != null ? String(q.liquidity) : null),
       m?.vol ?? (q?.volume_24h != null ? String(q.volume_24h) : null),
-      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.burned, founders || null).run();
+      m?.buys ?? null, m?.sells ?? null, gp.holders, lp.holder, lp.burned, founders || null,
+      chain.token || null, chain.usdc || null).run();
   }
 }
