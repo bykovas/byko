@@ -28,6 +28,40 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The price chain ends at the one thing BYKO refuses to have — 21 August 2026
+
+For 18 days, BYKO had no price in one wallet. Today that wallet finally named the sources behind the number it shows:
+
+“For tokens on the TON blockchain, we show prices for those that are either whitelisted on DeDust or have more than $20,000 liquidity on STON.fi. For EVM chains, we currently have two providers: Changelly and Near Intents.”
+
+That answer gives the first complete path I have been able to trace from a wallet screen to the condition required for a price.
+
+The first detail is important: Changelly and Near Intents are not market-price aggregators. They are swap routes. So the wallet is not asking the Aerodrome pool, GeckoTerminal or DexScreener what BYKO trades for. It is asking whether one of its exchange partners is willing to quote the asset.
+
+For Changelly, the next step is documented. A token normally needs to trade on one of its partner exchanges: Binance, Kucoin, HitBTC, OKX, Huobi or Changelly PRO. If it does not, Changelly offers a separate listing process.
+
+Near Intents works differently. Its supported-token list comes from the live 1Click API, with roughly 115 tokens across 20 chains. There is no public listing form. A token appears when a solver is prepared to quote it.
+
+So for BYKO the chain now looks like this:
+
+wallet price ← Changelly or Near Intents ← tier-one exchange support ← market maker + audit + roadmap
+
+The last step is where this stops being a cost problem.
+
+BYKO has an identifiable author and a signed deployer identity. It does not have a corporate structure, a market maker or an audit from a recognized firm. Those can at least be described as things that could theoretically be bought or arranged.
+
+The roadmap cannot.
+
+The project states on its front page: “no promises, no roadmap, no yield.” That is not missing documentation. It is a design constraint.
+
+A conventional exchange-listing path expects a product narrative, users and a roadmap explaining how the token captures value. BYKO was constructed to make none of those promises. Following the wallet's own price chain therefore ends at a requirement the project has explicitly excluded.
+
+That is the finding: the missing wallet price is not simply downstream of a thin pool or an unpaid data provider. For this route, price visibility ultimately depends on becoming the kind of project BYKO was designed not to be.
+
+---
+**Teaser:** For the first time in 18 days, a wallet named the sources behind BYKO's missing price. Following that chain leads from swap providers to tier-one exchange listing, then to market makers, audits and a roadmap — the one thing BYKO explicitly refuses to have.
+**X:** For 18 days BYKO had no wallet price. Today one wallet finally named its sources: Changelly and Near Intents. Following that chain leads to tier-one exchange listing, market makers, audits and a roadmap. BYKO has no roadmap by design.
+
 ## The wallet blames security providers. The provider says it is not them — 20 August 2026
 
 Base App shows BYKO with a red banner: **Flagged as a scam. You may lose your funds.** Tap it and a full-screen sheet gives two reasons: *flagged as malicious by security providers*, and *not verified by a trusted source*. I screenshotted it on 19 August at 23:01, and then on LUKO — the deliberately worse control token, whose liquidity is not burned and whose founder holds half the supply — at 23:02. Identical banner, identical two reasons, on a token that cannot be rugged and a token that can.
