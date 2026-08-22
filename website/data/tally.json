@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-17T20:16:59.036Z",
-  "block": 50104223,
+  "updated": "2026-08-22T08:21:05.368Z",
+  "block": 50298671,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -12,7 +12,7 @@
   "notCounted": {
     "dust": 0,
     "contracts": 1,
-    "giftOnly": 1
+    "giftOnly": 911
   },
   "founder": {
     "wallets": [
@@ -27,7 +27,8 @@
       "0x33d857fb6f06aafc498de09654da82a8f68be233",
       "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
       "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
-      "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
+      "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+      "0x36041020857b33aa09ee7d9a99743176a7778134"
     ],
     "holdings": [
       {
@@ -38,19 +39,19 @@
       },
       {
         "address": "0x42873c60bc22424dbb4518df7be8b7f9ef4ac1d6",
-        "balance": 0,
+        "balance": 25384,
         "role": "ops · donation address",
         "class": "primary"
       },
       {
         "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
-        "balance": 256000,
+        "balance": 22680,
         "role": "trading, invoices",
         "class": "primary"
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 0,
+        "balance": 87140.967275,
         "role": "buyer",
         "class": "primary"
       },
@@ -62,7 +63,7 @@
       },
       {
         "address": "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
-        "balance": 1000,
+        "balance": 1681,
         "role": "farcaster",
         "class": "primary"
       },
@@ -101,10 +102,16 @@
         "balance": 0,
         "role": "neighbouring project",
         "class": "same owner"
+      },
+      {
+        "address": "0x36041020857b33aa09ee7d9a99743176a7778134",
+        "balance": 4,
+        "role": "airdrop experiment",
+        "class": "primary"
       }
     ],
-    "balance": 278173.09,
-    "pct": 35.2
+    "balance": 158063.06,
+    "pct": 20
   },
   "voters": [
     {
