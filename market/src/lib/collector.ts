@@ -208,7 +208,7 @@ async function dexscreener(token: string): Promise<Probe> {
   } catch (e) { return unmeasured("error", String(e)); }
 }
 
-interface GeckoSample { price: string; fdv: string; tvl: string; vol: string; buys: number; sells: number }
+interface GeckoSample { price: string; fdv: string; tvl: string; vol: string; buys: number | null; sells: number | null }
 async function geckoPool(pool: string): Promise<Probe & { sample: GeckoSample | null }> {
   try {
     const { status, text } = await get(`https://api.geckoterminal.com/api/v2/networks/base/pools/${pool}`);
@@ -220,7 +220,11 @@ async function geckoPool(pool: string): Promise<Probe & { sample: GeckoSample | 
       price: String(a.base_token_price_usd ?? ""), fdv: String(a.fdv_usd ?? ""),
       tvl: String(a.reserve_in_usd ?? ""),
       vol: String((a.volume_usd as { h24?: string } | undefined)?.h24 ?? ""),
-      buys: tx?.buys ?? 0, sells: tx?.sells ?? 0,
+      /* null, not 0: a response that omits the trade counts is telling us
+         nothing, and "nothing" printed as "no trades today" is the same
+         mistake as a rate limit printed as a balance. */
+      buys: typeof tx?.buys === "number" ? tx.buys : null,
+      sells: typeof tx?.sells === "number" ? tx.sells : null,
     };
     return { ok: true, value: locked == null ? "null" : String(locked), raw: text, sample };
   } catch (e) { return { ...unmeasured("error", String(e)), sample: null }; }

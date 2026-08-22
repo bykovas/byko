@@ -155,7 +155,7 @@
       <div class="page-head">
         <span class="kicker">Market · live</span>
         <h1>The pool, read from the chain.</h1>
-        <p class="lede">Price and reserves come from <span class="mono">balanceOf</span> on the pool contract, in your browser. No aggregator, no price API, no dashboard in between — the same numbers you would get by querying Base yourself.</p>
+        <p class="lede">Price and reserves come from <span class="mono">balanceOf</span> on the pool contract, in your browser. No aggregator, no price API, no dashboard in between — the same numbers you would get by querying Base yourself. Two blocks below are not read that way and say so: the euro denominations and the holder distribution are computed by this project's own worker and served with the time they were measured, because deriving them in every visitor's browser meant a thousand calls a day to public endpoints that answer us “over rate limit”.</p>
       </div>
 
       <div class="price-block">
@@ -303,6 +303,6 @@
   if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
 })();
 </script>
-<script src="market.js?v=20260822a" defer></script>
+<script src="market.js?v=20260822b" defer></script>
 </body>
 </html>
