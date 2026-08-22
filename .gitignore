@@ -45,3 +45,4 @@ scripts/airdrop/node_modules/
 market/node_modules/
 market/.dev.vars
 market/.wrangler/
+.claude/settings.local.json
