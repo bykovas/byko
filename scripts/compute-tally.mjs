@@ -62,18 +62,26 @@ const KNOWN_ROUTERS = [
   "0x6ff5693b99212da76ad316178a184ab56d299b43"  // Uniswap universal router (Base)
 ];
 
+const UA = "byko-tally/1.0 (+https://byko.bykovas.lt)";
 const rpcArg = process.argv.indexOf("--rpc");
 const RPC_URLS = rpcArg > -1
   ? [process.argv[rpcArg + 1]]
   : ["https://mainnet.base.org", "https://base.drpc.org"];
 
-async function rpc(method, params) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* One pass over the node list and then give up was enough while this script
+   made a few dozen calls. It now makes about a thousand — one eth_getCode per
+   address the airdrop created — and both public endpoints answer 429 partway
+   through. A rate limit is a "come back later", not an answer, so wait and ask
+   again rather than failing the whole run. */
+async function rpc(method, params, attempt = 0) {
   let lastError;
   for (const url of RPC_URLS) {
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "User-Agent": UA },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
       });
       if (!response.ok) throw new Error("http " + response.status);
@@ -82,7 +90,45 @@ async function rpc(method, params) {
       return payload.result;
     } catch (error) { lastError = error; }
   }
+  if (attempt < 5) {
+    await sleep(400 * Math.pow(3, attempt));
+    return rpc(method, params, attempt + 1);
+  }
   throw lastError;
+}
+
+/* Batched, chunked at three: DRPC's free plan refuses larger batches and says
+   so inside an HTTP 200, one error object per element. Every element is
+   checked, so a refusal can never be read as an empty answer. */
+async function rpcBatch(calls) {
+  const out = [];
+  for (let i = 0; i < calls.length; i += 3) {
+    const chunk = calls.slice(i, i + 3);
+    let got = null;
+    for (let attempt = 0; attempt < 6 && !got; attempt += 1) {
+      for (const url of RPC_URLS) {
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "User-Agent": UA },
+            body: JSON.stringify(chunk.map((c, j) => ({
+              jsonrpc: "2.0", id: j, method: c.method, params: c.params })))
+          });
+          if (!response.ok) throw new Error("http " + response.status);
+          const body = await response.json();
+          if (!Array.isArray(body) || body.length !== chunk.length) throw new Error("batch");
+          if (body.some((x) => x.error || x.result === undefined)) throw new Error("batch element refused");
+          body.sort((a, b) => a.id - b.id);
+          got = body.map((x) => x.result);
+          break;
+        } catch { /* next node */ }
+      }
+      if (!got) await sleep(400 * Math.pow(3, attempt));
+    }
+    if (!got) throw new Error("rpc batch failed");
+    out.push(...got);
+  }
+  return out;
 }
 
 const WEI = 10n ** 18n;
@@ -151,6 +197,21 @@ for (const tx of txOrder) {
 
 /* 3. EOA check for every address that matters for a bucket. */
 const codeCache = new Map();
+
+/* Ask for every code up front, three per request, instead of one blocking
+   call per address inside the classify loop. A thousand sequential requests is
+   what earned the 429 in the first place. */
+async function prefetchCodes(addresses) {
+  const wanted = addresses.filter((a) => !codeCache.has(a));
+  if (wanted.length === 0) return;
+  process.stderr.write("eth_getCode for " + wanted.length + " addresses\n");
+  const results = await rpcBatch(wanted.map((a) => ({ method: "eth_getCode", params: [a, "latest"] })));
+  wanted.forEach((a, i) => {
+    const code = results[i];
+    codeCache.set(a, code === "0x" || code.startsWith("0xef0100"));
+  });
+}
+
 async function isEoa(address) {
   if (!codeCache.has(address)) {
     const code = await rpc("eth_getCode", [address, "latest"]);
@@ -164,6 +225,9 @@ const toByko = wei => Number(wei / 10n ** 12n) / 1e6;
 const rows = [];
 const tally = { for: 0, withdrawn: 0 };
 const notCounted = { dust: 0, contracts: 0, giftOnly: 0 };
+
+await prefetchCodes([...seen].filter((a) =>
+  a !== POOL && a !== DEAD && !founderSet.has(a) && !KNOWN_ROUTERS.includes(a)));
 
 for (const address of [...seen].sort()) {
   const balance = balances.get(address) || 0n;

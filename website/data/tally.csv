@@ -937,4 +937,4 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0xfe7089f40965146508c8c8592c7f193b23ca1f1d,not-counted,227,false,false,true,"gift from founder, never bought"
 0xfe85fce1a21178db20ca9634541e876a69360240,not-counted,227,false,false,true,"gift from founder, never bought"
 0xff177611293ec015e347ac64e261439c3f31f419,not-counted,227,false,false,true,"gift from founder, never bought"
-# computed 2026-08-22T08:21:05.368Z at block 50298671 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
+# computed 2026-08-22T08:42:46.412Z at block 50299360 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
