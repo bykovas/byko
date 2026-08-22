@@ -111,12 +111,15 @@
   .price-big{font-size:52px}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
-  .rates{grid-template-columns:minmax(0,1fr)}
-  .rates > div{border-bottom:var(--byko-rule-hair)}
-  /* the ninth amount goes, so the single column ends even; the eighth then
-     drops its own rule rather than doubling the one under the grid */
-  .rates > div:last-child{display:none}
-  .rates > div:nth-last-child(2){border-bottom:0}
+  /* Two columns, so eight cells make four even rows. The one dropped is 200 €,
+     from the middle of the ladder — not 1000 €, which is the whole point of
+     quoting the router: it is the row where the curve stops looking linear. */
+  .rates{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px}
+  .rates > div{padding:14px 0 16px;border-bottom:var(--byko-rule-hair)}
+  .rates > div:nth-child(7){display:none}
+  .rates > div:nth-last-child(-n+2){border-bottom:0}
+  .rates .eur{font-size:14px}
+  .rates .byko{font-size:23px;margin-top:7px}
   .rate-legend{flex-wrap:wrap;gap:10px}
   .rate-legend .data{margin-left:0;flex-basis:100%}
 }
