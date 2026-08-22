@@ -53,9 +53,32 @@
   text-transform:uppercase;color:var(--byko-label);margin-top:5px}
 .pool-note{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
 
-#market-chart{position:relative;margin-top:var(--byko-sp-9);border:1px solid var(--byko-rule);height:420px}
-#market-chart iframe{display:block;width:100%;height:100%;border:0}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+  padding-bottom:10px;border-bottom:var(--byko-rule-heavy)}
+.chart-head .data{color:var(--byko-label)}
+#market-chart{position:relative;height:420px;background:var(--byko-paper-2);
+  border-bottom:var(--byko-rule-hair)}
+#market-chart iframe{display:block;width:100%;height:100%;border:0;background:var(--byko-paper-2)}
 #chart-loading{position:absolute;top:14px;left:14px}
+
+/* Denominations. The euro is the outside world's unit, so it is set in the
+   label face; the BYKO figure is mono and blue because it comes back from the
+   router, one eth_call per amount, the same call a swap makes. */
+.rate-legend{display:flex;align-items:baseline;gap:14px;padding-bottom:10px}
+.rate-legend .eur{font:700 25px/1 var(--byko-font-sans);letter-spacing:-.03em;color:var(--byko-ink)}
+.rate-legend .eq{font:400 20px/1 var(--byko-font-sans);color:var(--byko-label)}
+.rate-legend .byko{font:600 22px/1 var(--byko-font-mono);letter-spacing:-.02em;color:var(--byko-live-ink)}
+.rate-legend .data{margin-left:auto;color:var(--byko-label)}
+
+.rates{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:44px;
+  border-top:var(--byko-live-bar);border-bottom:var(--byko-rule-hair);
+  font-variant-numeric:var(--byko-numeric)}
+.rates > div{padding:16px 22px 18px 0;border-bottom:var(--byko-rule-hair)}
+.rates > div:nth-last-child(-n+3){border-bottom:0}
+.rates .eur{display:block;font:700 15px var(--byko-font-sans);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--byko-ink)}
+.rates .byko{display:block;margin-top:9px;text-align:right;font:600 30px/1 var(--byko-font-mono);
+  letter-spacing:-.03em;color:var(--byko-live-ink)}
 
 .holders-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:44px;align-items:start;margin-top:26px}
 .donut-mode{display:flex;gap:8px;margin-bottom:14px}
@@ -88,6 +111,14 @@
   .price-big{font-size:52px}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
+  .rates{grid-template-columns:minmax(0,1fr)}
+  .rates > div{border-bottom:var(--byko-rule-hair)}
+  /* the ninth amount goes, so the single column ends even; the eighth then
+     drops its own rule rather than doubling the one under the grid */
+  .rates > div:last-child{display:none}
+  .rates > div:nth-last-child(2){border-bottom:0}
+  .rate-legend{flex-wrap:wrap;gap:10px}
+  .rate-legend .data{margin-left:0;flex-basis:100%}
 }
 </style>
 <script
@@ -152,11 +183,39 @@
     </div>
   </div>
 
-  <div id="market-chart"><span class="loading" id="chart-loading">loading…</span><iframe
-    id="dextools-widget"
-    title="DEXTools chart, BYKO/USDC on Base"
-    src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=light&chartType=2&chartResolution=30&drawingToolbars=false"
-    loading="lazy"></iframe></div>
+  <section id="rates">
+    <div class="section-head">
+      <span class="kicker">Denominations · quoted</span>
+      <h2>What a euro buys</h2>
+    </div>
+    <p class="section-intro">Nine round euro amounts, each one quoted from Aerodrome's own router —
+      <span class="mono">getAmountsOut</span>, the same call a swap makes, with the 0.3% fee and the
+      price impact already in the answer. This is deliberately not the price above multiplied out:
+      the pool answers one swap at a time, and the larger the order the worse the rate it gets, which
+      is why a thousand euro does not buy a thousand times what one euro buys. Nothing here is a
+      quote or an offer.</p>
+
+    <div class="rate-legend">
+      <span class="eur">€</span><span class="eq">=</span><span class="byko">BYKO</span>
+      <span class="data">euro in Archivo · BYKO in mono, blue = read back from the chain</span>
+    </div>
+
+    <div class="rates" id="rates-grid"><!-- filled by market.js --></div>
+    <p class="fine" id="rates-note">waiting for the EUR/USD reference rate</p>
+  </section>
+
+  <section id="chart">
+    <div class="chart-head">
+      <span class="label">Chart · BYKO/USDC · DEXTools widget</span>
+      <span class="data">third-party frame · not restyleable</span>
+    </div>
+    <div id="market-chart">
+      <span class="loading" id="chart-loading">loading…</span>
+      <iframe id="dextools-widget" title="DEXTools chart, BYKO/USDC on Base"
+        src="https://www.dextools.io/widget-chart/en/base/pe-light/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca?theme=light&chartType=2&chartResolution=30&drawingToolbars=false"
+        loading="lazy"></iframe>
+    </div>
+  </section>
 
   <section id="holders">
     <div class="section-head">
@@ -241,6 +300,6 @@
   if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
 })();
 </script>
-<script src="market.js?v=20260817" defer></script>
+<script src="market.js?v=20260821" defer></script>
 </body>
 </html>
