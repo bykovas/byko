@@ -885,14 +885,28 @@ dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--b
       }
     }
   }
-  fetch("/api/tally").then(function (response) {
-    if (!response.ok) throw new Error("api");
-    return response.json();
-  }).then(function (data) {
-    if (data && data.tally) render(data); else throw new Error("api");
-  }).catch(function () {
-    fetch("data/tally.json").then(function (response) { return response.json(); }).then(render).catch(function () {});
-  });
+  /* Three sources, in order of freshness, each a real measurement: the
+     worker's hourly copy, then the Pages function that computes it live (it
+     has been answering 503 — every public RPC refuses that many getLogs from
+     Cloudflare's shared egress), then the committed snapshot, which a
+     six-hourly GitHub job keeps current. Whichever answers, the block and the
+     timestamp travel with it, so the page never shows a number without
+     saying when it was true. */
+  function tallyFrom(url, unwrap) {
+    return fetch(url).then(function (response) {
+      if (!response.ok) throw new Error("tally");
+      return response.json();
+    }).then(function (body) {
+      var data = unwrap ? body && body.value : body;
+      if (!data || !data.tally) throw new Error("tally");
+      return data;
+    });
+  }
+  tallyFrom("https://byko-market.bykovas.lt/api/tally", true)
+    .catch(function () { return tallyFrom("/api/tally", false); })
+    .catch(function () { return tallyFrom("data/tally.json", false); })
+    .then(render)
+    .catch(function () {});
 }());
 
 document.getElementById('copyBtn').addEventListener('click', function () {

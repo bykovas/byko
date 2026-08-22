@@ -1,0 +1,54 @@
+# Recompute the referendum tally and commit the snapshot.
+#
+# /api/tally walks the token's Transfer logs from a checkpoint, which after the
+# 908-wallet airdrop is roughly twenty eth_getLogs calls — and it makes them
+# from Cloudflare's shared egress, on the request path, for every visitor. All
+# four public endpoints refuse that: base.org rate-limits, publicnode 403s,
+# 1rpc caps getLogs at fifty blocks. So the endpoint has been answering 503 and
+# the home page has been quietly falling back to this snapshot, five days old
+# and with nothing on screen saying so.
+#
+# A GitHub runner is an ordinary connection, the same reason the classifier
+# probe lives here. scripts/compute-tally.mjs already does the whole job; this
+# runs it on a schedule and commits the result, so the fallback is never more
+# than six hours old and always carries the block it was taken at.
+#
+# The commit touches only the snapshot files. publish-diary.yml diffs
+# website/content/diary.md, finds nothing new, and exits without posting.
+name: tally snapshot
+
+on:
+  schedule:
+    - cron: "43 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: tally-snapshot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  tally:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: recompute the tally
+        run: node scripts/compute-tally.mjs > /dev/null
+      - name: commit if it moved
+        run: |
+          if git diff --quiet -- website/data/tally.json website/data/tally.csv; then
+            echo "tally unchanged — nothing to commit"
+            exit 0
+          fi
+          block=$(node -e "process.stdout.write(String(require('./website/data/tally.json').block))")
+          git config user.name  "byko-bot"
+          git config user.email "dbykovas@gmail.com"
+          git add website/data/tally.json website/data/tally.csv
+          git commit -m "tally snapshot at block ${block}"
+          git push
