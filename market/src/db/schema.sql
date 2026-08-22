@@ -145,3 +145,21 @@ CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status);
 CREATE INDEX IF NOT EXISTS idx_checks_src    ON flag_checks(arm, source, id);
 CREATE INDEX IF NOT EXISTS idx_events_arm    ON events(arm, id);
 CREATE INDEX IF NOT EXISTS idx_samples_arm   ON market_samples(arm, id);
+
+-- Last-good cache for everything the website reads that is NOT the pool price.
+-- The website used to derive these in the reader's browser or rebuild them per
+-- request in a Pages Function; both paths hit public rate limits, and one of
+-- them (the referendum tally) had been answering 503 for days while the page
+-- quietly fell back to a snapshot five days old.
+--
+-- The discipline is the same as everywhere else here: a failed refresh leaves
+-- the previous row alone. A reader gets the last figure that was actually
+-- measured, with the time it was measured — never a zero, never a blank, and
+-- never a fresh timestamp on a stale number.
+CREATE TABLE IF NOT EXISTS cache (
+  key        TEXT PRIMARY KEY,   -- pool | holders | tally | eur
+  json       TEXT NOT NULL,
+  fetched_at TEXT NOT NULL,
+  ok         INTEGER NOT NULL DEFAULT 1,
+  note       TEXT
+);

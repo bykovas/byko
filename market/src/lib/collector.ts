@@ -58,7 +58,7 @@ function unmeasured(reason: string, raw = ""): Probe {
   return { ok: false, value: reason, raw };
 }
 
-function num(hex: string): bigint { return hex && hex !== "0x" ? BigInt(hex) : 0n; }
+export function num(hex: string): bigint { return hex && hex !== "0x" ? BigInt(hex) : 0n; }
 
 /* Chain reads walk the node list instead of trusting one endpoint. The earlier
    version asked a single node and returned "0x" on any failure, so a rate limit
@@ -93,10 +93,18 @@ async function rpcCall(env: Env, payload: unknown, valid: (body: unknown) => boo
   throw last instanceof Error ? last : new Error("no node answered");
 }
 
+export async function blockNumber(env: Env): Promise<number> {
+  const body = await rpcCall(env,
+    { jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] },
+    (b) => typeof (b as { result?: unknown }).result === "string",
+  ) as { result: string };
+  return parseInt(body.result, 16);
+}
+
 const WORD = 66;   /* "0x" + 32 bytes: the width of any uint256 answer */
 const isWord = (v: unknown): v is string => typeof v === "string" && v.length >= WORD;
 
-async function ethCall(env: Env, to: string, data: string): Promise<string> {
+export async function ethCall(env: Env, to: string, data: string): Promise<string> {
   const body = await rpcCall(env,
     { jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to, data }, "latest"] },
     (b) => isWord((b as { result?: unknown }).result),
@@ -113,7 +121,7 @@ async function ethCall(env: Env, to: string, data: string): Promise<string> {
    believed. */
 const BATCH_MAX = 3;
 
-async function ethCallBatch(env: Env, calls: Array<{ to: string; data: string }>): Promise<string[]> {
+export async function ethCallBatch(env: Env, calls: Array<{ to: string; data: string }>): Promise<string[]> {
   const out: string[] = [];
   for (let i = 0; i < calls.length; i += BATCH_MAX) {
     const chunk = calls.slice(i, i + BATCH_MAX);
@@ -285,7 +293,7 @@ function listMembership(listText: string, token: string): Probe {
    The register is the same file the site's tally and home-page list read — one
    source, never a second list — and the sum is a plain chain read, so the
    figure on this page cannot drift from the one on the front page. */
-async function foundersShare(env: Env, token: string): Promise<string> {
+export async function foundersShare(env: Env, token: string): Promise<string> {
   try {
     const res = await fetch("https://byko.bykovas.lt/data/founder-wallets.json",
       { signal: AbortSignal.timeout(10_000) });
@@ -307,7 +315,7 @@ async function foundersShare(env: Env, token: string): Promise<string> {
 }
 
 /* price and reserves straight from the pool — no vendor in between */
-async function poolReserves(env: Env, pool: string): Promise<{ price: string; token: string; usdc: string }> {
+export async function poolReserves(env: Env, pool: string): Promise<{ price: string; token: string; usdc: string }> {
   try {
     const raw = await ethCall(env, pool, "0x0902f1ac");
     const hex = raw.slice(2);

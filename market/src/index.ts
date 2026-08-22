@@ -17,6 +17,8 @@ import { confirmTrades } from "./lib/confirm";
 import { collect } from "./lib/collector";
 import { event } from "./lib/db";
 import { ArmLock as ArmLockDO } from "./do/arm-lock";
+import { computePool, type PoolPayload } from "./lib/pool";
+import { readCache, writeCache, ageOf } from "./lib/cache";
 
 const sentryOptions = (env: Env) => ({
   dsn: env.SENTRY_DSN ?? "",
@@ -51,8 +53,82 @@ async function arm(env: Env, id: string): Promise<void> {
   }));
 }
 
+const SITE = "https://byko.bykovas.lt";
+const WARM = 3 * 60_000;        /* the pool moves with every trade */
+const COLD = 60 * 60_000;       /* holders and votes move with the day */
+
+/* Warm: recomputed on request when older than three minutes, served from the
+   last good reading when the recompute fails. The response always carries the
+   time the figures were measured, never the time they were served. */
+async function servePool(env: Env): Promise<Response> {
+  const cached = await readCache<PoolPayload>(env, "pool");
+  if (cached && ageOf(cached) < WARM) {
+    return json({ ...cached.value, cached_at: cached.at, stale: false }, 200,
+      { "Cache-Control": "public, max-age=60" });
+  }
+  try {
+    const value = await computePool(env);
+    await writeCache(env, "pool", value);
+    return json({ ...value, cached_at: value.measured_at, stale: false }, 200,
+      { "Cache-Control": "public, max-age=60" });
+  } catch (err) {
+    if (cached) {
+      return json({ ...cached.value, cached_at: cached.at, stale: true,
+        note: "the recompute failed; this is the last reading that succeeded" }, 200,
+        { "Cache-Control": "public, max-age=30" });
+    }
+    await event(env, null, "error", `pool: ${String((err as Error)?.message ?? err).slice(0, 160)}`);
+    return error("pool unavailable", 503);
+  }
+}
+
+/* Cold: mirrors a page endpoint into D1 once an hour. The fallbacks matter —
+   /api/tally had been answering 503 for days while the home page silently used
+   a committed snapshot from five days earlier, and nothing said so anywhere. */
+async function serveMirror(env: Env, key: string, sources: string[]): Promise<Response> {
+  const cached = await readCache<unknown>(env, key);
+  if (cached && ageOf(cached) < COLD) {
+    return json({ value: cached.value, measured_at: cached.at, source: cached.note, stale: false }, 200,
+      { "Cache-Control": "public, max-age=300" });
+  }
+  for (const src of sources) {
+    try {
+      const res = await fetch(src, { headers: { "User-Agent": "byko-market/1.0" }, signal: AbortSignal.timeout(20_000) });
+      if (!res.ok) throw new Error(`http ${res.status}`);
+      const value = await res.json();
+      if (!value || (value as { error?: unknown }).error) throw new Error("payload carries an error");
+      await writeCache(env, key, value, src);
+      return json({ value, measured_at: new Date().toISOString(), source: src, stale: false }, 200,
+        { "Cache-Control": "public, max-age=300" });
+    } catch { /* next source */ }
+  }
+  if (cached) {
+    return json({ value: cached.value, measured_at: cached.at, source: cached.note, stale: true,
+      note: "every source refused; this is the last reading that succeeded" }, 200,
+      { "Cache-Control": "public, max-age=60" });
+  }
+  return error(`${key} unavailable`, 503);
+}
+
+const MIRRORS: Record<string, string[]> = {
+  holders: [SITE + "/api/holders"],
+  /* the committed snapshot is a real measurement with its own timestamp, so it
+     is a legitimate second source — not a placeholder */
+  tally: [SITE + "/api/tally", SITE + "/data/tally.json"],
+};
+
 async function handle(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
+
+  if (url.pathname === "/api/pool") {
+    if (request.method !== "GET") return methodNotAllowed();
+    return servePool(env);
+  }
+  if (url.pathname === "/api/holders" || url.pathname === "/api/tally") {
+    if (request.method !== "GET") return methodNotAllowed();
+    const key = url.pathname.slice("/api/".length);
+    return serveMirror(env, key, MIRRORS[key]);
+  }
 
   if (url.pathname === "/api/wash") {
     if (request.method !== "GET") return methodNotAllowed();
@@ -209,6 +285,18 @@ export default Sentry.withSentry(sentryOptions, {
     const dueForCollect = !last || Date.now() - Date.parse(last.replace(" ", "T") + "Z") > 55 * 60_000;
     if (dueForCollect) {
       try { await collect(env); } catch (err) { await event(env, null, "error", `collector: ${String((err as Error)?.message ?? err).slice(0, 200)}`); }
+    }
+    /* Warm the cache from the cron so the first reader of the hour is not the
+       one who pays for the recompute. */
+    try {
+      const pool = await readCache<PoolPayload>(env, "pool");
+      if (ageOf(pool) >= WARM) await writeCache(env, "pool", await computePool(env));
+    } catch (err) { await event(env, null, "error", `pool warm: ${String((err as Error)?.message ?? err).slice(0, 160)}`); }
+    for (const key of Object.keys(MIRRORS)) {
+      try {
+        const entry = await readCache<unknown>(env, key);
+        if (ageOf(entry) >= COLD) await serveMirror(env, key, MIRRORS[key]);
+      } catch { /* serveMirror already keeps the last good reading */ }
     }
     await heartbeat(env);
   },
