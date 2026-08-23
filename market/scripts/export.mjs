@@ -47,6 +47,7 @@ writeFileSync(`${OUT}/meta.json`, JSON.stringify({
   generated: data.generated, market_open: data.market_open, rules: data.rules,
   arms: (data.arms ?? []).map((a) => ({
     id: a.id, halted: a.halted, halt_reason: a.halt_reason, usdc_spent: a.usdc_spent,
+    usdc_bought: a.usdc_bought, usdc_received: a.usdc_received, usdc_net: a.usdc_net,
     started_at: a.started_at, market: a.market,
   })),
 }, null, 2) + "\n");

@@ -128,6 +128,25 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       sample.trades_at = t?.at ?? null;
     }
 
+    /* Net USDC from the full confirmed ledger: gross buys minus what sells
+       returned. The wallets.usdc_spent column stays gross on purpose — that is
+       what the max_gross_usdc guard caps — but as a headline it lies by
+       omission: it never credits a sell. Settled amounts from the Swap log are
+       the truth where the confirmer has written them (raw 1e-6 units); the
+       decided size stands in for rows not yet settled (whole USDC). */
+    const flow = await env.DB.prepare(
+      `SELECT
+         SUM(CASE WHEN side = 'buy' THEN
+               CASE WHEN usdc_settled IS NOT NULL THEN CAST(usdc_settled AS REAL) / 1e6
+                    ELSE CAST(usdc_amount AS REAL) END ELSE 0 END) AS bought,
+         SUM(CASE WHEN side = 'sell' THEN
+               CASE WHEN usdc_settled IS NOT NULL THEN CAST(usdc_settled AS REAL) / 1e6
+                    ELSE CAST(usdc_amount AS REAL) END ELSE 0 END) AS sold
+         FROM trades WHERE arm = ?1 AND status = 'confirmed'`,
+    ).bind(r.id).first<{ bought: number | null; sold: number | null }>();
+    const bought = flow?.bought ?? 0;
+    const sold = flow?.sold ?? 0;
+
     /* the checks grid for this arm */
     const start = await env.DB.prepare(
       `SELECT MIN(date(checked_at)) AS d FROM flag_checks WHERE arm = ?1`,
@@ -163,7 +182,10 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       id: r.id, label: r.label, wallet: r.wallet, token: r.token, pool: r.pool,
       enabled: w?.enabled !== 0, halted: w?.halted === 1, halt_reason: w?.halt_reason ?? null,
       started_at: w?.started_at ?? null, start_price: w?.start_price ?? null,
-      usdc_spent: w?.usdc_spent ?? "0", next_fire_at: w?.next_fire_at ?? null,
+      usdc_spent: w?.usdc_spent ?? "0",
+      usdc_bought: bought.toFixed(6), usdc_received: sold.toFixed(6),
+      usdc_net: (bought - sold).toFixed(6),
+      next_fire_at: w?.next_fire_at ?? null,
       usdc_balance: w?.usdc_balance ?? null, token_balance: w?.token_balance ?? null,
       stop: r.stop, guards: r.guards, market: sample ?? null, measured, checks: grid,
       /* What the published rule yields at the balance and price printed on the

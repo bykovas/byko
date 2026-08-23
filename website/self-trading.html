@@ -146,6 +146,11 @@ td a:hover{color:var(--byko-ink)}
      what nowrap was doing here. */
   .rules{flex-wrap:wrap;overflow-x:visible;white-space:normal;gap:4px 18px}
 }
+.reveal{display:inline-flex;align-items:center;gap:8px;margin:18px 0 0;padding:6px 12px;background:var(--byko-paper);
+  border:1px solid rgba(13,17,22,.22);border-radius:var(--byko-radius-control);font:var(--byko-data);
+  color:var(--byko-ink-2);cursor:pointer;transition:var(--byko-transition)}
+.reveal:hover{background:var(--byko-paper-2);color:var(--byko-ink)}
+#checks-wrap[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -201,22 +206,36 @@ td a:hover{color:var(--byko-ink)}
 
   <div class="arms" id="arms"></div>
 
-  <h2 class="sec">What the classifiers say<span class="n" id="checks-n"></span></h2>
-  <div class="scroll"><table id="checks"><thead></thead><tbody></tbody></table></div>
-  <div class="grid-key">
-    <span>· unchanged from baseline</span>
-    <span><b>▲</b> changed</span>
-    <span>? asked, no answer</span>
+  <button class="reveal" id="checks-reveal" type="button" aria-expanded="false" aria-controls="checks-wrap"><span id="checks-reveal-label">Show what the classifiers say about BYKO &amp; LUKO →</span><span class="n" id="checks-n"></span></button>
+  <div id="checks-wrap" hidden>
+    <div class="scroll"><table id="checks"><thead></thead><tbody></tbody></table></div>
+    <div class="grid-key">
+      <span>· unchanged from baseline</span>
+      <span><b>▲</b> changed</span>
+      <span>? asked, no answer</span>
+    </div>
+    <p class="note" id="unmeasured" style="margin-top:14px;padding-top:0;border-top:0"></p>
   </div>
-  <p class="note" id="unmeasured" style="margin-top:14px;padding-top:0;border-top:0"></p>
 
-  <h2 class="sec">Trades — BYKO<span class="n" id="trades-n-byko"></span></h2>
+  <h2 class="sec">Trades — BYKO (TOP 10)<span class="n" id="trades-n-byko-top"></span></h2>
+  <div class="scroll"><table id="trades-byko-top"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
+    <th>USDC</th><th>BYKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <h2 class="sec">Trades — LUKO (TOP 10)<span class="n" id="trades-n-luko-top"></span></h2>
+  <div class="scroll"><table id="trades-luko-top"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
+    <th>USDC</th><th>LUKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  </tr></thead><tbody></tbody></table></div>
+
+  <h2 class="sec">Trades — BYKO (full log)<span class="n" id="trades-n-byko"></span></h2>
   <div class="scroll"><table id="trades-byko"><thead><tr>
     <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
     <th>USDC</th><th>BYKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
   </tr></thead><tbody></tbody></table></div>
 
-  <h2 class="sec">Trades — LUKO<span class="n" id="trades-n-luko"></span></h2>
+  <h2 class="sec">Trades — LUKO (full log)<span class="n" id="trades-n-luko"></span></h2>
   <div class="scroll"><table id="trades-luko"><thead><tr>
     <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
     <th>USDC</th><th>LUKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
@@ -248,6 +267,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260820c"></script>
+<script src="market-self.js?v=20260823"></script>
 </body>
 </html>

@@ -66,7 +66,7 @@
     ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
   ];
   var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
-  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC spent", "trades 24h",
+  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "trades 24h",
     "LP burned", "LP held by founders", "supply held by founders"];
 
   /* Draw everything that is known without the network: the rules strip, both
@@ -119,7 +119,8 @@
     });
 
     ARM_LABELS.forEach(function (pair) {
-      var t = $("trades-" + pair[0]);
+      ["-top", ""].forEach(function (suffix) {
+      var t = $("trades-" + pair[0] + suffix);
       if (!t) return;
       var tb = t.querySelector("tbody");
       tb.textContent = "";
@@ -127,6 +128,7 @@
       var lab = ["", "utc", "side", "usdc", pair[0].toUpperCase(), "price", "fdv", "pool usdc", "status", "tx"];
       for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i === 0 ? "l mono lead" : (i < 3 ? "l" : "mono"), lab[i]));
       tb.appendChild(tr);
+      });
     });
 
     var log = $("events"); log.textContent = "";
@@ -211,7 +213,16 @@
       row("pool USDC", m.reserve_usdc ? "$" + n(Number(m.reserve_usdc) / 1e6) : "—", true);
       var hAge = m.holders != null ? ago(m.holders_at) : "";
       row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
-      row("USDC spent", "$" + n(arm.usdc_spent));
+      /* Net over the full confirmed ledger: buys minus what sells returned.
+         The old "USDC spent" was gross-only and overstated the position the
+         moment the first sell settled. Gross stays in the breakdown — the
+         published spend-cap guard is a gross cap, so both numbers matter. */
+      if (arm.usdc_net != null) {
+        row("USDC net", "$" + n(arm.usdc_net) +
+          " · buys $" + n(arm.usdc_bought) + " − sells $" + n(arm.usdc_received));
+      } else {
+        row("USDC spent", "$" + n(arm.usdc_spent));
+      }
       var tAge = m.buys_24h != null ? ago(m.trades_at) : "";
       row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " +
         (m.sells_24h != null ? m.sells_24h : "?") + (tAge ? " · " + tAge : ""));
@@ -370,20 +381,31 @@
 
   function renderTrades(data) {
     /* One table per arm: a single mixed ledger made the reader check the arm
-       column on every row to know which token a number belonged to. */
-    (data.arms || []).forEach(function (a) { renderArmTrades(data, a.id); });
+       column on every row to know which token a number belonged to. Each arm
+       gets two views of the same rows: the last ten with the "next" line for
+       the glance, and the complete log for the record. */
+    (data.arms || []).forEach(function (a) {
+      renderArmTrades(data, a.id, true);
+      renderArmTrades(data, a.id, false);
+    });
   }
 
-  function renderArmTrades(data, armId) {
-    var table = $("trades-" + armId);
+  function renderArmTrades(data, armId, top) {
+    var table = $("trades-" + armId + (top ? "-top" : ""));
     if (!table) return;
     var tbody = table.querySelector("tbody");
     tbody.textContent = "";
-    var rows = (data.trades || []).filter(function (t) { return t.arm === armId; });
-    var counter = $("trades-n-" + armId);
-    if (counter) counter.textContent = rows.length + " done";
+    var all = (data.trades || []).filter(function (t) { return t.arm === armId; });
+    var rows = top ? all.slice(0, 10) : all;
+    var counter = $("trades-n-" + armId + (top ? "-top" : ""));
+    if (counter) {
+      counter.textContent = top
+        ? (all.length > 10 ? "last 10 of " + all.length : all.length + " done")
+        : all.length + " done";
+    }
     var arm = (data.arms || []).filter(function (a) { return a.id === armId; })[0];
-    if (arm) waitingRows({ arms: [arm] }, tbody);
+    /* the "next fire" line belongs to the current view, not the archive */
+    if (top && arm) waitingRows({ arms: [arm] }, tbody);
     if (!rows.length) {
       var tr = el("tr");
       var td = el("td", "l"); td.colSpan = 10;
@@ -485,5 +507,19 @@
 
   var btn = $("refresh");
   if (btn) btn.addEventListener("click", load);
+
+  /* the classifier grid folds away, same mechanism as the wallet register
+     on the home page: the data stays on the page, only its rows hide */
+  var checksBtn = $("checks-reveal");
+  if (checksBtn) checksBtn.addEventListener("click", function () {
+    var wrap = $("checks-wrap");
+    var open = wrap.hasAttribute("hidden");
+    if (open) wrap.removeAttribute("hidden"); else wrap.setAttribute("hidden", "");
+    checksBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    $("checks-reveal-label").textContent = open
+      ? "Hide what the classifiers say about BYKO & LUKO"
+      : "Show what the classifiers say about BYKO & LUKO →";
+  });
+
   load();
 })();
