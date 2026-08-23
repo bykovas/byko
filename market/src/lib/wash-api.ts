@@ -40,7 +40,10 @@ function nextByRule(
   const [lower, upper] = RULES.strategy.band_usdc;
   let side: "buy" | "sell" = w.direction === "sell" ? "sell" : "buy";
   /* Same order the worker uses: the drawn percentage turns the run, then the
-     band overrides it if the balance would leave 10–20. */
+     band overrides it if the balance would leave it. This is the RUN side;
+     since the sixth amendment each fire also throws a contrarian_pct coin,
+     so the published side is the rule's, with the flip odds published next
+     to it. */
   const runStart = w.run_start_price ? Number(w.run_start_price) : 0;
   const runTarget = w.run_target_pct ? Number(w.run_target_pct) : 0;
   const price = sample?.price_usd ? Number(sample.price_usd) : 0;

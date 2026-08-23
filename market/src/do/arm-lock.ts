@@ -225,8 +225,9 @@ export class ArmLock {
        Hysteresis, not a pivot. A single threshold makes every trade near it
        reverse direction, so the wallet alternates buy/sell/buy/sell like a
        metronome — the most machine-shaped pattern available. A band keeps the
-       current direction until the balance leaves it, which gives runs of one
-       to three trades the same way an ordinary trader's day does. */
+       current direction until the balance leaves it, so run length is set by
+       the corridor, the drawn reversal target and the drawn sizes — not by a
+       fixed count. */
     const st = await env.DB.prepare(
       `SELECT direction, run_start_price, run_target_pct FROM wallet_state WHERE address = ?1`,
     ).bind(r.wallet).first<{ direction: string | null; run_start_price: string | null; run_target_pct: string | null }>();
@@ -253,7 +254,7 @@ export class ArmLock {
       else if (side === "sell" && moved < -runTarget) side = "buy";
     }
     /* The band has the last word. A drawn percentage says when a run turns; it
-       does not get to walk the balance out of 10–20. Written the other way
+       does not get to walk the balance out of the band. Written the other way
        round the trigger overrode its own constraint. */
     if (usdcWhole > upper) side = "buy";
     else if (usdcWhole < lower) side = "sell";
@@ -279,18 +280,46 @@ export class ArmLock {
         `recorded before the first trade of the run)`);
     }
 
+    /* SIXTH AMENDMENT: one trade in five runs against its own run. A pure run
+       process can never print a lone contrarian trade — direction changes only
+       at a reversal — and the ledger showed it: neat alternating stretches a
+       spreadsheet could have generated. The coin is thrown by the same CSPRNG
+       as every other draw, at the published contrarian_pct, and every
+       contrarian trade names itself in the events log. The noise is
+       subordinate to everything above it: it fires only inside the band
+       (outside, the corrective side is forced, and noise would un-force it),
+       only within the deviation guard's limit, and only when the opposite leg
+       can fund a trade at all. The run's direction, clock and target are
+       untouched — a contrarian trade is a trade against the run, not a
+       shorter run. */
+    let tradeSide: "buy" | "sell" = side;
+    const cp = RULES.strategy.contrarian_pct ?? 0;
+    const insideBand = usdcWhole >= lower && usdcWhole <= upper;
+    if (cp > 0 && insideBand && Math.abs(dev) <= r.guards.max_price_deviation_pct
+        && uniform(0, 100) < cp) {
+      const flipped: "buy" | "sell" = side === "buy" ? "sell" : "buy";
+      const fundable = flipped === "buy"
+        ? Number(usdcBal) / 1e6 >= 0.40
+        : price > 0 && (Number(tokenBal) / 1e18) * price >= 0.40;
+      if (fundable) {
+        tradeSide = flipped;
+        await event(env, arm, "contrarian",
+          `run is ${side}, this trade goes ${flipped} — drawn at ${cp}%, run unchanged`);
+      }
+    }
+
     /* Now the deviation guard can tell an abuse from an unwind. Value
        untouched; what changes is that past the limit only the corrective
        direction is allowed through. */
     if (Math.abs(dev) > r.guards.max_price_deviation_pct) {
-      const worsens = (side === "buy" && dev > 0) || (side === "sell" && dev < 0);
+      const worsens = (tradeSide === "buy" && dev > 0) || (tradeSide === "sell" && dev < 0);
       if (worsens) {
         await halt(env, r.wallet, arm, `price-deviation ${dev.toFixed(1)}%`);
         return;
       }
       await event(env, arm, "guard-trip",
         `price-deviation ${dev.toFixed(1)}% is past ${r.guards.max_price_deviation_pct}%, ` +
-        `but this ${side} moves the price back toward the start — allowed`);
+        `but this ${tradeSide} moves the price back toward the start — allowed`);
     }
 
     /* $9 was 6% of this pool and moved the price about 12% in one trade, which
@@ -313,7 +342,7 @@ export class ArmLock {
 
     let inputToken: Address;
     let amountIn: bigint;
-    if (side === "buy") {
+    if (tradeSide === "buy") {
       inputToken = quote;
       amountIn = parseUnits(size.toFixed(6), 6);
       const cap = (usdcBal * 999n) / 1000n;
@@ -353,7 +382,7 @@ export class ArmLock {
     }
 
     /* --- quote, then pre-sign the swap --- */
-    const rt = route(inputToken, side === "buy" ? token : quote, RULES.venue.stable, RULES.venue.factory);
+    const rt = route(inputToken, tradeSide === "buy" ? token : quote, RULES.venue.stable, RULES.venue.factory);
     const amounts = await rd.readContract({
       address: router, abi: ROUTER_ABI, functionName: "getAmountsOut", args: [amountIn, [rt]],
     }) as readonly bigint[];
@@ -375,7 +404,7 @@ export class ArmLock {
           nonce, tx_hash, status, broadcast_at)
        VALUES (?1,?2,?3,datetime('now'),?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,'pending',datetime('now'))`,
     ).bind(
-      arm, r.wallet, token, side, size.toFixed(6), 0, usdcWhole.toFixed(6),
+      arm, r.wallet, token, tradeSide, size.toFixed(6), 0, usdcWhole.toFixed(6),
       price.toPrecision(12), String(reserves.token), String(reserves.usdc),
       String(amountIn), String(minOut), nonce, hash,
     ).run();
@@ -386,7 +415,7 @@ export class ArmLock {
         `UPDATE wallets SET started_at = datetime('now'), start_price = ?2 WHERE address = ?1`,
       ).bind(r.wallet, price.toPrecision(12)).run();
     }
-    if (side === "buy") {
+    if (tradeSide === "buy") {
       await env.DB.prepare(
         `UPDATE wallets SET usdc_spent = ?2 WHERE address = ?1`,
       ).bind(r.wallet, (spent + size).toFixed(6)).run();

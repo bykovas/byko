@@ -345,10 +345,12 @@
   }
 
   /* The waiting row used to show the fire time and five dashes. More than that
-     is knowable: the side is not random — the band and the run-reversal rule
-     pick it from the balance and the price, both printed on this page — and
-     the size, while drawn at fire time, is drawn from a range that is clamped
-     to a share of the pool and so is a number too. Those are shown as "by
+     is knowable: the band and the run-reversal rule pick the side from the
+     balance and the price, both printed on this page — and since the sixth
+     amendment a published coin may flip it at fire time, so the flip odds
+     print next to the side. The size, while drawn at fire time, is drawn
+     from a range that is clamped to a share of the pool and so is a number
+     too. Those are shown as "by
      rule", because they are what the published rule yields right now and not
      a claim about a trade that has not happened; if the balance or the pool
      moves before the alarm, so does the answer. What genuinely cannot be known
@@ -365,9 +367,13 @@
       if (a.next_side) {
         /* The turning point is drawn per run and written down before the run's
            first trade, so it is a committed figure rather than a forecast —
-           show it beside the side it governs. */
+           show it beside the side it governs. The side itself is the run's;
+           since the sixth amendment each fire may flip it with the published
+           probability, so the odds print right next to the claim they weaken. */
         var turn = a.next_run_target_pct ? " · turns at " + Number(a.next_run_target_pct).toFixed(2) + "%" : "";
-        tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase() + turn, labels[0]));
+        var cpct = data.rules && data.rules.strategy && data.rules.strategy.contrarian_pct;
+        var flips = cpct ? " · flips " + cpct + "%" : "";
+        tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase() + flips + turn, labels[0]));
       }
       else tr.appendChild(cellDash("l", labels[0]));
 

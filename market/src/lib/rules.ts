@@ -29,6 +29,7 @@ export interface Rules {
     band_usdc: [number, number];
     run_reverse_pct: [number, number];
     max_trade_pct_pool: number;
+    contrarian_pct: number;
     slippage_bps: number;
   };
   arms: ArmRules[];
