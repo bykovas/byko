@@ -419,7 +419,7 @@
     }
     var arm = (data.arms || []).filter(function (a) { return a.id === armId; })[0];
     /* the "next fire" line belongs to the current view, not the archive */
-    if (top && arm) waitingRows({ arms: [arm] }, tbody);
+    if (top && arm) waitingRows({ arms: [arm], rules: data.rules }, tbody);
     if (!rows.length) {
       var tr = el("tr");
       var td = el("td", "l"); td.colSpan = 10;
