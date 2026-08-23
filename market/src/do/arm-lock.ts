@@ -293,13 +293,22 @@ export class ArmLock {
         `but this ${side} moves the price back toward the start — allowed`);
     }
 
-    let size = uniform(RULES.strategy.trade_usdc[0], RULES.strategy.trade_usdc[1]);
     /* $9 was 6% of this pool and moved the price about 12% in one trade, which
        spends a whole run in a single step; the same $9 against a deep pool
-       would be invisible. Clamp the draw to a share of what is actually in
-       there, so the instrument scales to what it is measuring. */
+       would be invisible. The cap scales the instrument to what it measures.
+       FIFTH AMENDMENT: the draw happens over the effective range, not before
+       it. Drawing from [0.30, 9] and clamping after put 62% of all draws
+       exactly at the cap — the ledger printed 3.61, 3.57, 3.49 in a row and
+       called it random, while the page published "drawn from $0.30–3.61".
+       Now the draw is uniform over what the page says it is. The cap keeps
+       the last word for the corner where the pool shrinks below the minimum
+       mid-flight. */
     const poolUsdcNow = Number(reserves.usdc) / 1e6;
     const cap = poolUsdcNow * RULES.strategy.max_trade_pct_pool / 100;
+    const sizeLo = RULES.strategy.trade_usdc[0];
+    let sizeHi = RULES.strategy.trade_usdc[1];
+    if (cap > 0 && cap < sizeHi) sizeHi = cap;
+    let size = uniform(sizeLo, Math.max(sizeHi, sizeLo));
     if (cap > 0 && size > cap) size = cap;
 
     let inputToken: Address;
