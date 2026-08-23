@@ -218,8 +218,16 @@
          moment the first sell settled. Gross stays in the breakdown — the
          published spend-cap guard is a gross cap, so both numbers matter. */
       if (arm.usdc_net != null) {
-        row("USDC net", "$" + n(arm.usdc_net) +
-          " · buys $" + n(arm.usdc_bought) + " − sells $" + n(arm.usdc_received));
+        /* The breakdown gets its own line: on one line the fit depended on
+           the viewport, and the right card — 23px narrower because it alone
+           pays for the divider — wrapped mid-phrase while the left one
+           didn't. A chosen break beats an accidental one. */
+        dl.appendChild(el("dt", null, "USDC net"));
+        var netDd = el("dd", null, "$" + n(arm.usdc_net));
+        netDd.appendChild(el("br"));
+        netDd.appendChild(document.createTextNode(
+          "buys $" + n(arm.usdc_bought) + " − sells $" + n(arm.usdc_received)));
+        dl.appendChild(netDd);
       } else {
         row("USDC spent", "$" + n(arm.usdc_spent));
       }

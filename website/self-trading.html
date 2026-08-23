@@ -42,7 +42,11 @@ aside.quoted li{margin-top:8px}
 .rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
 .arms{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:24px;border-top:var(--byko-rule-heavy)}
 .arm{padding:14px 20px 16px 0}
-.arm.right{border-left:var(--byko-rule-hair);padding-left:22px}
+/* The divider's gap is split between the cards: the left one pays 20px on
+   its right, the right one 22px on its left — and nothing else. Giving the
+   right card a right padding too made it 23px narrower than its twin, so
+   identical-length values fit in one card and wrapped in the other. */
+.arm.right{border-left:var(--byko-rule-hair);padding:14px 0 16px 22px}
 .arm h3{font:700 16px/1.2 var(--byko-font-sans);margin:0}
 .arm .st{font:var(--byko-data);color:var(--byko-label);margin-top:2px}
 .arm dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:12px 0 0;font:var(--byko-data)}
@@ -105,7 +109,7 @@ td a:hover{color:var(--byko-ink)}
 
 @media (max-width:640px){
   .arms{grid-template-columns:1fr}
-  .arm.right{border-left:0;padding-left:0}
+  .arm.right{border-left:0;padding:14px 20px 16px 0}
 
   /* A ten-column table on a 390px screen can only be solved two ways: cut the
      data off the edge, or stop being a table. Horizontal scroll was the first,
@@ -267,6 +271,6 @@ td a:hover{color:var(--byko-ink)}
   </div>
 </footer>
 
-<script src="market-self.js?v=20260823"></script>
+<script src="market-self.js?v=20260823a"></script>
 </body>
 </html>
