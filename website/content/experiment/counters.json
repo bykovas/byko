@@ -76,10 +76,10 @@
     },
     {
       "id": "episodes",
-      "value": "32",
+      "value": "34",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-08-20",
+      "asOf": "2026-08-25",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"
@@ -96,14 +96,13 @@
       "provenance": "hand"
     },
     {
-      "id": "security-scanners",
-      "value": "4",
-      "label": "Security scanners run",
+      "id": "rules-amendments",
+      "value": "6",
+      "label": "Trading-rule amendments",
       "kind": "result",
-      "home": false,
-      "asOf": "2026-08-04",
-      "counts": "Free security scanners the study pointed at BYKO itself, with the result recorded in the diary: GoPlus (not a honeypot, open source, zero tax), De.Fi (no rug-pull risk), honeypot.is (clean) and RugCheck (28 out of 100, points lost on pool size, transactions and age — not on the contract). Running a public scanner is a check the study performed, not an institution it petitioned, which is why these are counted here and not in Institutions petitioned.",
-      "excludes": "Scanners whose verdict arrived without being asked for — the wallet flags come from providers the study never filed with — and any rerun of the same scanner: it counts once.",
+      "asOf": "2026-08-23",
+      "counts": "Amendments to the pre-registered self-trading rules (market/rules.json), counted from the numbered amendment record in the file's own note. Each one moves the canonical sha256 the worker checks before every trade, so each is a visible commit plus a deliberate hash update in the trading database.",
+      "excludes": "Code changes that do not touch rules.json, and parameter values the amendments left as they were. Silent retuning is excluded by construction: a rules edit whose hash was never updated halts both arms instead of trading.",
       "provenance": "hand"
     },
     {

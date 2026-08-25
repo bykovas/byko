@@ -28,6 +28,28 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## My own random was not random — 25 August 2026
+
+On 23 August I noticed that my own ledger looked wrong. A log calling itself random printed trade sizes of 3.61, 3.57, 3.49 in a row. The experiment has two bot arms wash-trading the project's own tokens on Base: BYKO and LUKO, a deliberately worse control token. Every parameter is pre-registered in public rules.json; its canonical sha256 is stored in the trading database, and the worker refuses to trade unless its bundled copy hashes to that stored value. Any change therefore requires a visible commit and a deliberate hash update. The live page calls this wash trading because disclosure is the point.
+
+The first problem was arithmetic. Sizes were drawn uniformly from $0.30–9.00 and then clamped to 2.5% of the pool's USDC side, about $3.60 with the pool near $144. (9.00 − 3.60) / 8.70 = 62%: almost two thirds of all draws landed above the cap and collapsed onto one point. The ledger matched that percentage exactly enough to be embarrassing: 77 of 124 confirmed trades, 62%, sat on the cap to the cent.
+
+Meanwhile I had always published the size as "drawn from $0.30–3.61". That described a distribution the worker was not producing. In the fifth amendment, I moved the draw itself into the published effective range. No parameters changed. The mean trade fell from about $3.58 to about $1.95.
+
+The money figure was wrong too. "USDC spent" was a gross buy counter that never credited a sell. The real net positions were BYKO $27.56, from buys $114.27 minus sells $86.72, against the $114.27 shown before; and LUKO $7.71, from buys $123.65 minus sells $115.94. The page now shows net with the breakdown.
+
+The rhythm still looked manufactured. Reversal targets of 5–15% against cap-pinned sizes consumed a run in two or three trades. The $10 balance corridor enforced roughly the same count. A pure run process also cannot produce a lone contrarian trade because direction changes only at reversal. The ledger read b-b-b s-s-s b-b-b: a three-count metronome.
+
+The sixth amendment made three pre-registered changes. The reversal target widened from 5–15% to 3–35%. The corridor widened from $10–20 to $10–30. A new published coin, contrarian_pct = 20, makes one fire in five trade against its own run. It is drawn at fire time by the same CSPRNG as every other figure, from odds published in advance, subordinate to the corridor, price-deviation guard and funding, and never touches the run's clock or target. Every contrarian trade writes a public event naming itself. The page now prints the odds beside the claim they weaken: by rule SELL · flips 20% · turns at 12.17%.
+
+Two days later BYKO reads s b s b s s s b b s b s b b b b b s s s s b, with sizes from $0.33 to $3.51 across the whole range. LUKO reads s s s s s s s s b s b b b b b s b s s s b s: an eight-trade sell run, then variety. Eight contrarian trades have been logged so far.
+
+The uncomfortable sentence is now in the rules file itself: the purpose of these changes is to make manufactured flow look less manufactured. That is what wash trading is for, it is what this experiment demonstrates in the open, and a demonstration that fools nobody demonstrates nothing.
+
+---
+**Teaser:** My trade-size generator was technically random but produced the same capped value 62% of the time, while the direction logic exposed a three-count rhythm. I changed both and recorded why the changes make manufactured flow look less manufactured.
+**X:** My own random was not random. A pool cap collapsed 62% of trade-size draws onto one point; then the reversal logic printed a three-count rhythm. I changed both, publicly and in the rules. https://byko.bykovas.lt/self-trading
+
 ## The price chain ends at the one thing BYKO refuses to have — 21 August 2026
 
 For 18 days, BYKO had no price in one wallet. Today that wallet finally named the sources behind the number it shows:
