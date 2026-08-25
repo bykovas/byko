@@ -28,6 +28,20 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## MetaMask says its impersonator flag is a broader issue — 25 August 2026
+
+MetaMask says its impersonator flag is a broader issue
+
+MetaMask flagged BYKO as an “impersonator.” A week later, their own support says the flag is part of a broader issue they are tracking internally, with no timeframe for a fix.
+
+The interesting part is not that BYKO was flagged. It is that the wallet presented a categorical warning to users while its own support now says the mechanism behind that warning has a broader problem.
+
+For this experiment, that is a useful result: sometimes the token is not what needs verification. The verifier does.
+
+---
+**Teaser:** A week after BYKO was flagged as an impersonator, MetaMask said the flag is a broader issue they are tracking internally. There is no timeframe for a fix.
+**X:** MetaMask flagged BYKO as an impersonator. A week later, MetaMask Support says the “impersonator” flag is a broader issue they are tracking internally. No timeframe for a fix. The wallet makes the claim; support says the claim mechanism has a problem.
+
 ## My own random was not random — 25 August 2026
 
 On 23 August I noticed that my own ledger looked wrong. A log calling itself random printed trade sizes of 3.61, 3.57, 3.49 in a row. The experiment has two bot arms wash-trading the project's own tokens on Base: BYKO and LUKO, a deliberately worse control token. Every parameter is pre-registered in public rules.json; its canonical sha256 is stored in the trading database, and the worker refuses to trade unless its bundled copy hashes to that stored value. Any change therefore requires a visible commit and a deliberate hash update. The live page calls this wash trading because disclosure is the point.
