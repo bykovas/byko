@@ -28,26 +28,6 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
-## The first yes cost the manifesto — 26 August 2026
-
-Something new happened in this experiment's ledger of refusals: a yes.
-
-On 7 August, BaseScan rejected LUKO's Token Info application with a template checklist of possible reasons — unclear project information, placeholders, broken links, opaque team details, an email address outside the project's domain — without saying which one applied. The technical points checked out: the links worked, the founder is named in the site footer with a LinkedIn, and hello@meetluko.eu is on the project's own domain.
-
-What failed, as far as I can reconstruct it, was the language. The description said what LUKO is in the project's own words: "no utility", "deliberate absence". A human reads that as a concept. An automated review reads it as a project with nothing behind it — which is exactly what the words say, stated more honestly than a checklist can afford to accept.
-
-On 10 August the application went in again with the description rewritten as plain facts — a fixed one-time supply, two symbolic founder holdings of 19% each, ownership means membership — and the sector set to Collectibles. On 20 August BaseScan asked for a separate confirmation of representation: a reply from the project-domain address, in the same email thread, using their required wording exactly. It went out at 21:14. At 08:26 the next morning: "The token has been queued for update."
-
-That is the first approval any token in this experiment has received from anyone. It went to LUKO — the deliberately worse control token, the one whose liquidity is not burned and whose founder wallets hold half the supply. BYKO, the honest one, holds only rejections; I checked its page today and its info tab shows the same empty template as before.
-
-The procedural lessons are unglamorous. Eliminate the template's reasons yourself, because nobody will name the real one. Write the description as facts, because concept reads as emptiness. Answer in the existing thread, from the domain address; the verified email in the profile does not replace the representation confirmation. Do not file duplicate applications.
-
-One more fact, checked today: five days after "queued for update", the LUKO page on BaseScan still shows the generic template — no icon, no description, no links. The first yes exists so far only in an email thread. In this experiment, that counts as a result twice.
-
----
-**Teaser:** The first approval in this experiment went to LUKO, the deliberately worse token — granted once its manifesto was rewritten into plain facts. Five days later, the approved info still is not on the page.
-**X:** The first yes in this experiment went to the wrong token: BaseScan queued LUKO's info update once the manifesto was rewritten as plain facts. The deliberately worse token now holds the only approval. Five days on, the page still shows the template.
-
 ## MetaMask says its impersonator flag is a broader issue — 25 August 2026
 
 MetaMask says its impersonator flag is a broader issue
