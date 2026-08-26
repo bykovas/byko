@@ -25,6 +25,20 @@ function uniform(lo: number, hi: number): number {
   return lo + u * (hi - lo);
 }
 
+/* SEVENTH AMENDMENT: the wait between trades is drawn log-uniformly. A linear
+   draw weights minutes, not scales — a 5–10 minute gap had a 2.9% chance
+   against 17% for 150–180 — so every pause came out "an hour or more" and the
+   stream read as a steady beat. Log-uniform gives every doubling of the wait
+   the same probability, so bursts and silences arrive mixed. Bounds untouched. */
+function drawDelayMin(): number {
+  const [lo, hi] = RULES.strategy.interval_minutes;
+  if (RULES.strategy.interval_curve === "log-uniform") {
+    const u = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+    return lo * Math.exp(u * Math.log(hi / lo));
+  }
+  return uniform(lo, hi);
+}
+
 export class ArmLock {
   private state: DurableObjectState;
   private env: Env;
@@ -429,7 +443,7 @@ export class ArmLock {
     }
 
     /* set delay_min on the row we just wrote, then schedule the next fire */
-    const delayMin = uniform(RULES.strategy.interval_minutes[0], RULES.strategy.interval_minutes[1]);
+    const delayMin = drawDelayMin();
     await env.DB.prepare(
       `UPDATE trades SET delay_min = ?2 WHERE tx_hash = ?1`,
     ).bind(hash, delayMin).run();
@@ -460,7 +474,7 @@ export class ArmLock {
   }
 
   private async reschedule(wallet: string, ms = 0): Promise<void> {
-    const delay = ms > 0 ? ms : uniform(RULES.strategy.interval_minutes[0], RULES.strategy.interval_minutes[1]) * 60_000;
+    const delay = ms > 0 ? ms : drawDelayMin() * 60_000;
     const at = Date.now() + delay;
     await this.state.storage.setAlarm(at);
     await this.env.DB.prepare(

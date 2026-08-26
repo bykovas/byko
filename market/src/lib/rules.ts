@@ -25,6 +25,7 @@ export interface Rules {
   venue: { router: string; factory: string; quote: string; stable: boolean };
   strategy: {
     interval_minutes: [number, number];
+    interval_curve?: "uniform" | "log-uniform";
     trade_usdc: [number, number];
     band_usdc: [number, number];
     run_reverse_pct: [number, number];
