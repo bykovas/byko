@@ -65,21 +65,21 @@
       "provenance": "hand"
     },
     {
-      "id": "transactions-audited",
-      "value": "100",
-      "label": "Transactions audited",
+      "id": "listing-approvals",
+      "value": "1",
+      "label": "Listing approvals",
       "kind": "result",
-      "asOf": "2026-08-16",
-      "counts": "BYKO Transfer events classified one by one in the on-chain audit of 16 Aug 2026 — mints, liquidity adds, buys, sells, LP removals and plain transfers — covering the token's entire history up to that date. The reconciled balances matched the on-chain balances exactly, and their total matched the fixed supply of 790,227. The audit corrected three facts this diary had already published. It has not been re-run since: the airdrop of 18 Aug 2026 added 908 transfers that this number does not cover, and the figure stays at 100 until the audit is repeated rather than quietly growing.",
-      "excludes": "Transfers of any other token, and activity on any other chain. Nothing in BYKO's own history up to 16 Aug 2026 is excluded — that is what made the reconciliation meaningful. Everything after that date is outside the audit, not inside it and uncounted.",
-      "provenance": "chain"
+      "asOf": "2026-08-26",
+      "counts": "Applications for public token information that ended in a stated approval: BaseScan answered “The token has been queued for update” for LUKO on 21 Aug 2026, after one template rejection and a rewrite of the description from manifesto language into plain facts. Counted when the service says yes, not when the page shows it — checked five days later, the page still does not.",
+      "excludes": "Paid fast-track offers (declined on principle — see Paid for legitimacy), approvals implied but never stated, and the update actually appearing on the page — that is a separate fact anyone can verify against the token page itself.",
+      "provenance": "hand"
     },
     {
       "id": "episodes",
-      "value": "35",
+      "value": "36",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-08-25",
+      "asOf": "2026-08-26",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"
@@ -107,12 +107,12 @@
     },
     {
       "id": "listing-rejections",
-      "value": "3",
+      "value": "4",
       "label": "Listing rejections",
       "kind": "result",
       "home": false,
-      "asOf": "2026-08-12",
-      "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 so far. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
+      "asOf": "2026-08-26",
+      "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 for BYKO, and 07 Aug 2026 for LUKO's BaseScan Token Info application. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
       "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid for legitimacy), and resubmissions of the same form that are still inside the review window.",
       "provenance": "hand"
     },
