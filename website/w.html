@@ -34,6 +34,17 @@ td.addr a:hover{color:var(--byko-ink)}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
 tbody tr.watched td{color:var(--byko-label)}
 tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
+/* Phone: the name and the four currency columns share one screen — the
+   currencies sit right after the name and the numbers print compact (whole
+   LUKO/BYKO, cents for USDC, thousandths for ETH). Funded-by and the address
+   stay in the row but live past the right edge, one swipe away. */
+@media (max-width:900px){
+  table{min-width:0}
+  th,td{padding:8px 5px}
+  td{font:var(--byko-data)}
+  td.name{font-family:var(--byko-font-sans);white-space:normal}
+  tbody tr.total td.l{white-space:normal}
+}
 </style>
 </head>
 <body>
@@ -51,11 +62,11 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
         <tr>
           <th class="l">#</th>
           <th class="l">Name</th>
-          <th class="l">Funded by</th>
           <th>ETH</th>
           <th>USDC</th>
           <th>LUKO</th>
           <th>BYKO</th>
+          <th class="l">Funded by</th>
           <th class="l">Address</th>
         </tr>
       </thead>
@@ -120,18 +131,26 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     return Number(whole) + Number(rest) / Number(scale);
   }
 
-  function fmt(amount) {
+  /* On a phone the numbers print compact so the name and all four currencies
+     share one screen: whole LUKO/BYKO, cents for USDC, thousandths for ETH.
+     Anything that would round to all zeros while being real prints as "<…" —
+     dust must never read as an empty wallet. Desktop keeps four decimals. */
+  var compactQuery = window.matchMedia("(max-width:900px)");
+  var DECIMALS = { eth: 3, usdc: 2, luko: 0, byko: 0 };
+
+  function fmt(amount, key) {
     if (amount === null || amount === undefined) return null;
     if (amount === 0) return "–";
-    /* dust would print as 0.0000 and read as an empty wallet, which it is not */
-    if (amount < 0.0001) return "<0.0001";
-    return amount.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+    var decimals = compactQuery.matches ? DECIMALS[key] : 4;
+    var floor = Math.pow(10, -decimals);
+    if (amount < floor) return "<" + floor.toLocaleString("en-US", { maximumFractionDigits: decimals });
+    return amount.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   }
 
-  function cell(row, amount, className) {
+  function cell(row, amount, key) {
     var td = document.createElement("td");
-    td.className = "num" + (className ? " " + className : "");
-    var text = fmt(amount);
+    td.className = "num" + (key === "byko" ? " hot" : "");
+    var text = fmt(amount, key);
     if (text === null) { td.textContent = "…"; td.classList.add("pending"); }
     else { td.textContent = text; if (amount === 0) td.classList.add("zero"); }
     row.appendChild(td);
@@ -149,8 +168,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
       if (wallet.watched) row.className = "watched";
       if (!wallet.watched) mine += 1;
       [["l", String(index + 1)],
-       ["l name", wallet.name],
-       ["l", wallet.watched ? wallet.by + " · not mine" : wallet.by]].forEach(function (pair) {
+       ["l name", wallet.name]].forEach(function (pair) {
         var td = document.createElement("td");
         td.className = pair[0];
         td.textContent = pair[1];
@@ -158,10 +176,14 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
       });
       COLUMNS.forEach(function (key) {
         var amount = balances ? balances[wallet.address.toLowerCase()][key] : null;
-        cell(row, amount, key === "byko" ? "hot" : "");
+        cell(row, amount, key);
         /* watched wallets are shown, never counted as the project's */
         if (amount && !wallet.watched) totals[key] += amount;
       });
+      var by = document.createElement("td");
+      by.className = "l";
+      by.textContent = wallet.watched ? wallet.by + " · not mine" : wallet.by;
+      row.appendChild(by);
       var addr = document.createElement("td");
       addr.className = "l addr";
       var link = document.createElement("a");
@@ -178,12 +200,13 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     total.className = "total";
     var label = document.createElement("td");
     label.className = "l";
-    label.colSpan = 3;
+    label.colSpan = 2;
     label.textContent = "total · " + mine + " wallets · watched excluded";
     total.appendChild(label);
     COLUMNS.forEach(function (key) {
-      cell(total, balances ? totals[key] : null, key === "byko" ? "hot" : "");
+      cell(total, balances ? totals[key] : null, key);
     });
+    total.appendChild(document.createElement("td"));
     total.appendChild(document.createElement("td"));
     body.appendChild(total);
   }
@@ -307,6 +330,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
         balances[call.wallet.toLowerCase()][call.key] = toAmount(value, call.decimals);
       });
 
+      lastBalances = balances;
       render(balances);
       var stamp = new Date().toLocaleString("en-GB", { hour12: false });
       document.getElementById("meta").textContent =
@@ -320,6 +344,14 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
   }
 
   document.getElementById("refresh").addEventListener("click", load);
+  var lastBalances = null;
+  /* rotating the phone crosses the breakpoint: reprint the cached figures */
+  var wasCompact = compactQuery.matches;
+  window.addEventListener("resize", function () {
+    if (compactQuery.matches === wasCompact) return;
+    wasCompact = compactQuery.matches;
+    render(lastBalances);
+  });
   render(null);
   load();
 })();
