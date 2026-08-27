@@ -333,22 +333,27 @@ async function computeTally(env, origin) {
   }
   if (latest === null || latest === undefined) latest = parseInt(await rpc("eth_blockNumber", []), 16);
   scanned = from <= latest;
+  var etherscanError = "";
   if (key && scanned) {
     try {
       foldLogs(state, await etherscanLogs(from, latest, key));
       from = latest + 1;
-    } catch (error) { /* fall through to the chunked RPC scan */ }
+    } catch (error) { etherscanError = "; etherscan: " + String(error && error.message || error); }
   }
   var target = Math.min(latest, from + CHUNK_SIZE * MAX_SCAN_CHUNKS - 1);
-  while (from <= target) {
-    to = Math.min(from + CHUNK_SIZE - 1, target);
-    foldLogs(state, await rpc("eth_getLogs", [{
-      address: BYKO,
-      fromBlock: hex(from),
-      toBlock: hex(to),
-      topics: [TRANSFER_TOPIC]
-    }]));
-    from = to + 1;
+  try {
+    while (from <= target) {
+      to = Math.min(from + CHUNK_SIZE - 1, target);
+      foldLogs(state, await rpc("eth_getLogs", [{
+        address: BYKO,
+        fromBlock: hex(from),
+        toBlock: hex(to),
+        topics: [TRANSFER_TOPIC]
+      }]));
+      from = to + 1;
+    }
+  } catch (error) {
+    throw new Error(String(error && error.message || error) + etherscanError);
   }
   state.block = from - 1;
   if (state.block < latest) {
