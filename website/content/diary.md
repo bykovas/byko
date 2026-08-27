@@ -65,6 +65,7 @@ One limitation matters. Revolut currently describes EURR as launching on Ethereu
 ---
 **Teaser:** Revolut’s new EURR stablecoin is interesting to BYKO for one reason: it is a young token whose legitimacy comes pre-installed through a regulated issuer, redemption rights and distribution. That makes it a useful control case for measuring how infrastructure treats institutional trust versus on-chain transparency.
 **X:** Revolut’s EURR gives BYKO a useful control case: a new token whose trust arrives through a regulated issuer, redemption rights and distribution. Now I can measure how fast infrastructure recognizes institutional trust versus on-chain transparency.
+**Image:** ![Two BYKO coins — one satin silver, one matte black — resting on a black tray](/assets/diary/eurr-is-the-opposite-control-case-byko-needed/coins.png)
 
 ## The first yes cost the manifesto — 26 August 2026
 
