@@ -561,6 +561,10 @@ writeFileSync(OG_MANIFEST, JSON.stringify({
     datePublished: entry.dateIso,
     imageVersion: entry.imageVersion,
     twitterImageVersion: entry.twitterImageVersion,
+    /* Hero path + size only — never the bytes (they would bloat the manifest).
+       Enough for the byte-match test to reconstruct the card; the dynamic
+       /api/og cannot read the file, which is why og:image is the static PNG. */
+    ...(entry.hero ? { hero: { src: entry.hero.src, width: entry.hero.width, height: entry.hero.height } } : {}),
   })),
 }, null, 2) + "\n");
 

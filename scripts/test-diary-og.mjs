@@ -18,9 +18,16 @@ const fonts = [
 ];
 
 for (const entry of manifest.entries) {
-  const layout = layoutTitle(entry.title);
+  /* A hero entry carries only its path in the manifest; rebuild the data URI
+     from the committed file so the re-render can reproduce the baked card. */
+  if (entry.hero) {
+    const buf = readFileSync(`website${entry.hero.src}`);
+    entry.hero.dataUri = `data:${entry.hero.src.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg"};base64,`
+      + buf.toString("base64");
+  }
+  const layout = layoutTitle(entry.title, titleOptionsForEntry(entry));
   assert.equal(layout.lines.join(" "), entry.title, `${entry.slug}: full title must survive layout`);
-  assert.ok(layout.lines.length >= 1 && layout.lines.length <= 4, `${entry.slug}: line count`);
+  assert.ok(layout.lines.length >= 1 && layout.lines.length <= 5, `${entry.slug}: line count`);
   assert.ok(layout.widths.every(width => width <= TITLE_MAX_WIDTH), `${entry.slug}: title width`);
   for (let i = 0; i < layout.lines.length; i++) {
     assert.equal(layout.widths[i], measureTitleLine(layout.lines[i], layout.fontSize));

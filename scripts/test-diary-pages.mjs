@@ -91,11 +91,22 @@ for (const entry of manifest.entries) {
   assert.ok(diary.includes(`href="/d/${entry.slug}"`), `${entry.slug}: diary links to entry page`);
   assert.equal((sitemap.match(new RegExp(`<loc>${url}</loc>`, "g")) || []).length, 1, `${entry.slug}: sitemap URL`);
 
+  /* Every diary image names itself and reserves its box (no layout shift). */
   for (const [tag, src] of [...html.matchAll(/<img\s+src="(\/assets\/diary\/[^"]+)"[^>]*>/g)].map(m => [m[0], m[1]])) {
     assert.match(tag, /\salt="[^"]+"/, `${entry.slug}: diary image has alt text`);
     assert.match(tag, /\swidth="\d+"\sheight="\d+"/, `${entry.slug}: diary image reserves its space`);
-    assert.match(tag, /\sloading="lazy"/, `${entry.slug}: diary image loads lazily`);
     assert.ok(existsSync(`website${src}`), `${entry.slug}: ${src} exists in the repository`);
+  }
+  /* Body screenshots load lazily (they are below the fold); the hero is the
+     above-the-fold lead and loads eagerly — lazy-loading an LCP image is the
+     anti-pattern this split avoids. */
+  for (const tag of [...html.matchAll(/<figure class="shot"><img\s+[^>]*>/g)].map(m => m[0])) {
+    assert.match(tag, /\sloading="lazy"/, `${entry.slug}: body screenshot loads lazily`);
+  }
+  const heroImg = html.match(/<figure class="entry-hero"><img\s+[^>]*>/);
+  if (heroImg) {
+    assert.doesNotMatch(heroImg[0], /\sloading="lazy"/, `${entry.slug}: hero is the eager lead image`);
+    assert.match(heroImg[0], /\sdecoding="async"/, `${entry.slug}: hero decodes off the main thread`);
   }
   assert.doesNotMatch(html, /!\[[^\]]*\]\(/, `${entry.slug}: no unrendered image markdown`);
 

@@ -7,7 +7,12 @@
       "dateText": "27 August 2026",
       "datePublished": "2026-08-27",
       "imageVersion": "9a8c0ad952ef",
-      "twitterImageVersion": "22c4d3a343eb"
+      "twitterImageVersion": "22c4d3a343eb",
+      "hero": {
+        "src": "/assets/diary/eurr-is-the-opposite-control-case-byko-needed/coins.png",
+        "width": 1080,
+        "height": 484
+      }
     },
     {
       "slug": "the-first-yes-cost-the-manifesto",
