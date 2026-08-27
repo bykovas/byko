@@ -143,9 +143,13 @@ function keyedRpcUrls(env) {
   var urls = [];
   if (env && env.RPC_URL) urls.push(env.RPC_URL);
   if (env && env.DRPC_API_KEY) {
+    /* DRPC's documented endpoint. The old "lb.drpc.live/base/{key}" host/path
+       403'd the key, so this archive-capable node never answered and the
+       fallbacks (public, no archive) could not scan old ranges — which is why
+       the endpoint 503'd. A full URL in the var is used as-is. */
     urls.push(env.DRPC_API_KEY.indexOf("http") === 0
       ? env.DRPC_API_KEY
-      : "https://lb.drpc.live/base/" + env.DRPC_API_KEY);
+      : "https://lb.drpc.org/ogrpc?network=base&dkey=" + env.DRPC_API_KEY);
   }
   return urls;
 }
