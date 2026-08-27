@@ -92,8 +92,17 @@
     var price = data.usdc / data.byko;
     var bykoRelative = data.byko / GENESIS_BYKO;
     var usdcRelative = data.usdc / GENESIS_USDC;
-    var split = bykoRelative / (bykoRelative + usdcRelative) * 100;
-    var displaySplit = Math.max(8, Math.min(92, split));
+    /* Log scale, symmetric around genesis. Each reserve is measured against its
+       genesis level and the divider sits at the log10 of their ratio: at
+       genesis both are 1, the ratio is 1, log is 0, the edge is dead centre on
+       the dashed line. A linear split buried the shrunken side in a ~10%
+       sliver; LOG_SPAN decades from centre to either edge keep both legible.
+       The top ticks (÷10 · genesis · ×10) mark the decades so the axis reads as
+       logarithmic. */
+    var LOG_SPAN = 2;
+    var logRatio = Math.log(bykoRelative / usdcRelative) / Math.LN10;
+    var split = 50 + 50 * logRatio / LOG_SPAN;
+    var displaySplit = Math.max(6, Math.min(94, split));
     var marketPrice = byId("market-price");
     var priceSub = byId("price-sub");
     var marketByko = byId("market-byko");

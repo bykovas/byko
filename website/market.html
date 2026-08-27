@@ -45,6 +45,13 @@
   border-left:2px dashed rgba(13,17,22,.55);transform:translateX(-1px);pointer-events:none}
 .pool-bar .genesis span{position:absolute;left:8px;top:-2px;font:var(--byko-label-sm-font);
   letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;color:var(--byko-label);white-space:nowrap}
+/* Log-scale decade marks: dotted, so they read apart from the dashed genesis
+   line and the solid current edge. One division = one factor of ten in the
+   pool's BYKO:USDC balance relative to genesis. */
+.pool-bar .tick{position:absolute;top:-9px;bottom:-9px;width:0;
+  border-left:1px dotted rgba(13,17,22,.3);pointer-events:none}
+.pool-bar .tick span{position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);color:var(--byko-label);white-space:nowrap}
 .pool-side{display:flex;flex-direction:column;justify-content:center;padding:0 14px}
 .pool-side.l{background:var(--byko-paper-2);border-right:2px solid var(--byko-ink)}
 .pool-side.r{background:var(--byko-live-wash);text-align:right;align-items:flex-end}
@@ -109,6 +116,10 @@
 
 @media (max-width:900px){
   .price-big{font-size:52px}
+  /* The log divider gives the shrunken side more room than a phone's width
+     alone would; a smaller figure and tighter padding keep it inside its box. */
+  .pool-side{padding:0 8px}
+  .pool-side b{font-size:14px}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
   /* Two columns, so eight cells make four even rows. The one dropped is 200 €,
@@ -168,9 +179,11 @@
         <div class="pool-bar">
           <div class="pool-side l"><b id="market-byko">—</b><span id="market-byko-label">BYKO in pool</span></div>
           <div class="pool-side r"><b id="market-usdc">—</b><span id="market-usdc-label">USDC in pool</span></div>
+          <i class="tick" style="left:25%" aria-hidden="true"><span>÷10</span></i>
           <i class="genesis" aria-hidden="true"><span>genesis</span></i>
+          <i class="tick" style="left:75%" aria-hidden="true"><span>×10</span></i>
         </div>
-        <p class="pool-note">dashed line = genesis, 740,227 BYKO : 74.0227 USDC · the solid edge is where the pool stands now · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
+        <p class="pool-note">log scale — each dotted division is a ten-fold shift in the pool's BYKO : USDC balance · dashed line = genesis, 740,227 BYKO : 74.0227 USDC · the solid edge is where the pool stands now · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
       </div>
     </div>
 
@@ -303,6 +316,6 @@
   if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
 })();
 </script>
-<script src="market.js?v=20260822b" defer></script>
+<script src="market.js?v=20260827" defer></script>
 </body>
 </html>
