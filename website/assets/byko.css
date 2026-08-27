@@ -303,6 +303,15 @@ a.log-row h3{margin:0}
 a.log-row:hover h3{color:var(--byko-live-ink)}
 a.log-row p{margin:6px 0 0;font:400 14.5px/1.5 var(--byko-font-sans);color:var(--byko-ink-2)}
 a.log-row .ep{font:var(--byko-data);color:var(--byko-live-ink);text-align:right}
+/* Hero thumbnails. The picture is cover-cropped into a fixed frame so the list
+   stays a tidy grid whatever the source aspect; entries without one are
+   unchanged. The card gets a banner on top, the log row a small square under
+   its episode number (which keeps the date column aligned across all rows). */
+a.card .thumb{display:block;aspect-ratio:3/2;overflow:hidden;border:1px solid var(--byko-rule);margin:0 0 12px}
+a.card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+a.log-row .ep-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+a.log-row .rthumb{display:block;width:96px;aspect-ratio:3/2;overflow:hidden;border:1px solid var(--byko-rule)}
+a.log-row .rthumb img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ── footer ────────────────────────────────────────────────────────────── */
 .site-foot{margin-top:var(--byko-sp-9);border-top:var(--byko-rule-heavy);padding:26px 0 44px;background:var(--byko-paper)}

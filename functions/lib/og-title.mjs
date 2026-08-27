@@ -9,7 +9,26 @@
 
 export const TITLE_MAX_WIDTH = 1000;
 
+/* When a hero image takes the right ~third of the card, the title keeps the
+   left column. Narrower band, so it may wrap to more lines and go smaller. */
+export const HERO_TITLE_MAX_WIDTH = 664;
+
 const FONT_SIZES = [96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48];
+const HERO_FONT_SIZES = [84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44];
+
+function heroMaximumLines(fontSize) {
+  if (fontSize >= 72) return 3;
+  if (fontSize >= 56) return 4;
+  return 5;
+}
+
+/* One source of truth for how a title is laid out, shared by the build-time
+   fit check and the card renderer so they can never disagree. */
+export function titleOptionsForEntry(entry) {
+  return entry && entry.hero
+    ? { maxWidth: HERO_TITLE_MAX_WIDTH, fontSizes: HERO_FONT_SIZES, maximumLines: heroMaximumLines }
+    : {};
+}
 
 /* Archivo-Bold.ttf horizontal advances for ASCII U+0020..U+007E,
    normalized to units-per-em. Kerning generally makes the rendered result
@@ -58,14 +77,14 @@ function maximumLines(fontSize) {
 }
 
 /* For an exact line count, find the most balanced valid word partition. */
-function balancedPartition(words, lineCount, fontSize) {
+function balancedPartition(words, lineCount, fontSize, maxWidth) {
   let best = null;
 
   function visit(start, remaining, lines, widths) {
     if (remaining === 1) {
       const line = words.slice(start).join(" ");
       const width = measureTitleLine(line, fontSize);
-      if (!line || width > TITLE_MAX_WIDTH) return;
+      if (!line || width > maxWidth) return;
       const candidateLines = lines.concat(line);
       const candidateWidths = widths.concat(width);
       const widest = Math.max(...candidateWidths);
@@ -83,7 +102,7 @@ function balancedPartition(words, lineCount, fontSize) {
     for (let end = start + 1; end <= finalEnd; end++) {
       const line = words.slice(start, end).join(" ");
       const width = measureTitleLine(line, fontSize);
-      if (width > TITLE_MAX_WIDTH) break;
+      if (width > maxWidth) break;
       visit(end, remaining - 1, lines.concat(line), widths.concat(width));
     }
   }
@@ -98,11 +117,12 @@ export function layoutTitle(title, options = {}) {
   const words = normalized.split(" ");
   const fontSizes = options.fontSizes || FONT_SIZES;
   const lineLimitForSize = options.maximumLines || maximumLines;
+  const maxWidth = options.maxWidth || TITLE_MAX_WIDTH;
 
   for (const fontSize of fontSizes) {
     const limit = Math.min(lineLimitForSize(fontSize), words.length);
     for (let lineCount = 1; lineCount <= limit; lineCount++) {
-      const partition = balancedPartition(words, lineCount, fontSize);
+      const partition = balancedPartition(words, lineCount, fontSize, maxWidth);
       if (!partition) continue;
       const lineHeight = Math.round(fontSize * 1.08);
       const titleTop = 220;
@@ -123,7 +143,9 @@ export function layoutTitle(title, options = {}) {
     }
   }
 
-  throw new Error(`diary OG title cannot fit without truncation: "${normalized}"`);
+  throw new Error(`diary OG title cannot fit without truncation: "${normalized}"`
+    + (maxWidth < TITLE_MAX_WIDTH
+      ? " (a hero image narrows the title column — shorten the title or drop the image)" : ""));
 }
 
 export function escapeXml(text) {
@@ -131,13 +153,35 @@ export function escapeXml(text) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
 
+/* A hero image sits in a fixed portrait panel on the right. The source is
+   cover-fitted (scaled to fill, centred, clipped) so a tall phone screenshot
+   fills the panel without distortion, and the blue rule stops short of it. */
+const HERO_PANEL = { x: 780, y: 96, w: 348, h: 428 };
+
+function heroPanelSvg(hero) {
+  if (!hero || !hero.dataUri || !hero.width || !hero.height) return "";
+  const { x, y, w, h } = HERO_PANEL;
+  const scale = Math.max(w / hero.width, h / hero.height);
+  const dw = hero.width * scale;
+  const dh = hero.height * scale;
+  const dx = x + (w - dw) / 2;
+  const dy = y + (h - dh) / 2;
+  return `<clipPath id="og-hero"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`
+    + `<image href="${hero.dataUri}" x="${dx.toFixed(2)}" y="${dy.toFixed(2)}"`
+    + ` width="${dw.toFixed(2)}" height="${dh.toFixed(2)}"`
+    + ` clip-path="url(#og-hero)" preserveAspectRatio="none"/>`
+    + `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#0D1116" stroke-width="1.5"/>`;
+}
+
 export function renderDiaryOgSvg(entry) {
-  const layout = layoutTitle(entry.title);
+  const layout = layoutTitle(entry.title, titleOptionsForEntry(entry));
   const titleLines = layout.lines.map((line, index) =>
     `<tspan x="72" y="${layout.firstBaseline + index * layout.lineHeight}">${escapeXml(line)}</tspan>`
   ).join("");
   const date = escapeXml(String(entry.dateText || "").toUpperCase());
   const path = escapeXml(`byko.bykovas.lt/d/${entry.slug}`);
+  const hasHero = !!(entry.hero && entry.hero.dataUri);
+  const ruleX2 = hasHero ? 724 : 1128;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <rect width="1200" height="630" fill="#FAF9F5"/>
@@ -147,11 +191,11 @@ export function renderDiaryOgSvg(entry) {
 <g transform="translate(77,22) scale(0.229)" fill="none" stroke="#0D1116" stroke-width="15" stroke-linecap="butt" stroke-linejoin="miter"><path d="M24 14 V82"/><path d="M40 20 L70 48 L40 76"/></g>
 <text x="118" y="41" font-family="Archivo" font-weight="700" font-size="25" letter-spacing="-1" fill="#0D1116">BYKO</text>
 <text x="1140" y="40" font-family="Archivo" font-weight="600" font-size="11" letter-spacing="1.8" fill="#5A6068" text-anchor="end">DIARY · EPISODE</text>
-<line x1="72" y1="150" x2="1128" y2="150" stroke="#7CCBFF" stroke-width="3"/>
+<line x1="72" y1="150" x2="${ruleX2}" y2="150" stroke="#7CCBFF" stroke-width="3"/>
 <text x="72" y="196" font-family="Archivo" font-weight="600" font-size="12" letter-spacing="1.9" fill="#0A5C8F">EPISODE · ${date}</text>
 <text font-family="Archivo" font-weight="700" font-size="${layout.fontSize}" letter-spacing="-1.4" fill="#0D1116">${titleLines}</text>
 <line x1="72" y1="536" x2="1128" y2="536" stroke="#DCD8CD"/>
 <text x="72" y="580" font-family="IBM Plex Mono" font-size="13" fill="#5A6068">${path}</text>
 <text x="1128" y="580" font-family="IBM Plex Mono" font-size="13" fill="#5A6068" text-anchor="end">1 BYKO = 1 BYKO</text>
-</svg>`;
+${heroPanelSvg(entry.hero)}</svg>`;
 }

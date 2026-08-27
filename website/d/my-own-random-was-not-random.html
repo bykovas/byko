@@ -12,8 +12,8 @@
 <meta property="og:title" content="My own random was not random">
 <meta property="og:description" content="My trade-size generator was technically random but produced the same capped value 62% of the time, while the direction logic exposed a three-count rhythm. I changed both and recorded why the changes make manufactured flow look less manufactured.">
 <meta property="og:url" content="https://byko.bykovas.lt/d/my-own-random-was-not-random">
-<meta property="og:image" content="https://byko.bykovas.lt/api/og?slug=my-own-random-was-not-random&amp;v=61cb22107b6b">
-<meta property="og:image:secure_url" content="https://byko.bykovas.lt/api/og?slug=my-own-random-was-not-random&amp;v=61cb22107b6b">
+<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/my-own-random-was-not-random-3e7b9d1349d7.png">
+<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/my-own-random-was-not-random-3e7b9d1349d7.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -49,7 +49,7 @@
   },
   "image": {
     "@type": "ImageObject",
-    "url": "https://byko.bykovas.lt/api/og?slug=my-own-random-was-not-random&v=61cb22107b6b",
+    "url": "https://byko.bykovas.lt/assets/og/diary/my-own-random-was-not-random-3e7b9d1349d7.png",
     "width": 1200,
     "height": 630
   }
@@ -58,7 +58,7 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="stylesheet" href="/assets/byko.css?v=20260817a">
+<link rel="stylesheet" href="/assets/byko.css?v=20260827">
 <style>
 .entry-doc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding-top:28px}
 .back{display:inline-block;font:var(--byko-data);color:var(--byko-live-ink);margin-bottom:18px}
@@ -66,6 +66,10 @@
   letter-spacing:var(--byko-kicker-tracking);text-transform:uppercase;color:var(--byko-live-ink)}
 .entry-doc h1{font:700 38px/1.08 var(--byko-font-sans);letter-spacing:-.03em;margin:12px 0 0}
 .entry-teaser{font:italic 400 18px/1.45 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+/* Lead image: the whole picture, centred and capped in height so a tall phone
+   screenshot does not tower over the page. Paper shows at the sides. */
+.entry-hero{margin:24px 0 0;display:flex;justify-content:center}
+.entry-hero img{display:block;max-width:100%;max-height:560px;width:auto;height:auto;border:1px solid var(--byko-rule)}
 .entry-body{margin-top:22px;padding-top:22px;border-top:var(--byko-rule-heavy);
   font:var(--byko-prose);max-width:var(--byko-measure-prose)}
 .entry-body p{margin:0 0 1em}
@@ -114,6 +118,7 @@
       </div>
       <h1>My own random was not random</h1>
       <p class="entry-teaser">My trade-size generator was technically random but produced the same capped value 62% of the time, while the direction logic exposed a three-count rhythm. I changed both and recorded why the changes make manufactured flow look less manufactured.</p>
+      
       <div class="entry-body">
 <p>On 23 August I noticed that my own ledger looked wrong. A log calling itself random printed trade sizes of 3.61, 3.57, 3.49 in a row. The experiment has two bot arms wash-trading the project's own tokens on Base: BYKO and LUKO, a deliberately worse control token. Every parameter is pre-registered in public rules.json; its canonical sha256 is stored in the trading database, and the worker refuses to trade unless its bundled copy hashes to that stored value. Any change therefore requires a visible commit and a deliberate hash update. The live page calls this wash trading because disclosure is the point.</p>
 <p>The first problem was arithmetic. Sizes were drawn uniformly from $0.30–9.00 and then clamped to 2.5% of the pool's USDC side, about $3.60 with the pool near $144. (9.00 − 3.60) / 8.70 = 62%: almost two thirds of all draws landed above the cap and collapsed onto one point. The ledger matched that percentage exactly enough to be embarrassing: 77 of 124 confirmed trades, 62%, sat on the cap to the cent.</p>

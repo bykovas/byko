@@ -12,8 +12,8 @@
 <meta property="og:title" content="The site that answered 200 to everything">
 <meta property="og:description" content="A site about verifiable facts was returning 200 OK for every address that doesn't exist.">
 <meta property="og:url" content="https://byko.bykovas.lt/d/the-site-that-answered-200-to-everything">
-<meta property="og:image" content="https://byko.bykovas.lt/api/og?slug=the-site-that-answered-200-to-everything&amp;v=fbfd91de9c1a">
-<meta property="og:image:secure_url" content="https://byko.bykovas.lt/api/og?slug=the-site-that-answered-200-to-everything&amp;v=fbfd91de9c1a">
+<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/the-site-that-answered-200-to-everything-5c78836e62c0.png">
+<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/the-site-that-answered-200-to-everything-5c78836e62c0.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -49,7 +49,7 @@
   },
   "image": {
     "@type": "ImageObject",
-    "url": "https://byko.bykovas.lt/api/og?slug=the-site-that-answered-200-to-everything&v=fbfd91de9c1a",
+    "url": "https://byko.bykovas.lt/assets/og/diary/the-site-that-answered-200-to-everything-5c78836e62c0.png",
     "width": 1200,
     "height": 630
   }
@@ -58,7 +58,7 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="stylesheet" href="/assets/byko.css?v=20260817a">
+<link rel="stylesheet" href="/assets/byko.css?v=20260827">
 <style>
 .entry-doc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding-top:28px}
 .back{display:inline-block;font:var(--byko-data);color:var(--byko-live-ink);margin-bottom:18px}
@@ -66,6 +66,10 @@
   letter-spacing:var(--byko-kicker-tracking);text-transform:uppercase;color:var(--byko-live-ink)}
 .entry-doc h1{font:700 38px/1.08 var(--byko-font-sans);letter-spacing:-.03em;margin:12px 0 0}
 .entry-teaser{font:italic 400 18px/1.45 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+/* Lead image: the whole picture, centred and capped in height so a tall phone
+   screenshot does not tower over the page. Paper shows at the sides. */
+.entry-hero{margin:24px 0 0;display:flex;justify-content:center}
+.entry-hero img{display:block;max-width:100%;max-height:560px;width:auto;height:auto;border:1px solid var(--byko-rule)}
 .entry-body{margin-top:22px;padding-top:22px;border-top:var(--byko-rule-heavy);
   font:var(--byko-prose);max-width:var(--byko-measure-prose)}
 .entry-body p{margin:0 0 1em}
@@ -114,6 +118,7 @@
       </div>
       <h1>The site that answered 200 to everything</h1>
       <p class="entry-teaser">A site about verifiable facts was returning 200 OK for every address that doesn't exist.</p>
+      
       <div class="entry-body">
 <p>Registered the site in Google Search Console — free, fifteen minutes, and the first thing it did was point at something embarrassing.</p>
 <p>Every non-existent URL on byko.bykovas.lt returned 200 OK with the homepage. Not a 404 — a confident &quot;yes, this page exists, here it is&quot;. A default fallback that switches itself on when there's no 404 page, and it meant a site whose entire argument is &quot;check everything yourself&quot; was quietly claiming that every address it doesn't have, exists.</p>

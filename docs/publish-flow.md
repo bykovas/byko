@@ -23,7 +23,8 @@ Field mapping — how a Notion card becomes a diary entry:
 | FB POST | entry body (everything before the `---` field block) | already written and proofread by a human: do not rewrite, shorten, "improve" or derive anything from it. Must not contain a line that is exactly `---` — replace stray horizontal rules with an empty line |
 | Teaser | `**Teaser:** …` line | required; verbatim |
 | XCOM POST | `**X:** …` line | verbatim; max **250 characters**. Over the limit: **stop and report which card and by how many characters — never cut**. If the card has no XCOM POST, omit the `**X:**` line entirely (the entry then skips X); never write one yourself |
-| Proofs (screenshots) | `website/assets/diary/{slug}/{file}` + an `![alt](…)` line in the body | only if the human hands you the files (chat, a commit, or a URL) — the Notion API returns opaque `file://` references you cannot download. Alt text is required and becomes the caption. The line stands alone in its own paragraph and is stripped from the Facebook and X text, so screenshots stay on the site |
+| image (hero) | `website/assets/diary/{slug}/{file}` + a `**Image:** ![alt](…)` field line | the optional lead picture: hero on the entry page, thumbnail in the list, and the right-hand panel baked into the OG card. **Download it yourself:** when you read the card with the Notion MCP the **image** file property returns a signed `https` URL — fetch that, commit the file (PNG or JPEG) under `website/assets/diary/{slug}/`, and write the field. The CI Notion token cannot fetch attachments, so this happens in your session, not CI. No cropping needed — the entry page shows it whole, the list and OG card cover-crop via CSS/resvg. Alt text required. A title that will not fit beside the image fails the build; report it and ask for a shorter title rather than dropping the image silently |
+| Proofs (screenshots) | `website/assets/diary/{slug}/{file}` + an `![alt](…)` line in the body | inline evidence, distinct from the hero above. Fetch the same way (signed URL) or take the files the human hands you. Alt text is required and becomes the caption. The line stands alone in its own paragraph and is stripped from the Facebook and X text, so screenshots stay on the site |
 | Hours | a line in `website/content/hours.md` | `- {Title EN} — {hours} h` |
 | USD | a line in `website/content/dollars.md` | `- {Title EN} — ${amount}` |
 | Body, Summary | nowhere | working fields; never published, never edited by you |
@@ -40,7 +41,11 @@ survives: **bold**, `code`, [text](https://url), "- " list lines.}
 ---
 **Teaser:** {Teaser}
 **X:** {XCOM POST}
+**Image:** ![{alt}](/assets/diary/{slug}/{file})
 ```
+
+The `**Image:**` line is present only when the card's **image** column has a
+file; omit it otherwise.
 
 ## 2. The command: "публикуй социалки"
 

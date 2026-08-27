@@ -12,8 +12,8 @@
 <meta property="og:title" content="The only advice I can follow is to fake a market">
 <meta property="og:description" content="A security team told me exactly how to clear my token's last flag. One instruction needs fifty times my entire supply; the other, for a token nobody trades, means buying from myself. So that is what I am going to do — in public, under its real name, with every trade published.">
 <meta property="og:url" content="https://byko.bykovas.lt/d/the-only-advice-i-can-follow-is-to-fake-a-market">
-<meta property="og:image" content="https://byko.bykovas.lt/api/og?slug=the-only-advice-i-can-follow-is-to-fake-a-market&amp;v=792cd6dd20e4">
-<meta property="og:image:secure_url" content="https://byko.bykovas.lt/api/og?slug=the-only-advice-i-can-follow-is-to-fake-a-market&amp;v=792cd6dd20e4">
+<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/the-only-advice-i-can-follow-is-to-fake-a-market-83a26b55f2ef.png">
+<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/the-only-advice-i-can-follow-is-to-fake-a-market-83a26b55f2ef.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -49,7 +49,7 @@
   },
   "image": {
     "@type": "ImageObject",
-    "url": "https://byko.bykovas.lt/api/og?slug=the-only-advice-i-can-follow-is-to-fake-a-market&v=792cd6dd20e4",
+    "url": "https://byko.bykovas.lt/assets/og/diary/the-only-advice-i-can-follow-is-to-fake-a-market-83a26b55f2ef.png",
     "width": 1200,
     "height": 630
   }
@@ -58,7 +58,7 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="stylesheet" href="/assets/byko.css?v=20260817a">
+<link rel="stylesheet" href="/assets/byko.css?v=20260827">
 <style>
 .entry-doc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding-top:28px}
 .back{display:inline-block;font:var(--byko-data);color:var(--byko-live-ink);margin-bottom:18px}
@@ -66,6 +66,10 @@
   letter-spacing:var(--byko-kicker-tracking);text-transform:uppercase;color:var(--byko-live-ink)}
 .entry-doc h1{font:700 38px/1.08 var(--byko-font-sans);letter-spacing:-.03em;margin:12px 0 0}
 .entry-teaser{font:italic 400 18px/1.45 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+/* Lead image: the whole picture, centred and capped in height so a tall phone
+   screenshot does not tower over the page. Paper shows at the sides. */
+.entry-hero{margin:24px 0 0;display:flex;justify-content:center}
+.entry-hero img{display:block;max-width:100%;max-height:560px;width:auto;height:auto;border:1px solid var(--byko-rule)}
 .entry-body{margin-top:22px;padding-top:22px;border-top:var(--byko-rule-heavy);
   font:var(--byko-prose);max-width:var(--byko-measure-prose)}
 .entry-body p{margin:0 0 1em}
@@ -114,6 +118,7 @@
       </div>
       <h1>The only advice I can follow is to fake a market</h1>
       <p class="entry-teaser">A security team told me exactly how to clear my token's last flag. One instruction needs fifty times my entire supply; the other, for a token nobody trades, means buying from myself. So that is what I am going to do — in public, under its real name, with every trade published.</p>
+      
       <div class="entry-body">
 <p>I asked Blockaid to look at BYKO again. They answered properly — no template, no silence — and it is the most useful reply this project has received from anyone. Their words, published here in full and unedited:</p>
 <ul><li>&quot;We can confirm that the remaining signal you're seeing is not a malice flag. It's tied to market-condition heuristics, specifically the Spam / unstable-price pattern that activates when a token's trading environment is extremely thin.&quot;</li><li>&quot;Deepen liquidity in the primary trading pool, so the market is no longer thinly capitalized.&quot;</li><li>&quot;Sustain two-sided trading, so price is not dominated by tiny trades.&quot;</li><li>&quot;After liquidity and trading conditions improve, request a fresh rescan — this signal typically clears once the pool is no longer at illiquid levels.&quot;</li></ul>

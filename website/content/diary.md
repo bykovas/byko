@@ -23,6 +23,12 @@
   automatically. Optional: an entry without it goes to the site and Facebook
   but not to X. The X text is authored independently of the body; neither is
   ever derived from the other.
+  **Image:** optional hero picture, "![alt](/assets/diary/{slug}/{file})" —
+  same rules as a body figure (same-origin, PNG or JPEG, alt required). It is
+  the lead image on the entry page, a thumbnail in the diary list, and the
+  right-hand panel of the social (OG) card. One per entry, and separate from
+  any inline body screenshots. A title that will not fit beside the image
+  fails the build — shorten it or drop the image.
 
   New entries at the top. Pushing a new entry to main triggers
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.

@@ -44,7 +44,7 @@ import {
 } from "node:fs";
 import { createHash } from "node:crypto";
 import { initWasm, Resvg } from "../functions/lib/resvg.js";
-import { layoutTitle, renderDiaryOgSvg } from "../functions/lib/og-title.mjs";
+import { layoutTitle, renderDiaryOgSvg, titleOptionsForEntry } from "../functions/lib/og-title.mjs";
 
 const SOURCE = "website/content/diary.md";
 const DIARY_PAGE = "website/diary.html";
@@ -167,6 +167,25 @@ function figureHtml(alt, src, title) {
     + `<figcaption>${inline(alt)}</figcaption></figure>`;
 }
 
+/* The optional "**Image:** ![alt](/assets/diary/{slug}/file)" tail field names a
+   hero image: the lead on the entry page, a thumbnail in the list, and the
+   right-hand panel of the OG card. It reuses the body-image syntax and rules —
+   same-origin, PNG or JPEG, alt required — but is one designated picture, kept
+   apart from the inline body screenshots. */
+function parseHero(value, title) {
+  const match = IMAGE_LINE.exec(value.trim());
+  if (!match) {
+    throw new Error(`entry "${title}": **Image:** must be "![alt](/assets/diary/{slug}/file.png)", got "${value}"`);
+  }
+  const [, alt, src] = match;
+  if (!alt.trim()) throw new Error(`entry "${title}": hero image ${src} has no alt text`);
+  const path = `website${src}`;
+  if (!existsSync(path)) throw new Error(`entry "${title}": hero image file ${path} does not exist`);
+  const { width, height } = imageSize(path);
+  const mime = src.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+  return { src, alt, width, height, path, mime };
+}
+
 function bodyToHtml(lines, title) {
   const blocks = lines.join("\n").split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
   const html = [];
@@ -224,6 +243,7 @@ function parse(source) {
       slug: slugify(title),
       teaser: fields.teaser,
       teaserText: inlineToPlain(fields.teaser),
+      hero: fields.image ? parseHero(fields.image, title) : null,
       bodyHtml: bodyToHtml(lines.slice(0, cut), title),
     });
   }
@@ -239,8 +259,9 @@ function prepareEntries(entries) {
       throw new Error(`entries "${slugs.get(entry.slug)}" and "${entry.title}" produce the same slug "${entry.slug}"`);
     }
     slugs.set(entry.slug, entry.title);
-    /* Fail the site build rather than ever truncating a social-card title. */
-    layoutTitle(entry.title);
+    /* Fail the site build rather than ever truncating a social-card title —
+       with the same options the card renderer will use (a hero narrows it). */
+    layoutTitle(entry.title, titleOptionsForEntry(entry));
     entry.imageVersion = createHash("sha256")
       .update(`${OG_CARD_VERSION}\0${entry.title}\0${entry.dateText}`)
       .digest("hex").slice(0, 12);
@@ -257,6 +278,13 @@ async function renderTwitterImages(entries) {
   let removed = 0;
   mkdirSync(TWITTER_IMAGE_DIR, { recursive: true });
   for (const entry of entries) {
+    /* Bake the hero into the card: read the committed file, inline it as a
+       data URI, and let resvg cover-fit it into the panel. No resize library —
+       the rasteriser does the scaling. */
+    if (entry.hero) {
+      entry.hero.dataUri = `data:${entry.hero.mime};base64,`
+        + readFileSync(entry.hero.path).toString("base64");
+    }
     const png = new Resvg(renderDiaryOgSvg(entry), {
       fitTo: { mode: "width", value: 1200 },
       font: {
@@ -332,20 +360,30 @@ function renderEntryPages(entries) {
       "inLanguage": "en",
       "author": author,
       "isPartOf": { "@type": "Blog", "@id": `${SITE}/diary`, "url": `${SITE}/diary` },
-      "image": { "@type": "ImageObject", "url": entry.ogImageUrl, "width": 1200, "height": 630 },
+      "image": { "@type": "ImageObject", "url": entry.twitterImageUrl, "width": 1200, "height": 630 },
     };
+    /* The lead image: the whole picture, centred, not cropped — the list
+       thumbnail and the OG card do the cropping, the entry shows it in full. */
+    const heroHtml = entry.hero
+      ? `<figure class="entry-hero"><img src="${escapeHtml(entry.hero.src)}" alt="${escapeHtml(entry.hero.alt)}"`
+        + ` width="${entry.hero.width}" height="${entry.hero.height}" decoding="async"></figure>`
+      : "";
     const page = fillTemplate(template, {
       GENERATED_MARKER,
       PAGE_TITLE: escapeHtml(entry.title),
       META_DESCRIPTION: escapeHtml(entry.teaserText),
       ENTRY_URL: escapeHtml(entry.url),
-      OG_IMAGE_URL: escapeHtml(entry.ogImageUrl),
+      /* Both crawlers get the baked static PNG (the hero is rendered into it);
+         the dynamic /api/og cannot see the image bytes, and static is what X
+         reliably fetches anyway. */
+      OG_IMAGE_URL: escapeHtml(entry.twitterImageUrl),
       TWITTER_IMAGE_URL: escapeHtml(entry.twitterImageUrl),
       IMAGE_ALT: escapeHtml(imageAlt),
       DATE_ISO: escapeHtml(entry.dateIso),
       DATE_TEXT: escapeHtml(entry.dateText),
       SLUG: escapeHtml(entry.slug),
       ENTRY_TITLE: inline(entry.title),
+      ENTRY_HERO: heroHtml,
       ENTRY_BODY: entry.bodyHtml,
       ENTRY_TEASER: inline(entry.teaser),
       EPISODE: `EP ${episode}`,
@@ -486,15 +524,24 @@ const entries = parse(readFileSync(SOURCE, "utf8"));
 prepareEntries(entries);
 const twitterImages = await renderTwitterImages(entries);
 
+/* A thumbnail for the list surfaces. The link text already carries the title,
+   so the picture is decorative here (empty alt); CSS cover-crops it. */
+function listThumb(hero, className) {
+  if (!hero) return "";
+  return `<span class="${className}"><img src="${escapeHtml(hero.src)}" alt=""`
+    + ` width="${hero.width}" height="${hero.height}" loading="lazy" decoding="async"></span>`;
+}
+
 /* /diary — the index: every entry as a log row, the text lives on /d/{slug} */
-const diaryHtml = entries.map((entry, index) => `      <a class="log-row" id="${entry.slug}" href="/d/${entry.slug}">
+const diaryHtml = entries.map((entry, index) => `      <a class="log-row${entry.hero ? " has-thumb" : ""}" id="${entry.slug}" href="/d/${entry.slug}">
         <span class="date">${escapeHtml(entry.dateText)}</span>
         <span><h3>${inline(entry.title)}</h3><p>${inline(entry.teaser)}</p></span>
-        <span class="ep">EP ${entries.length - index}</span>
+        <span class="ep-wrap"><span class="ep">EP ${entries.length - index}</span>${listThumb(entry.hero, "rthumb")}</span>
       </a>`).join("\n");
 
 /* home page — the CARD_COUNT most recent as cards; zero entries → no block */
-const cards = entries.slice(0, CARD_COUNT).map((entry, index) => `      <a class="card" href="/d/${entry.slug}">
+const cards = entries.slice(0, CARD_COUNT).map((entry, index) => `      <a class="card${entry.hero ? " has-thumb" : ""}" href="/d/${entry.slug}">
+        ${listThumb(entry.hero, "thumb")}
         <span class="head"><span class="date">${escapeHtml(entry.dateText)}</span><span class="ep">EP ${entries.length - index}</span></span>
         <h3>${inline(entry.title)}</h3>
         <p>${inline(entry.teaser)}</p>

@@ -58,6 +58,15 @@ Facebook and X text, so screenshots live on the site only.
 **Teaser:** required — the home-page card text.
 **X:** optional — standalone X post text, max 250 chars; never derived
 from the body. Without it the entry skips X.
+**Image:** optional hero — `![alt](/assets/diary/{slug}/{file})`, same file
+rules as a body image. It is the lead on the entry page, the thumbnail in the
+diary list, and the right-hand panel baked into the social (OG) card. One per
+entry, separate from inline body screenshots. Source is the Notion **image**
+column (a file property); at publish time you download it from the signed URL
+the Notion page returns, commit it under `website/assets/diary/{slug}/`, and
+write this line — the CI Notion token cannot fetch attachments, so this
+download happens in the interactive session, never in CI. A title that will
+not fit beside the image fails the build; shorten it or drop the image.
 ```
 
 Hard format rules: date is `D Month YYYY` (English month; convert from ISO

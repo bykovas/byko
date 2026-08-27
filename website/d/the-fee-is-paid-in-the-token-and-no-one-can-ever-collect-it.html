@@ -12,8 +12,8 @@
 <meta property="og:title" content="The fee is paid in the token, and no one can ever collect it">
 <meta property="og:description" content="Aerodrome takes 0.3% of every swap out of the pool, not into it. On a BYKO sale that 0.3% is BYKO, sent to a fee contract nobody can ever claim, because the LP was burned. The experiment eats its own token.">
 <meta property="og:url" content="https://byko.bykovas.lt/d/the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it">
-<meta property="og:image" content="https://byko.bykovas.lt/api/og?slug=the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it&amp;v=ae0e183160ed">
-<meta property="og:image:secure_url" content="https://byko.bykovas.lt/api/og?slug=the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it&amp;v=ae0e183160ed">
+<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it-de133cc0d197.png">
+<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it-de133cc0d197.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -49,7 +49,7 @@
   },
   "image": {
     "@type": "ImageObject",
-    "url": "https://byko.bykovas.lt/api/og?slug=the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it&v=ae0e183160ed",
+    "url": "https://byko.bykovas.lt/assets/og/diary/the-fee-is-paid-in-the-token-and-no-one-can-ever-collect-it-de133cc0d197.png",
     "width": 1200,
     "height": 630
   }
@@ -58,7 +58,7 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="stylesheet" href="/assets/byko.css?v=20260817a">
+<link rel="stylesheet" href="/assets/byko.css?v=20260827">
 <style>
 .entry-doc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:start;padding-top:28px}
 .back{display:inline-block;font:var(--byko-data);color:var(--byko-live-ink);margin-bottom:18px}
@@ -66,6 +66,10 @@
   letter-spacing:var(--byko-kicker-tracking);text-transform:uppercase;color:var(--byko-live-ink)}
 .entry-doc h1{font:700 38px/1.08 var(--byko-font-sans);letter-spacing:-.03em;margin:12px 0 0}
 .entry-teaser{font:italic 400 18px/1.45 var(--byko-font-sans);color:var(--byko-ink-2);margin:14px 0 0}
+/* Lead image: the whole picture, centred and capped in height so a tall phone
+   screenshot does not tower over the page. Paper shows at the sides. */
+.entry-hero{margin:24px 0 0;display:flex;justify-content:center}
+.entry-hero img{display:block;max-width:100%;max-height:560px;width:auto;height:auto;border:1px solid var(--byko-rule)}
 .entry-body{margin-top:22px;padding-top:22px;border-top:var(--byko-rule-heavy);
   font:var(--byko-prose);max-width:var(--byko-measure-prose)}
 .entry-body p{margin:0 0 1em}
@@ -114,6 +118,7 @@
       </div>
       <h1>The fee is paid in the token, and no one can ever collect it</h1>
       <p class="entry-teaser">Aerodrome takes 0.3% of every swap out of the pool, not into it. On a BYKO sale that 0.3% is BYKO, sent to a fee contract nobody can ever claim, because the LP was burned. The experiment eats its own token.</p>
+      
       <div class="entry-body">
 <p>I started wash trading to test whether a market classifier could be satisfied. Then I found something I had not accounted for: the experiment slowly removes BYKO from circulation.</p>
 <p>Aerodrome charges 0.3% on the input token of every swap. I assumed those fees stayed in the pool and increased liquidity. They do not. The pool's k has stayed exactly the same through the swaps I checked. The fee is transferred out to a separate fee contract.</p>
