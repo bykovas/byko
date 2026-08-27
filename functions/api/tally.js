@@ -21,11 +21,21 @@
    reported separately, not hidden. */
 
 var BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
+/* Several public Base endpoints. Any one rate-limits the Worker's egress under
+   the per-address eth_getCode volume, so the more that share the load the less
+   likely a scan runs out of answers — the failure that had this endpoint 503ing
+   ("no endpoint answered eth_getCode"). Requests round-robin across them below,
+   so no single node is hammered first on every call. */
 var RPC_URLS = [
   "https://mainnet.base.org",
-  "https://base.drpc.org"
+  "https://base.drpc.org",
+  "https://1rpc.io/base",
+  "https://base-rpc.publicnode.com",
+  "https://base.meowrpc.com",
+  "https://base.gateway.tenderly.co"
 ];
 var activeRpcUrls = RPC_URLS;
+var rpcCursor = 0;
 var TOTAL_SUPPLY = 790227;
 var DEPLOY_BLOCK = 49430937;
 var TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
@@ -105,12 +115,16 @@ function hex(number) {
 }
 
 async function rpc(method, params) {
+  var n = activeRpcUrls.length;
   var i;
   var response;
   var payload;
-  for (i = 0; i < activeRpcUrls.length; i++) {
+  /* Round-robin: start where the last successful call left off, so the load of
+     many per-address calls spreads instead of always hammering the first node. */
+  for (i = 0; i < n; i++) {
+    var index = (rpcCursor + i) % n;
     try {
-      response = await fetch(activeRpcUrls[i], {
+      response = await fetch(activeRpcUrls[index], {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
@@ -118,6 +132,7 @@ async function rpc(method, params) {
       if (!response.ok) continue;
       payload = await response.json();
       if (!payload || payload.error || payload.result === undefined || payload.result === null) continue;
+      rpcCursor = (index + 1) % n;
       return payload.result;
     } catch (error) { /* try next endpoint */ }
   }
