@@ -62,11 +62,14 @@ from the body. Without it the entry skips X.
 rules as a body image. It is the lead on the entry page, the thumbnail in the
 diary list, and the right-hand panel baked into the social (OG) card. One per
 entry, separate from inline body screenshots. Source is the Notion **image**
-column (a file property); at publish time you download it from the signed URL
-the Notion page returns, commit it under `website/assets/diary/{slug}/`, and
-write this line — the CI Notion token cannot fetch attachments, so this
-download happens in the interactive session, never in CI. A title that will
-not fit beside the image fails the build; shorten it or drop the image.
+column, but you cannot download it from the API: an uploaded file comes back
+as an opaque `file://{…attachment:<id>.png…}` reference, not a signed URL
+(the same limitation as Proofs). Get the actual bytes from the human — they
+paste the image into chat, or it is already on disk (it was uploaded to
+Notion from somewhere; the filename on their Desktop/Downloads often matches
+the `<id>` in the ref). Commit it under `website/assets/diary/{slug}/` and
+write this line. A title that will not fit beside the image fails the build;
+shorten it or drop the image.
 ```
 
 Hard format rules: date is `D Month YYYY` (English month; convert from ISO
