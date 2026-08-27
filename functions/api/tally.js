@@ -164,7 +164,7 @@ async function etherscanLogs(fromBlock, toBlock, key) {
       "&page=" + page + "&offset=1000&apikey=" + key);
     if (!response.ok) throw new Error("etherscan getLogs HTTP " + response.status);
     payload = await response.json();
-    if (!payload || !Array.isArray(payload.result)) throw new Error("etherscan getLogs");
+    if (!payload || !Array.isArray(payload.result)) throw new Error("etherscan getLogs: " + String((payload && (payload.message || payload.result)) || "no result").slice(0, 80));
     all = all.concat(payload.result);
     if (payload.result.length < 1000) return all;
     page += 1;
