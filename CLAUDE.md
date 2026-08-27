@@ -26,7 +26,7 @@ Guidance for Claude Code when working in this repository.
 ## Diary and social publishing
 
 **Full instruction for the publishing agent: [docs/publish-flow.md](docs/publish-flow.md).**
-It is self-contained — source (Notion), field mapping, per-card cycle, CI
+It is self-contained — source (Airtable), field mapping, per-card cycle, CI
 behaviour, statuses, the final report. What follows here is only the format.
 
 `website/content/diary.md` is the single source for published diary entries.
@@ -61,14 +61,11 @@ from the body. Without it the entry skips X.
 **Image:** optional hero — `![alt](/assets/diary/{slug}/{file})`, same file
 rules as a body image. It is the lead on the entry page, the thumbnail in the
 diary list, and the right-hand panel baked into the social (OG) card. One per
-entry, separate from inline body screenshots. Source is the Notion **image**
-column, but you cannot download it from the API: an uploaded file comes back
-as an opaque `file://{…attachment:<id>.png…}` reference, not a signed URL
-(the same limitation as Proofs). Get the actual bytes from the human — they
-paste the image into chat, or it is already on disk (it was uploaded to
-Notion from somewhere; the filename on their Desktop/Downloads often matches
-the `<id>` in the ref). Commit it under `website/assets/diary/{slug}/` and
-write this line. A title that will not fit beside the image fails the build;
+entry, separate from inline body screenshots. Source is the Airtable **Image**
+attachment field, which carries a signed `https` `url` you download directly
+(`curl` it, fresh at publish time — the URL expires). Commit the file under
+`website/assets/diary/{slug}/` and write this line; you write the alt text.
+A title that will not fit beside the image fails the build;
 shorten it or drop the image.
 ```
 
@@ -93,7 +90,7 @@ force-push (it destroys the publish workflow's diff baseline).
 
 - `website/content/hours.md` and `dollars.md` — one line per diary entry
   with the respective tally: `- {title} — {number}` (spaced em dash). They
-  are rebuilt in full from the whole Notion base at every publish and do
+  are rebuilt in full from the whole Airtable base at every publish and do
   **not** trigger social posting.
 - The Experiment stat bar on the home page renders entirely from
   `website/content/experiment/counters.json` via `render-diary.mjs`:

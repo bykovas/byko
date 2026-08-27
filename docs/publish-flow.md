@@ -1,4 +1,4 @@
-# Publish flow: Notion → repository → site → Facebook → X
+# Publish flow: Airtable → repository → site → Facebook → X
 
 This is the complete, self-contained instruction for the agent that publishes
 diary entries. A fresh session in a rebuilt container, given the command
@@ -7,27 +7,37 @@ everything below with no further human explanation.
 
 The container never posts to social networks itself. It writes to this
 repository; GitHub Actions (`.github/workflows/publish-diary.yml`) does the
-posting. Your job ends at a green CI run and an updated Notion status.
+posting. Your job ends at a green CI run and an updated Airtable status.
 
 ## 1. Source of truth
 
-Notion database **"BYKO"**, data source
-`collection://3ba36823-9b97-80ad-abae-000b77df3276`.
+**Airtable** base **"BYKO"** (`appPE8rh4UAmDcd4a`), table **"BYKO"**
+(`tblO5mRZ6GtWSYshT`), read via the Airtable MCP (`list_records_for_table`,
+`get_table_schema`, `update_records_for_table`). This replaced the old Notion
+database; Notion is no longer a source. The decisive reason: Airtable
+attachment fields return a real signed `https` URL you can download, so hero
+images are automatic — no more pasting.
 
-Field mapping — how a Notion card becomes a diary entry:
+Field mapping — how an Airtable record becomes a diary entry (field IDs are
+stable; names can be renamed in the UI, so filter and read by ID):
 
-| Notion field | Where it goes | Rules |
+| Airtable field (id) | Where it goes | Rules |
 |---|---|---|
-| Title EN | `## {Title EN} — {date}` header in `website/content/diary.md`; also the title in `hours.md` / `dollars.md` lines | verbatim; after publication it is immutable because it defines the permanent `/d/{slug}` URL |
-| Date (ISO, e.g. `2026-08-02`) | the header date | **you convert** to `2 August 2026` (English month, no leading zero required). Separator is the em dash `—` (U+2014) with a space on each side — an en dash or hyphen breaks the parser |
-| FB POST | entry body (everything before the `---` field block) | already written and proofread by a human: do not rewrite, shorten, "improve" or derive anything from it. Must not contain a line that is exactly `---` — replace stray horizontal rules with an empty line |
-| Teaser | `**Teaser:** …` line | required; verbatim |
-| XCOM POST | `**X:** …` line | verbatim; max **250 characters**. Over the limit: **stop and report which card and by how many characters — never cut**. If the card has no XCOM POST, omit the `**X:**` line entirely (the entry then skips X); never write one yourself |
-| image (hero) | `website/assets/diary/{slug}/{file}` + a `**Image:** ![alt](…)` field line | the optional lead picture: hero on the entry page, thumbnail in the list, and the right-hand panel baked into the OG card. **You cannot download it from Notion:** an uploaded file in the **image** column comes back from the MCP as an opaque `file://{…"source":"attachment:<id>.png"…}` reference, not a signed URL (`download-attachment` handles text only). Get the bytes from the human — they paste the image into chat, or it is already on their machine (the file uploaded to Notion; its name on Desktop/Downloads often equals the `<id>` in the ref, so you can find it with `find ~/Downloads ~/Desktop -name '<id>*'`). Commit it (PNG or JPEG) under `website/assets/diary/{slug}/` and write the field. No cropping needed — the entry page shows it whole, the list and OG card cover-crop via CSS/resvg. Alt text required. A title that will not fit beside the image fails the build; report it and ask for a shorter title rather than dropping the image silently |
-| Proofs (screenshots) | `website/assets/diary/{slug}/{file}` + an `![alt](…)` line in the body | inline evidence, distinct from the hero above. Fetch the same way (signed URL) or take the files the human hands you. Alt text is required and becomes the caption. The line stands alone in its own paragraph and is stripped from the Facebook and X text, so screenshots stay on the site |
-| Hours | a line in `website/content/hours.md` | `- {Title EN} — {hours} h` |
-| USD | a line in `website/content/dollars.md` | `- {Title EN} — ${amount}` |
-| Body, Summary | nowhere | working fields; never published, never edited by you |
+| Title EN (`fldkp3fWFWzyIkxDT`) | `## {Title EN} — {date}` header in `website/content/diary.md`; also the title in `hours.md` / `dollars.md` lines | verbatim; after publication it is immutable because it defines the permanent `/d/{slug}` URL. (`Title` = `fldGpbyk4mEvzucUm` is the primary/internal name — not published.) |
+| Date (`fldXgZUweMfkfm0Ub`, ISO e.g. `2026-08-02`) | the header date | **you convert** to `2 August 2026` (English month, no leading zero required). Separator is the em dash `—` (U+2014) with a space on each side — an en dash or hyphen breaks the parser |
+| FB POST (`fldbh9jtt8lpKvD7O`) | entry body (everything before the `---` field block) | already written and proofread by a human: do not rewrite, shorten, "improve" or derive anything from it. Must not contain a line that is exactly `---` — replace stray horizontal rules with an empty line |
+| Teaser (`fldgJKLvDebeN6s8i`) | `**Teaser:** …` line | required; verbatim |
+| XCOM POST (`fldSI724JyNe0jxbB`) | `**X:** …` line | verbatim; max **250 characters**. Over the limit: **stop and report which card and by how many characters — never cut**. If empty, omit the `**X:**` line entirely (the entry then skips X); never write one yourself |
+| Image (`fld1Rh7fb0H45BNpp`, attachment) | `website/assets/diary/{slug}/{file}` + a `**Image:** ![alt](…)` field line | the optional lead picture: hero on the entry page, thumbnail in the list, and the right-hand panel baked into the OG card. **Download it yourself:** the attachment value carries a signed `url` on `v5.airtableusercontent.com` (temporary — fetch it fresh at publish time). `curl` it, commit the file (PNG or JPEG) under `website/assets/diary/{slug}/`, and write the field. No cropping needed — the entry page shows it whole, the list and OG card cover-crop via CSS/resvg. Alt text required (you write it — describe the picture). A title that will not fit beside the image fails the build; report it and ask for a shorter title rather than dropping the image silently |
+| Proofs (`fldQwU57PJBn9UTUO`, attachment) | `website/assets/diary/{slug}/{file}` + an `![alt](…)` line in the body | inline evidence, distinct from the hero above. Fetch the same way (signed `url`). Alt text is required and becomes the caption. The line stands alone in its own paragraph and is stripped from the Facebook and X text, so screenshots stay on the site |
+| Hours (`fldgwZx2KDwPUgqor`) | a line in `website/content/hours.md` | `- {Title EN} — {hours} h` |
+| USD (`fld1TTXt8r2roturU`) | a line in `website/content/dollars.md` | `- {Title EN} — ${amount}` |
+| Body (`fldb8p6eKTunPd7t5`), Summary (`fld6KrhilFFDpmb9Y`) | nowhere | working fields; never published, never edited by you |
+
+Status field `fldoOa1PRLo4pWv66` (singleSelect). Publish only records whose
+status is **"Publish approved"** (choice id `selr6im2opTTtSXTw`); on a green CI
+run set it to **"Published"** (`selsvAQAwmhWcjpM8`) with
+`update_records_for_table` (pass the plain name `"Published"`).
 
 Entry format in `diary.md` (new entries at the **top**, after the format
 comment; newest first):
@@ -80,9 +90,10 @@ For each card, in order:
    This regenerates `website/diary.html`, the generator-owned
    `website/d/{slug}.html` page for every entry, `website/data/diary-og.json`
    for entry-specific 1200×630 cards, and a versioned static X image at
-   `website/assets/og/diary/{slug}-{hash}.png`. Facebook/Open Graph keeps the
-   dynamic `/api/og` image; `twitter:image` uses the visually identical static
-   PNG because X did not reliably fetch the Worker response. It also regenerates
+   `website/assets/og/diary/{slug}-{hash}.png`. Both `og:image` and
+   `twitter:image` now point at that static hashed PNG — it carries the baked
+   hero image, which the dynamic `/api/og` cannot see, and static is what
+   crawlers fetch most reliably. It also regenerates
    `website/index.html`, the diary JSON-LD, `website/sitemap.xml` and the header
    nav, and syncs hours/dollars values into `counters.json`. If it fails, fix
    the entry format — do not commit.
@@ -101,7 +112,7 @@ For each card, in order:
    gh run list --workflow=publish-diary.yml --limit 1   # find the run for your commit
    gh run watch <run-id> --exit-status
    ```
-   - **Success** → set the card's status in Notion to **"Published"**.
+   - **Success** → set the card's status in Airtable to **"Published"**.
      Then continue with the next card.
    - **Failure** → do NOT change the card's status, do NOT retry, do NOT
      re-run the workflow. Stop the whole cycle (remaining cards stay
@@ -113,10 +124,10 @@ For each card, in order:
 
 - Never post to Facebook or X directly from the container — CI does it.
 - Never touch cards in statuses other than "Publish approved".
-- Never edit Body, Summary or any other working field in Notion.
+- Never edit Body, Summary or any other working field in Airtable.
 - Never set "Published" before the CI run is green.
 - Never rewrite, shorten or cross-derive FB POST and XCOM POST texts.
-- Never invent numbers: every figure on the site comes from Notion data
+- Never invent numbers: every figure on the site comes from Airtable data
   or from the chain.
 
 ## 3. Counters and the stat bar
@@ -129,7 +140,7 @@ sync automatically. These files never trigger social posting (the workflow
 watches `diary.md` only).
 
 The other counters (currently listing rejections, wallet flags, support
-rounds, paid listings) have no dedicated Notion fields: you derive them from
+rounds, paid listings) have no dedicated Airtable fields: you derive them from
 the cards' content — Title, Category, Body — by counting what they describe,
 across all non-Archived cards.
 
@@ -156,7 +167,7 @@ introduce. Set `asOf` to the date the number was last true.
 
 After the cycle (or the stop on first failure), report:
 
-- per card: **title · commit hash · CI result · new Notion status**;
+- per card: **title · commit hash · CI result · new Airtable status**;
 - separately: **what changed in the stat bar and why** — new values from the
   sums, any composition change and the reasoning under the 3.1 rule;
 - if stopped on failure: what was published before the stop, what failed,
