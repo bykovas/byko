@@ -1,6 +1,6 @@
 {
-  "updated": "2026-08-27T18:08:13.585Z",
-  "block": 50532320,
+  "updated": "2026-08-27T22:35:01.801Z",
+  "block": 50540323,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
