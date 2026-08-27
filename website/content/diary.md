@@ -34,6 +34,38 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The wallet hides BYKO and prices the lookalikes — 27 August 2026
+
+I searched Base App for EURR after Revolut announced its euro stablecoin. The result was more useful than the official token.
+
+The search shows several different Solana tokens called `EURR`. Multiple entries use the same or a very similar euro logo. The list also contains names such as `Revolut Unstablecoin`. Every visible result has a calculated price.
+
+I opened one of them. It is a Solana token with an address shown as `AdT1...pump`, age **20 hours**, market cap **$2.71K** and 24-hour volume **$2.53K**. Base App gives it a chart and a Buy button.
+
+What it does not show on either captured screen is a visible **scam** or **impersonation** warning.
+
+This is not the official Revolut EURR described in Revolut's announcement. And I am not calling any of these tokens scams. The screenshots do not establish intent or security. They establish something narrower and measurable: Base App is willing to index them, calculate prices for them and present them as ordinary tradable assets without a visible warning.
+
+That makes the comparison with BYKO more interesting.
+
+BYKO has a public contract, identifiable author, public repository, disclosed wallets and a documented history. The same wallet has hidden it behind a scam classification, removed that classification, and later hidden it again.
+
+So the control is no longer simply “large regulated issuer versus tiny personal token.” These EURR results are separate Solana tokens using the name and visual language of a newly announced financial product, and they still pass far enough through the interface to receive prices and Buy buttons.
+
+The question for the BYKO experiment is now narrower:
+
+**What property makes BYKO less displayable than these tokens?**
+
+I do not want Base App to hide the EURR results. That would destroy the measurement. I want to understand the rule that produces both outcomes.
+
+I will repeat the same search after 24 hours and after seven days, record whether warnings appear or tokens disappear, and capture BYKO at the same time. The comparison is only visibility, price and warning state. No claim about the legitimacy of somebody else's token is required.
+
+---
+**Teaser:** Base App search shows multiple Solana tokens named EURR using the same Revolut-style identity, each with a price and no visible scam or impersonation warning. BYKO is still hidden by the same wallet despite a public contract, author and provenance.
+**X:** Base App search shows several Solana tokens called EURR using the Revolut-style logo, with prices and no visible scam or impersonation warning. BYKO, with a public contract and author, is still hidden. Same wallet, very different threshold.
+**Image:** ![Base App search for EURR — several Solana lookalike tokens listed with prices and no scam warning](/assets/diary/the-wallet-hides-byko-and-prices-the-lookalikes/base-app-eurr-search.png)
+
+
 ## EURR is the opposite control case BYKO needed — 27 August 2026
 
 Revolut launched EURR, a euro stablecoin designed to hold €1.00 and issued by a regulated electronic-money institution. Holders have redemption rights at par, Revolut distributes it, and Revolut X admits it for trading.
