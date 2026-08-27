@@ -54,7 +54,6 @@ assert.match(headers, /\/assets\/og\/diary\/\*[\s\S]*Cache-Control: public, max-
 for (const entry of manifest.entries) {
   const url = `${SITE}/d/${entry.slug}`;
   const filename = `${entry.slug}.html`;
-  const ogImageUrl = `${SITE}/api/og?slug=${entry.slug}&v=${entry.imageVersion}`;
   const twitterImageUrl = `${SITE}/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`;
   const twitterImagePath = `website/assets/og/diary/${entry.slug}-${entry.twitterImageVersion}.png`;
   assert.ok(files.includes(filename), `${entry.slug}: generated file exists`);
@@ -69,11 +68,15 @@ for (const entry of manifest.entries) {
   assert.ok(html.includes('<meta property="og:image:height" content="630">'), `${entry.slug}: OG height`);
   assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image">'), `${entry.slug}: large X card`);
   assert.ok(html.includes(`<meta name="twitter:title" content="${entry.title.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">`), `${entry.slug}: twitter:title`);
-  assert.ok(html.includes(`<meta property="og:image" content="${ogImageUrl.replace(/&/g, "&amp;")}">`),
-    `${entry.slug}: Facebook keeps the dynamic OG image`);
+  /* Both crawlers now get the baked static PNG: it carries the hero image,
+     which the dynamic /api/og cannot see, and static is what they fetch most
+     reliably. The dynamic card URL must no longer appear on an entry page. */
+  assert.ok(html.includes(`<meta property="og:image" content="${twitterImageUrl}">`),
+    `${entry.slug}: Facebook gets the baked static PNG`);
   assert.ok(html.includes(`<meta name="twitter:image" content="${twitterImageUrl}">`),
-    `${entry.slug}: X gets a static PNG URL`);
-  assert.notEqual(ogImageUrl, twitterImageUrl, `${entry.slug}: platform image delivery URLs are split`);
+    `${entry.slug}: X gets the same static PNG URL`);
+  assert.ok(!html.includes("/api/og?slug="),
+    `${entry.slug}: entry no longer points a crawler at the dynamic card`);
   const png = readFileSync(twitterImagePath);
   assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10],
     `${entry.slug}: static X asset is PNG`);
@@ -103,7 +106,7 @@ for (const entry of manifest.entries) {
   assert.equal(jsonLd.url, url, `${entry.slug}: JSON-LD URL`);
   assert.equal(jsonLd.headline, entry.title, `${entry.slug}: JSON-LD title`);
   assert.equal(jsonLd.datePublished, entry.datePublished, `${entry.slug}: JSON-LD date`);
-  assert.equal(jsonLd.image.url, ogImageUrl, `${entry.slug}: JSON-LD follows Open Graph image`);
+  assert.equal(jsonLd.image.url, twitterImageUrl, `${entry.slug}: JSON-LD follows the Open Graph (static) image`);
 }
 
 assert.doesNotMatch(diary, /"url": "https:\/\/byko\.bykovas\.lt\/diary#/, "Blog JSON-LD uses entry URLs");

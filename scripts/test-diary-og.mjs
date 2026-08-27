@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { initWasm, Resvg } from "../functions/lib/resvg.js";
 import {
   layoutTitle, measureTitleLine, renderDiaryOgSvg, TITLE_MAX_WIDTH,
+  HERO_TITLE_MAX_WIDTH, titleOptionsForEntry,
 } from "../functions/lib/og-title.mjs";
 
 const manifest = JSON.parse(readFileSync("website/data/diary-og.json", "utf8"));
@@ -74,4 +75,34 @@ const escapedSvg = renderDiaryOgSvg({
 assert.match(escapedSvg, /Angles &lt; &amp; &gt;/);
 assert.doesNotMatch(escapedSvg, /Angles < & >/);
 
-console.log(`diary OG layout/render: ${manifest.entries.length} current titles and byte-identical static PNGs + long/3-line/4-line/XML/failure cases ok`);
+/* Hero image: the panel appears, the title keeps the narrow left column, the
+   blue rule stops before the panel, and the rasteriser accepts the inlined
+   data URI — while the same entry without a hero stays the full-width card. */
+{
+  const shot = readFileSync("website/assets/diary/metamask-values-a-malicious-token-at-1-032-while-byko-still-has-no-price/metamask-byko-risky-no-price.png");
+  const hero = {
+    src: "/assets/diary/x/hero.png", alt: "a", mime: "image/png",
+    width: shot.readUInt32BE(16), height: shot.readUInt32BE(20),
+    dataUri: "data:image/png;base64," + shot.toString("base64"),
+  };
+  const heroEntry = { slug: "hero-case", title: "EURR is the opposite control case BYKO needed", dateText: "27 August 2026", hero };
+  assert.deepEqual(Object.keys(titleOptionsForEntry(heroEntry)).sort(), ["fontSizes", "maxWidth", "maximumLines"]);
+  assert.deepEqual(titleOptionsForEntry({ slug: "x", title: "y" }), {}, "no hero → default title options");
+  const heroLayout = layoutTitle(heroEntry.title, titleOptionsForEntry(heroEntry));
+  assert.ok(heroLayout.widths.every(w => w <= HERO_TITLE_MAX_WIDTH), "hero title fits the narrow column");
+  const heroSvg = renderDiaryOgSvg(heroEntry);
+  assert.match(heroSvg, /<image href="data:image\/png;base64,/, "hero panel embeds the image");
+  assert.match(heroSvg, /<clipPath id="og-hero">/, "hero panel is clipped to its rect");
+  assert.match(heroSvg, /x1="72" y1="150" x2="724"/, "blue rule stops before the hero panel");
+  const heroPng = new Resvg(heroSvg, {
+    fitTo: { mode: "width", value: 1200 },
+    font: { loadSystemFonts: false, fontBuffers: fonts, defaultFontFamily: "Archivo" },
+  }).render().asPng();
+  assert.ok(heroPng.byteLength > 40_000, "hero card rasterises with the image baked in");
+
+  const plainSvg = renderDiaryOgSvg({ slug: "hero-case", title: heroEntry.title, dateText: heroEntry.dateText });
+  assert.doesNotMatch(plainSvg, /<image /, "no hero → no image element");
+  assert.match(plainSvg, /x1="72" y1="150" x2="1128"/, "no hero → full-width blue rule");
+}
+
+console.log(`diary OG layout/render: ${manifest.entries.length} current titles and byte-identical static PNGs + long/3-line/4-line/XML/failure/hero cases ok`);
