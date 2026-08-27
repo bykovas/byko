@@ -34,6 +34,39 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## EURR is the opposite control case BYKO needed — 27 August 2026
+
+Revolut launched EURR, a euro stablecoin designed to hold €1.00 and issued by a regulated electronic-money institution. Holders have redemption rights at par, Revolut distributes it, and Revolut X admits it for trading.
+
+For BYKO, the interesting part is not the stablecoin itself. It is the trust model.
+
+BYKO tries to build trust from the bottom: fixed supply, immutable contract, public author, public wallets, public repository, published corrections, almost no promises.
+
+EURR starts from the other end: regulated issuer, legal redemption, institutional distribution and a financial platform already prepared to recognize it.
+
+Technically, both are still tokens on a blockchain. But one arrives with an institution attached to it before most users ever see the contract.
+
+That makes EURR a useful control case for the BYKO experiment.
+
+I can now measure something that was difficult to isolate before: legitimacy latency.
+
+How long does a newly launched institutional token take to receive a correct name, icon, price and normal treatment across wallets, explorers, token lists and price services? And how does that compare with a token that supplies public on-chain evidence but has no licensed issuer, corporate structure or distribution agreement behind it?
+
+This is not a criticism of Revolut. Their model makes sense for a financial product: redemption rights and an accountable issuer are stronger guarantees for a user than a clean Solidity contract.
+
+The useful question for BYKO is what happens downstream. Wallets and data products often look like neutral windows into a blockchain. EURR gives a chance to measure how much of what they display is actually inherited institutional trust.
+
+The experiment is straightforward: once the official EURR contract is public, record when the same wallets used in the BYKO study recognize it, price it and classify it. Repeat on a fixed schedule. No comparison of investment value, only infrastructure recognition.
+
+If EURR is recognized almost immediately while BYKO continues to require manual submissions and appeals, the result becomes more precise: crypto infrastructure does not evaluate only the contract. It also inherits trust from whoever stands behind the contract.
+
+One limitation matters. Revolut currently describes EURR as launching on Ethereum, while BYKO is on Base. A future EURR deployment on Base would make the control substantially cleaner.
+
+---
+**Teaser:** Revolut’s new EURR stablecoin is interesting to BYKO for one reason: it is a young token whose legitimacy comes pre-installed through a regulated issuer, redemption rights and distribution. That makes it a useful control case for measuring how infrastructure treats institutional trust versus on-chain transparency.
+**X:** Revolut’s EURR gives BYKO a useful control case: a new token whose trust arrives through a regulated issuer, redemption rights and distribution. Now I can measure how fast infrastructure recognizes institutional trust versus on-chain transparency.
+**Image:** ![Two BYKO coins — one satin silver, one matte black — resting on a black tray](/assets/diary/eurr-is-the-opposite-control-case-byko-needed/coins.png)
+
 ## The first yes cost the manifesto — 26 August 2026
 
 Something new happened in this experiment's ledger of refusals: a yes.
