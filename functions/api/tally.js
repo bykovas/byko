@@ -121,7 +121,7 @@ async function rpc(method, params) {
       return payload.result;
     } catch (error) { /* try next endpoint */ }
   }
-  throw new Error("rpc");
+  throw new Error("rpc: no endpoint answered " + method);
 }
 
 function keyedRpcUrls(env) {
@@ -147,13 +147,13 @@ async function etherscanLogs(fromBlock, toBlock, key) {
       "&address=" + BYKO + "&topic0=" + TRANSFER_TOPIC +
       "&fromBlock=" + fromBlock + "&toBlock=" + toBlock +
       "&page=" + page + "&offset=1000&apikey=" + key);
-    if (!response.ok) throw new Error("rpc");
+    if (!response.ok) throw new Error("etherscan getLogs HTTP " + response.status);
     payload = await response.json();
     if (!payload || !Array.isArray(payload.result)) throw new Error("etherscan getLogs");
     all = all.concat(payload.result);
     if (payload.result.length < 1000) return all;
     page += 1;
-    if (page > 30) throw new Error("rpc"); /* runaway guard */
+    if (page > 30) throw new Error("etherscan getLogs runaway >30 pages"); /* runaway guard */
   }
 }
 
@@ -258,7 +258,7 @@ function foldLogs(state, logs) {
   var address;
   for (i = 0; i < logs.length; i++) {
     log = logs[i];
-    if (!log.topics || log.topics.length < 3 || !log.data) throw new Error("rpc");
+    if (!log.topics || log.topics.length < 3 || !log.data) throw new Error("malformed transfer log");
     tx = log.transactionHash;
     if (!byTx.has(tx)) { byTx.set(tx, []); txOrder.push(tx); }
     byTx.get(tx).push(log);
