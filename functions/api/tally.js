@@ -149,13 +149,29 @@ async function rpc(method, params) {
   throw new Error("rpc: no endpoint answered " + method + " [" + tried.join(" | ") + "]");
 }
 
+/* Endpoints that actually honour a JSON-RPC batch. Measured against Base's
+   public nodes: base.org, publicnode, tenderly and 1rpc all return a correct
+   array for a 10-call batch; DRPC answers a batch with HTTP 500 and meowrpc
+   with 400. Dropping the latter two means a batch never burns a round-robin
+   slot on a node that structurally can't answer it. base.org additionally
+   caps a batch at 10 calls (error -32014 above that), which CODE_BATCH honours. */
+function batchRpcUrls() {
+  var out = activeRpcUrls.filter(function (u) {
+    var h = "";
+    try { h = new URL(u).host; } catch (e) { /* treat as unusable */ return false; }
+    return h.indexOf("drpc") < 0 && h.indexOf("meowrpc") < 0;
+  });
+  return out.length ? out : activeRpcUrls;
+}
+
 /* One HTTP request carrying many JSON-RPC calls. 900+ eth_getCode checks as
    separate fetches blow Cloudflare's per-invocation subrequest cap — the whole
-   reason this endpoint 503'd; batched ~50 at a time they cost a handful.
-   base.org caps a batch at 10 and some nodes rate-limit, so round-robin keeps
-   trying until one node returns the full array. */
+   reason this endpoint 503'd; batched they cost a fraction. Some nodes
+   rate-limit, so round-robin over the batch-capable pool keeps trying until one
+   returns the full array. */
 async function rpcBatch(calls) {
-  var n = activeRpcUrls.length;
+  var pool = batchRpcUrls();
+  var n = pool.length;
   var i, response, payload, j, r;
   var body = JSON.stringify(calls.map(function (c, id) {
     return { jsonrpc: "2.0", id: id, method: c.method, params: c.params };
@@ -164,9 +180,9 @@ async function rpcBatch(calls) {
   for (i = 0; i < n; i++) {
     var index = (rpcCursor + i) % n;
     var host = "?";
-    try { host = new URL(activeRpcUrls[index]).host; } catch (e) { /* keep ? */ }
+    try { host = new URL(pool[index]).host; } catch (e) { /* keep ? */ }
     try {
-      response = await fetch(activeRpcUrls[index], {
+      response = await fetch(pool[index], {
         method: "POST", headers: { "Content-Type": "application/json" }, body: body
       });
       if (!response.ok) { tried.push(host + ":http" + response.status); continue; }
@@ -447,7 +463,11 @@ async function computeTally(env, origin) {
     if (KNOWN_ROUTERS.indexOf(address) > -1) continue;
     if (!state.eoa.has(address)) pending.push(address);
   }
-  var CODE_BATCH = 50;
+  /* 10 is the largest batch every node in the pool accepts (base.org caps
+     there); larger and base.org drops out, leaving too few nodes to spread
+     the load without rate-limiting. ~900 addresses => ~90 batched requests,
+     comfortably under Cloudflare's per-invocation subrequest cap. */
+  var CODE_BATCH = 10;
   var pb, ci, slice, codes;
   for (pb = 0; pb < pending.length; pb += CODE_BATCH) {
     slice = pending.slice(pb, pb + CODE_BATCH);
