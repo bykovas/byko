@@ -17,7 +17,7 @@
      pool price above is still read straight from the chain in the browser, as
      the lede promises. */
   var POOL_API = "https://byko-market.bykovas.lt/api/pool";
-  var EUR_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 400, 500];
+  var EUR_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 250, 400, 500, 750, 1000, 1500];
   var RATES_CACHE_KEY = "byko-rates-v4";
   var RATES_MAX_AGE = 3 * 60 * 1000;
   var rates = null;
@@ -171,6 +171,13 @@
     return String(Math.floor(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "\u2009");
   }
 
+  /* Free text, not <input type=number>: the spinners were noise at 40px and the
+     comma decimal is what a European keyboard actually produces. */
+  function parseEur(raw) {
+    var n = parseFloat(String(raw == null ? "" : raw).replace(",", ".").replace(/\s/g, ""));
+    return isFinite(n) && n > 0 ? n : null;
+  }
+
   /* USDC in, BYKO out \u2014 the pool's constant product with the 0.3% fee, the same
      arithmetic getAmountsOut runs (checked equal to the whole BYKO). One helper
      feeds both the fixed rows and the converter, so they can never disagree. */
@@ -184,29 +191,58 @@
     return bykoOut(eur * rates.eur.rate);
   }
 
-  /* The converter: a free-form euro amount, quoted the same way as the rows. */
+  /* One quote list, emitted twice -- the second copy aria-hidden, since it is
+     the same data. Both the tape and the calculator read through bykoForEur,
+     which is what keeps them from ever disagreeing. */
+  function quoteHtml(eur) {
+    var byko = bykoForEur(eur);
+    return '<span class="q"><span class="eur">' + eur.toLocaleString("de-DE") + " €</span>" +
+      "<b>" + (byko != null ? fmtInt(byko) : "—") + "</b>" +
+      '<span class="unit">byko</span></span>';
+  }
+
+  function renderTape() {
+    var track = byId("rates-track");
+    var tape = byId("rates-tape");
+    var html = "";
+    var i;
+    if (!track) return;
+    for (i = 0; i < EUR_STEPS.length; i++) html += quoteHtml(EUR_STEPS[i]);
+    /* Two copies: translateX(-50%) then lands on the start of the second and the
+       loop has no seam. The duplicate is decorative -- the label carries the data. */
+    track.innerHTML = html + html.replace(/<span class="q">/g, '<span class="q" aria-hidden="true">');
+    if (tape) {
+      tape.setAttribute("aria-label", "Euro denominations quoted in BYKO: " +
+        EUR_STEPS.map(function (e) {
+          var b = bykoForEur(e);
+          return e + " euro buys " + (b != null ? fmtInt(b) : "no quote yet") + " BYKO";
+        }).join(", "));
+    }
+  }
+
+  /* The calculator: a free-form euro amount, quoted the same way as the tape.
+     The per-euro line is the price impact made visible -- it falls as the
+     amount rises, the one thing the block asserts in prose and otherwise never
+     shows. */
   function updateConvert() {
     var input = byId("convert-eur");
     var out = byId("convert-byko");
+    var eff = byId("convert-eff");
+    var eur, byko;
     if (!input || !out) return;
-    var eur = parseFloat(input.value);
-    var byko = isFinite(eur) && eur > 0 ? bykoForEur(eur) : null;
-    out.textContent = byko != null ? fmtInt(byko) : "\u2014";
+    eur = parseEur(input.value);
+    byko = eur != null ? bykoForEur(eur) : null;
+    out.textContent = byko != null ? fmtInt(byko) : "—";
+    if (eff) {
+      eff.textContent = byko != null
+        ? fmtInt(byko / eur) + " BYKO per € at this size"
+        : "each size gets its own rate — larger orders get worse ones";
+    }
   }
 
   function renderRates() {
-    var grid = byId("rates-grid");
     var note = byId("rates-note");
-    if (grid) {
-      var html = "";
-      var i, byko;
-      for (i = 0; i < EUR_STEPS.length; i++) {
-        byko = bykoForEur(EUR_STEPS[i]);
-        html += '<div><span class="eur">' + EUR_STEPS[i].toLocaleString("de-DE") + "\u2009\u20AC</span>" +
-          '<b class="byko">' + (byko != null ? fmtInt(byko) : "\u2014") + "</b></div>";
-      }
-      grid.innerHTML = html;
-    }
+    renderTape();
     updateConvert();
     if (!note) return;
     if (!rates || !rates.eur) { note.textContent = "asking the pool\u2026"; return; }
@@ -432,12 +468,34 @@
     window.setTimeout(function () { hideLoading("chart-loading"); }, 20000);
   }
 
+  /* +10 / +50 / +100 / +500 add to the current amount; clear empties it. One
+     listener on the row, delegated to the button that was clicked. */
+  function initCalc() {
+    var input = byId("convert-eur");
+    var steps = document.querySelector(".calc .steps");
+    if (input) input.addEventListener("input", updateConvert);
+    if (!steps) return;
+    steps.addEventListener("click", function (event) {
+      var button = event.target.closest("button");
+      var add;
+      if (!button || !input) return;
+      if (button.hasAttribute("data-clear")) {
+        input.value = "";
+      } else {
+        add = parseFloat(button.getAttribute("data-add"));
+        if (!isFinite(add)) return;
+        input.value = String((parseEur(input.value) || 0) + add);
+      }
+      updateConvert();
+      input.focus();
+    });
+  }
+
   loadMarket(true);
   window.setInterval(function () { loadMarket(true); }, 30000);
   loadRates();
   window.setInterval(loadRates, 180000);
-  var convertInput = byId("convert-eur");
-  if (convertInput) convertInput.addEventListener("input", updateConvert);
+  initCalc();
   initDonutMode();
   loadHolders();
   watchChart();

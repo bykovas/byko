@@ -8,7 +8,8 @@
  *   1. Blue is a legend, not decoration. --byko-live marks a value read from
  *      the chain live; a figure without blue was counted by hand.
  *   2. No opacity for text, no shadows, no radius (except controls), no
- *      animation beyond 0.15s on colour.
+ *      animation beyond 0.15s on colour — except the market quote tape, whose
+ *      motion IS its meaning; it stops under prefers-reduced-motion.
  *   3. Mono is data only — never labels, nav, kickers or field names.
  */
 

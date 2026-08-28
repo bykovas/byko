@@ -46,38 +46,60 @@
 #market-chart iframe{display:block;width:100%;height:100%;border:0;background:var(--byko-paper-2)}
 #chart-loading{position:absolute;top:14px;left:14px}
 
-/* Denominations. The euro is the outside world's unit, so it is set in the
-   label face; the BYKO figure is mono and blue because it is the pool's own
-   constant-product answer, the same maths a swap makes. Two rows of five, then
-   a converter for any other amount on the same arithmetic. */
 .rate-legend{display:flex;align-items:baseline;gap:14px;padding-bottom:10px}
-.rate-legend .eur{font:700 25px/1 var(--byko-font-sans);letter-spacing:-.03em;color:var(--byko-ink)}
-.rate-legend .eq{font:400 20px/1 var(--byko-font-sans);color:var(--byko-label)}
-.rate-legend .byko{font:600 22px/1 var(--byko-font-mono);letter-spacing:-.02em;color:var(--byko-live-ink)}
 .rate-legend .data{margin-left:auto;color:var(--byko-label)}
 
-.rates{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));column-gap:22px;
-  border-top:var(--byko-live-bar);border-bottom:var(--byko-rule-hair);
-  font-variant-numeric:var(--byko-numeric)}
-.rates > div{padding:12px 12px 13px 0;border-bottom:var(--byko-rule-hair)}
-.rates > div:nth-last-child(-n+5){border-bottom:0}
-.rates .eur{display:block;font:700 12px var(--byko-font-sans);letter-spacing:.09em;
+/* Quote tape. The ten-cell grid read as a price list; a tape reads as an
+   instrument — the same figures, but the block says they move without a word of
+   copy. The track holds the quote list TWICE, so translateX(-50%) lands exactly
+   on the start of the second copy and the loop has no seam. The one animation
+   this stylesheet allows. */
+.tape{position:relative;overflow:hidden;background:var(--byko-paper-3);
+  border-top:var(--byko-live-bar);border-bottom:var(--byko-rule-hair)}
+.tape-track{display:flex;width:max-content;animation:byko-tape 64s linear infinite}
+.tape q,.tape .q{display:inline-flex;align-items:baseline;gap:9px;padding:10px 18px;
+  border-right:var(--byko-rule-hair);white-space:nowrap}
+.tape .q .eur{font:700 10.5px var(--byko-font-sans);letter-spacing:.09em;
   text-transform:uppercase;color:var(--byko-ink)}
-.rates .byko{display:block;margin-top:7px;text-align:right;font:600 19px/1 var(--byko-font-mono);
-  letter-spacing:-.02em;color:var(--byko-live-ink)}
+.tape .q b{font:600 15px/1 var(--byko-font-mono);letter-spacing:-.02em;
+  color:var(--byko-live-ink);font-variant-numeric:var(--byko-numeric)}
+.tape .q .unit{font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);
+  text-transform:uppercase;color:var(--byko-label)}
+@keyframes byko-tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* Motion off: the track stops, so the tape becomes a row the reader scrolls. */
+@media (prefers-reduced-motion:reduce){
+  .tape{overflow-x:auto}
+  .tape-track{width:auto}
+}
 
-/* The converter: a free-form euro amount on the same maths as the rows. The
-   pool's bottom rule already separates it, so it carries no border of its own. */
-.rate-convert{display:flex;align-items:center;gap:12px;padding:16px 12px 6px 0}
-.rate-convert input{width:170px;max-width:46vw;height:44px;padding:0 13px;background:var(--byko-paper);
-  border:1px solid rgba(13,17,22,.22);border-radius:var(--byko-radius-control);
-  font:600 20px/1 var(--byko-font-mono);color:var(--byko-ink);font-variant-numeric:var(--byko-numeric)}
-.rate-convert input:focus{outline:none;border-color:var(--byko-live-ink)}
-.rate-convert input::placeholder{color:var(--byko-label);font-weight:400;font-size:15px}
-.rate-convert .conv-unit{font:700 13px var(--byko-font-sans);letter-spacing:.06em;
-  text-transform:uppercase;color:var(--byko-ink)}
-.rate-convert .byko{margin-left:auto;text-align:right;font:600 26px/1 var(--byko-font-mono);
-  letter-spacing:-.03em;color:var(--byko-live-ink);font-variant-numeric:var(--byko-numeric)}
+/* The calculator. Full content width, the input and the answer on one baseline.
+   minmax(min(100%,420px),1fr) gives two columns above ~900px and one below,
+   with no media query — the floor collapses on its own. */
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));
+  gap:32px 44px;align-items:end;padding:26px 0 24px;border-bottom:var(--byko-rule-heavy)}
+.calc .in-wrap{display:flex;align-items:stretch;margin-top:10px;
+  border:var(--byko-rule-heavy);border-radius:var(--byko-radius-control);background:var(--byko-paper)}
+.calc input{flex:1;min-width:0;height:66px;padding:0 16px;background:transparent;border:0;
+  font:600 40px/1 var(--byko-font-mono);letter-spacing:-.04em;color:var(--byko-ink);
+  font-variant-numeric:var(--byko-numeric)}
+.calc input:focus{outline:none}
+.calc .in-wrap:focus-within{border-color:var(--byko-live-ink)}
+.calc input::placeholder{color:var(--byko-label);font-weight:400;font-size:20px}
+.calc .cur{display:flex;align-items:center;padding:0 18px 0 14px;
+  border-left:var(--byko-rule-hair);font:700 22px var(--byko-font-sans);color:var(--byko-ink)}
+.calc .steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.calc .steps button{min-height:var(--byko-tap);padding:0 16px;background:var(--byko-paper);
+  border:var(--byko-bd-input);border-radius:var(--byko-radius-control);
+  font:500 14px var(--byko-font-mono);color:var(--byko-ink);cursor:pointer;
+  transition:var(--byko-transition)}
+.calc .steps button:hover{background:var(--byko-paper-2);border-color:var(--byko-ink)}
+.calc .steps button.clear{font-family:var(--byko-font-sans);color:var(--byko-label)}
+.calc .steps button.clear:hover{color:var(--byko-ink)}
+.calc .out{text-align:right;min-width:0}
+.calc .out b{display:block;margin-top:6px;font:600 clamp(40px,7vw,64px)/1 var(--byko-font-mono);
+  letter-spacing:-.045em;color:var(--byko-live-ink);font-variant-numeric:var(--byko-numeric)}
+.calc .out .unit{display:block;margin-top:10px}
+.calc .eff{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
 
 .holders-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:44px;align-items:start;margin-top:26px}
 .donut-mode{display:flex;gap:8px;margin-bottom:14px}
@@ -110,13 +132,6 @@
   .price-big{font-size:52px}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
-  /* Ten cells, so two columns make five even rows — nothing is dropped. */
-  .rates{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px}
-  .rates > div{padding:12px 0 14px;border-bottom:var(--byko-rule-hair)}
-  .rates > div:nth-last-child(-n+2){border-bottom:0}
-  .rates .eur{font-size:12px}
-  .rates .byko{font-size:22px;margin-top:6px}
-  .rate-convert .byko{font-size:22px}
   .rate-legend{flex-wrap:wrap;gap:10px}
   .rate-legend .data{margin-left:0;flex-basis:100%}
 }
@@ -214,24 +229,44 @@
       <span class="kicker">Denominations · computed</span>
       <h2>What a euro buys</h2>
     </div>
-    <p class="section-intro">Ten round euro amounts, and a converter for any other — each figure the pool's
-      own constant-product answer, the same maths <span class="mono">getAmountsOut</span> runs, with the
-      0.3% fee and the price impact already in it, worked out in your browser from the reserves. This is
+    <p class="section-intro">Fourteen euro amounts on a running tape, and a calculator for any other — each figure the
+      pool's own constant-product answer, the same maths <span class="mono">getAmountsOut</span> runs, with
+      the 0.3% fee and the price impact already in it, worked out in your browser from the reserves. This is
       deliberately not the price above multiplied out: the pool answers one swap at a time, and the larger
-      the order the worse the rate it gets, which is why five hundred euro does not buy five hundred times
-      what one euro buys. Nothing here is a quote or an offer.</p>
+      the order the worse the rate it gets, which is why fifteen hundred euro does not buy fifteen hundred
+      times what one euro buys. Nothing here is a quote or an offer.</p>
 
     <div class="rate-legend">
-      <span class="eur">€</span><span class="eq">=</span><span class="byko">BYKO</span>
+      <span class="label">Tape · fourteen denominations, one swap each</span>
       <span class="data">euro in Archivo · BYKO in mono, blue = read back from the chain</span>
     </div>
 
-    <div class="rates" id="rates-grid"><!-- filled by market.js --></div>
+    <div class="tape" id="rates-tape" role="img" aria-label="Euro denominations quoted in BYKO">
+      <div class="tape-track" id="rates-track"><!-- filled by market.js --></div>
+    </div>
 
-    <div class="rate-convert">
-      <input id="convert-eur" type="number" inputmode="decimal" min="0" step="any" placeholder="any amount" aria-label="euro amount to convert to BYKO">
-      <span class="conv-unit">€</span>
-      <b class="byko" id="convert-byko">—</b>
+    <div class="calc">
+      <div>
+        <span class="label">You swap</span>
+        <div class="in-wrap">
+          <input id="convert-eur" type="text" inputmode="decimal" value="50"
+            placeholder="any amount" aria-label="euro amount to convert to BYKO">
+          <span class="cur">€</span>
+        </div>
+        <div class="steps">
+          <button type="button" data-add="10">+10</button>
+          <button type="button" data-add="50">+50</button>
+          <button type="button" data-add="100">+100</button>
+          <button type="button" data-add="500">+500</button>
+          <button type="button" class="clear" data-clear>clear</button>
+        </div>
+      </div>
+      <div class="out">
+        <span class="label">You get</span>
+        <b id="convert-byko">—</b>
+        <span class="label unit">byko</span>
+        <p class="eff" id="convert-eff">each size gets its own rate — larger orders get worse ones</p>
+      </div>
     </div>
 
     <p class="fine" id="rates-note">waiting for the EUR/USD reference rate</p>
@@ -333,6 +368,6 @@
   if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
 })();
 </script>
-<script src="market.js?v=20260828c" defer></script>
+<script src="market.js?v=20260828d" defer></script>
 </body>
 </html>
