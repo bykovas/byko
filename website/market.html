@@ -36,21 +36,28 @@
 .loading{display:inline-flex;align-items:center;gap:7px;font:var(--byko-data);color:var(--byko-label)}
 .loading[hidden]{display:none}
 
-.pool-bar{position:relative;display:grid;grid-template-columns:var(--split,50%) 1fr;height:64px;margin-top:30px;
-  border-top:var(--byko-rule-heavy);border-bottom:var(--byko-rule-heavy)}
-/* the dashed line is where the pool started: 740,227 BYKO : 74.0227 USDC.
-   The solid edge between the two sides is where it stands now, so the gap
-   between them is the whole story. */
-.pool-bar .genesis{position:absolute;left:50%;top:-9px;bottom:-9px;width:0;
+/* A log axis: each reserve as a percentage of its genesis level. The gridlines
+   are the doubling ticks 10·20·40·80·160·320·640, equally spaced because the
+   scale is logarithmic; genesis (100%) is the dashed reference; the two dots
+   are where the pool stands now. */
+.pool-axis{position:relative;height:2px;background:var(--byko-ink);margin:52px 10px 60px}
+.pool-axis .grid{position:absolute;top:-9px;bottom:-9px;width:0;
+  border-left:1px dotted rgba(13,17,22,.3);pointer-events:none}
+.pool-axis .grid span{position:absolute;bottom:12px;left:0;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);color:var(--byko-label)}
+.pool-axis .genesis{position:absolute;top:-15px;bottom:-15px;width:0;
   border-left:2px dashed rgba(13,17,22,.55);transform:translateX(-1px);pointer-events:none}
-.pool-bar .genesis span{position:absolute;left:8px;top:-2px;font:var(--byko-label-sm-font);
-  letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;color:var(--byko-label);white-space:nowrap}
-.pool-side{display:flex;flex-direction:column;justify-content:center;padding:0 14px}
-.pool-side.l{background:var(--byko-paper-2);border-right:2px solid var(--byko-ink)}
-.pool-side.r{background:var(--byko-live-wash);text-align:right;align-items:flex-end}
-.pool-side b{font:600 18px/1.2 var(--byko-font-mono);font-variant-numeric:tabular-nums}
-.pool-side span{font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);
-  text-transform:uppercase;color:var(--byko-label);margin-top:5px}
+.pool-axis .genesis span{position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;
+  color:var(--byko-label);white-space:nowrap}
+.pool-axis .dot{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;
+  transform:translate(-50%,-50%);border:2px solid var(--byko-paper);z-index:2}
+.pool-axis .dot.byko{background:var(--byko-ink)}
+.pool-axis .dot.usdc{background:var(--byko-live-ink)}
+.pool-axis .dot b{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  font:600 14px/1.15 var(--byko-font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pool-axis .dot.byko b{color:var(--byko-ink)}
+.pool-axis .dot.usdc b{color:var(--byko-live-ink)}
 .pool-note{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
 
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:18px;
@@ -109,6 +116,9 @@
 
 @media (max-width:900px){
   .price-big{font-size:52px}
+  /* Tighter axis margins and a smaller dot figure so the labels fit a phone. */
+  .pool-axis{margin:46px 4px 54px}
+  .pool-axis .dot b{font-size:12px}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
   /* Two columns, so eight cells make four even rows. The one dropped is 200 €,
@@ -165,12 +175,19 @@
         <p class="price-sub" id="price-sub">1 BYKO = — USDC</p>
         <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC →</a></p>
 
-        <div class="pool-bar">
-          <div class="pool-side l"><b id="market-byko">—</b><span id="market-byko-label">BYKO in pool</span></div>
-          <div class="pool-side r"><b id="market-usdc">—</b><span id="market-usdc-label">USDC in pool</span></div>
-          <i class="genesis" aria-hidden="true"><span>genesis</span></i>
+        <div class="pool-axis" role="img" aria-label="Pool reserves as a percentage of their genesis levels, on a logarithmic axis">
+          <i class="grid" style="left:0%" aria-hidden="true"><span>10</span></i>
+          <i class="grid" style="left:16.667%" aria-hidden="true"><span>20</span></i>
+          <i class="grid" style="left:33.333%" aria-hidden="true"><span>40</span></i>
+          <i class="grid" style="left:50%" aria-hidden="true"><span>80</span></i>
+          <i class="grid" style="left:66.667%" aria-hidden="true"><span>160</span></i>
+          <i class="grid" style="left:83.333%" aria-hidden="true"><span>320</span></i>
+          <i class="grid" style="left:100%" aria-hidden="true"><span>640</span></i>
+          <i class="genesis" style="left:55.4%" aria-hidden="true"><span>genesis</span></i>
+          <i class="dot byko" id="byko-dot" style="left:29%"><b id="market-byko">—</b></i>
+          <i class="dot usdc" id="usdc-dot" style="left:81%"><b id="market-usdc">—</b></i>
         </div>
-        <p class="pool-note">dashed line = genesis, 740,227 BYKO : 74.0227 USDC · the solid edge is where the pool stands now · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
+        <p class="pool-note">log scale — each reserve as % of its genesis level, on doubling gridlines (10 · 20 · 40 · 80 · 160 · 320 · 640) · genesis = 100%, 740,227 BYKO : 74.0227 USDC · BYKO shrank as it was bought, USDC flowed in · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
       </div>
     </div>
 
@@ -303,6 +320,6 @@
   if (frame && loading) frame.addEventListener("load", function () { loading.hidden = true; });
 })();
 </script>
-<script src="market.js?v=20260828" defer></script>
+<script src="market.js?v=20260828a" defer></script>
 </body>
 </html>

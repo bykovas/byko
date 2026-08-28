@@ -90,20 +90,23 @@
 
   function renderMarket(data) {
     var price = data.usdc / data.byko;
-    var bykoRelative = data.byko / GENESIS_BYKO;
-    var usdcRelative = data.usdc / GENESIS_USDC;
-    var split = bykoRelative / (bykoRelative + usdcRelative) * 100;
-    var displaySplit = Math.max(8, Math.min(92, split));
+    /* A plain log axis: each reserve as a percentage of its genesis level, on
+       fixed doubling gridlines 10 · 20 · 40 · 80 · 160 · 320 · 640, genesis at
+       100%. Equal spacing for every doubling is what makes it read as log. BYKO
+       shrank as it was bought (below 100%); USDC flowed in (above 100%). */
+    function poolPos(pct) {
+      var lo = Math.log(10) / Math.LN10, hi = Math.log(640) / Math.LN10;
+      return Math.max(1.5, Math.min(98.5, (Math.log(pct) / Math.LN10 - lo) / (hi - lo) * 100));
+    }
+    var bykoPct = data.byko / GENESIS_BYKO * 100;
+    var usdcPct = data.usdc / GENESIS_USDC * 100;
     var marketPrice = byId("market-price");
     var priceSub = byId("price-sub");
     var marketByko = byId("market-byko");
     var marketUsdc = byId("market-usdc");
-    var bykoLabel = byId("market-byko-label");
-    var usdcLabel = byId("market-usdc-label");
-    var bykoDelta = (data.byko / GENESIS_BYKO - 1) * 100;
-    var usdcDelta = data.usdc - GENESIS_USDC;
     var marketUpdated = byId("market-updated");
-    var poolBar = document.querySelector(".pool-bar");
+    var bykoDot = byId("byko-dot");
+    var usdcDot = byId("usdc-dot");
     var indexPrice = byId("index-price");
     /* the hero readout carries the bare figure; its unit lives in the label */
     var indexPriceFigure = byId("index-price-figure");
@@ -112,14 +115,13 @@
     latestBlock = data.block;
     if (marketPrice) marketPrice.textContent = (price * 100).toFixed(4);
     if (priceSub) priceSub.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
-    /* Whole numbers with a leading ~: four decimals overflow the bar on a
-       phone, and the exact reserves are one click away on BaseScan. */
-    if (marketByko) marketByko.textContent = "~" + Math.round(data.byko).toLocaleString("en-US");
-    if (marketUsdc) marketUsdc.textContent = "~" + Math.round(data.usdc).toLocaleString("en-US");
-    if (bykoLabel) bykoLabel.textContent = "BYKO in pool (~" + (bykoDelta >= 0 ? "+" : "") + Math.round(bykoDelta) + "%)";
-    if (usdcLabel) usdcLabel.textContent = "USDC in pool (~" + (usdcDelta >= 0 ? "+" : "") + Math.round(usdcDelta) + " USDC)";
+    /* Whole numbers with a leading ~; the exact reserves are one click away.
+       The percent is the point on the axis, spelled out beside the figure. */
+    if (marketByko) marketByko.textContent = "~" + Math.round(data.byko).toLocaleString("en-US") + " · " + Math.round(bykoPct) + "%";
+    if (marketUsdc) marketUsdc.textContent = "~" + Math.round(data.usdc).toLocaleString("en-US") + " · " + Math.round(usdcPct) + "%";
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
-    if (poolBar) poolBar.style.setProperty("--split", displaySplit.toFixed(1) + "%");
+    if (bykoDot) bykoDot.style.left = poolPos(bykoPct).toFixed(2) + "%";
+    if (usdcDot) usdcDot.style.left = poolPos(usdcPct).toFixed(2) + "%";
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
     if (indexPriceFigure) indexPriceFigure.textContent = price.toFixed(6);
     hideLoading("price-loading");
