@@ -180,20 +180,15 @@ export class ArmLock {
       return;
     }
 
-    /* someone else moved the pool since our last trade: skip this fire */
-    const lastRes = await env.DB.prepare(
-      `SELECT reserve_usdc_after FROM trades WHERE arm = ?1 AND reserve_usdc_after IS NOT NULL
-        ORDER BY id DESC LIMIT 1`,
-    ).bind(arm).first<string>("reserve_usdc_after");
-    if (lastRes) {
-      const prev = Number(lastRes);
-      const jump = prev > 0 ? Math.abs(Number(reserves.usdc) - prev) / prev * 100 : 0;
-      if (jump > r.guards.max_reserve_jump_pct) {
-        await event(env, arm, "skip", `reserve jump ${jump.toFixed(1)}% — not trading into an unknown move`);
-        await this.reschedule(r.wallet);
-        return;
-      }
-    }
+    /* The reserve-jump skip is gone (eighth amendment). It compared the pool's
+       USDC reserve against the level after this arm's own last trade and
+       skipped on a move past the limit — but the baseline only advances when a
+       trade is made, so any large legitimate change (a real buyer taking a
+       chunk out of the pool — which is the experiment succeeding) locked the
+       arm out permanently: it could not trade, so the baseline never caught up,
+       so the jump stayed over the limit forever. A guard that cannot tell a
+       genuine buy from manipulation and then deadlocks on the former is not
+       protecting anything; the price-deviation guard still bounds each trade. */
 
     /* stop conditions (byko only): max days, or the flag actually cleared */
     if (row?.started_at && r.stop.max_days != null) {

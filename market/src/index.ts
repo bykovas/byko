@@ -285,6 +285,13 @@ export default Sentry.withSentry(sentryOptions, {
     const dueForCollect = !last || Date.now() - Date.parse(last.replace(" ", "T") + "Z") > 55 * 60_000;
     if (dueForCollect) {
       try { await collect(env); } catch (err) { await event(env, null, "error", `collector: ${String((err as Error)?.message ?? err).slice(0, 200)}`); }
+      /* collect is subrequest-heavy (classifiers + chain reads). Warming the
+         pool and refreshing the mirrors in the SAME invocation pushed the run
+         past Cloudflare's per-invocation subrequest limit — recorded hourly as
+         "pool warm: Too many subrequests". They run on the next 10-minute tick
+         instead, when collect is not also spending the budget. */
+      await heartbeat(env);
+      return;
     }
     /* Warm the cache from the cron so the first reader of the hour is not the
        one who pays for the recompute. */
