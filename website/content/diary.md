@@ -34,6 +34,29 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## €374 was enough when the institutions were right — 28 August 2026
+
+Revolut's EURR currently has about 374 EURR in circulation.
+
+Its contract model is almost the opposite of BYKO. EURR must be mintable and burnable because euros enter and leave the system. Its issuer, Bridge Building S.A., is a regulated electronic money institution, and holders have a redemption claim at par.
+
+BYKO was minted once: 790,227 tokens. There is no later minting and no owner privilege that can change the supply.
+
+So EURR is technically more centralized. It is also vastly more legitimate in the eyes of the surrounding infrastructure.
+
+That legitimacy does not come from smart-contract purity. It comes from outside the contract: issuer, licence, reserves, redemption rights and Revolut distribution.
+
+The interesting number is 374.
+
+A regulated institutional token can be accepted with roughly €374 in circulation while small independent tokens are routinely judged by holder counts, market activity and liquidity.
+
+The experiment keeps finding the same thing: legitimacy is not a property of code alone.
+
+---
+**Teaser:** Revolut's EURR is technically more centralized than BYKO, yet its legitimacy comes from the issuer, licence, reserves and redemption rights — even with only about €374 in circulation.
+**X:** Revolut's EURR has minting, burning and issuer control. BYKO has none. Yet EURR is legitimate with ~€374 in circulation. The difference is not smart-contract purity. It is the institution behind it.
+**Image:** ![A split illustration titled Two paths, one truth of trust — on the left a classical institution, Revolut and Bridge Building S.A., with a hand feeding a coin into a minting press beside a Regulator sign; on the right a glowing blue BYKO crystal on bare rock marked code-based path, with hands holding BYKO tokens; a balance in the middle weighs technical centralization against decentralization.](/assets/diary/374-was-enough-when-the-institutions-were-right/two-paths-of-trust.jpg)
+
 ## The wallet hides BYKO and prices the lookalikes — 27 August 2026
 
 I searched Base App for EURR after Revolut announced its euro stablecoin. The result was more useful than the official token.
