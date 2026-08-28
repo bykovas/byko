@@ -149,26 +149,34 @@ async function rpc(method, params) {
   throw new Error("rpc: no endpoint answered " + method + " [" + tried.join(" | ") + "]");
 }
 
-/* Endpoints that actually honour a JSON-RPC batch. Measured against Base's
-   public nodes: base.org, publicnode, tenderly and 1rpc all return a correct
-   array for a 10-call batch; DRPC answers a batch with HTTP 500 and meowrpc
-   with 400. Dropping the latter two means a batch never burns a round-robin
-   slot on a node that structurally can't answer it. base.org additionally
-   caps a batch at 10 calls (error -32014 above that), which CODE_BATCH honours. */
+/* Endpoints that honour a large JSON-RPC batch, publicnode first. This Pages
+   project is on the free Workers plan — 50 subrequests per invocation — so the
+   ~900 eth_getCode checks must go out as a handful of big batches, not many
+   small ones. Measured against Base's public nodes: publicnode answers a
+   150-call batch cleanly, six in a burst, no rate-limit; base.org caps a batch
+   at 10 (-32014), 1rpc plan-limits at ~100 (-32001), tenderly 429s at 100, and
+   DRPC/meowrpc reject a batch outright (500/400). So publicnode carries the
+   batches and the rest sit behind it only as a fallback if it ever fails. */
 function batchRpcUrls() {
-  var out = activeRpcUrls.filter(function (u) {
+  var usable = activeRpcUrls.filter(function (u) {
     var h = "";
     try { h = new URL(u).host; } catch (e) { /* treat as unusable */ return false; }
     return h.indexOf("drpc") < 0 && h.indexOf("meowrpc") < 0;
   });
-  return out.length ? out : activeRpcUrls;
+  usable.sort(function (a, b) {
+    return (a.indexOf("publicnode") > -1 ? 0 : 1) - (b.indexOf("publicnode") > -1 ? 0 : 1);
+  });
+  return usable.length ? usable : activeRpcUrls;
 }
+
+/* Sticky, separate from rpcCursor: once a node answers a batch, the next batch
+   goes back to the same node rather than rotating onto one that will just
+   fail a large batch and burn a subrequest. */
+var batchCursor = 0;
 
 /* One HTTP request carrying many JSON-RPC calls. 900+ eth_getCode checks as
    separate fetches blow Cloudflare's per-invocation subrequest cap — the whole
-   reason this endpoint 503'd; batched they cost a fraction. Some nodes
-   rate-limit, so round-robin over the batch-capable pool keeps trying until one
-   returns the full array. */
+   reason this endpoint 503'd; batched they cost a handful. */
 async function rpcBatch(calls) {
   var pool = batchRpcUrls();
   var n = pool.length;
@@ -178,7 +186,7 @@ async function rpcBatch(calls) {
   }));
   var tried = [];
   for (i = 0; i < n; i++) {
-    var index = (rpcCursor + i) % n;
+    var index = (batchCursor + i) % n;
     var host = "?";
     try { host = new URL(pool[index]).host; } catch (e) { /* keep ? */ }
     try {
@@ -198,7 +206,7 @@ async function rpcBatch(calls) {
         out.push(r.result);
       }
       if (!okAll) { tried.push(host + ":partial"); continue; }
-      rpcCursor = (index + 1) % n;
+      batchCursor = index; /* stay on the winner for the next batch */
       return out;
     } catch (error) { tried.push(host + ":ex " + String(error && error.message || error).slice(0, 30)); }
   }
@@ -463,11 +471,11 @@ async function computeTally(env, origin) {
     if (KNOWN_ROUTERS.indexOf(address) > -1) continue;
     if (!state.eoa.has(address)) pending.push(address);
   }
-  /* 10 is the largest batch every node in the pool accepts (base.org caps
-     there); larger and base.org drops out, leaving too few nodes to spread
-     the load without rate-limiting. ~900 addresses => ~90 batched requests,
-     comfortably under Cloudflare's per-invocation subrequest cap. */
-  var CODE_BATCH = 10;
+  /* On the free plan's 50-subrequest budget the batches must be few and large,
+     not many and small: ~900 addresses at 150 each is 6 requests, all served
+     by publicnode (proven to take six 150-batches back-to-back without a
+     rate-limit). getLogs + founder fetch add only a few more — well under 50. */
+  var CODE_BATCH = 150;
   var pb, ci, slice, codes;
   for (pb = 0; pb < pending.length; pb += CODE_BATCH) {
     slice = pending.slice(pb, pb + CODE_BATCH);
