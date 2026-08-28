@@ -43,12 +43,13 @@ var ZERO = "0x0000000000000000000000000000000000000000";
 var DEAD = "0x000000000000000000000000000000000000dead";
 var POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
 var WEI = 1000000000000000000n;
-var CHUNK_SIZE = 10000;
-/* Pages Functions allow ~50 subrequests per request. A fresh checkpoint
-   (e.g. after a version bump) sits hundreds of chunks behind the chain,
-   so one request can never rescan it all: scan at most this many chunks,
-   checkpoint the progress and let the next request continue. */
-var MAX_SCAN_CHUNKS = 30;
+/* One big window instead of ~100 small ones. The public 10k-range nodes
+   refuse this and round-robin skips them; Tenderly (and a paid DRPC key)
+   serve the whole token history in a single getLogs, so the scan costs one
+   subrequest, not one per 10k blocks — which is what pushed the whole run
+   past Cloudflare's per-invocation subrequest cap and made it 503. */
+var CHUNK_SIZE = 4000000;
+var MAX_SCAN_CHUNKS = 4;
 var MIN_VOTE = 100; /* BYKO — config, published on the page */
 var MIN_VOTE_WEI = BigInt(MIN_VOTE) * WEI;
 var RULE_TEXT = MIN_VOTE + "+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers";
@@ -101,7 +102,7 @@ var KNOWN_ROUTERS = [
 /* v2: founder wallet list extended (buyers + neighbouring-project wallets).
    The gift set is stamped during the scan, so widening the list needs a
    full rescan — hence the version bump, which abandons the v1 checkpoint. */
-var CHECKPOINT_KEY = "tally-checkpoint-v3";
+var CHECKPOINT_KEY = "tally-checkpoint-v4";
 var CHECKPOINT_CACHE_URL = "https://byko-checkpoint.invalid/" + CHECKPOINT_KEY;
 
 function json(body, status, headers) {
@@ -146,6 +147,46 @@ async function rpc(method, params) {
     } catch (error) { tried.push(host + ":ex " + String(error && error.message || error).slice(0, 30)); }
   }
   throw new Error("rpc: no endpoint answered " + method + " [" + tried.join(" | ") + "]");
+}
+
+/* One HTTP request carrying many JSON-RPC calls. 900+ eth_getCode checks as
+   separate fetches blow Cloudflare's per-invocation subrequest cap — the whole
+   reason this endpoint 503'd; batched ~50 at a time they cost a handful.
+   base.org caps a batch at 10 and some nodes rate-limit, so round-robin keeps
+   trying until one node returns the full array. */
+async function rpcBatch(calls) {
+  var n = activeRpcUrls.length;
+  var i, response, payload, j, r;
+  var body = JSON.stringify(calls.map(function (c, id) {
+    return { jsonrpc: "2.0", id: id, method: c.method, params: c.params };
+  }));
+  var tried = [];
+  for (i = 0; i < n; i++) {
+    var index = (rpcCursor + i) % n;
+    var host = "?";
+    try { host = new URL(activeRpcUrls[index]).host; } catch (e) { /* keep ? */ }
+    try {
+      response = await fetch(activeRpcUrls[index], {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: body
+      });
+      if (!response.ok) { tried.push(host + ":http" + response.status); continue; }
+      payload = await response.json();
+      if (!Array.isArray(payload) || payload.length !== calls.length) { tried.push(host + ":shape"); continue; }
+      var byId = {};
+      for (j = 0; j < payload.length; j++) byId[payload[j].id] = payload[j];
+      var out = [];
+      var okAll = true;
+      for (j = 0; j < calls.length; j++) {
+        r = byId[j];
+        if (!r || r.error || r.result === undefined || r.result === null) { okAll = false; break; }
+        out.push(r.result);
+      }
+      if (!okAll) { tried.push(host + ":partial"); continue; }
+      rpcCursor = (index + 1) % n;
+      return out;
+    } catch (error) { tried.push(host + ":ex " + String(error && error.message || error).slice(0, 30)); }
+  }
+  throw new Error("rpc batch: no endpoint answered [" + tried.join(" | ") + "]");
 }
 
 function keyedRpcUrls(env) {
@@ -395,7 +436,27 @@ async function computeTally(env, origin) {
   for (entry of state.balances.entries()) {
     if (entry[1] > 0n) candidates.add(entry[0]);
   }
-  for (address of [...candidates].sort()) {
+  var sortedCandidates = [...candidates].sort();
+  /* Pre-fetch every EOA check in batches so ~900 addresses cost a handful of
+     subrequests instead of one each. isEoa below then reads the filled cache
+     and makes no further calls. */
+  var pending = [];
+  for (address of sortedCandidates) {
+    if (address === POOL || address === DEAD || address === ZERO) continue;
+    if (FOUNDER_WALLETS.indexOf(address) > -1) continue;
+    if (KNOWN_ROUTERS.indexOf(address) > -1) continue;
+    if (!state.eoa.has(address)) pending.push(address);
+  }
+  var CODE_BATCH = 50;
+  var pb, ci, slice, codes;
+  for (pb = 0; pb < pending.length; pb += CODE_BATCH) {
+    slice = pending.slice(pb, pb + CODE_BATCH);
+    codes = await rpcBatch(slice.map(function (a) { return { method: "eth_getCode", params: [a, "latest"] }; }));
+    for (ci = 0; ci < slice.length; ci++) {
+      state.eoa.set(slice[ci], codes[ci] === "0x" || codes[ci].indexOf("0xef0100") === 0);
+    }
+  }
+  for (address of sortedCandidates) {
     balance = state.balances.get(address) || 0n;
     if (address === POOL || address === DEAD || address === ZERO) continue;
     if (FOUNDER_WALLETS.indexOf(address) > -1) continue;
