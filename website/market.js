@@ -20,6 +20,7 @@
   var rates = null;
   var GENESIS_BYKO = 740227;
   var GENESIS_USDC = 74.0227;
+  var POOL_HALVINGS = 6;   /* halvings per side; axis spans 1.6%…6400% of genesis */
   var latestBlock = null;
   var holdersUpdated = null;
   var tierOrder = ["whale", "shark", "dolphin", "fish", "crab", "shrimp"];
@@ -90,13 +91,17 @@
 
   function renderMarket(data) {
     var price = data.usdc / data.byko;
-    /* A plain log axis: each reserve as a percentage of its genesis level, on
-       fixed doubling gridlines 10 · 20 · 40 · 80 · 160 · 320 · 640, genesis at
-       100%. Equal spacing for every doubling is what makes it read as log. BYKO
-       shrank as it was bought (below 100%); USDC flowed in (above 100%). */
-    function poolPos(pct) {
-      var lo = Math.log(10) / Math.LN10, hi = Math.log(640) / Math.LN10;
-      return Math.max(1.5, Math.min(98.5, (Math.log(pct) / Math.LN10 - lo) / (hi - lo) * 100));
+    /* The pool holds a constant product, so bykoRel and usdcRel are exact
+       reciprocals — one number places the edge. log2 keeps every halving of a
+       reserve the same distance, which is what stops a large buy from
+       collapsing the bar: at $2,500 bought the edge sits at 7.3% instead of
+       the 0.08% a linear split would give. Genesis stays pinned at 50%. */
+    function poolEdge(rel) {
+      var steps = Math.log(rel) / Math.LN2;
+      return {
+        pos: Math.max(0, Math.min(100, 50 + 50 * (steps / POOL_HALVINGS))),
+        offScale: Math.abs(steps) > POOL_HALVINGS
+      };
     }
     var bykoPct = data.byko / GENESIS_BYKO * 100;
     var usdcPct = data.usdc / GENESIS_USDC * 100;
@@ -105,8 +110,9 @@
     var marketByko = byId("market-byko");
     var marketUsdc = byId("market-usdc");
     var marketUpdated = byId("market-updated");
-    var bykoDot = byId("byko-dot");
-    var usdcDot = byId("usdc-dot");
+    var bykoLabel = byId("market-byko-label");
+    var usdcLabel = byId("market-usdc-label");
+    var poolBar = document.querySelector(".pool-bar");
     var indexPrice = byId("index-price");
     /* the hero readout carries the bare figure; its unit lives in the label */
     var indexPriceFigure = byId("index-price-figure");
@@ -115,13 +121,21 @@
     latestBlock = data.block;
     if (marketPrice) marketPrice.textContent = (price * 100).toFixed(4);
     if (priceSub) priceSub.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
-    /* Whole numbers with a leading ~; the exact reserves are one click away.
-       The percent is the point on the axis, spelled out beside the figure. */
-    if (marketByko) marketByko.textContent = "~" + Math.round(data.byko).toLocaleString("en-US") + " · " + Math.round(bykoPct) + "%";
-    if (marketUsdc) marketUsdc.textContent = "~" + Math.round(data.usdc).toLocaleString("en-US") + " · " + Math.round(usdcPct) + "%";
+
+    var bykoRel = data.byko / GENESIS_BYKO;
+    var edge = poolEdge(bykoRel);
+    if (poolBar) {
+      poolBar.style.setProperty("--split", edge.pos.toFixed(2) + "%");
+      poolBar.setAttribute("data-off-scale", edge.offScale ? "true" : "false");
+    }
+    /* The figure keeps the bare number; the percentage moves to the label line
+       (mono is data only; a label is not data). */
+    if (marketByko) marketByko.textContent = "~" + Math.round(data.byko).toLocaleString("en-US");
+    if (marketUsdc) marketUsdc.textContent = "~" + Math.round(data.usdc).toLocaleString("en-US");
+    if (bykoLabel) bykoLabel.textContent = "BYKO in pool · " + Math.round(bykoPct) + "% of genesis" +
+      (edge.offScale ? " · off scale" : "");
+    if (usdcLabel) usdcLabel.textContent = Math.round(usdcPct) + "% of genesis · USDC in pool";
     if (marketUpdated) marketUpdated.textContent = "updated " + utcTime(new Date());
-    if (bykoDot) bykoDot.style.left = poolPos(bykoPct).toFixed(2) + "%";
-    if (usdcDot) usdcDot.style.left = poolPos(usdcPct).toFixed(2) + "%";
     if (indexPrice) indexPrice.textContent = "1 BYKO = " + price.toFixed(6) + " USDC";
     if (indexPriceFigure) indexPriceFigure.textContent = price.toFixed(6);
     hideLoading("price-loading");

@@ -222,6 +222,40 @@ section{padding:var(--byko-sp-9) 0 0}
 .legend-key i{display:inline-block;width:15px;height:4px;background:var(--byko-live)}
 .legend-key i.hand{background:var(--byko-rule-2)}
 
+/* ── pool bar: the split on a halvings axis ────────────────────────────────
+   One number drives it: --split, the BYKO reserve as a share of genesis
+   mapped through log2. Genesis is pinned at 50% and is a reference, not a
+   data point. The readouts sit ABOVE the bar, never inside a segment, so a
+   thin segment never has to be widened to fit its own text. */
+.pool-readouts{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:40px}
+.pool-readouts b{display:block;font:600 18px/1.2 var(--byko-font-mono);
+  font-variant-numeric:var(--byko-numeric);white-space:nowrap}
+.pool-readouts span{display:flex;align-items:center;gap:8px;margin-top:6px;
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);
+  text-transform:uppercase;color:var(--byko-label);white-space:nowrap}
+.pool-readouts span::before{content:"";width:16px;height:5px;flex:none;
+  background:var(--byko-paper-2);border:1px solid var(--byko-rule-2)}
+.pool-readouts .r{text-align:right}
+.pool-readouts .r span{flex-direction:row-reverse}
+.pool-readouts .r span::before{background:var(--byko-live-wash);border-color:var(--byko-live)}
+
+.pool-bar{position:relative;display:grid;grid-template-columns:var(--split,50%) 1fr;
+  height:44px;margin-top:12px;border-top:var(--byko-rule-heavy);border-bottom:var(--byko-rule-heavy)}
+.pool-bar .side.l{background:var(--byko-paper-2);border-right:2px solid var(--byko-ink)}
+.pool-bar .side.r{background:var(--byko-live-wash)}
+.pool-bar .genesis{position:absolute;left:50%;top:-8px;bottom:-8px;width:0;
+  border-left:2px dashed rgba(13,17,22,.55);transform:translateX(-1px);pointer-events:none}
+.pool-bar .genesis span{position:absolute;left:8px;top:-3px;font:var(--byko-label-sm-font);
+  letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;
+  color:var(--byko-label);white-space:nowrap}
+
+.pool-ticks{position:relative;height:28px;margin-top:14px}
+.pool-ticks i{position:absolute;top:0;width:1px;height:6px;background:var(--byko-rule-2)}
+.pool-ticks i.major{height:9px;background:var(--byko-ink)}
+.pool-ticks span{position:absolute;top:11px;left:0;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);color:var(--byko-label)}
+.pool-ticks i.major span{color:var(--byko-ink)}
+
 /* ── controls ──────────────────────────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:var(--byko-tap);
   padding:11px 20px;border-radius:var(--byko-radius-control);font:600 15px var(--byko-font-sans);
@@ -331,6 +365,12 @@ a.log-row .rthumb img{width:100%;height:100%;object-fit:cover;display:block}
   .counters{grid-template-columns:repeat(2,minmax(0,1fr))}
   .counters>*{padding-left:0!important;padding-right:16px}
   .counters>*+*{border-left:0}
+  .pool-readouts{margin-top:32px}
+  .pool-readouts b{font-size:16px}
+  .pool-readouts span{font-size:9px;letter-spacing:.12em}
+  /* eleven labels do not fit a phone; drop every other one, keep 100 */
+  .pool-ticks i[data-k="1"] span,.pool-ticks i[data-k="3"] span,
+  .pool-ticks i[data-k="5"] span{display:none}
   .counters>*:nth-child(2n){border-left:var(--byko-rule-hair);padding-left:16px!important}
   .counters>*:nth-child(n+3){border-top:var(--byko-rule-hair)}
   .cards3{grid-template-columns:1fr}
