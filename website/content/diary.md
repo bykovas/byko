@@ -34,6 +34,35 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The price was real. The assumption was worth $8.7 million — 28 August 2026
+
+A price can be real and still be a bad fact to depend on.
+
+Moonwell is investigating an incident in its MAMO Core Market on Base. Security firms CertiK and PeckShield estimate the loss at about $8.7 million. The preliminary mechanism is unusually relevant to what BYKO has been measuring: MAMO had relatively thin liquidity, its market price was pushed sharply, and the inflated collateral valuation was then used to borrow more liquid assets.
+
+Moonwell responded by reducing borrow caps across its Base Core Markets to 1 wei while the incident is investigated.
+
+The interesting part for BYKO is not the exploit itself. BYKO is not lending collateral. The interesting part is the assumption underneath it.
+
+An AMM price is real in a narrow technical sense. A swap happened. Reserves changed. The chain recorded the new ratio. But another protocol using that number as collateral value makes a much stronger claim: that the price is representative enough to support an economic decision.
+
+Those are different properties.
+
+BYKO is about to make that distinction unusually visible. It can have separate real on-chain prices against USDC, EURC, WETH and HYPE. A small trade can move one of them. External arbitrage may bring it back. Or it may not.
+
+So instead of asking only "what is the BYKO price?", the experiment can measure something more useful: how much capital moves it by 1%, 5% or 10%; how long different pools remain out of line; when external bots decide the spread is worth taking; and whether the price shown by infrastructure resembles the price at which meaningful size can actually be executed.
+
+Moonwell is the expensive version of that distinction. A price existed. The consequential question was whether another system should have trusted it.
+
+The approximately $8.7 million figure is still preliminary and Moonwell has not yet published a complete post-mortem, so the final mechanics and unrecoverable loss may change.
+
+Sources: Moonwell official incident response; The Block, 27 Aug 2026; FinanceFeeds, 28 Aug 2026; CertiK and PeckShield incident assessments as reported by those publications.
+
+---
+**Teaser:** A thinly traded token on Base had a real on-chain price. An external protocol treated that price as reliable collateral value, and security firms estimate the result at about $8.7 million. BYKO is interested in the boundary between a price that exists and a price that deserves to be trusted.
+**X:** A thin Base token price was manipulated; about $8.7M was borrowed against the inflated collateral value. BYKO asks: when does an on-chain price become trustworthy enough to mean anything? Sources: Moonwell, CertiK, PeckShield.
+**Image:** ![Infographic — a balance scale weighing MAMO against BYKO, building blocks from thin liquidity to $8.7M drained, a frozen Moonwell MAMO Market alert, and a BYKO Diary notepad with the measurement questions the exploit raises](/assets/diary/the-price-was-real-the-assumption-was-worth-8-7-million/image.png)
+
 ## €374 was enough when the institutions were right — 28 August 2026
 
 Revolut's EURR currently has about 374 EURR in circulation.
