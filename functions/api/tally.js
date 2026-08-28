@@ -119,24 +119,33 @@ async function rpc(method, params) {
   var i;
   var response;
   var payload;
+  /* Per-endpoint outcomes for the error message — host only, so a keyed DRPC
+     URL never leaks its key into a 503 body. */
+  var tried = [];
   /* Round-robin: start where the last successful call left off, so the load of
      many per-address calls spreads instead of always hammering the first node. */
   for (i = 0; i < n; i++) {
     var index = (rpcCursor + i) % n;
+    var host = "?";
+    try { host = new URL(activeRpcUrls[index]).host; } catch (e) { /* keep ? */ }
     try {
       response = await fetch(activeRpcUrls[index], {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params })
       });
-      if (!response.ok) continue;
+      if (!response.ok) { tried.push(host + ":http" + response.status); continue; }
       payload = await response.json();
-      if (!payload || payload.error || payload.result === undefined || payload.result === null) continue;
+      if (payload && payload.error) {
+        tried.push(host + ":" + String(payload.error.message || payload.error.code || "err").slice(0, 40));
+        continue;
+      }
+      if (!payload || payload.result === undefined || payload.result === null) { tried.push(host + ":null"); continue; }
       rpcCursor = (index + 1) % n;
       return payload.result;
-    } catch (error) { /* try next endpoint */ }
+    } catch (error) { tried.push(host + ":ex " + String(error && error.message || error).slice(0, 30)); }
   }
-  throw new Error("rpc: no endpoint answered " + method);
+  throw new Error("rpc: no endpoint answered " + method + " [" + tried.join(" | ") + "]");
 }
 
 function keyedRpcUrls(env) {
