@@ -100,7 +100,7 @@ assert.doesNotMatch(escapedSvg, /Angles < & >/);
   const heroSvg = renderDiaryOgSvg(heroEntry);
   assert.match(heroSvg, /<image href="data:image\/png;base64,/, "hero panel embeds the image");
   assert.match(heroSvg, /<clipPath id="og-hero">/, "hero panel is clipped to its rect");
-  assert.match(heroSvg, /x1="72" y1="150" x2="724"/, "blue rule stops before the hero panel");
+  assert.match(heroSvg, /x1="72" y1="150" x2="644"/, "blue rule stops before the hero panel");
   const heroPng = new Resvg(heroSvg, {
     fitTo: { mode: "width", value: 1200 },
     font: { loadSystemFonts: false, fontBuffers: fonts, defaultFontFamily: "Archivo" },

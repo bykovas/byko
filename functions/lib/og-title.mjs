@@ -9,9 +9,9 @@
 
 export const TITLE_MAX_WIDTH = 1000;
 
-/* When a hero image takes the right ~third of the card, the title keeps the
-   left column. Narrower band, so it may wrap to more lines and go smaller. */
-export const HERO_TITLE_MAX_WIDTH = 664;
+/* When a hero image takes the right of the card, the title keeps the left
+   column. Narrower band, so it may wrap to more lines and go smaller. */
+export const HERO_TITLE_MAX_WIDTH = 572;
 
 const FONT_SIZES = [96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48];
 const HERO_FONT_SIZES = [84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44];
@@ -153,10 +153,13 @@ export function escapeXml(text) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
 
-/* A hero image sits in a fixed portrait panel on the right. The source is
-   cover-fitted (scaled to fill, centred, clipped) so a tall phone screenshot
-   fills the panel without distortion, and the blue rule stops short of it. */
-const HERO_PANEL = { x: 780, y: 96, w: 348, h: 428 };
+/* A hero image sits in a fixed 3:2 landscape panel on the right — the same
+   aspect the diary list thumbnails and the entry-page lead use, so ONE source
+   image shows the identical framing everywhere instead of being cropped one way
+   here and another way in the list. The source is cover-fitted (scaled to fill,
+   centred, clipped); a 3:2 source fills it with no crop at all, and the blue
+   rule stops short of it. */
+const HERO_PANEL = { x: 684, y: 212, w: 444, h: 296 };
 
 function heroPanelSvg(hero) {
   if (!hero || !hero.dataUri || !hero.width || !hero.height) return "";
@@ -181,7 +184,7 @@ export function renderDiaryOgSvg(entry) {
   const date = escapeXml(String(entry.dateText || "").toUpperCase());
   const path = escapeXml(`byko.bykovas.lt/d/${entry.slug}`);
   const hasHero = !!(entry.hero && entry.hero.dataUri);
-  const ruleX2 = hasHero ? 724 : 1128;
+  const ruleX2 = hasHero ? 644 : 1128;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <rect width="1200" height="630" fill="#FAF9F5"/>
