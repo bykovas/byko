@@ -149,70 +149,6 @@ async function rpc(method, params) {
   throw new Error("rpc: no endpoint answered " + method + " [" + tried.join(" | ") + "]");
 }
 
-/* Endpoints that honour a large JSON-RPC batch, publicnode first. This Pages
-   project is on the free Workers plan — 50 subrequests per invocation — so the
-   ~900 eth_getCode checks must go out as a handful of big batches, not many
-   small ones. Measured against Base's public nodes: publicnode answers a
-   150-call batch cleanly, six in a burst, no rate-limit; base.org caps a batch
-   at 10 (-32014), 1rpc plan-limits at ~100 (-32001), tenderly 429s at 100, and
-   DRPC/meowrpc reject a batch outright (500/400). So publicnode carries the
-   batches and the rest sit behind it only as a fallback if it ever fails. */
-function batchRpcUrls() {
-  var usable = activeRpcUrls.filter(function (u) {
-    var h = "";
-    try { h = new URL(u).host; } catch (e) { /* treat as unusable */ return false; }
-    return h.indexOf("drpc") < 0 && h.indexOf("meowrpc") < 0;
-  });
-  usable.sort(function (a, b) {
-    return (a.indexOf("publicnode") > -1 ? 0 : 1) - (b.indexOf("publicnode") > -1 ? 0 : 1);
-  });
-  return usable.length ? usable : activeRpcUrls;
-}
-
-/* Sticky, separate from rpcCursor: once a node answers a batch, the next batch
-   goes back to the same node rather than rotating onto one that will just
-   fail a large batch and burn a subrequest. */
-var batchCursor = 0;
-
-/* One HTTP request carrying many JSON-RPC calls. 900+ eth_getCode checks as
-   separate fetches blow Cloudflare's per-invocation subrequest cap — the whole
-   reason this endpoint 503'd; batched they cost a handful. */
-async function rpcBatch(calls) {
-  var pool = batchRpcUrls();
-  var n = pool.length;
-  var i, response, payload, j, r;
-  var body = JSON.stringify(calls.map(function (c, id) {
-    return { jsonrpc: "2.0", id: id, method: c.method, params: c.params };
-  }));
-  var tried = [];
-  for (i = 0; i < n; i++) {
-    var index = (batchCursor + i) % n;
-    var host = "?";
-    try { host = new URL(pool[index]).host; } catch (e) { /* keep ? */ }
-    try {
-      response = await fetch(pool[index], {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: body
-      });
-      if (!response.ok) { tried.push(host + ":http" + response.status); continue; }
-      payload = await response.json();
-      if (!Array.isArray(payload) || payload.length !== calls.length) { tried.push(host + ":shape"); continue; }
-      var byId = {};
-      for (j = 0; j < payload.length; j++) byId[payload[j].id] = payload[j];
-      var out = [];
-      var okAll = true;
-      for (j = 0; j < calls.length; j++) {
-        r = byId[j];
-        if (!r || r.error || r.result === undefined || r.result === null) { okAll = false; break; }
-        out.push(r.result);
-      }
-      if (!okAll) { tried.push(host + ":partial"); continue; }
-      batchCursor = index; /* stay on the winner for the next batch */
-      return out;
-    } catch (error) { tried.push(host + ":ex " + String(error && error.message || error).slice(0, 30)); }
-  }
-  throw new Error("rpc batch: no endpoint answered [" + tried.join(" | ") + "]");
-}
-
 function keyedRpcUrls(env) {
   var urls = [];
   if (env && env.RPC_URL) urls.push(env.RPC_URL);
@@ -461,39 +397,27 @@ async function computeTally(env, origin) {
     if (entry[1] > 0n) candidates.add(entry[0]);
   }
   var sortedCandidates = [...candidates].sort();
-  /* Pre-fetch every EOA check in batches so ~900 addresses cost a handful of
-     subrequests instead of one each. isEoa below then reads the filled cache
-     and makes no further calls. */
-  var pending = [];
-  for (address of sortedCandidates) {
-    if (address === POOL || address === DEAD || address === ZERO) continue;
-    if (FOUNDER_WALLETS.indexOf(address) > -1) continue;
-    if (KNOWN_ROUTERS.indexOf(address) > -1) continue;
-    if (!state.eoa.has(address)) pending.push(address);
-  }
-  /* On the free plan's 50-subrequest budget the batches must be few and large,
-     not many and small: ~900 addresses at 150 each is 6 requests, all served
-     by publicnode (proven to take six 150-batches back-to-back without a
-     rate-limit). getLogs + founder fetch add only a few more — well under 50. */
-  var CODE_BATCH = 150;
-  var pb, ci, slice, codes;
-  for (pb = 0; pb < pending.length; pb += CODE_BATCH) {
-    slice = pending.slice(pb, pb + CODE_BATCH);
-    codes = await rpcBatch(slice.map(function (a) { return { method: "eth_getCode", params: [a, "latest"] }; }));
-    for (ci = 0; ci < slice.length; ci++) {
-      state.eoa.set(slice[ci], codes[ci] === "0x" || codes[ci].indexOf("0xef0100") === 0);
-    }
-  }
+  /* The EOA check is one eth_getCode subrequest per address. This Pages
+     project is on the free Workers plan — 50 subrequests per invocation — and
+     the ~900 current holders cannot all be checked from Cloudflare's egress:
+     the public nodes rate-limit (429) a burst that large, whether the calls go
+     out singly or in big JSON-RPC batches (measured against every Base public
+     node). Only an address that ever qualified can be a "for" vote, and that
+     set is tiny (a handful), so the check is spent only on it. Non-qualifying
+     holders are classified by how they got their balance — gift-only vs dust —
+     without a code check; a contract that merely received a gift is not a vote,
+     and the exact contract/EOA split of that tail is left to the committed
+     snapshot (compute-tally.mjs), which runs without this subrequest ceiling. */
   for (address of sortedCandidates) {
     balance = state.balances.get(address) || 0n;
     if (address === POOL || address === DEAD || address === ZERO) continue;
     if (FOUNDER_WALLETS.indexOf(address) > -1) continue;
     if (KNOWN_ROUTERS.indexOf(address) > -1) continue;
-    if (!(await isEoa(state, address))) {
-      if (balance > 0n) notCounted.contracts += 1;
-      continue;
-    }
     if (state.everQualified.has(address)) {
+      if (!(await isEoa(state, address))) {
+        if (balance > 0n) notCounted.contracts += 1;
+        continue;
+      }
       if (balance >= MIN_VOTE_WEI) {
         tally.for += 1;
         voters.push({ address: address, status: "for", balance: toByko(balance) });
