@@ -165,30 +165,26 @@ export class ArmLock {
     }
 
     const row = await env.DB.prepare(
-      `SELECT started_at, start_price, usdc_spent FROM wallets WHERE address = ?1`,
-    ).bind(r.wallet).first<{ started_at: string | null; start_price: string | null; usdc_spent: string }>();
-    const startPrice = row?.start_price ? Number(row.start_price) : null;
+      `SELECT started_at, usdc_spent FROM wallets WHERE address = ?1`,
+    ).bind(r.wallet).first<{ started_at: string | null; usdc_spent: string }>();
     const spent = row?.usdc_spent ? Number(row.usdc_spent) : 0;
 
-    /* Signed, and judged only once the side is known — see below. An arm that
-       reached this limit used to be unable to trade in ANY direction, which
-       froze the price it had just run up and made recovery impossible: the
-       guard blocked the unwind exactly as hard as it blocked the abuse. */
-    const dev = startPrice && startPrice > 0 ? (price - startPrice) / startPrice * 100 : 0;
+    /* The only ceiling left is total gross spend — a hard money cap, not a
+       price one. NINTH AMENDMENT: the price is out of every decision now (see
+       the band below and rules.json), so nothing reads start_price for a
+       deviation and there is no per-trade price guard to trip. */
     if (spent > r.guards.max_gross_usdc) {
       await halt(env, r.wallet, arm, `spend-cap ${spent.toFixed(2)}`);
       return;
     }
 
-    /* The reserve-jump skip is gone (eighth amendment). It compared the pool's
+    /* The reserve-jump skip is gone (eighth amendment): it compared the pool's
        USDC reserve against the level after this arm's own last trade and
-       skipped on a move past the limit — but the baseline only advances when a
-       trade is made, so any large legitimate change (a real buyer taking a
-       chunk out of the pool — which is the experiment succeeding) locked the
-       arm out permanently: it could not trade, so the baseline never caught up,
-       so the jump stayed over the limit forever. A guard that cannot tell a
-       genuine buy from manipulation and then deadlocks on the former is not
-       protecting anything; the price-deviation guard still bounds each trade. */
+       skipped on a move past the limit, but the baseline only advanced on a
+       trade, so any large legitimate change (a real buyer taking a chunk out of
+       the pool — the experiment succeeding) locked the arm out for good. The
+       price-deviation guard that used to sit here is gone too (ninth
+       amendment); the band alone decides direction. */
 
     /* stop conditions (byko only): max days, or the flag actually cleared */
     if (row?.started_at && r.stop.max_days != null) {
@@ -231,62 +227,32 @@ export class ArmLock {
     }
 
     /* --- decide the trade ---
-       Hysteresis, not a pivot. A single threshold makes every trade near it
-       reverse direction, so the wallet alternates buy/sell/buy/sell like a
-       metronome — the most machine-shaped pattern available. A band keeps the
-       current direction until the balance leaves it, so run length is set by
-       the corridor, the drawn reversal target and the drawn sizes — not by a
-       fixed count. */
+       Direction is set by cash alone, with hysteresis. Buy while the wallet
+       holds more than the upper band, sell below the lower, and keep the
+       current direction in between — so a run's length is set by the cash
+       corridor and the drawn sizes, not by a fixed count, and not by a single
+       threshold that would make every trade near it flip (a buy/sell/buy/sell
+       metronome). NINTH AMENDMENT: the price is out of this decision entirely.
+       A run no longer reverses on how far the pool has moved, and no trade is
+       blocked (nor the arm halted) for price deviation. The bot spends the cash
+       on hand to buy and sells to refill it; what that does to the quoted price
+       is the experiment's output, never its input — see the note in rules.json. */
     const st = await env.DB.prepare(
-      `SELECT direction, run_start_price, run_target_pct FROM wallet_state WHERE address = ?1`,
-    ).bind(r.wallet).first<{ direction: string | null; run_start_price: string | null; run_target_pct: string | null }>();
+      `SELECT direction FROM wallet_state WHERE address = ?1`,
+    ).bind(r.wallet).first<{ direction: string | null }>();
     const prev = st?.direction ?? null;
     let side: "buy" | "sell" = prev === "sell" ? "sell" : "buy";
     if (usdcWhole > upper) side = "buy";
     else if (usdcWhole < lower) side = "sell";
 
-    /* The band alone bounds a run by cash, not by price, and cash is whatever
-       happens to have been deposited. Funded to $34.32 against a band topping
-       out at $20, this arm was obliged to spend $24 in one direction before it
-       could reverse — $24 into a pool holding $123, which is the 64% move that
-       tripped its own deviation guard after eight buys and no sells. So a run
-       also reverses on price: once the pool has moved run_reverse_pct from
-       where this run began, the next trade goes the other way whatever the
-       balance says. The excursion is then bounded by the pool, and the 60%
-       guard goes back to being a backstop instead of something the strategy
-       walks into by design. */
-    const runStart = st?.run_start_price ? Number(st.run_start_price) : 0;
-    const runTarget = st?.run_target_pct ? Number(st.run_target_pct) : 0;
-    if (runStart > 0 && runTarget > 0 && price > 0) {
-      const moved = (price - runStart) / runStart * 100;
-      if (side === "buy" && moved > runTarget) side = "sell";
-      else if (side === "sell" && moved < -runTarget) side = "buy";
-    }
-    /* The band has the last word. A drawn percentage says when a run turns; it
-       does not get to walk the balance out of the band. Written the other way
-       round the trigger overrode its own constraint. */
-    if (usdcWhole > upper) side = "buy";
-    else if (usdcWhole < lower) side = "sell";
-
-    /* A new run gets its own price clock AND its own turning point, drawn from
-       the published range and written down before the run begins. A single
-       fixed percentage is a pattern in itself: every run would turn at exactly
-       the same distance, drawing a metronome on the chart the way the single
-       pivot did, only slower. */
-    const newRun = side !== prev || runStart <= 0 || runTarget <= 0;
-    const runPrice = newRun ? price : runStart;
-    const target = newRun
-      ? uniform(RULES.strategy.run_reverse_pct[0], RULES.strategy.run_reverse_pct[1])
-      : runTarget;
+    const newRun = side !== prev;
     await env.DB.prepare(
-      `UPDATE wallet_state SET direction = ?2, run_start_price = ?3, run_target_pct = ?4
-        WHERE address = ?1`,
-    ).bind(r.wallet, side, String(runPrice), String(target)).run();
+      `UPDATE wallet_state SET direction = ?2 WHERE address = ?1`,
+    ).bind(r.wallet, side).run();
     if (newRun) {
       await event(env, arm, "run-start",
-        `${side} run begins at ${price.toPrecision(9)}, turning at ${target.toFixed(2)}% ` +
-        `(drawn from ${RULES.strategy.run_reverse_pct[0]}–${RULES.strategy.run_reverse_pct[1]}%, ` +
-        `recorded before the first trade of the run)`);
+        `${side} run begins — cash $${usdcWhole.toFixed(2)} ` +
+        (side === "buy" ? `above the $${upper} top of the band` : `below the $${lower} floor of the band`));
     }
 
     /* SIXTH AMENDMENT: one trade in five runs against its own run. A pure run
@@ -294,18 +260,15 @@ export class ArmLock {
        at a reversal — and the ledger showed it: neat alternating stretches a
        spreadsheet could have generated. The coin is thrown by the same CSPRNG
        as every other draw, at the published contrarian_pct, and every
-       contrarian trade names itself in the events log. The noise is
-       subordinate to everything above it: it fires only inside the band
-       (outside, the corrective side is forced, and noise would un-force it),
-       only within the deviation guard's limit, and only when the opposite leg
-       can fund a trade at all. The run's direction, clock and target are
-       untouched — a contrarian trade is a trade against the run, not a
-       shorter run. */
+       contrarian trade names itself in the events log. It fires only inside the
+       band (outside, the corrective side is forced and noise would un-force it)
+       and only when the opposite leg can fund a trade at all. NINTH AMENDMENT:
+       the "within the deviation guard's limit" condition is gone with the guard
+       itself — price no longer gates the coin. */
     let tradeSide: "buy" | "sell" = side;
     const cp = RULES.strategy.contrarian_pct ?? 0;
     const insideBand = usdcWhole >= lower && usdcWhole <= upper;
-    if (cp > 0 && insideBand && Math.abs(dev) <= r.guards.max_price_deviation_pct
-        && uniform(0, 100) < cp) {
+    if (cp > 0 && insideBand && uniform(0, 100) < cp) {
       const flipped: "buy" | "sell" = side === "buy" ? "sell" : "buy";
       const fundable = flipped === "buy"
         ? Number(usdcBal) / 1e6 >= 0.40
@@ -315,20 +278,6 @@ export class ArmLock {
         await event(env, arm, "contrarian",
           `run is ${side}, this trade goes ${flipped} — drawn at ${cp}%, run unchanged`);
       }
-    }
-
-    /* Now the deviation guard can tell an abuse from an unwind. Value
-       untouched; what changes is that past the limit only the corrective
-       direction is allowed through. */
-    if (Math.abs(dev) > r.guards.max_price_deviation_pct) {
-      const worsens = (tradeSide === "buy" && dev > 0) || (tradeSide === "sell" && dev < 0);
-      if (worsens) {
-        await halt(env, r.wallet, arm, `price-deviation ${dev.toFixed(1)}%`);
-        return;
-      }
-      await event(env, arm, "guard-trip",
-        `price-deviation ${dev.toFixed(1)}% is past ${r.guards.max_price_deviation_pct}%, ` +
-        `but this ${tradeSide} moves the price back toward the start — allowed`);
     }
 
     /* $9 was 6% of this pool and moved the price about 12% in one trade, which
@@ -418,7 +367,8 @@ export class ArmLock {
       String(amountIn), String(minOut), nonce, hash,
     ).run();
 
-    /* first trade marks the arm's start (for the day/deviation stops) */
+    /* first trade marks the arm's start (for the max-days stop); start_price is
+       kept only as a historical record now — nothing reads it for a guard */
     if (!row?.started_at) {
       await env.DB.prepare(
         `UPDATE wallets SET started_at = datetime('now'), start_price = ?2 WHERE address = ?1`,

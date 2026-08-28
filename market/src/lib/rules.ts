@@ -16,7 +16,7 @@ export interface ArmRules {
   token: string;
   pool: string;
   stop: { max_days: number | null; on_signal_cleared: boolean };
-  guards: { max_gross_usdc: number; max_price_deviation_pct: number };
+  guards: { max_gross_usdc: number };
 }
 
 export interface Rules {
@@ -28,7 +28,6 @@ export interface Rules {
     interval_curve?: "uniform" | "log-uniform";
     trade_usdc: [number, number];
     band_usdc: [number, number];
-    run_reverse_pct: [number, number];
     max_trade_pct_pool: number;
     contrarian_pct: number;
     slippage_bps: number;

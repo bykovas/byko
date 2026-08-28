@@ -26,9 +26,8 @@ const SOURCE_ASKS: Record<string, string> = {
   "base-app": "what the screen says (by hand)",
 };
 
-/* The side the band and the run-reversal rule select right now. Same three
-   inputs the worker uses: the USDC balance, the direction of the current run,
-   and how far the pool has moved since that run began. */
+/* The side the band selects right now. NINTH AMENDMENT: price is out of it —
+   direction is the USDC balance with hysteresis, nothing else. */
 function nextByRule(
   r: { guards: unknown },
   w: Record<string, unknown> | null,
@@ -38,20 +37,11 @@ function nextByRule(
   const balance = Number(w.usdc_balance) / 1e6;
   if (!Number.isFinite(balance)) return {};
   const [lower, upper] = RULES.strategy.band_usdc;
+  /* Same rule the worker runs: keep the current side inside the band, buy above
+     the top, sell below the floor. This is the RUN side; since the sixth
+     amendment each fire also throws a contrarian_pct coin, so the published
+     side is the rule's, with the flip odds published next to it. */
   let side: "buy" | "sell" = w.direction === "sell" ? "sell" : "buy";
-  /* Same order the worker uses: the drawn percentage turns the run, then the
-     band overrides it if the balance would leave it. This is the RUN side;
-     since the sixth amendment each fire also throws a contrarian_pct coin,
-     so the published side is the rule's, with the flip odds published next
-     to it. */
-  const runStart = w.run_start_price ? Number(w.run_start_price) : 0;
-  const runTarget = w.run_target_pct ? Number(w.run_target_pct) : 0;
-  const price = sample?.price_usd ? Number(sample.price_usd) : 0;
-  if (runStart > 0 && runTarget > 0 && price > 0) {
-    const moved = (price - runStart) / runStart * 100;
-    if (side === "buy" && moved > runTarget) side = "sell";
-    else if (side === "sell" && moved < -runTarget) side = "buy";
-  }
   if (balance > upper) side = "buy";
   else if (balance < lower) side = "sell";
   /* The chain figure, not tvl_usd: the vendors disagree about whether that
@@ -65,8 +55,6 @@ function nextByRule(
     next_side: side,
     next_size_min: sizeMin,
     next_size_max: cap > 0 ? Math.min(sizeMax, cap) : sizeMax,
-    next_run_start_price: runStart > 0 ? String(runStart) : null,
-    next_run_target_pct: runTarget > 0 ? runTarget : null,
   };
 }
 
@@ -92,7 +80,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
               s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
-              s.direction, s.run_start_price, s.run_target_pct
+              s.direction
          FROM wallets w LEFT JOIN wallet_state s ON s.address = w.address
         WHERE w.address = ?1`,
     ).bind(r.wallet).first<Record<string, unknown>>();
