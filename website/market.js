@@ -6,16 +6,19 @@
   var USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
   var POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
   var RPC_URLS = ["https://mainnet.base.org", "https://base.drpc.org"];
-  /* The nine denominations and the ECB rate used to be derived here: nine
-     getAmountsOut calls plus a feed request, in every visitor's browser,
-     against public endpoints that already answer this project "over rate
-     limit". The worker computes them once and serves them with the time they
-     were measured. The pool price above is deliberately NOT taken from there —
-     the page's own lede promises that one is read from the chain in your
-     browser with nothing in between, and that sentence has to stay true. */
+  /* Denominations and the ECB rate: fetching a quote per amount used to mean
+     one getAmountsOut RPC per row in every visitor's browser, against public
+     endpoints that already answer this project "over rate limit". The worker
+     measures the pool's reserves and the ECB rate once and serves them with the
+     time they were taken; the browser then computes each euro amount from those
+     two numbers with the router's own constant-product formula (the 0.3% fee
+     included) — verified identical to getAmountsOut to the whole BYKO — so a
+     free-form converter costs nothing extra and every row agrees with it. The
+     pool price above is still read straight from the chain in the browser, as
+     the lede promises. */
   var POOL_API = "https://byko-market.bykovas.lt/api/pool";
-  var EUR_STEPS = [1, 5, 10, 20, 50, 100, 200, 500, 1000];
-  var RATES_CACHE_KEY = "byko-rates-v3";
+  var EUR_STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 400, 500];
+  var RATES_CACHE_KEY = "byko-rates-v4";
   var RATES_MAX_AGE = 3 * 60 * 1000;
   var rates = null;
   var GENESIS_BYKO = 740227;
@@ -168,25 +171,50 @@
     return String(Math.floor(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "\u2009");
   }
 
+  /* USDC in, BYKO out \u2014 the pool's constant product with the 0.3% fee, the same
+     arithmetic getAmountsOut runs (checked equal to the whole BYKO). One helper
+     feeds both the fixed rows and the converter, so they can never disagree. */
+  function bykoOut(usdc) {
+    if (!rates || !(rates.reserveByko > 0) || !(rates.reserveUsdc > 0) || !(usdc > 0)) return null;
+    var inWithFee = usdc * 0.997;
+    return rates.reserveByko * inWithFee / (rates.reserveUsdc + inWithFee);
+  }
+  function bykoForEur(eur) {
+    if (!rates || !rates.eur || !(rates.eur.rate > 0)) return null;
+    return bykoOut(eur * rates.eur.rate);
+  }
+
+  /* The converter: a free-form euro amount, quoted the same way as the rows. */
+  function updateConvert() {
+    var input = byId("convert-eur");
+    var out = byId("convert-byko");
+    if (!input || !out) return;
+    var eur = parseFloat(input.value);
+    var byko = isFinite(eur) && eur > 0 ? bykoForEur(eur) : null;
+    out.textContent = byko != null ? fmtInt(byko) : "\u2014";
+  }
+
   function renderRates() {
     var grid = byId("rates-grid");
     var note = byId("rates-note");
-    var html = "";
-    var quotes = rates && rates.quotes;
-    var i;
-    if (!grid) return;
-    for (i = 0; i < EUR_STEPS.length; i++) {
-      html += '<div><span class="eur">' + EUR_STEPS[i].toLocaleString("de-DE") + "\u2009\u20AC</span>" +
-        '<b class="byko">' + (quotes && quotes[i] ? fmtInt(quotes[i].byko) : "\u2014") + "</b></div>";
+    if (grid) {
+      var html = "";
+      var i, byko;
+      for (i = 0; i < EUR_STEPS.length; i++) {
+        byko = bykoForEur(EUR_STEPS[i]);
+        html += '<div><span class="eur">' + EUR_STEPS[i].toLocaleString("de-DE") + "\u2009\u20AC</span>" +
+          '<b class="byko">' + (byko != null ? fmtInt(byko) : "\u2014") + "</b></div>";
+      }
+      grid.innerHTML = html;
     }
-    grid.innerHTML = html;
+    updateConvert();
     if (!note) return;
-    if (!quotes) { note.textContent = "asking the router\u2026"; return; }
+    if (!rates || !rates.eur) { note.textContent = "asking the pool\u2026"; return; }
     note.textContent =
       "1 EUR = " + rates.eur.rate.toFixed(4) + " USD \u00B7 " +
       (rates.eur.live ? "ECB reference rate, " + rates.eur.date
                       : "hand-set fallback, the rate feed did not answer") +
-      " \u00B7 1 USDC treated as 1 USD \u00B7 quoted from Aerodrome's router, fee and price impact included" +
+      " \u00B7 1 USDC treated as 1 USD \u00B7 computed from the pool's reserves with the router's constant product, 0.3% fee and price impact included" +
       (rates.block ? " \u00B7 block " + rates.block.toLocaleString("en-US") : "") +
       " \u00B7 measured " + utcTime(new Date(rates.at)) +
       (rates.stale ? " \u00B7 the recompute failed, this is the last reading that succeeded" : "") +
@@ -195,7 +223,7 @@
 
   function loadRates() {
     var cached = readCache();
-    if (cached && cached.quotes && cached.quotes.length === EUR_STEPS.length) {
+    if (cached && cached.reserveByko && cached.reserveUsdc && cached.eur) {
       rates = cached;
       renderRates();
       if (Date.now() - Date.parse(cached.at) < RATES_MAX_AGE) return;
@@ -204,8 +232,13 @@
       if (!response.ok) throw new Error("pool");
       return response.json();
     }).then(function (d) {
-      if (!d || !d.quotes || d.quotes.length !== EUR_STEPS.length) throw new Error("pool");
-      rates = { at: d.measured_at, block: d.block, eur: d.eur, quotes: d.quotes, stale: Boolean(d.stale) };
+      if (!d || !d.reserve_token || !d.reserve_usdc || !d.eur) throw new Error("pool");
+      rates = {
+        at: d.measured_at, block: d.block, eur: d.eur,
+        reserveByko: Number(d.reserve_token) / 1e18,
+        reserveUsdc: Number(d.reserve_usdc) / 1e6,
+        stale: Boolean(d.stale)
+      };
       writeCache(rates);
       renderRates();
     }).catch(function () {
@@ -403,6 +436,8 @@
   window.setInterval(function () { loadMarket(true); }, 30000);
   loadRates();
   window.setInterval(loadRates, 180000);
+  var convertInput = byId("convert-eur");
+  if (convertInput) convertInput.addEventListener("input", updateConvert);
   initDonutMode();
   loadHolders();
   watchChart();
