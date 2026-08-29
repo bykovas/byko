@@ -44,6 +44,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .loading{display:inline-flex;align-items:center;gap:7px;font:var(--byko-data);color:var(--byko-label)}
 .loading[hidden]{display:none}
 
+/* the pool visualisation breaks out of the content column to span the full
+   doc width (content column + gap + 300px apparatus sidebar). */
+.pool-viz{margin-right:calc(-1 * (300px + 44px))}
 .pool-note{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
 
 .chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:18px;
@@ -138,6 +141,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 @media (max-width:900px){
   .price-big{font-size:52px}
+  .pool-viz{margin-right:0}
   .holders-grid{grid-template-columns:minmax(0,1fr);gap:28px}
   #market-chart{height:320px}
   .rate-legend{flex-wrap:wrap;gap:10px}
@@ -189,6 +193,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p class="price-sub" id="price-sub">1 BYKO = — USDC</p>
         <p class="updated"><span id="market-updated">updated —</span> · <a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">pool 0x02dd…a6ca · Base RPC →</a></p>
 
+        <div class="pool-viz">
         <div class="pool-readouts">
           <div>
             <b id="market-byko">—</b>
@@ -221,6 +226,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <p class="pool-note">log scale, one tick = one halving of the reserve · left is BYKO, right is USDC, each as % of its genesis level · dashed centre = genesis, 740,227 BYKO : 74.0227 USDC, both sides 100% · the solid edge is where the pool stands now · the two shares are reciprocal, so a buy that halves BYKO doubles USDC and moves the edge one tick left · LP tokens burned — the position cannot be withdrawn · <a href="https://basescan.org/token/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca#balances" target="_blank" rel="noopener">live proof: 0x…dEaD holds 100% →</a></p>
+        </div>
       </div>
     </div>
 
