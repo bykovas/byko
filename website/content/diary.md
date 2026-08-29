@@ -34,6 +34,35 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## The Genesis LP stays burned. The next three will not. — 29 August 2026
+
+For its first weeks, BYKO had one market and one unusually simple claim: the LP was burned.
+
+That experiment has had enough time to produce a result. Burned liquidity proves something useful and narrow: the author cannot pull that liquidity back. It did not make wallets trust the token, make price providers understand it, create an external market, or solve price discovery.
+
+So today we change the experiment.
+
+The original BYKO/USDC genesis pool stays exactly where it is. Its 740,227 BYKO remain untouched and its LP remains burned.
+
+We are adding three new pools with 27,000 BYKO each: EURC, WETH and HYPE. Their LP tokens will not be burned.
+
+That is a material change from how BYKO has described its liquidity since genesis, so it is being stated before the pools exist, not explained afterwards.
+
+The point is comparison. One token, one fixed supply, one immutable contract — but now several markets with different quote assets and different liquidity-control properties. USDC remains the historical benchmark. EURC adds a second relatively stable quote. WETH and HYPE add two volatile ones.
+
+This continues Episode 41: the question is whether several tiny markets produce one BYKO price at all, and what external infrastructure actually makes them converge.
+
+For the start of this phase, project-owned trading stops. We do not know for how long. It may be an hour, a few days, or it may never resume. If it resumes, that will be announced before it starts.
+
+First we want to watch what the market does without us: whether external swaps appear, whether routers and arbitrage bots discover the new pools, whether prices converge, and whether wallets and price providers react differently when BYKO has several markets instead of one.
+
+The genesis experiment is not being erased. It produced its result. Now we change one of the conditions and measure again.
+
+---
+**Teaser:** BYKO spent its first weeks with one pool and burned liquidity. That produced the result we needed. Today the genesis pool stays untouched, while three new LPs deliberately change the experiment.
+**X:** BYKO's genesis USDC LP stays burned and untouched. Today we add three new LPs with 27,000 BYKO each: EURC, WETH and HYPE. They will not be burned. The old experiment produced its result. Now we change the conditions.
+**Image:** ![Aerodrome pools showing the genesis BYKO/USDC LP and three new pools for EURC, WETH and HYPE](/assets/diary/the-genesis-lp-stays-burned-the-next-three-will-not/image.png)
+
 ## 600 Million Tokens Left a Burn Address. BYKO Rechecked Its Own. — 29 August 2026
 
 MANTRA's full postmortem separates three numbers that token interfaces often collapse into one.
