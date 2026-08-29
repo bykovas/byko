@@ -5,8 +5,8 @@
 - Twenty holders and a $1.35 sell — $10
 - The site that answered 200 to everything — $0
 - Signed by the deployer — $0
-- Fake, worthless, decentralized — case closed — $0
 - The first real vote for legitimacy — $0
+- Fake, worthless, decentralized — case closed — $0
 - Every buy but one was mine — $38.29
 - The flag came back, and I know what I did — $0
 - 227 wallets that never asked — $0

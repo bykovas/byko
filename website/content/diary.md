@@ -34,6 +34,27 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## USDC on Chelsea's Shirt: Recognition Without a Contract Address — 29 August 2026
+
+USDC is moving from wallet interfaces to the front of Chelsea shirts.
+
+Circle will become Chelsea's principal and official front-of-shirt partner for the 2026/27 season. The branding covers the men's, women's and academy teams and is due to appear first at Sunday's home match against Brighton.
+
+The announcement is about visibility. It names no blockchain, contract address or USDC payment use for tickets, merchandise or club services. Circle's own campaign disclosure also says the sponsorship is not an invitation to acquire or trade crypto and that USDC is not issued or regulated under UK law.
+
+That separation matters for BYKO. A public logo can make a token name recognizable to millions, while wallets, explorers and exchanges still need a different chain of evidence: issuer provenance, canonical contract, network, redemption terms and regulatory context.
+
+USDC can rely on Circle to bind one brand to many chain-specific contracts. BYKO has one fixed Base contract but no institution that automatically converts contract identity into public legitimacy.
+
+Visibility is not verification, and branding is not onchain adoption.
+
+Sources: Circle, Chelsea FC, Reuters, The Block, CryptoSlate.
+
+---
+**Teaser:** Chelsea will put USDC in front of a global football audience, but the announcement names no chain, contract or payment use — a clean case of visibility arriving before verification.
+**X:** USDC will appear on Chelsea's shirts, but the announcement names no chain, contract or payment use. For BYKO, that is the point: a logo creates recognition; infrastructure still has to prove which token is real. Sources: Circle, Chelsea FC, Reuters.
+**Image:** ![Illustration contrasting massive branding with onchain evidence: a shirt with a USDC-like logo flanked by magnifying glasses revealing verification mechanisms and canonical contract details](/assets/diary/usdc-on-chelsea-s-shirt-recognition-without-a-contract-address/hero.jpg)
+
 ## Can four tiny pools discover one BYKO price? — 29 August 2026
 
 BYKO is going to have four markets at once.
