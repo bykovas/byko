@@ -34,6 +34,25 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## 600 Million Tokens Left a Burn Address. BYKO Rechecked Its Own. — 29 August 2026
+
+MANTRA's full postmortem separates three numbers that token interfaces often collapse into one.
+
+An upstream Cosmos EVM accounting flaw allowed an attacker to move about 600 million MANTRA from a burn address and 120.9 million from a legacy multisig. No new MANTRA was minted. Native total supply barely changed, but about 720.9 million previously inert tokens became transferable, so circulating supply increased.
+
+BYKO used the report as a reason to recheck its own claim. At Base block 50,591,867, BYKO totalSupply was still exactly 790,227 tokens. The Aerodrome LP token showed 7,402,269,999,999,000 raw units at dEaD and 1,000 at address(1). The old diary shorthand "dEaD = 100%" was economically accurate but not literally exact.
+
+The correction is tiny. The distinction is not. Fixed token supply, LP ownership and the impossibility of an outgoing transfer are separate claims backed by different layers.
+
+The Cosmos EVM flaw does not imply that Base or BYKO is affected. It shows why "burned" should be expressed as an invariant and monitored, not treated as a label that proves itself.
+
+Sources: MANTRA, Cosmos Labs, CoinDesk, The Block, Base RPC.
+
+---
+**Teaser:** MANTRA's postmortem says 600 million tokens left a burn address without a mint. BYKO then rechecked its own LP burn—and found "100% at dEaD" was not literally exact.
+**X:** MANTRA says 600M tokens left a burn address without a mint. BYKO rechecked its LP burn: dEaD holds all but 1,000 raw LP units; address(1) holds the rest. "Fixed," "burned" and "unspendable" are different claims. Sources: MANTRA, Cosmos Labs.
+**Image:** ![BYKO LP burn snapshot at Base block 50591867 showing dEaD and address(1) balances](/assets/diary/600-million-tokens-left-a-burn-address-byko-rechecked-its-own/hero.jpg)
+
 ## When the Market Maker Is a Bot, Liquidity Stops Meaning Organic Demand — 29 August 2026
 
 Bankr has launched agent-managed liquidity for Coinbase Tokenized Stocks on Aerodrome. A user can instruct an agent in plain English to create a concentrated-liquidity position, while the agent monitors and rebalances it continuously within approved parameters.
