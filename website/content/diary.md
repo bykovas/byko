@@ -34,6 +34,29 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BYKO got a little brother on pump.fun — 30 August 2026
+
+BYKO is getting a little brother.
+
+The original BYKO was deployed by hand on Base, with its own contract and deliberately small liquidity. Now I want to put a separate relative into a very different machine: pump.fun.
+
+Why? Not because BYKO needed another token. It did not. The point is to compare two ways a tiny crypto asset comes into existence. One was deployed manually on Base. The other will be born through a launchpad designed to create a market almost instantly.
+
+The budget is $10. No artificial volume, no wash trading, no bots hired to promote it, and no attempt to pretend that this is the original Base BYKO.
+
+The expectation is deliberately modest: it may attract nobody and die almost immediately. That is a useful result too.
+
+We will measure holders, number of trades, buy/sell activity, volume, market cap, creator fees, bot activity where identifiable, time to the last trade, and what happens to the original $10 after 1 hour, 24 hours and 7 days. If strangers appear, we will also look at how quickly they arrived and what kind of wallets they were.
+
+Same founder. Related name. Different chain. Different machinery.
+
+Keep following BYKO. We will publish what happens, including if absolutely nothing happens.
+
+---
+**Teaser:** The original BYKO was deployed by hand on Base. Now a separate $10 relative will be launched through pump.fun to see what the launchpad machine does with it.
+**X:** BYKO is getting a little brother: a separate $10 pump.fun experiment. Same founder, related name, different chain and market machinery. We will measure what happens rather than help it happen. Follow the experiment.
+**Image:** ![The launchpad test: two ways a crypto asset exists — BYKO on Base versus a relative on pump.fun](/assets/diary/byko-got-a-little-brother-on-pump-fun/hero.jpg)
+
 ## The Genesis LP stays burned. The next three will not. — 29 August 2026
 
 For its first weeks, BYKO had one market and one unusually simple claim: the LP was burned.
