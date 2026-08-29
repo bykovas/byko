@@ -34,6 +34,23 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## When the Market Maker Is a Bot, Liquidity Stops Meaning Organic Demand — 29 August 2026
+
+Bankr has launched agent-managed liquidity for Coinbase Tokenized Stocks on Aerodrome. A user can instruct an agent in plain English to create a concentrated-liquidity position, while the agent monitors and rebalances it continuously within approved parameters.
+
+The interesting part for BYKO is not AI. It is what this does to the meaning of market activity.
+
+A liquid market can contain real assets, real trades and real fees while a meaningful part of its maintenance is automated. Volume proves that transactions happened. Liquidity proves that capital was supplied. Neither, by itself, proves organic demand or independent human price discovery.
+
+BYKO is deliberately running at the opposite scale. Its planned multi-pool experiment can label project-owned activity and then observe what external routers, arbitrageurs and bots do in response. The useful distinction is becoming sharper: activity is observable; its origin still has to be classified.
+
+Sources: Bankr, Coinbase, Galaxy Research, Unchained.
+
+---
+**Teaser:** Base just made stock market-making something an AI agent can do from one sentence. That changes what visible liquidity can actually prove.
+**X:** On Base, AI agents can now manage liquidity for Coinbase tokenized stocks on Aerodrome. BYKO asks the smaller question underneath it: when bots maintain the market, is liquidity still evidence of organic demand? Sources: Bankr, Coinbase, Galaxy.
+**Image:** ![Bankr agent-managed liquidity interface for Coinbase Tokenized Stocks on Aerodrome](/assets/diary/when-the-market-maker-is-a-bot-liquidity-stops-meaning-organic-demand/hero.jpg)
+
 ## USDC on Chelsea's Shirt: Recognition Without a Contract Address — 29 August 2026
 
 USDC is moving from wallet interfaces to the front of Chelsea shirts.
