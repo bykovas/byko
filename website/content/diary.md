@@ -34,6 +34,35 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Can four tiny pools discover one BYKO price? — 29 August 2026
+
+BYKO is going to have four markets at once.
+
+Two will quote it against relatively stable assets: USDC and EURC. Two will quote it against volatile ones: WETH and HYPE.
+
+The existing USDC pool originally started at $79.0227 and has already changed. Each of the three new pools is planned at roughly $27 of initial liquidity.
+
+Setting four pools to the same starting price is easy. The experiment begins after that.
+
+The project will not use its own wallets to arbitrage the pools back into line. If one price moves away from the others, the correction has to come from outside traders, routers or arbitrage systems — or it does not happen.
+
+That makes the small size useful rather than embarrassing. An arbitrage opportunity can exist mathematically while being too small to justify gas, fees, execution risk or simply anyone's attention.
+
+USDC and EURC provide the stable control. WETH and HYPE add moving reference assets, so their external price changes have to propagate through tiny BYKO pools as well. Planned Start: September 2026.
+
+There are two useful outcomes.
+
+If four tiny pools keep converging on one BYKO price without project intervention, then even a very small token can be tied into a wider market by external arbitrage infrastructure.
+
+If they remain apart, then BYKO can have several simultaneously valid on-chain prices. Multiple AMM pools do not automatically create one market.
+
+That is the question BYKO is interested in: when four public sources disagree, what actually makes one of them become "the price"?
+
+---
+**Teaser:** BYKO will be quoted against two stable assets and two volatile ones at the same time. Then the project steps away and watches whether arbitrage alone is enough to make four tiny pools behave like one market. Planned Start: September 2026.
+**X:** BYKO will test whether four tiny pools can converge on one price without project trading: USDC and EURC as stable quotes, WETH and HYPE as volatile ones. Three start at $27; the original USDC pool began at $79.0227 and has already changed.
+**Image:** ![Four BYKO liquidity pools — USDC, EURC, WETH and HYPE — visualized as a price convergence experiment](/assets/diary/can-four-tiny-pools-discover-one-byko-price/image.jpg)
+
 ## The price was real. The assumption was worth $8.7 million — 28 August 2026
 
 A price can be real and still be a bad fact to depend on.
