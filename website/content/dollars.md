@@ -12,3 +12,4 @@
 - 227 wallets that never asked — $0
 - Six cents did what 908 holders could not — $0
 - The only advice I can follow is to fake a market — $42
+- BYKO got a little brother on pump.fun — $10
