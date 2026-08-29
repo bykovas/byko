@@ -11,7 +11,7 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0x020f734228821b0710f57ac690ac7f733bde702c,not-counted,227,false,false,true,"gift from founder, never bought"
 0x023c1a01108c35b72852a5cd4e0bb5123da9657e,not-counted,227,false,false,true,"gift from founder, never bought"
 0x0258a3b56ada6c5b1110efb02d56464b8e835b64,not-counted,227,false,false,true,"gift from founder, never bought"
-0x02dd4285ad38ea93d021ca854016a839b0b2a6ca,excluded,188030.808466,false,false,,"pool"
+0x02dd4285ad38ea93d021ca854016a839b0b2a6ca,excluded,186605.316444,false,false,,"pool"
 0x03906d9ce98bbbc8b7242ecf9448a4b4d2310705,not-counted,227,false,false,true,"gift from founder, never bought"
 0x03945f94c45cc74e6c608c21db4c658e403ec8b7,not-counted,227,false,false,true,"gift from founder, never bought"
 0x03ffe3441e9d2c17de6bdcda4693080c95a3cced,not-counted,227,false,false,true,"gift from founder, never bought"
@@ -289,6 +289,7 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0x4cdfbb8a901fca3c1d2938ffe839ba71f42cbebd,not-counted,227,false,false,true,"gift from founder, never bought"
 0x4cfc2735027379e29443c1e0b8870f2b862f9430,not-counted,227,false,false,true,"gift from founder, never bought"
 0x4d07212d7d3ce80d1abb0d7e3fb5207b01ea2ccc,not-counted,227,false,false,true,"gift from founder, never bought"
+0x4d7965bf4b7cae5eb8b8b7592c6ddc4f51eebf8a,for,1425.492021,true,true,true,""
 0x4e09d8a5b8df253b53d116852a9870a6baaafc14,not-counted,227,false,false,true,"gift from founder, never bought"
 0x4e3b692490df762dcc9046a6ce0b38394a594c0a,not-counted,227,false,false,true,"gift from founder, never bought"
 0x4e5e9aab73206940718a2adddbffdef52f6a896a,not-counted,227,false,false,true,"gift from founder, never bought"
@@ -683,6 +684,7 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0xb72d088def563c456d6090019d9b5fe72fe7823e,not-counted,227,false,false,true,"gift from founder, never bought"
 0xb878a06dde8e7e8dbc61d94c89b7bc9ad6b9183d,not-counted,227,false,false,true,"gift from founder, never bought"
 0xb892cdfd57e0459551cf1f0a515b3068c10f8d8e,not-counted,227,false,false,true,"gift from founder, never bought"
+0xb92fe925dc43a0ecde6c8b1a2709c170ec4fff4f,excluded,0,false,false,false,"contract"
 0xb95bf23a89560835776339f9375d04fe4b191e00,not-counted,227,false,false,true,"gift from founder, never bought"
 0xb99c36378358a442005c9fd6ee5390006fa975a4,not-counted,227,false,false,true,"gift from founder, never bought"
 0xb9bdf1119052f645a8c8b4b223fa14c332a90f09,not-counted,227,false,false,true,"gift from founder, never bought"
@@ -947,4 +949,4 @@ address,status,balance_byko,acquired_via_pool,ever_qualified,is_eoa,note
 0xfe7089f40965146508c8c8592c7f193b23ca1f1d,not-counted,227,false,false,true,"gift from founder, never bought"
 0xfe85fce1a21178db20ca9634541e876a69360240,not-counted,227,false,false,true,"gift from founder, never bought"
 0xff177611293ec015e347ac64e261439c3f31f419,not-counted,227,false,false,true,"gift from founder, never bought"
-# computed 2026-08-29T16:53:28.881Z at block 50616479 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
+# computed 2026-08-29T21:11:41.629Z at block 50624234 · rule: 100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers
