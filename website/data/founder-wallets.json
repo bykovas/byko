@@ -17,7 +17,7 @@
     },
     {
       "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
-      "role": "trading, invoices",
+      "role": "personal",
       "class": "primary",
       "name": "BYKOVAS",
       "funded_by": "Kraken"
