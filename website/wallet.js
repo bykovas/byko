@@ -132,6 +132,8 @@
   function showWalletChoice() {
     clearBody();
     addMessage("Choose a wallet:");
+    var grid = document.createElement("div");
+    grid.className = "wallet-grid";
     providers.forEach(function (entry) {
       var option = document.createElement("button");
       option.type = "button";
@@ -150,8 +152,9 @@
         addMessage("Waiting for wallet…");
         runAdd(entry.provider);
       });
-      dialogBody.appendChild(option);
+      grid.appendChild(option);
     });
+    dialogBody.appendChild(grid);
     openDialog();
   }
 

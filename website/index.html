@@ -135,11 +135,13 @@ dialog.byko-dialog h2{font:var(--byko-h2)}
 dialog.byko-dialog .dialog-head{display:flex;align-items:baseline;gap:16px;border-bottom:var(--byko-rule-heavy);padding-bottom:10px}
 dialog.byko-dialog .close{margin-left:auto;background:none;border:0;font:var(--byko-data);color:var(--byko-ink-2);cursor:pointer}
 .wallet-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.wallet-option{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--byko-paper-2);
-  border:1px solid rgba(13,17,22,.22);border-radius:var(--byko-radius-control);
-  font:600 14px/1.4 var(--byko-font-sans);color:var(--byko-ink);cursor:pointer;transition:var(--byko-transition)}
-.wallet-option:hover{background:rgba(13,17,22,.08)}
-.wallet-option img{width:24px;height:24px;object-fit:contain;flex-shrink:0}
+.wallet-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.wallet-option{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;
+  padding:0 20px;background:var(--byko-paper);border:1.5px solid var(--byko-ink);
+  border-radius:var(--byko-radius-control);font:600 15px/1 var(--byko-font-sans);color:var(--byko-ink);
+  cursor:pointer;transition:var(--byko-transition)}
+.wallet-option:hover{background:var(--byko-ink);color:var(--byko-paper)}
+.wallet-option img{width:26px;height:26px;object-fit:contain;flex-shrink:0}
 .wallet-message{font:var(--byko-body);margin:14px 0 0}
 .wallet-address{display:block;margin:14px 0 0;padding:10px 12px;border:var(--byko-bd-input);border-radius:var(--byko-radius-control);
   font:var(--byko-hex);word-break:break-all}
@@ -999,7 +1001,7 @@ document.getElementById('vote-addr').addEventListener('keypress', function (e) {
   if (e.key === 'Enter') checkVote();
 });
 </script>
-<script src="wallet.js" defer></script>
+<script src="wallet.js?v=20260829" defer></script>
 <script src="market.js?v=20260828d" defer></script>
 <script src="card.js" defer></script>
 </body>
