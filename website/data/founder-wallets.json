@@ -91,6 +91,13 @@
       "class": "primary",
       "name": "BYKO Airdrop",
       "funded_by": "BYKOVAS"
+    },
+    {
+      "address": "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
+      "role": "lp pumper",
+      "class": "primary",
+      "name": "LP Pumper",
+      "funded_by": "Kraken"
     }
   ]
 }
