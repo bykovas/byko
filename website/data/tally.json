@@ -1,12 +1,12 @@
 {
-  "updated": "2026-08-28T22:38:12.746Z",
-  "block": 50583618,
+  "updated": "2026-08-29T07:21:27.959Z",
+  "block": 50599322,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
   },
   "tally": {
-    "for": 2,
+    "for": 1,
     "withdrawn": 0
   },
   "notCounted": {
@@ -28,7 +28,8 @@
       "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
       "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
       "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
-      "0x36041020857b33aa09ee7d9a99743176a7778134"
+      "0x36041020857b33aa09ee7d9a99743176a7778134",
+      "0x9c8665dd47eba6e23c47fa2577fe3ad953563206"
     ],
     "holdings": [
       {
@@ -46,12 +47,12 @@
       {
         "address": "0xe8fc8769934f9461f7adf6f440ff3883e28021eb",
         "balance": 45000,
-        "role": "trading, invoices",
+        "role": "personal",
         "class": "primary"
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 76430.933834,
+        "balance": 72451.328549,
         "role": "buyer",
         "class": "primary"
       },
@@ -108,21 +109,22 @@
         "balance": 4,
         "role": "airdrop experiment",
         "class": "primary"
+      },
+      {
+        "address": "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
+        "balance": 211028.418115,
+        "role": "lp pumper",
+        "class": "primary"
       }
     ],
-    "balance": 146442.93,
-    "pct": 18.5
+    "balance": 353491.75,
+    "pct": 44.7
   },
   "voters": [
     {
       "address": "0x30fd96c5ae61f0fb3d97e6159ab023710163efbf",
       "status": "for",
       "balance": 45860.230224
-    },
-    {
-      "address": "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
-      "status": "for",
-      "balance": 144651.751787
     }
   ]
 }
