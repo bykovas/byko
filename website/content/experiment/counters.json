@@ -26,17 +26,17 @@
   "counters": [
     {
       "id": "hours",
-      "value": "125.0 h",
+      "value": "131.1 h",
       "label": "Hours logged",
       "kind": "spent",
-      "asOf": "2026-08-19",
+      "asOf": "2026-08-30",
       "counts": "Working hours spent on the BYKO study since 2 Aug 2026: contract work, liquidity setup, the website, listing applications, wallet-flag appeals, support conversations, and writing. Tracked per session, rounded to the half hour. Self-reported estimate from the project diary; it will increase as the remaining episodes get logged.",
       "excludes": "Thinking about BYKO in the shower. Only sessions with an artifact — a commit, a submitted form, a sent message — are counted.",
       "provenance": "hand"
     },
     {
       "id": "dollars",
-      "value": "$185.29",
+      "value": "$188.29",
       "label": "Dollars spent",
       "kind": "spent",
       "asOf": "2026-08-30",
@@ -76,7 +76,7 @@
     },
     {
       "id": "episodes",
-      "value": "49",
+      "value": "50",
       "label": "Episodes published",
       "kind": "result",
       "asOf": "2026-08-30",

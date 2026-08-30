@@ -14,3 +14,4 @@
 - The only advice I can follow is to fake a market — $42
 - BYKO got a little brother on pump.fun — $10
 - BYKO is getting another little brother — this time on Base — $10
+- How Clanker's promised seconds turned into six wasted hours — $3

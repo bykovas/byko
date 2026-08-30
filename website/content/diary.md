@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## How Clanker's promised seconds turned into six wasted hours — 30 August 2026
+
+Clanker advertises token deployment in seconds. I tried to launch cBYKO as another BYKO infrastructure experiment. Six hours and roughly $3 later, there was still no token.
+
+The failure was consistent: deployToken() reverted with LockerNotEnabled(). I reproduced it across Project and Legacy liquidity configurations, USDC and WETH pairs, with and without Droid rewards, without an airdrop, and with a Creator Vault. The web interface kept generating a locker configuration rejected by the deployer contract.
+
+The amusing part is that the Droid provisioning step succeeded before the token did. Repeated retries even produced additional Droid state while cBYKO itself remained undeployed.
+
+Nothing here proves anything about the eventual token. It does measure something simpler: the distance between an infrastructure promise measured in seconds and the time required when its deployment path fails.
+
+---
+**Teaser:** Clanker says a token can be deployed in seconds. Six hours, several configuration experiments and about $3 later, cBYKO still did not exist.
+**X:** Clanker promises token deployment in seconds. Six hours, ~$3 and a pile of failed configurations later, cBYKO still does not exist. The Droid, however, managed to exist first.
+**Image:** ![Clanker token deployment failure — six hours of reverted transactions](/assets/diary/how-clankers-promised-seconds-turned-into-six-wasted-hours/hero.jpg)
+
 ## BYKO is getting another little brother — this time on Base — 30 August 2026
 
 BYKO is getting a little brother.
