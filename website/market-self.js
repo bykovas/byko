@@ -66,8 +66,8 @@
     ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
   ];
   var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
-  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "trades 24h",
-    "LP burned", "LP held by founders", "supply held by founders"];
+  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "token net",
+    "turnover", "trades 24h", "LP burned", "LP held by founders", "supply held by founders"];
 
   /* Draw everything that is known without the network: the rules strip, both
      arm panels, every source row, one trade line and one log line. */
@@ -119,8 +119,7 @@
     });
 
     ARM_LABELS.forEach(function (pair) {
-      ["-top", ""].forEach(function (suffix) {
-      var t = $("trades-" + pair[0] + suffix);
+      var t = $("trades-" + pair[0] + "-top");
       if (!t) return;
       var tb = t.querySelector("tbody");
       tb.textContent = "";
@@ -128,7 +127,6 @@
       var lab = ["", "utc", "side", "usdc", pair[0].toUpperCase(), "price", "fdv", "pool usdc", "status", "tx"];
       for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i === 0 ? "l mono lead" : (i < 3 ? "l" : "mono"), lab[i]));
       tb.appendChild(tr);
-      });
     });
 
     var log = $("events"); log.textContent = "";
@@ -213,23 +211,35 @@
       row("pool USDC", m.reserve_usdc ? "$" + n(Number(m.reserve_usdc) / 1e6) : "—", true);
       var hAge = m.holders != null ? ago(m.holders_at) : "";
       row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
-      /* Net over the full confirmed ledger: buys minus what sells returned.
-         The old "USDC spent" was gross-only and overstated the position the
-         moment the first sell settled. Gross stays in the breakdown — the
-         published spend-cap guard is a gross cap, so both numbers matter. */
-      if (arm.usdc_net != null) {
-        /* The breakdown gets its own line: on one line the fit depended on
-           the viewport, and the right card — 23px narrower because it alone
-           pays for the divider — wrapped mid-phrase while the left one
-           didn't. A chosen break beats an accidental one. */
-        dl.appendChild(el("dt", null, "USDC net"));
-        var netDd = el("dd", null, "$" + n(arm.usdc_net));
-        netDd.appendChild(el("br"));
-        netDd.appendChild(document.createTextNode(
-          "buys $" + n(arm.usdc_bought) + " − sells $" + n(arm.usdc_received)));
-        dl.appendChild(netDd);
-      } else {
-        row("USDC spent", "$" + n(arm.usdc_spent));
+
+      /* NET means what the buyer wallet holds right now — the current on-chain
+         balance the worker reads each tick and stores, NOT an accounting result
+         of buys minus sells. USDC NET and {token} NET answer one question:
+         what does this experiment wallet hold at this moment. */
+      var currentUsdcBalance = arm.usdc_balance != null && arm.usdc_balance !== ""
+        ? Number(arm.usdc_balance) / 1e6 : null;
+      var currentTokenBalance = arm.token_balance != null && arm.token_balance !== ""
+        ? Number(arm.token_balance) / 1e18 : null;
+      var sym = arm.id === "luko" ? "LUKO" : "BYKO";
+      row("USDC net", currentUsdcBalance == null ? "—" : "$" + n(currentUsdcBalance));
+      row(sym + " net", currentTokenBalance == null ? "—" : n(currentTokenBalance, 0));
+
+      /* TURNOVER is cumulative trading activity, kept apart from NET so the
+         balance above is never mistaken for a ledger total. It sums the USDC
+         moved by confirmed trades on BOTH sides — buys spent plus sells
+         received — and is NOT buys minus sells. The server already restricts
+         usdc_bought / usdc_received to confirmed trades of this arm, so pending,
+         failed and the next scheduled trade are excluded. */
+      if (arm.usdc_bought != null && arm.usdc_received != null) {
+        var buyUsdcTotal = Number(arm.usdc_bought);
+        var sellUsdcTotal = Number(arm.usdc_received);
+        var turnoverUsdc = buyUsdcTotal + sellUsdcTotal;
+        dl.appendChild(el("dt", null, "turnover"));
+        var turnDd = el("dd", null, "$" + n(turnoverUsdc));
+        turnDd.appendChild(el("br"));
+        turnDd.appendChild(document.createTextNode(
+          "buys $" + n(buyUsdcTotal) + " · sells $" + n(sellUsdcTotal)));
+        dl.appendChild(turnDd);
       }
       var tAge = m.buys_24h != null ? ago(m.trades_at) : "";
       row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " +
@@ -395,12 +405,14 @@
 
   function renderTrades(data) {
     /* One table per arm: a single mixed ledger made the reader check the arm
-       column on every row to know which token a number belonged to. Each arm
-       gets two views of the same rows: the last ten with the "next" line for
-       the glance, and the complete log for the record. */
+       column on every row to know which token a number belonged to. The page
+       shows only the last ten with the "next" line for the glance; the
+       exhaustive raw history lives on BaseScan, linked below each table, so the
+       site does not reproduce the full chain log it is not the canonical copy of. */
     (data.arms || []).forEach(function (a) {
       renderArmTrades(data, a.id, true);
-      renderArmTrades(data, a.id, false);
+      var scan = $("scan-" + a.id);
+      if (scan && a.wallet) scan.href = SCAN + "/address/" + a.wallet;
     });
   }
 
