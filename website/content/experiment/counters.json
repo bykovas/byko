@@ -36,10 +36,10 @@
     },
     {
       "id": "dollars",
-      "value": "$175.29",
+      "value": "$185.29",
       "label": "Dollars spent",
       "kind": "spent",
-      "asOf": "2026-08-29",
+      "asOf": "2026-08-30",
       "counts": "Direct out-of-pocket cost of the study: $74.02 — the exact, verified, irreversible pool funding, burned along with the LP tokens — plus $49.27 of BYKO bought from the pool with project wallets, every purchase reconciled against the on-chain transaction history. The founder's own buys used to be excluded here as \"votes, not costs\"; the audit of 16 Aug 2026 counted them, because money that left the wallet is a cost whatever it was buying.",
       "excludes": "The $5.57 returned by four small sells — this counts what went out, not the net — and the value of the time counted in hours above.",
       "provenance": "hand"
@@ -76,10 +76,10 @@
     },
     {
       "id": "episodes",
-      "value": "38",
+      "value": "47",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-08-27",
+      "asOf": "2026-08-30",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"

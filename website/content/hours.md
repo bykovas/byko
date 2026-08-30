@@ -1,4 +1,4 @@
-# Hours per diary entry — rebuilt in full from the Notion base at every publish.
+# Hours per diary entry — rebuilt in full from the Airtable base at every publish.
 # One line per non-Archived card with Hours set: "- {title} — {hours} h".
 
 - Genesis: one block, one number, no promises — 32 h

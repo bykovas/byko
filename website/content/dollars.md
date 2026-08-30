@@ -1,4 +1,4 @@
-# Dollars per diary entry — rebuilt in full from the Notion base at every publish.
+# Dollars per diary entry — rebuilt in full from the Airtable base at every publish.
 # One line per non-Archived card with USD set: "- {title} — ${amount}".
 
 - Genesis: one block, one number, no promises — $75
@@ -13,3 +13,4 @@
 - Six cents did what 908 holders could not — $0
 - The only advice I can follow is to fake a market — $42
 - BYKO got a little brother on pump.fun — $10
+- BYKO is getting another little brother — this time on Base — $10

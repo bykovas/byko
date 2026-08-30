@@ -34,6 +34,27 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Immutability Removed the Kill Switch. The Bug Stayed. — 30 August 2026
+
+Ajna was designed to remove familiar trust points: no governance, no external price feeds, an immutable protocol.
+
+On August 29, after an exploit affecting multiple lending pools, the team could not simply pause or upgrade the contracts. It asked users to withdraw funds, repay loans and stop interacting. Public estimates put losses around $775K; the exact root cause is still being investigated.
+
+For BYKO, the useful distinction is not "immutability is bad." BYKO deliberately has no owner, mint authority or upgrade path because those powers create their own risks.
+
+The distinction is narrower: removing admin control removes both the ability to abuse that control and the ability to use it in an emergency.
+
+"Nobody can change the rules" and "nobody can repair the rules" are not the same security claim.
+
+A simple fixed-supply ERC-20 is not comparable in complexity to a lending protocol. But the Ajna incident is a useful control case for how BYKO describes itself: contract immutability is evidence about who can change code, not evidence that the code must be correct.
+
+Sources: Ajna, Defimon Alerts, The Crypto Times, Cryptopolitan, Sherlock.
+
+---
+**Teaser:** Ajna removed governance and oracles by design; after a ~$775K exploit, the remaining emergency control was the users themselves.
+**X:** Ajna removed oracles, governance and upgrade keys. After a ~$775K exploit, its team could not pause the protocol; it could only ask users to leave. BYKO asks what immutability proves—and what it prevents. Sources: Ajna, Defimon, The Crypto Times.
+**Image:** ![Ajna protocol exploit — immutable contracts with no emergency pause](/assets/diary/immutability-removed-the-kill-switch-the-bug-stayed/hero.jpg)
+
 ## BYKO got a little brother on pump.fun — 30 August 2026
 
 BYKO is getting a little brother.
