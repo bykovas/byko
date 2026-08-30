@@ -34,6 +34,35 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BaseScan approved the less verifiable twin — 30 August 2026
+
+I now have a useful control sample for BYKO's BaseScan problem: another token I submitted myself.
+
+LUKO and BYKO were submitted to the same explorer with nearly the same structure: official project-domain email, website, GitHub repository, Telegram, X, my LinkedIn profile, public specification PDF, CoinMarketCap DEX link and GeckoTerminal pool link. Both are small Base tokens without an ICO or private sale.
+
+The outcomes diverged.
+
+For LUKO, BaseScan asked for one concrete verification step: reply from the official website-domain email confirming that I represent the project. I did. BaseScan then replied that the token had been queued for update.
+
+For BYKO, BaseScan rejected the update again. The response did not identify a failed field. Instead it supplied a generic list of possible reasons: inaccessible website, unclear project information, placeholders, broken links, insufficient founder transparency, wrong sender domain, misrepresentation, or possible brand infringement.
+
+That is difficult to reconcile with the submitted record. BYKO used denisas.bykovas@byko.bykovas.lt and published hello@byko.bykovas.lt. It identified me by name, linked my LinkedIn profile, GitHub repository and public specification, and explicitly explained the relationship between BYKO, byko.bykovas.lt and bykovas.lt. The resubmission also supplied two on-chain transactions showing that 100% of the genesis LP tokens were sent permanently to the burn address.
+
+The comparison becomes stranger at the market-control layer. BYKO's genesis LP, roughly $100 at the relevant scale, was burned. LUKO's LP, roughly $200, remained in a founder-controlled wallet. BaseScan's published guidelines do not state that founder-controlled liquidity is preferable to burned liquidity.
+
+I am not claiming that burned LP proves a token is safe, nor that LUKO should have been rejected. The point is narrower: using BaseScan's stated review criteria, I cannot identify a disclosed criterion that explains why LUKO passed while BYKO did not.
+
+This is exactly the kind of gate BYKO was created to document. A small unknown token can pass the gate. Another small unknown token from the same submitter can provide at least comparable, and in several areas stronger, public verification and still fail repeatedly. After eight BYKO rejections, the project still has no project-specific reason it can correct — only a menu of hypothetical faults.
+
+The BYKO logo is intentionally plain and project-specific. The contract, supply, transfers and LP-burn transactions are public. The founder is named. The source repository and specification are public. The sender uses the project domain. Yet the off-chain identity layer remains withheld.
+
+The blockchain gives a deterministic answer. The listing gate does not.
+
+---
+**Teaser:** Two tokens. Nearly the same application. The one with permanently burned genesis liquidity is rejected again; the one whose LP remains with a founder is approved. BaseScan gives BYKO only a generic checklist, not the failed criterion.
+**X:** Same submitter, same Base network, near-identical BaseScan forms. LUKO was approved. BYKO, with burned genesis LP and more public evidence, was rejected again without a specific failed criterion. The gate is measurable; the rule is not.
+**Image:** ![Cartoon: anonymous tokens pass BaseScan's gate while BYKO with burned LP faces its eighth rejection without explicit reason](/assets/diary/basescan-approved-the-less-verifiable-twin/hero.jpg)
+
 ## How Clanker's promised seconds turned into six wasted hours — 30 August 2026
 
 Clanker advertises token deployment in seconds. I tried to launch cBYKO as another BYKO infrastructure experiment. Six hours and roughly $3 later, there was still no token.

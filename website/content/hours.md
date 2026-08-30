@@ -23,3 +23,4 @@
 - Six cents did what 908 holders could not — 4 h
 - The only advice I can follow is to fake a market — 6 h
 - How Clanker's promised seconds turned into six wasted hours — 6 h
+- BaseScan approved the less verifiable twin — 2 h
