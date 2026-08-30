@@ -34,6 +34,27 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Four new pools changed the structure, not the outcome — 30 August 2026
+
+We added extra BYKO markets to test a simple idea: would more pools improve price discovery, attract useful external activity, or make the token easier for market infrastructure to understand?
+
+They did not.
+
+The extra pools changed the market structure, but they did not produce a useful new outcome. More AMM markets did not create a better market by themselves.
+
+That is enough of a result.
+
+BYKO is closing the additional pools and returning to a simpler structure that is easier to observe and interpret. If a new market does not create a measurable difference, keeping it only adds fragmentation and complexity.
+
+This is not a failed experiment. The hypothesis was tested. The result was negative, so the condition is being removed.
+
+For BYKO, that is the point of the diary: change one thing, measure what actually happens, keep it only if the result justifies the added complexity.
+
+---
+**Teaser:** We added new BYKO markets to see whether more pools would improve price discovery or external attention. They changed the topology, but produced no useful new result. We are closing them and keeping the simpler market structure.
+**X:** We added new BYKO pools to test whether more markets would improve price discovery or attract useful external activity. They did not. The topology changed; the result did not. We are closing the extra pools and simplifying again.
+**Image:** ![BYKO extra liquidity pools experiment — closing four additional markets](/assets/diary/four-new-pools-changed-the-structure-not-the-outcome/hero.jpg)
+
 ## Immutability Removed the Kill Switch. The Bug Stayed. — 30 August 2026
 
 Ajna was designed to remove familiar trust points: no governance, no external price feeds, an immutable protocol.

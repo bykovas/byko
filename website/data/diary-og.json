@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "four-new-pools-changed-the-structure-not-the-outcome",
+      "title": "Four new pools changed the structure, not the outcome",
+      "dateText": "30 August 2026",
+      "datePublished": "2026-08-30",
+      "imageVersion": "d90570f053c1",
+      "twitterImageVersion": "a90091869f60",
+      "hero": {
+        "src": "/assets/diary/four-new-pools-changed-the-structure-not-the-outcome/hero.jpg",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "immutability-removed-the-kill-switch-the-bug-stayed",
       "title": "Immutability Removed the Kill Switch. The Bug Stayed.",
       "dateText": "30 August 2026",
