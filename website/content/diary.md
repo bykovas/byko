@@ -34,6 +34,39 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BYKO is getting another little brother — this time on Base — 30 August 2026
+
+BYKO is getting a little brother.
+
+Yesterday I put pBYKO into pump.fun on Solana. The experiment immediately mixed two variables: a different launch mechanism and a different blockchain.
+
+Then I found Clanker.
+
+Clanker offers a similar idea on Base: deploy an ERC-20 and create its market through the launch platform rather than manually assembling the token and liquidity infrastructure myself.
+
+That makes the comparison much cleaner.
+
+Original BYKO: Base, manually deployed contract, manually created liquidity.
+pBYKO: Solana, pump.fun launchpad.
+cBYKO: Base, Clanker launchpad.
+
+The interesting comparison is BYKO versus cBYKO. Both live on Base. The network is no longer the main variable. What changes is how the asset is born and how the surrounding infrastructure discovers it.
+
+The proposed budget is again $10. No manufactured volume and no attempt to rescue the market if nobody cares.
+
+We will compare discovery speed, holders, trades, volume, bots, wallet visibility, market cap, creator rewards and, most importantly, displayed value versus the amount that can actually be extracted by selling the founder position.
+
+Three related assets. Two chains. Three different ways of creating a market.
+
+If the launchpad makes no difference, that is a result. If it makes a large difference for two nearly identical Base assets, that is a much more interesting result.
+
+Keep following BYKO. The machinery around a token may turn out to matter more than the token itself.
+
+---
+**Teaser:** After launching pBYKO through pump.fun on Solana, I found Clanker: a similar launch mechanism on Base. That gives the experiment a cleaner control — the same network as BYKO, but a completely different way of creating its market.
+**X:** BYKO may get another little brother. pBYKO tested pump.fun on Solana; cBYKO would test Clanker on Base. Same network as the original BYKO, different birth mechanism. Another $10 experiment, measuring what the launchpad itself changes.
+**Image:** ![cBYKO Clanker experiment — three tokens, two chains, three launch mechanisms](/assets/diary/byko-is-getting-another-little-brother-this-time-on-base/hero.jpg)
+
 ## Four new pools changed the structure, not the outcome — 30 August 2026
 
 We added extra BYKO markets to test a simple idea: would more pools improve price discovery, attract useful external activity, or make the token easier for market infrastructure to understand?
