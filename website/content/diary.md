@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Cronos Halted After a Thin Token Became a Reported $75M Problem — 31 August 2026
+
+Cronos halted block production after identifying an exploit in Tectonic. On-chain researcher Weilin Li estimates that thinly traded TONIC was pushed roughly 100x in 20 minutes and used as collateral for about $75 million in borrowing. Cronos and Tectonic have not confirmed the final amount or root cause.
+
+The useful distinction for BYKO is contract immutability versus settlement availability. BYKO's token rules cannot be changed by an owner, but the token still depends on Base, RPCs, wallets, explorers, pools and price providers. If the settlement layer stops, an interface may keep showing a price even though no transfer can complete.
+
+Moonwell showed that a real AMM price may still be unsafe collateral. Cronos adds another layer: a lending-market incident escalated into a chain-wide halt. BYKO can measure displayed price, quote age, last swap, block age and executable depth as separate facts.
+
+Sources: Cronos Network, Tectonic, Weilin Li, The Block, BeInCrypto.
+
+---
+**Teaser:** Cronos halted block production after a Tectonic exploit; the reported trigger was a 100x move in thinly traded TONIC.
+**X:** TONIC was reportedly pumped 100x and used as collateral before Cronos halted the chain. BYKO's lesson is broader than oracle risk: an immutable token still depends on infrastructure that can stop settlement. Sources: Cronos, Tectonic, The Block.
+**Image:** ![BYKO mascot takes notes while a broken blockchain chain triggers a halt sign, disabling wallets, DEXes and price feeds](/assets/diary/cronos-halted-after-a-thin-token-became-a-reported-75m-problem/image.png)
+
 ## BaseScan approved the less verifiable twin — 30 August 2026
 
 I now have a useful control sample for BYKO's BaseScan problem: another token I submitted myself.

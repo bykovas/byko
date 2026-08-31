@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "cronos-halted-after-a-thin-token-became-a-reported-75m-problem",
+      "title": "Cronos Halted After a Thin Token Became a Reported $75M Problem",
+      "dateText": "31 August 2026",
+      "datePublished": "2026-08-31",
+      "imageVersion": "40a88568a413",
+      "twitterImageVersion": "2f9210b353cd",
+      "hero": {
+        "src": "/assets/diary/cronos-halted-after-a-thin-token-became-a-reported-75m-problem/image.png",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "basescan-approved-the-less-verifiable-twin",
       "title": "BaseScan approved the less verifiable twin",
       "dateText": "30 August 2026",
