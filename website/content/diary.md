@@ -34,6 +34,23 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## One WFLOW Drain, Three Dollar Values: $9.3M, $410K, $246K — 1 September 2026
+
+A vulnerability in Ankr's ankrFLOW contract allowed approximately 8.6 million unbacked ankrFLOW to be created. According to Flow, the tokens were used as collateral on MORE Markets to remove 15.5 million WFLOW from its reserve.
+
+The number of WFLOW did not change. Its dollar story did. Blockaid first published a $9.3 million detector estimate, then corrected it to about $410,000 at spot and roughly $250,000 after slippage. Flow reported approximately $246,000 realized.
+
+For BYKO, this separates token balance, reference value and executable value. A wallet can multiply a balance by a visible price without showing whether the full position could be sold near that number.
+
+BYKO can compare provider marks with read-only router quotes at several position sizes and record source pool, block, route, fees and price impact.
+
+Sources: Flow, MORE Markets, Blockaid, BeInCrypto, Cointelegraph, The Crypto Times.
+
+---
+**Teaser:** A 15.5 million WFLOW drain was first called $9.3 million, then marked at $410,000, while the attacker realized about $246,000.
+**X:** A 15.5M WFLOW drain was first called $9.3M, then marked at $410K; the attacker realized about $246K. BYKO asks: when a wallet values a thin token, is it showing a reference price or an executable one? Sources: Flow, MORE Markets, Blockaid.
+**Image:** ![Infographic: three dollar values for the 15.5M WFLOW drain — initial Blockaid estimate $9.3M, Flow and Blockaid spot mark $410K, actual realized proceeds $250K after slippage](/assets/diary/one-wflow-drain-three-dollar-values-9-3m-410k-246k/hero.jpg)
+
 ## Cronos Halted After a Thin Token Became a Reported $75M Problem — 31 August 2026
 
 Cronos halted block production after identifying an exploit in Tectonic. On-chain researcher Weilin Li estimates that thinly traded TONIC was pushed roughly 100x in 20 minutes and used as collateral for about $75 million in borrowing. Cronos and Tectonic have not confirmed the final amount or root cause.
