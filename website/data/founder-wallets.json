@@ -98,6 +98,13 @@
       "class": "primary",
       "name": "BYKO LP Pumper",
       "funded_by": "Kraken"
+    },
+    {
+      "address": "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
+      "role": "icons",
+      "class": "primary",
+      "name": "BYKO Icons",
+      "funded_by": "Kraken"
     }
   ]
 }
