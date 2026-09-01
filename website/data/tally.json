@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-01T16:55:13.580Z",
-  "block": 50746127,
+  "updated": "2026-09-01T21:20:02.713Z",
+  "block": 50754069,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -29,7 +29,8 @@
       "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
       "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "0x36041020857b33aa09ee7d9a99743176a7778134",
-      "0x9c8665dd47eba6e23c47fa2577fe3ad953563206"
+      "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
+      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae"
     ],
     "holdings": [
       {
@@ -52,7 +53,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 26406.258586,
+        "balance": 26220.898291,
         "role": "buyer",
         "class": "primary"
       },
@@ -115,10 +116,16 @@
         "balance": 12358.957209,
         "role": "lp pumper",
         "class": "primary"
+      },
+      {
+        "address": "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
+        "balance": 0,
+        "role": "icons",
+        "class": "primary"
       }
     ],
-    "balance": 286460.4,
-    "pct": 36.3
+    "balance": 286275.04,
+    "pct": 36.2
   },
   "voters": [
     {
