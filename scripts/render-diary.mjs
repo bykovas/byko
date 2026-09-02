@@ -595,13 +595,31 @@ function injectStaticTally() {
   const held = holdings.filter((h) => Number(h.balance) > 0).length;
   const total = holdings.length || (Array.isArray(f.wallets) ? f.wallets.length : 0);
   const tally = t.tally || {};
+  const nc = t.notCounted || {};
+  /* Same UTC stamp the client script prints, so static and live agree. */
+  const stamp = (iso) => {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso);
+    const m = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const p2 = (n) => String(n).padStart(2, "0");
+    return `${d.getUTCDate()} ${m[d.getUTCMonth()]} ${d.getUTCFullYear()} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())} UTC`;
+  };
+  const forCount = tally.for, withdrawnCount = tally.withdrawn;
+  const voteTotal = (forCount != null && withdrawnCount != null) ? forCount + withdrawnCount : null;
+  const pct = (n) => voteTotal ? " · " + (n / voteTotal * 100).toFixed(1) + "%" : "";
   const values = {
     "founder-balance": f.balance != null ? Math.round(f.balance).toLocaleString("en-US") : null,
     "founder-pct": f.pct != null ? String(f.pct) : null,
     "founder-wallets-held": holdings.length ? String(held) : null,
     "founder-wallets-total": total ? String(total) : null,
-    "tally-for": tally.for != null ? String(tally.for) : null,
-    "tally-withdrawn": tally.withdrawn != null ? String(tally.withdrawn) : null,
+    "tally-for": forCount != null ? String(forCount) : null,
+    "tally-withdrawn": withdrawnCount != null ? String(withdrawnCount) : null,
+    "tally-caption-for": forCount != null ? "for " + forCount + pct(forCount) : null,
+    "tally-caption-withdrawn": withdrawnCount != null ? "withdrawn " + withdrawnCount + pct(withdrawnCount) : null,
+    "tally-updated": t.updated ? (voteTotal ? voteTotal + " counted · " : "") + stamp(t.updated) +
+      (t.block ? " · block " + Number(t.block).toLocaleString("en-US") : "") : null,
+    "tally-notcounted": nc.dust != null ? "not counted: " + nc.dust + " below the floor · " +
+      nc.contracts + " contracts · " + nc.giftOnly + " gift-only (never bought)" : null,
   };
   let page = readFileSync(INDEX_PAGE, "utf8");
   for (const [id, value] of Object.entries(values)) {

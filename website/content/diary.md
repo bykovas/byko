@@ -72,7 +72,7 @@ Same experiment. Different object.
 This time, it has a face.
 
 ---
-**Teaser:** BYKO выпустил BYKO Icons — коллекцию emoji-inspired котов как ERC-721 NFT в сети Base. Максимальный supply контракта — 227 экземпляров.
+**Teaser:** BYKO released BYKO Icons, a collection of emoji-inspired cats as ERC-721 NFTs on Base. The contract's maximum supply is 227 tokens.
 **X:** BYKO now has faces. 😋🥹 BYKO Icons is a tiny ERC-721 collection on Base: emoji-inspired Cheshire cats, immutable IPFS metadata, max 227 tokens. First drop: TASTE REALITY + LUKO INNOCENT.
 **Image:** ![BYKO Icons emoji-inspired Cheshire cats on Base](/assets/diary/byko-launches-the-byko-icons-collection/byko-icons-collection.jpg)
 
