@@ -475,7 +475,9 @@ function renderCounters() {
       `<span class="prov${chain ? " live" : ""}">${chain ? "from the chain" : "counted by hand"}</span></a>`;
   }).join("\n");
   return {
-    html: `    <div class="counters">\n${band}\n    </div>`,
+    /* one row, one column per home counter: the CSS reads --counter-cols so
+       the band never wraps a stray cell onto a second line as counters change. */
+    html: `    <div class="counters" style="--counter-cols:${onHome.length}">\n${band}\n    </div>`,
     count: onHome.length,
     total: data.counters.length,
     jsonChanged,
