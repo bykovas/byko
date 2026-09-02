@@ -503,8 +503,11 @@ function renderHero(byId) {
   const html = cells.map((cell) => {
     let figure;
     if (cell.live === "price") {
-      /* index.js writes the live pool price into this span by id. */
-      figure = `<div class="figure live"><span id="index-price-figure">0.000252</span></div>`;
+      /* index.js writes the live pool price into this span by id. The static
+         default is a flat zero, not a stale real-looking figure: a crawler
+         reading the page with no JS then sees a value that reads as
+         "not loaded yet", not a price that appears to have crashed. */
+      figure = `<div class="figure live"><span id="index-price-figure">0.000000</span></div>`;
     } else if (cell.figure != null) {
       /* A static fact, not a counter: supply and owner/mint are fixed by the
          contract, so their figures are literals rather than tracked values. */
