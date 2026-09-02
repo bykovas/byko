@@ -34,6 +34,29 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## BYKO launches the BYKO Icons collection — 1 September 2026
+
+BYKO now has faces. 😋🥹
+
+Introducing BYKO Icons — a tiny ERC-721 collection on Base built around the same BYKO cat, with each expression inspired by an emoji.
+
+The first two works are already on-chain:
+
+😋 ICON #001 — TASTE REALITY
+🥹 ICON #002 — LUKO INNOCENT
+
+The collection is deliberately small: maximum 227 token IDs. Images and metadata live on IPFS, and each token URI becomes immutable after minting.
+
+Some works may exist as Single, Rare or Limited editions. The first mint is just five NFTs.
+
+Same experiment. Different object.
+This time, it has a face.
+
+---
+**Teaser:** BYKO выпустил BYKO Icons — коллекцию emoji-inspired котов как ERC-721 NFT в сети Base. Максимальный supply контракта — 227 экземпляров.
+**X:** BYKO now has faces. 😋🥹 BYKO Icons is a tiny ERC-721 collection on Base: emoji-inspired Cheshire cats, immutable IPFS metadata, max 227 tokens. First drop: TASTE REALITY + LUKO INNOCENT.
+**Image:** ![BYKO Icons emoji-inspired Cheshire cats on Base](/assets/diary/byko-launches-the-byko-icons-collection/byko-icons-collection.jpg)
+
 ## One WFLOW Drain, Three Dollar Values: $9.3M, $410K, $246K — 1 September 2026
 
 A vulnerability in Ankr's ankrFLOW contract allowed approximately 8.6 million unbacked ankrFLOW to be created. According to Flow, the tokens were used as collateral on MORE Markets to remove 15.5 million WFLOW from its reserve.
