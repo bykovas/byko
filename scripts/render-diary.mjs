@@ -577,6 +577,41 @@ replaceBetween(INDEX_PAGE, counters.html, C_BEGIN, C_END);
 const hero = renderHero(counters.byId);
 replaceBetween(INDEX_PAGE, hero.html, H_BEGIN, H_END);
 
+/* ---------- static tally: honesty figures baked into the HTML ----------
+   The Disclosure sentence and the Referendum tiles are filled live in the
+   browser, so crawlers, classifiers and archivers saw only the "—" dashes.
+   Bake the committed snapshot (website/data/tally.json) into the static HTML
+   so those figures are true in the source too; index.html's own script still
+   refreshes them to the live block on load. A missing or unparseable file
+   leaves the dashes rather than inventing a number. Values are matched by span
+   id, so the id is the single point of truth shared with the client script. */
+function injectStaticTally() {
+  const path = "website/data/tally.json";
+  if (!existsSync(path)) return;
+  let t;
+  try { t = JSON.parse(readFileSync(path, "utf8")); } catch { return; }
+  const f = t.founder || {};
+  const holdings = Array.isArray(f.holdings) ? f.holdings : [];
+  const held = holdings.filter((h) => Number(h.balance) > 0).length;
+  const total = holdings.length || (Array.isArray(f.wallets) ? f.wallets.length : 0);
+  const tally = t.tally || {};
+  const values = {
+    "founder-balance": f.balance != null ? Math.round(f.balance).toLocaleString("en-US") : null,
+    "founder-pct": f.pct != null ? String(f.pct) : null,
+    "founder-wallets-held": holdings.length ? String(held) : null,
+    "founder-wallets-total": total ? String(total) : null,
+    "tally-for": tally.for != null ? String(tally.for) : null,
+    "tally-withdrawn": tally.withdrawn != null ? String(tally.withdrawn) : null,
+  };
+  let page = readFileSync(INDEX_PAGE, "utf8");
+  for (const [id, value] of Object.entries(values)) {
+    if (value == null) continue;
+    page = page.replace(new RegExp(`(id="${id}"[^>]*>)[^<]*(<)`), `$1${escapeHtml(value)}$2`);
+  }
+  writeFileSync(INDEX_PAGE, page);
+}
+injectStaticTally();
+
 /* ---------- header navigation (one canonical menu on every page) ------- */
 
 /* The current page's own item renders as a non-link with aria-current so
