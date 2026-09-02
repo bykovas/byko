@@ -81,6 +81,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .hero .sub{font:italic 400 18px/1.4 var(--byko-font-sans);color:var(--byko-ink-2);margin:12px 0 0}
 .hero .lede{font:var(--byko-body-lg);color:var(--byko-ink-2);margin:16px 0 0}
 .hero .band{margin-top:28px}
+/* Tertiary action: no frame, no fill — a plain button that reads as a link
+   but keeps the button hit-area. */
+.btn-ghost{background:transparent;border-color:transparent;color:var(--byko-ink)}
+.btn-ghost:hover{background:var(--byko-paper-2);border-color:transparent;color:var(--byko-ink)}
+/* The contract copy control is an icon inline in the microcopy, not a word. */
+.fine .copy-icon{margin:0 1px;padding:3px 4px;vertical-align:-4px;line-height:0;color:var(--byko-label)}
+.fine .copy-icon:hover{color:var(--byko-ink)}
+.fine .copy-icon.copied{color:var(--byko-live-ink);border-color:var(--byko-live)}
 
 .coin{display:flex;justify-content:center;padding:6px 0 22px}
 .coin img{width:150px;height:150px}
@@ -231,15 +239,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="actions">
         <a class="btn" href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">Contract on BaseScan <span>→</span></a>
         <button class="btn btn-outline" id="add-to-wallet" type="button">Add to wallet</button>
-        <a class="btn btn-outline" href="/market">Market &amp; price</a>
+        <a class="btn btn-ghost" href="/market">Market &amp; price</a>
       </div>
-      <p class="fine">absolute price · <span class="hex" id="hero-address">0x078bB16e24c8931Fc007928c370422e5e38F4372</span> <button class="copy" type="button" data-copy="hero-address">copy</button> · verified exact match · 18 decimals</p>
+      <p class="fine">absolute price · <span class="hex" id="hero-address">0x078bB16e24c8931Fc007928c370422e5e38F4372</span> <button class="copy copy-icon" type="button" data-copy="hero-address" aria-label="Copy contract address" title="Copy contract address"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button> · verified exact match · 18 decimals</p>
     </div>
 
     <div>
       <div class="coin"><img src="assets/coin.svg" alt="The BYKO coin" width="150" height="150"></div>
       <div class="operator">
-        <span class="label">Founder</span>
+        <span class="label">One man</span>
         <div class="who">
           <img class="portrait" src="assets/portrait.png" alt="Denisas Bykovas" width="104" height="104">
           <div>
@@ -259,8 +267,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section id="diary">
     <div class="section-head">
-      <span class="kicker">Diary</span>
-      <h2>The log, newest first</h2>
+      <span class="kicker">One way</span>
+      <h2>BYKO does not predict what it will become. It records what it becomes.</h2>
     </div>
 <!-- diary:begin -->
     <div class="cards3">
@@ -680,8 +688,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var source = document.getElementById(button.getAttribute("data-copy"));
       if (!source || !navigator.clipboard) return;
       navigator.clipboard.writeText(source.textContent).then(function () {
-        button.textContent = "copied";
-        setTimeout(function () { button.textContent = "copy"; }, 1400);
+        /* Icon buttons keep their glyph — flash a class instead of swapping
+           text, which would wipe the SVG. Text buttons keep the word swap. */
+        if (button.classList.contains("copy-icon")) {
+          button.classList.add("copied");
+          setTimeout(function () { button.classList.remove("copied"); }, 1400);
+        } else {
+          button.textContent = "copied";
+          setTimeout(function () { button.textContent = "copy"; }, 1400);
+        }
       });
     });
   });
