@@ -242,9 +242,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="actions">
         <a class="btn" href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372#code" target="_blank" rel="noopener">Contract on BaseScan <span>→</span></a>
         <button class="btn btn-outline" id="add-to-wallet" type="button">Add to wallet</button>
-        <a class="btn btn-ghost" href="/market">Market &amp; price</a>
+        <a class="btn btn-outline" href="/market">Market &amp; price</a>
       </div>
-      <p class="fine">absolute price · 1 BYKO = 1 BYKO · <span class="hex" id="hero-address">0x078bB16e24c8931Fc007928c370422e5e38F4372</span> <button class="copy copy-icon" type="button" data-copy="hero-address" aria-label="Copy contract address" title="Copy contract address"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></p>
+      <p class="fine"><span class="hex" id="hero-address" title="0x078bB16e24c8931Fc007928c370422e5e38F4372">0x078bB16e…e38F4372</span> <button class="copy copy-icon" type="button" data-copy-text="0x078bB16e24c8931Fc007928c370422e5e38F4372" aria-label="Copy contract address" title="Copy contract address"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button> · verified exact match · 1 BYKO = 1 BYKO · absolute price</p>
     </div>
 
     <div>
@@ -688,9 +688,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 (function () {
   document.querySelectorAll("[data-copy]").forEach(function (button) {
     button.addEventListener("click", function () {
-      var source = document.getElementById(button.getAttribute("data-copy"));
-      if (!source || !navigator.clipboard) return;
-      navigator.clipboard.writeText(source.textContent).then(function () {
+      /* data-copy-text wins when the visible text is a shortened form (e.g. a
+         truncated address); otherwise copy the referenced element's text. */
+      var text = button.getAttribute("data-copy-text");
+      if (text == null) {
+        var source = document.getElementById(button.getAttribute("data-copy"));
+        if (!source) return;
+        text = source.textContent;
+      }
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(text).then(function () {
         /* Icon buttons keep their glyph — flash a class instead of swapping
            text, which would wipe the SVG. Text buttons keep the word swap. */
         if (button.classList.contains("copy-icon")) {
