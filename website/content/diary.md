@@ -34,6 +34,25 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Coinbase Displayed a $9.58T Market Cap Before CP Was Tradable — 2 September 2026
+
+Coinbase announced support for Cluster Protocol on Base, but deposits were still unavailable and its own price page described CP as not tradable.
+
+At the same time, the page displayed CP at $1,915.35, listed five billion tokens as circulating, and produced a $9.58 trillion market cap. It reported no trading volume and said the data came from third parties.
+
+Cluster Protocol's tokenomics says 1.369 billion CP should circulate on day one, while CoinMarketCap still classified the asset as an upcoming launch. OKX and KuCoin scheduled spot trading for later on September 2.
+
+For BYKO, this is a provider-state problem: support, indexing, pricing and tradability are different events. A price page can exist before an executable market, and a visible market cap can be no more trustworthy than the two metadata fields multiplied together.
+
+The useful test is correction latency. Snapshot every provider before launch, at trading open, one hour later and 24 hours later; then record when price, supply, market cap and tradability converge.
+
+Sources: Coinbase, Cluster Protocol, CoinMarketCap, OKX, KuCoin, BaseScan, DexScreener.
+
+---
+**Teaser:** Coinbase showed CP at $1,915.35 and $9.58T while labeling it non-tradable and reporting no volume.
+**X:** Coinbase showed non-tradable CP at $1,915.35 and a $9.58T market cap before exchange spot trading opened. For BYKO, this is the clean test: a price page can exist before an executable market. Sources: Coinbase, Cluster Protocol, CMC.
+**Image:** ![Coinbase price page showing Cluster Protocol at $1,915.35 and $9.58T market cap before trading](/assets/diary/coinbase-displayed-a-9-58t-market-cap-before-cp-was-tradable/coinbase-cp-market-cap.jpg)
+
 ## BYKO launches the BYKO Icons collection — 1 September 2026
 
 BYKO now has faces. 😋🥹
