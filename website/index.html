@@ -85,8 +85,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
    but keeps the button hit-area. */
 .btn-ghost{background:transparent;border-color:transparent;color:var(--byko-ink)}
 .btn-ghost:hover{background:var(--byko-paper-2);border-color:transparent;color:var(--byko-ink)}
-/* The contract copy control is an icon inline in the microcopy, not a word. */
-.fine .copy-icon{margin:0 1px;padding:3px 4px;vertical-align:-4px;line-height:0;color:var(--byko-label)}
+/* The contract copy control is an icon inline in the microcopy, not a word:
+   small, and centred on the line rather than sitting below it. */
+.fine .copy-icon{display:inline-flex;align-items:center;justify-content:center;margin:0 2px;
+  padding:2px;vertical-align:middle;line-height:0;color:var(--byko-label)}
+.fine .copy-icon svg{width:11px;height:11px;display:block}
 .fine .copy-icon:hover{color:var(--byko-ink)}
 .fine .copy-icon.copied{color:var(--byko-live-ink);border-color:var(--byko-live)}
 
