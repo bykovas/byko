@@ -159,7 +159,6 @@ section{padding:var(--byko-sp-9) 0 0}
   padding:4px 0;transition:var(--byko-transition)}
 .nav-links a:hover{color:var(--byko-ink);border-bottom:0}
 .nav-links span[aria-current="page"]{color:var(--byko-ink);border-bottom:1.5px solid var(--byko-ink)}
-.nav-links a.services,.nav-links span.services{font-weight:600;color:var(--byko-live-ink);border-bottom:1.5px solid var(--byko-live)}
 .lamp{display:inline-flex;align-items:center;gap:7px;font:var(--byko-label-font);
   letter-spacing:var(--byko-label-tracking);text-transform:uppercase;color:var(--byko-pass)}
 .lamp::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--byko-pass-lamp)}

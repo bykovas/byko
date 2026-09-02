@@ -505,6 +505,10 @@ function renderHero(byId) {
     if (cell.live === "price") {
       /* index.js writes the live pool price into this span by id. */
       figure = `<div class="figure live"><span id="index-price-figure">0.000252</span></div>`;
+    } else if (cell.figure != null) {
+      /* A static fact, not a counter: supply and owner/mint are fixed by the
+         contract, so their figures are literals rather than tracked values. */
+      figure = `<div class="figure">${escapeHtml(cell.figure)}</div>`;
     } else {
       const counter = byId.get(cell.counter);
       if (!counter) throw new Error(`${COUNTERS_JSON}: hero cell has unknown counter "${cell.counter}"`);
