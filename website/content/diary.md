@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Coinbase Opened CP, Then Sent It Back to Auction Seven Minutes Later — 3 September 2026
+
+Coinbase moved CP-USD into limit-only trading, declared Cluster Protocol available, returned the pair to auction seven minutes later, and reopened it in limit-only mode 14 minutes after that.
+
+Public candles show five minutes of matching before the auction gap, including a $0.31701 high, followed by no candle entries until 14:15 UTC. The earlier $1,915.35 price and $9.58T market-cap display disappeared. Coinbase and CoinGecko now show a market price near $0.04, but neither reproduces the issuer's stated 1.369B circulating supply.
+
+For BYKO, this is a useful correction to the word "listed." Support, consumer availability, auction, matching, limit-only trading, price publication, and supply recognition are separate infrastructure states. A price can become executable before the metadata needed to interpret it becomes coherent.
+
+Sources: Coinbase Markets, Coinbase Exchange API, Cluster Protocol, CoinGecko, PANews.
+
+---
+**Teaser:** CP went live on Coinbase, returned to auction seven minutes later, and fixed its price display before fixing its circulating-supply metadata.
+**X:** Coinbase declared CP live, sent CP-USD back to auction seven minutes later, then reopened it limit-only. The $9.58T display vanished; circulating supply remains zero or unknown. Listing is a state machine. Sources: Coinbase, CoinGecko.
+**Image:** ![Coinbase CP-USD trading page showing the limit-only status after returning from auction](/assets/diary/coinbase-opened-cp-then-sent-it-back-to-auction-seven-minutes-later/hero.jpg)
+
 ## Coinbase Displayed a $9.58T Market Cap Before CP Was Tradable — 2 September 2026
 
 Coinbase announced support for Cluster Protocol on Base, but deposits were still unavailable and its own price page described CP as not tradable.
