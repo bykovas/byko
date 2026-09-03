@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-03T16:41:30.514Z",
-  "block": 50832116,
+  "updated": "2026-09-03T21:20:12.523Z",
+  "block": 50840475,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -10,9 +10,9 @@
     "withdrawn": 0
   },
   "notCounted": {
-    "dust": 1,
+    "dust": 2,
     "contracts": 9,
-    "giftOnly": 901
+    "giftOnly": 900
   },
   "founder": {
     "wallets": [
