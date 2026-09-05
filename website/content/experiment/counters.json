@@ -76,10 +76,10 @@
     },
     {
       "id": "episodes",
-      "value": "56",
+      "value": "57",
       "label": "Episodes published",
       "kind": "result",
-      "asOf": "2026-09-03",
+      "asOf": "2026-09-05",
       "counts": "Diary entries live on this site, counted from website/content/diary.md — the single markdown source every page is generated from. An episode counts when it is published, not when it is written.",
       "excludes": "Drafts, and social posts that repeat an entry — an episode is counted once, however many times it is re-shared.",
       "provenance": "hand"

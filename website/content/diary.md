@@ -34,6 +34,23 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## AMC Rejected the Token Bearing Its Ticker. Robinhood Refused to Stop It — 5 September 2026
+
+AMC's CEO asked Robinhood to stop trading the AMC-linked Stock Token and said AMC had not authorized or endorsed it. Robinhood's chief legal officer said it would not stop, and CEO Vlad Tenev said the company stands behind Stock Tokens.
+
+Robinhood's own documentation calls the product a tokenized debt security. It provides economic exposure to AMC shares but no ownership of AMC equity or shareholder rights.
+
+For BYKO, this separates four facts that interfaces often compress into one label: the contract can be canonical to Robinhood, the instrument can be issued by a Robinhood affiliate, its price can reference AMC shares, and AMC itself can still reject the association.
+
+The measurement is not whether a price exists. It is whether wallets and explorers disclose the instrument issuer, the referenced company, the holder's rights, the source of the price and the absence of company endorsement as separate facts.
+
+Sources: AMC, Robinhood, Bloomberg, CoinDesk, The Block.
+
+---
+**Teaser:** Robinhood can prove which AMC token is canonical; AMC can still say the product has nothing to do with the company.
+**X:** AMC asked Robinhood to halt its AMC-linked Stock Token. Robinhood refused. A token can be canonical to a platform without being endorsed by the company it references. Sources: AMC, Robinhood, Bloomberg, CoinDesk.
+**Image:** ![AMC-linked Stock Token dispute between AMC and Robinhood](/assets/diary/amc-rejected-the-token-bearing-its-ticker-robinhood-refused-to-stop-it/hero.png)
+
 ## Coinbase Opened CP, Then Sent It Back to Auction Seven Minutes Later — 3 September 2026
 
 Coinbase moved CP-USD into limit-only trading, declared Cluster Protocol available, returned the pair to auction seven minutes later, and reopened it in limit-only mode 14 minutes after that.
