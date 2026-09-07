@@ -36,14 +36,21 @@ function nextByRule(
   if (!w || w.halted === 1 || !w.next_fire_at || w.usdc_balance == null) return {};
   const balance = Number(w.usdc_balance) / 1e6;
   if (!Number.isFinite(balance)) return {};
-  const [lower, upper] = RULES.strategy.band_usdc;
-  /* Same rule the worker runs: keep the current side inside the band, buy above
-     the top, sell below the floor. This is the RUN side; since the sixth
-     amendment each fire also throws a contrarian_pct coin, so the published
+  /* Same rule the worker runs. TWELFTH AMENDMENT: the run turns when the cash
+     crosses the target that was drawn and written down before the run's first
+     trade — so the target is published here exactly as run_target_pct was. This
+     is the RUN side; each fire also throws the contrarian coin, so the published
      side is the rule's, with the flip odds published next to it. */
-  let side: "buy" | "sell" = w.direction === "sell" ? "sell" : "buy";
-  if (balance > upper) side = "buy";
-  else if (balance < lower) side = "sell";
+  const target = w.run_target_usdc != null ? Number(w.run_target_usdc) : NaN;
+  const [, floorHi] = RULES.strategy.run_floor_usdc;
+  const [ceilLo] = RULES.strategy.run_ceiling_usdc;
+  let side: "buy" | "sell" = w.direction === "sell" || w.direction === "buy"
+    ? (w.direction as "buy" | "sell")
+    : (balance > (floorHi + ceilLo) / 2 ? "buy" : "sell");
+  if (Number.isFinite(target)) {
+    if (side === "sell" && balance >= target) side = "buy";
+    else if (side === "buy" && balance <= target) side = "sell";
+  }
   /* The chain figure, not tvl_usd: the vendors disagree about whether that
      counts one side of the pool or both, and this clamp is a share of the
      USDC side. Using theirs made luko's published range twice as wide as the
@@ -55,6 +62,9 @@ function nextByRule(
     next_side: side,
     next_size_min: sizeMin,
     next_size_max: cap > 0 ? Math.min(sizeMax, cap) : sizeMax,
+    /* the run's committed cash target, and the cadence mode it is holding */
+    next_run_target_usdc: Number.isFinite(target) ? target : null,
+    next_mode: w.mode ?? null,
   };
 }
 
@@ -80,7 +90,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
               s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
-              s.direction
+              s.direction, s.run_target_usdc, s.mode
          FROM wallets w LEFT JOIN wallet_state s ON s.address = w.address
         WHERE w.address = ?1`,
     ).bind(r.wallet).first<Record<string, unknown>>();

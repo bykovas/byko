@@ -24,12 +24,29 @@ export interface Rules {
   chain_id: number;
   venue: { router: string; factory: string; quote: string; stable: boolean };
   strategy: {
-    interval_minutes: [number, number];
     interval_curve?: "uniform" | "log-uniform";
+    /* TWELFTH AMENDMENT: cadence is a mode held for a drawn number of fires,
+       so waits cluster into bursts and silences instead of arriving i.i.d. */
+    modes: Array<{
+      id: string;
+      weight: number;
+      interval_minutes: [number, number];
+      fires: [number, number];
+    }>;
     trade_usdc: [number, number];
-    band_usdc: [number, number];
+    size_curve?: "uniform" | "log-uniform";
+    /* Per-run cash targets replace the fixed band. A buy run aims down into
+       run_floor_usdc, a sell run up into run_ceiling_usdc; the outer values of
+       these ranges are the self-funding envelope the band used to hold. */
+    run_floor_usdc: [number, number];
+    run_ceiling_usdc: [number, number];
     max_trade_pct_pool: number;
     contrarian_pct: number;
+    skip_pct: number;
+    double_pct: number;
+    double_seconds: [number, number];
+    early_reversal_pct: number;
+    spike_pct: number;
     slippage_bps: number;
   };
   arms: ArmRules[];

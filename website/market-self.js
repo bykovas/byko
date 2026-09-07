@@ -164,11 +164,22 @@
   function renderRules(data) {
     var box = $("rules"); box.textContent = "";
     var s = data.rules.strategy, v = data.rules.venue;
+    /* TWELFTH AMENDMENT: the fixed band is replaced by two target ranges, and
+       the wait comes from whichever cadence mode the arm is holding, so the
+       strip publishes the modes' overall span rather than one interval. */
+    var modes = s.modes || [];
+    var lo = null, hi = null;
+    modes.forEach(function (m) {
+      if (lo === null || m.interval_minutes[0] < lo) lo = m.interval_minutes[0];
+      if (hi === null || m.interval_minutes[1] > hi) hi = m.interval_minutes[1];
+    });
+    var range = function (a) { return a ? "$" + a[0] + "–" + a[1] : "—"; };
     var bits = [
       ["declared", data.rules.declared_at],
-      ["interval", s.interval_minutes[0] + "–" + s.interval_minutes[1] + "m"],
+      ["interval", lo !== null ? lo + "–" + hi + "m" : "—"],
+      ["modes", modes.length ? modes.map(function (m) { return m.id + " " + m.weight + "%"; }).join(" · ") : "—"],
       ["size", "$" + s.trade_usdc[0] + "–$" + s.trade_usdc[1]],
-      ["band", "$" + s.band_usdc[0] + "–$" + s.band_usdc[1]],
+      ["targets", range(s.run_floor_usdc) + " / " + range(s.run_ceiling_usdc)],
       ["slip", (s.slippage_bps / 100) + "%"],
       ["hash", data.rules.hash_ok ? "verified" : "MISMATCH"],
       ["switch", data.market_open ? "open" : "closed"],
@@ -380,10 +391,16 @@
            show it beside the side it governs. The side itself is the run's;
            since the sixth amendment each fire may flip it with the published
            probability, so the odds print right next to the claim they weaken. */
-        var turn = a.next_run_target_pct ? " · turns at " + Number(a.next_run_target_pct).toFixed(2) + "%" : "";
+        /* TWELFTH AMENDMENT: the run turns when the wallet's cash crosses the
+           target drawn before the run's first trade, so the committed figure is
+           a dollar level, not a price move. The cadence mode prints beside it. */
+        var turn = a.next_run_target_usdc != null
+          ? " · turns at $" + Number(a.next_run_target_usdc).toFixed(2) : "";
+        var mode = a.next_mode ? " · " + a.next_mode : "";
         var cpct = data.rules && data.rules.strategy && data.rules.strategy.contrarian_pct;
         var flips = cpct ? " · flips " + cpct + "%" : "";
-        tr.appendChild(cell("l mono byrule", "by rule " + a.next_side.toUpperCase() + flips + turn, labels[0]));
+        tr.appendChild(cell("l mono byrule",
+          "by rule " + a.next_side.toUpperCase() + flips + turn + mode, labels[0]));
       }
       else tr.appendChild(cellDash("l", labels[0]));
 

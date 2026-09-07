@@ -25,17 +25,61 @@ function uniform(lo: number, hi: number): number {
   return lo + u * (hi - lo);
 }
 
-/* SEVENTH AMENDMENT: the wait between trades is drawn log-uniformly. A linear
-   draw weights minutes, not scales — a 5–10 minute gap had a 2.9% chance
-   against 17% for 150–180 — so every pause came out "an hour or more" and the
-   stream read as a steady beat. Log-uniform gives every doubling of the wait
-   the same probability, so bursts and silences arrive mixed. Bounds untouched. */
-function drawDelayMin(): number {
-  const [lo, hi] = RULES.strategy.interval_minutes;
-  if (RULES.strategy.interval_curve === "log-uniform") {
-    const u = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
-    return lo * Math.exp(u * Math.log(hi / lo));
+function logUniform(lo: number, hi: number): number {
+  if (!(lo > 0) || !(hi > lo)) return uniform(Math.min(lo, hi), Math.max(lo, hi));
+  const u = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+  return lo * Math.exp(u * Math.log(hi / lo));
+}
+
+/* Every published probability is thrown by the same CSPRNG as the sizes. */
+function chance(pct: number): boolean {
+  return pct > 0 && uniform(0, 100) < pct;
+}
+
+/* TWELFTH AMENDMENT: cadence is a MODE, drawn by published weight and held for
+   a drawn number of fires. Waits drawn i.i.d. from one distribution have an
+   even texture; a real tape clusters — bursts of trades, then silence. Holding
+   a mode across several fires is what produces that clustering. */
+function drawMode(): { id: string; left: number } {
+  const modes = RULES.strategy.modes;
+  const total = modes.reduce((sum, m) => sum + m.weight, 0);
+  let u = uniform(0, total);
+  for (const m of modes) {
+    u -= m.weight;
+    if (u <= 0) return { id: m.id, left: Math.max(1, Math.round(uniform(m.fires[0], m.fires[1]))) };
   }
+  const last = modes[modes.length - 1];
+  return { id: last.id, left: Math.max(1, Math.round(uniform(last.fires[0], last.fires[1]))) };
+}
+
+/* SEVENTH AMENDMENT still holds, now inside the mode's own bounds: log-uniform,
+   so every doubling of the wait is equally likely within the mode. */
+function drawDelayMin(modeId: string | null): number {
+  const modes = RULES.strategy.modes;
+  const m = modes.find((x) => x.id === modeId) ?? modes[0];
+  const [lo, hi] = m.interval_minutes;
+  return RULES.strategy.interval_curve === "log-uniform" ? logUniform(lo, hi) : uniform(lo, hi);
+}
+
+/* A run's cash target, drawn BEFORE the run's first trade and written to
+   wallet_state, exactly as run_target_pct was: the figure is committed in
+   advance and published, not chosen once the outcome is known. A sell run aims
+   up into run_ceiling_usdc, a buy run down into run_floor_usdc; the run ends on
+   the trade that CROSSES the target, so the overshoot varies by itself. The
+   0.75 gap keeps the target far enough from the balance to be a run at all. */
+function drawRunTarget(side: "buy" | "sell", balance: number): number {
+  const [floorLo, floorHi] = RULES.strategy.run_floor_usdc;
+  const [ceilLo, ceilHi] = RULES.strategy.run_ceiling_usdc;
+  if (side === "sell") {
+    const lo = balance + 0.75;
+    let hi = uniform(ceilLo, ceilHi);
+    if (hi < lo + 0.5) hi = lo + uniform(1, 5);
+    return uniform(lo, hi);
+  }
+  const hi = balance - 0.75;
+  if (hi <= floorLo) return floorLo;
+  let lo = uniform(floorLo, floorHi);
+  if (lo > hi - 0.5) lo = Math.max(floorLo, hi - uniform(1, 5));
   return uniform(lo, hi);
 }
 
@@ -139,7 +183,11 @@ export class ArmLock {
     const token = getAddress(r.token.toLowerCase());
     const quote = getAddress(RULES.venue.quote.toLowerCase());
     const router = getAddress(RULES.venue.router.toLowerCase());
-    const [lower, upper] = RULES.strategy.band_usdc;
+    /* TWELFTH AMENDMENT: the fixed band is gone. What remains of it is the
+       self-funding envelope — the outer values of the two target ranges. */
+    const [floorLo, floorHi] = RULES.strategy.run_floor_usdc;
+    const [ceilLo, ceilHi] = RULES.strategy.run_ceiling_usdc;
+    const typicalCeiling = (ceilLo + ceilHi) / 2;
 
     /* read state */
     const [usdcBal, tokenBal, gas, reserves] = await Promise.all([
@@ -213,7 +261,7 @@ export class ArmLock {
     const inAfterFee = tokQty * 0.997;
     const realisable = poolTok > 0 ? (poolUsd * inAfterFee) / (poolTok + inAfterFee) : 0;
     const portfolio = usdcWhole + realisable;
-    if (portfolio < upper * 1.15) {
+    if (portfolio < typicalCeiling * 1.15) {
       const said = await env.DB.prepare(
         `SELECT 1 AS x FROM events WHERE arm = ?1 AND kind = 'underfunded' LIMIT 1`,
       ).bind(arm).first<number>("x");
@@ -221,8 +269,8 @@ export class ArmLock {
         await event(env, arm, "underfunded",
           `portfolio $${portfolio.toFixed(2)} (USDC $${usdcWhole.toFixed(2)} + $${realisable.toFixed(2)} ` +
           `realisable for the token leg, not $${(tokQty * price).toFixed(2)} at spot) ` +
-          `against a band whose upper bound is $${upper}: ` +
-          `this arm cannot sell its way to the top of the band and will stop on token-dust`);
+          `against sell targets drawn from $${ceilLo}–${ceilHi}: ` +
+          `this arm cannot sell its way to a typical run's target and will stop on token-dust`);
       }
     }
 
@@ -238,21 +286,86 @@ export class ArmLock {
        on hand to buy and sells to refill it; what that does to the quoted price
        is the experiment's output, never its input — see the note in rules.json. */
     const st = await env.DB.prepare(
-      `SELECT direction FROM wallet_state WHERE address = ?1`,
-    ).bind(r.wallet).first<{ direction: string | null }>();
-    const prev = st?.direction ?? null;
-    let side: "buy" | "sell" = prev === "sell" ? "sell" : "buy";
-    if (usdcWhole > upper) side = "buy";
-    else if (usdcWhole < lower) side = "sell";
+      `SELECT direction, run_target_usdc, mode, mode_left FROM wallet_state WHERE address = ?1`,
+    ).bind(r.wallet).first<{
+      direction: string | null; run_target_usdc: string | null;
+      mode: string | null; mode_left: number | null;
+    }>();
 
-    const newRun = side !== prev;
-    await env.DB.prepare(
-      `UPDATE wallet_state SET direction = ?2 WHERE address = ?1`,
-    ).bind(r.wallet, side).run();
+    /* Cadence first: which mode are we in? The mode is held across several
+       fires, so gaps cluster into bursts and silences instead of arriving
+       independently. Drawn by published weight, written down before it is used. */
+    let modeId = st?.mode ?? null;
+    let modeLeft = st?.mode_left ?? 0;
+    if (!modeId || modeLeft <= 0) {
+      const drawn = drawMode();
+      modeId = drawn.id;
+      modeLeft = drawn.left;
+      await env.DB.prepare(
+        `UPDATE wallet_state SET mode = ?2, mode_left = ?3 WHERE address = ?1`,
+      ).bind(r.wallet, modeId, modeLeft).run();
+      await event(env, arm, "mode",
+        `cadence mode ${modeId} for the next ${modeLeft} fire(s) — drawn from the published weights`);
+    }
+
+    /* A published skip: the alarm fires and no trade is made. Trading on every
+       single alarm is itself a pattern. */
+    if (chance(RULES.strategy.skip_pct ?? 0)) {
+      await event(env, arm, "skip",
+        `alarm fired, no trade — drawn at ${RULES.strategy.skip_pct}%`);
+      await env.DB.prepare(
+        `UPDATE wallet_state SET mode_left = ?2 WHERE address = ?1`,
+      ).bind(r.wallet, Math.max(0, modeLeft - 1)).run();
+      await this.reschedule(r.wallet, drawDelayMin(modeId) * 60_000);
+      return;
+    }
+
+    /* TWELFTH AMENDMENT: instead of two fixed band bounds, each run carries its
+       own drawn cash target — a sell run aims up into run_ceiling_usdc, a buy
+       run down into run_floor_usdc — and the run turns on the trade that
+       CROSSES it. Amplitude and reversal level differ every run, which a fixed
+       band could never do. */
+    const prev = st?.direction === "sell" || st?.direction === "buy" ? st.direction : null;
+    const storedTarget = st?.run_target_usdc != null ? Number(st.run_target_usdc) : NaN;
+    let side: "buy" | "sell" = prev ?? (usdcWhole > (floorHi + ceilLo) / 2 ? "buy" : "sell");
+    let newRun = prev === null || !Number.isFinite(storedTarget);
+    let reason = newRun ? "no run on record" : "";
+
+    if (!newRun) {
+      if (side === "sell" && usdcWhole >= storedTarget) {
+        side = "buy"; newRun = true;
+        reason = `sell run crossed its $${storedTarget.toFixed(2)} target`;
+      } else if (side === "buy" && usdcWhole <= storedTarget) {
+        side = "sell"; newRun = true;
+        reason = `buy run crossed its $${storedTarget.toFixed(2)} target`;
+      } else if (chance(RULES.strategy.early_reversal_pct ?? 0)) {
+        side = side === "buy" ? "sell" : "buy"; newRun = true;
+        reason = `early reversal — drawn at ${RULES.strategy.early_reversal_pct}%, ` +
+          `the $${storedTarget.toFixed(2)} target is abandoned`;
+        await event(env, arm, "early-reversal", reason);
+      }
+    }
+
+    /* What is left of the band: the self-funding envelope. Never start a buy
+       run below the floor range, never a sell run above the ceiling range. */
     if (newRun) {
+      if (side === "buy" && usdcWhole <= floorLo) side = "sell";
+      else if (side === "sell" && usdcWhole >= ceilHi) side = "buy";
+    }
+
+    let runTarget = storedTarget;
+    if (newRun) {
+      runTarget = drawRunTarget(side, usdcWhole);
+      await env.DB.prepare(
+        `UPDATE wallet_state SET direction = ?2, run_target_usdc = ?3 WHERE address = ?1`,
+      ).bind(r.wallet, side, runTarget.toFixed(6)).run();
       await event(env, arm, "run-start",
-        `${side} run begins — cash $${usdcWhole.toFixed(2)} ` +
-        (side === "buy" ? `above the $${upper} top of the band` : `below the $${lower} floor of the band`));
+        `${side} run begins — cash $${usdcWhole.toFixed(2)}, target $${runTarget.toFixed(2)} ` +
+        `(${reason || "reversal"}); the target is drawn and written before the run's first trade`);
+    } else {
+      await env.DB.prepare(
+        `UPDATE wallet_state SET direction = ?2 WHERE address = ?1`,
+      ).bind(r.wallet, side).run();
     }
 
     /* SIXTH AMENDMENT: one trade in five runs against its own run. A pure run
@@ -267,8 +380,11 @@ export class ArmLock {
        itself — price no longer gates the coin. */
     let tradeSide: "buy" | "sell" = side;
     const cp = RULES.strategy.contrarian_pct ?? 0;
-    const insideBand = usdcWhole >= lower && usdcWhole <= upper;
-    if (cp > 0 && insideBand && uniform(0, 100) < cp) {
+    /* TWELFTH AMENDMENT: "inside the band" becomes "comfortably inside the
+       envelope" — near either edge the corrective side is forced, and noise
+       there would un-force it. */
+    const insideEnvelope = usdcWhole > floorHi && usdcWhole < ceilLo;
+    if (cp > 0 && insideEnvelope && chance(cp)) {
       const flipped: "buy" | "sell" = side === "buy" ? "sell" : "buy";
       const fundable = flipped === "buy"
         ? Number(usdcBal) / 1e6 >= 0.40
@@ -276,7 +392,7 @@ export class ArmLock {
       if (fundable) {
         tradeSide = flipped;
         await event(env, arm, "contrarian",
-          `run is ${side}, this trade goes ${flipped} — drawn at ${cp}%, run unchanged`);
+          `run is ${side}, this trade goes ${flipped} — drawn at ${cp}%, run and target unchanged`);
       }
     }
 
@@ -295,7 +411,21 @@ export class ArmLock {
     const sizeLo = RULES.strategy.trade_usdc[0];
     let sizeHi = RULES.strategy.trade_usdc[1];
     if (cap > 0 && cap < sizeHi) sizeHi = cap;
-    let size = uniform(sizeLo, Math.max(sizeHi, sizeLo));
+    /* TWELFTH AMENDMENT: the draw over that effective range becomes LOG-UNIFORM.
+       Uniform has a flat profile — no tail — and a tape of evenly sized trades
+       reads as generated. Log-uniform gives many small trades and few large
+       ones, which is the shape real flow has. A published spike coin can send a
+       single trade up near the cap. */
+    const hiEff = Math.max(sizeHi, sizeLo);
+    let size = RULES.strategy.size_curve === "log-uniform"
+      ? logUniform(sizeLo, hiEff)
+      : uniform(sizeLo, hiEff);
+    if (chance(RULES.strategy.spike_pct ?? 0)) {
+      size = uniform(hiEff * 0.8, hiEff);
+      await event(env, arm, "spike",
+        `size drawn near the cap ($${size.toFixed(2)} of $${hiEff.toFixed(2)}) — ` +
+        `drawn at ${RULES.strategy.spike_pct}%`);
+    }
     if (cap > 0 && size > cap) size = cap;
 
     let inputToken: Address;
@@ -387,8 +517,25 @@ export class ArmLock {
       await event(env, arm, "error", `broadcast: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
     }
 
-    /* set delay_min on the row we just wrote, then schedule the next fire */
-    const delayMin = drawDelayMin();
+    /* set delay_min on the row we just wrote, then schedule the next fire.
+       TWELFTH AMENDMENT: the wait comes from the mode this arm is holding, and
+       a published double coin can bring the next fire in seconds instead — a
+       mini burst that no single-distribution draw would produce. A double does
+       not consume one of the mode's fires; it is an extra one inside it. */
+    let delayMin: number;
+    if (chance(RULES.strategy.double_pct ?? 0)) {
+      const [dLo, dHi] = RULES.strategy.double_seconds;
+      const seconds = uniform(dLo, dHi);
+      delayMin = seconds / 60;
+      await event(env, arm, "double",
+        `next fire in ${Math.round(seconds)}s instead of the ${modeId} wait — ` +
+        `drawn at ${RULES.strategy.double_pct}%`);
+    } else {
+      delayMin = drawDelayMin(modeId);
+      await env.DB.prepare(
+        `UPDATE wallet_state SET mode_left = ?2 WHERE address = ?1`,
+      ).bind(r.wallet, Math.max(0, modeLeft - 1)).run();
+    }
     await env.DB.prepare(
       `UPDATE trades SET delay_min = ?2 WHERE tx_hash = ?1`,
     ).bind(hash, delayMin).run();
@@ -418,8 +565,8 @@ export class ArmLock {
     return false;
   }
 
-  private async reschedule(wallet: string, ms = 0): Promise<void> {
-    const delay = ms > 0 ? ms : drawDelayMin() * 60_000;
+  private async reschedule(wallet: string, ms = 0, modeId: string | null = null): Promise<void> {
+    const delay = ms > 0 ? ms : drawDelayMin(modeId) * 60_000;
     const at = Date.now() + delay;
     await this.state.storage.setAlarm(at);
     await this.env.DB.prepare(

@@ -55,6 +55,19 @@ CREATE TABLE IF NOT EXISTS wallet_state (
   -- chosen once the outcome is known.
   run_start_price TEXT,
   run_target_pct  TEXT,
+  -- Added by hand, 7 Sep 2026, with the twelfth amendment:
+  --   ALTER TABLE wallet_state ADD COLUMN run_target_usdc TEXT;
+  --   ALTER TABLE wallet_state ADD COLUMN mode            TEXT;
+  --   ALTER TABLE wallet_state ADD COLUMN mode_left       INTEGER;
+  -- run_target_usdc is the cash level this run is aiming at, drawn and written
+  -- before the run's first trade; the run turns on the trade that crosses it.
+  -- mode / mode_left are the cadence mode and how many fires it still holds, so
+  -- waits cluster into bursts and silences instead of arriving independently.
+  -- run_start_price and run_target_pct above are dead since the ninth amendment
+  -- (price left the strategy) and are kept only so old rows still read.
+  run_target_usdc TEXT,
+  mode            TEXT,
+  mode_left       INTEGER,
   token_balance TEXT,
   updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
