@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## A Base Co-Founder's Account Became a Scam Token's Source — 6 September 2026
+
+Jesse Pollak said an attacker used a third-party app connected to his X account to post scam token tickers. He deleted the posts, removed all app connections and regained control.
+
+The relevant failure is not in an ERC-20 contract. It is in provenance: a widely trusted social account temporarily made an untrusted ticker look official.
+
+For BYKO, this creates a measurable test. After the same source disavows a token, how quickly do wallets, explorers, DEX interfaces and risk providers remove inherited legitimacy, add warnings, or keep the asset tradable? A contract address can identify code. It cannot prove that the person apparently publishing it intended to do so.
+
+Sources: Jesse Pollak, TokenPost, ChainCatcher/KuCoin.
+
+---
+**Teaser:** A verified social source can be authentic while the token post it publishes is not—how quickly does crypto infrastructure notice the reversal?
+**X:** A Base co-founder's X account posted scam token tickers via a connected app. The posts were deleted and access revoked. BYKO asks how fast wallets and scanners withdraw inherited trust after the source disavows it. Sources: Jesse Pollak, TokenPost.
+**Image:** ![Jesse Pollak's post about unauthorized scam token tickers published through a connected third-party app](/assets/diary/a-base-co-founder-s-account-became-a-scam-token-s-source/image.png)
+
 ## AMC Rejected the Token Bearing Its Ticker. Robinhood Refused to Stop It — 5 September 2026
 
 AMC's CEO asked Robinhood to stop trading the AMC-linked Stock Token and said AMC had not authorized or endorsed it. Robinhood's chief legal officer said it would not stop, and CEO Vlad Tenev said the company stands behind Stock Tokens.
