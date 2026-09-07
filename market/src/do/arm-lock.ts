@@ -58,7 +58,24 @@ function drawDelayMin(modeId: string | null): number {
   const modes = RULES.strategy.modes;
   const m = modes.find((x) => x.id === modeId) ?? modes[0];
   const [lo, hi] = m.interval_minutes;
-  return RULES.strategy.interval_curve === "log-uniform" ? logUniform(lo, hi) : uniform(lo, hi);
+  const drawn = RULES.strategy.interval_curve === "log-uniform" ? logUniform(lo, hi) : uniform(lo, hi);
+  return capGap(drawn);
+}
+
+/* THIRTEENTH AMENDMENT: a hard ceiling on any wait. The twelfth's quiet mode
+   was 4-24h held for up to six fires, which could silence an arm for two days —
+   and for a token that trades in order to show sustained two-sided trading, a
+   dead chart is a worse failure than the metronome it replaced. */
+function capGap(minutes: number): number {
+  const cap = RULES.strategy.max_gap_minutes;
+  return cap > 0 ? Math.min(minutes, cap) : minutes;
+}
+
+/* A skip means "not this alarm", not "sleep another cycle": it draws its own
+   short wait instead of the current mode's, which used to stack. */
+function drawSkipWaitMin(): number {
+  const [lo, hi] = RULES.strategy.skip_wait_minutes;
+  return capGap(logUniform(lo, hi));
 }
 
 /* A run's cash target, drawn BEFORE the run's first trade and written to
@@ -311,12 +328,14 @@ export class ArmLock {
     /* A published skip: the alarm fires and no trade is made. Trading on every
        single alarm is itself a pattern. */
     if (chance(RULES.strategy.skip_pct ?? 0)) {
+      const skipWait = drawSkipWaitMin();
       await event(env, arm, "skip",
-        `alarm fired, no trade — drawn at ${RULES.strategy.skip_pct}%`);
+        `alarm fired, no trade — drawn at ${RULES.strategy.skip_pct}%; ` +
+        `next look in ${skipWait.toFixed(1)}m (a skip does not sleep a whole ${modeId} wait)`);
       await env.DB.prepare(
         `UPDATE wallet_state SET mode_left = ?2 WHERE address = ?1`,
       ).bind(r.wallet, Math.max(0, modeLeft - 1)).run();
-      await this.reschedule(r.wallet, drawDelayMin(modeId) * 60_000);
+      await this.reschedule(r.wallet, skipWait * 60_000);
       return;
     }
 

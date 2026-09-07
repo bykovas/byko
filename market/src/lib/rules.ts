@@ -33,6 +33,11 @@ export interface Rules {
       interval_minutes: [number, number];
       fires: [number, number];
     }>;
+    /* THIRTEENTH AMENDMENT: a skip reschedules from its own short range rather
+       than the current mode's wait (a skip inside quiet used to stack another
+       quiet-length sleep), and no drawn wait may exceed max_gap_minutes. */
+    skip_wait_minutes: [number, number];
+    max_gap_minutes: number;
     trade_usdc: [number, number];
     size_curve?: "uniform" | "log-uniform";
     /* Per-run cash targets replace the fixed band. A buy run aims down into
