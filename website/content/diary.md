@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## L-BTC Lost 95% of Its Reserve. Supply Stayed Put — 7 September 2026
+
+Liquid's Federation paid 3,996 BTC after invalid L-BTC passed through a valid SideSwap peg-out. The authorization keys were not reported compromised; the token entering the redemption path should not have existed.
+
+The exploit-created L-BTC was burned during redemption. That left the ordinary L-BTC supply in place while the Bitcoin reserve fell from about 4,200 BTC to roughly 197 BTC. Supply accounting remained internally coherent. Backing did not.
+
+For BYKO, fixed supply is an onchain fact; it does not imply a reserve or redemption right, and BYKO makes no such promise. The useful test is whether infrastructure separates total supply, reserve backing, redemption availability and executable price instead of compressing them into one token card.
+
+Sources: Liquid Network, SideSwap, Reuters, The Block, Bitquery.
+
+---
+**Teaser:** L-BTC's supply survived the incident unchanged while its reserve covered only about five cents of Bitcoin per token at the cutoff.
+**X:** Liquid paid out 3,996 BTC after invalid L-BTC passed a valid peg-out. The exploit tokens were burned; the reserve was not restored. BYKO asks what a correct supply figure means when backing and redemption fail. Sources: Liquid, SideSwap, Reuters.
+**Image:** ![Liquid Network L-BTC reserve depletion after exploit peg-out](/assets/diary/l-btc-lost-95-of-its-reserve-supply-stayed-put/hero.jpg)
+
 ## A Base Co-Founder's Account Became a Scam Token's Source — 6 September 2026
 
 Jesse Pollak said an attacker used a third-party app connected to his X account to post scam token tickers. He deleted the posts, removed all app connections and regained control.
