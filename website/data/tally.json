@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-08T05:12:13.501Z",
-  "block": 51027433,
+  "updated": "2026-09-08T11:44:56.434Z",
+  "block": 51039214,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -30,7 +30,8 @@
       "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "0x36041020857b33aa09ee7d9a99743176a7778134",
       "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
-      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae"
+      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
+      "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3"
     ],
     "holdings": [
       {
@@ -53,7 +54,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 23930.560279,
+        "balance": 7628.602746,
         "role": "buyer",
         "class": "primary"
       },
@@ -122,10 +123,16 @@
         "balance": 0,
         "role": "icons",
         "class": "primary"
+      },
+      {
+        "address": "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
       }
     ],
-    "balance": 358393.16,
-    "pct": 45.4
+    "balance": 342091.21,
+    "pct": 43.3
   },
   "voters": [
     {
