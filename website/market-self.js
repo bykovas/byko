@@ -65,7 +65,11 @@
     ["blockscout", "holders / reputation"], ["uniswap-list", "present"],
     ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
   ];
-  var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"]];
+  /* Only the loading skeleton uses this list; the real render walks data.arms,
+     so an arm added in rules.json appears without touching it. Kept in step so
+     the placeholder matches what arrives. */
+  var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"],
+    ["luko01", "LUKO Buyer 01"], ["luko02", "LUKO Buyer 02"]];
   var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "token net",
     "turnover", "trades 24h", "LP burned", "LP held by founders", "supply held by founders"];
 
