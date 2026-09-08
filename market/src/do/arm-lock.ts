@@ -170,7 +170,12 @@ export class ArmLock {
       if (st === 1) return;
 
       /* 4. the key for this arm */
-      const key = (arm === "byko" ? env.ARM_PRIVATE_KEY_BYKO : env.ARM_PRIVATE_KEY_LUKO)?.trim();
+      /* One secret per arm, ARM_PRIVATE_KEY_<ID in caps>. The ternary this
+         replaces knew exactly two arms and would have handed a third arm luko's
+         key: the address check below would still have caught it, but as a
+         key-mismatch rather than as the missing secret it actually is. */
+      const keyName = `ARM_PRIVATE_KEY_${arm.toUpperCase().replace(/[^A-Z0-9]/g, "_")}` as const;
+      const key = env[keyName]?.trim();
       if (!key || !/^0x[0-9a-fA-F]{64}$/.test(key)) {
         await halt(env, rules.wallet, arm, "no-key");
         return;

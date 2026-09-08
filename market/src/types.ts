@@ -52,8 +52,13 @@ export interface Env {
 
   /* secrets (wrangler secret put) — all optional at runtime so a fresh deploy
      never 500s; a missing key reads as a halted arm, never a crash */
+  /* One key per arm, named ARM_PRIVATE_KEY_<ARM ID IN CAPS>. The two below are
+     named explicitly because they predate the convention; any further arm is
+     read through the index signature, so adding an arm is a rules.json entry
+     plus its own secret, with no code change. */
   ARM_PRIVATE_KEY_BYKO?: string;
   ARM_PRIVATE_KEY_LUKO?: string;
+  [armPrivateKey: `ARM_PRIVATE_KEY_${string}`]: string | undefined;
   DRPC_URL?: string;
   CMC_API_KEY?: string;
   ADMIN_TOKEN?: string;
