@@ -82,7 +82,7 @@
       "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "role": "neighbouring project",
       "class": "same owner",
-      "name": "LUKO Buyer -r",
+      "name": "LUKO Buyer 01",
       "funded_by": "MEETLUKO"
     },
     {
@@ -104,6 +104,13 @@
       "role": "icons",
       "class": "primary",
       "name": "BYKO Icons",
+      "funded_by": "Kraken"
+    },
+    {
+      "address": "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3",
+      "role": "neighbouring project",
+      "class": "same owner",
+      "name": "LUKO Buyer 02",
       "funded_by": "Kraken"
     }
   ]
