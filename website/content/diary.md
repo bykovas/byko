@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Liquid Recovered 3,400 BTC. Redemption Did Not Reopen — 8 September 2026
+
+Liquid's federation wallet received 3,400 BTC in a confirmed Bitcoin transaction after the L-BTC incident. About 598.5 BTC remained at the withdrawal-linked address.
+
+This is a material recovery, not a completed restoration. Blockstream had said the bridge nodes were patched, but the public incident page still described Liquid as paused and exchanges were still expected to suspend L-BTC deposits and withdrawals.
+
+For BYKO, the useful distinction is operational: a reserve balance can improve before redemption becomes usable. Token interfaces should report backing, service availability and executable exit routes as separate states.
+
+Sources: Bitcoin blockchain, Blockstream Status, The Block, Bitcoin Magazine, crypto.news.
+
+---
+**Teaser:** The reserve balance jumped in one confirmed transaction, but L-BTC holders still could not use the bridge and 598.5 BTC remained outside it.
+**X:** Liquid recovered 3,400 BTC onchain. Its bridge stayed paused and 598.5 BTC remained outside the federation wallet. BYKO asks whether interfaces distinguish reserve recovery from usable redemption. Sources: Liquid, The Block, crypto.news.
+**Image:** ![Liquid Network federation wallet after 3,400 BTC return transaction](/assets/diary/liquid-recovered-3400-btc-redemption-did-not-reopen/image.png)
+
 ## L-BTC Lost 95% of Its Reserve. Supply Stayed Put — 7 September 2026
 
 Liquid's Federation paid 3,996 BTC after invalid L-BTC passed through a valid SideSwap peg-out. The authorization keys were not reported compromised; the token entering the redemption path should not have existed.
