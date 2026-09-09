@@ -32,7 +32,7 @@ permissions:
 jobs:
   tally:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,13 +42,13 @@ jobs:
         run: node scripts/compute-tally.mjs > /dev/null
       - name: commit if it moved
         run: |
-          if git diff --quiet -- website/data/tally.json website/data/tally.csv; then
+          if git diff --quiet -- website/data/tally.json website/data/tally.csv website/data/tally-state.json; then
             echo "tally unchanged — nothing to commit"
             exit 0
           fi
           block=$(node -e "process.stdout.write(String(require('./website/data/tally.json').block))")
           git config user.name  "byko-bot"
           git config user.email "dbykovas@gmail.com"
-          git add website/data/tally.json website/data/tally.csv
+          git add website/data/tally.json website/data/tally.csv website/data/tally-state.json
           git commit -m "tally snapshot at block ${block}"
           git push

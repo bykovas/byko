@@ -28,13 +28,14 @@
    Usage: node scripts/compute-tally.mjs [--rpc https://...] */
 
 import { writeFileSync, mkdirSync, readFileSync } from "fs";
+import { createHash } from "crypto";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const DEPLOY_BLOCK = 49430937;
-const CHUNK_SIZE = 10000;
+const CHUNK_SIZE = 2000;   /* base.org caps eth_getLogs at 2,000 blocks (it was 10,000 until 9 Sep 2026); bisection below covers stricter backends */
 const MIN_VOTE = 100; // BYKO — config, published on the page
 
 const POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
@@ -85,7 +86,7 @@ function isRangeError(error) {
    through. A rate limit is a "come back later", not an answer, so wait and ask
    again rather than failing the whole run. */
 async function rpc(method, params, attempt = 0) {
-  let lastError;
+  let lastError, rangeError;
   for (const url of RPC_URLS) {
     try {
       const response = await fetch(url, {
@@ -97,16 +98,24 @@ async function rpc(method, params, attempt = 0) {
       const payload = await response.json();
       if (payload.error || payload.result === undefined) throw new Error(JSON.stringify(payload.error));
       return payload.result;
-    } catch (error) { lastError = error; }
+    } catch (error) {
+      lastError = error;
+      if (isRangeError(error)) rangeError = error;
+    }
   }
+  /* Report a range refusal in preference to whatever the LAST node happened to
+     say. base.org answers "limited to a 2,000 range" while drpc answers with a
+     500 on the same call, and throwing drpc's error hid the actionable one — the
+     caller then waited out the backoff instead of splitting the range. */
+  const failure = rangeError ?? lastError;
   /* A range limit is deterministic: every endpoint refuses the same span however
      long we wait, so retrying it only burns the backoff ladder before the caller
      gets a chance to split. Rate limits and transport errors still get it. */
-  if (attempt < 5 && !isRangeError(lastError)) {
+  if (attempt < 5 && !rangeError) {
     await sleep(400 * Math.pow(3, attempt));
     return rpc(method, params, attempt + 1);
   }
-  throw lastError;
+  throw failure;
 }
 
 /* Batched, chunked at three: DRPC's free plan refuses larger batches and says
@@ -146,15 +155,48 @@ async function rpcBatch(calls) {
 const WEI = 10n ** 18n;
 const TOTAL_SUPPLY = 790227;
 
-const latest = parseInt(await rpc("eth_blockNumber", []), 16);
-process.stderr.write("latest block " + latest + "\n");
+/* ---- incremental checkpoint --------------------------------------------
+   Rescanning from DEPLOY_BLOCK every run means 800+ archive eth_getLogs calls
+   (base.org caps a span at 2,000 blocks since 9 Sep 2026), which the free
+   endpoints now refuse outright. The fold is a running total, so it resumes:
+   keep the exact per-address state and restart at the block after the last.
+
+   The checkpoint is valid only while the inputs that classify HISTORY are
+   unchanged. Adding a founder wallet, for one, retroactively turns past
+   transfers into gifts, and a resumed fold would never revisit them — so the
+   fingerprint covers every such input and a mismatch forces a full rescan.
+   tally.csv cannot serve as this state: its balances are rounded for reading. */
+const STATE_FILE = join(dirname(fileURLToPath(import.meta.url)), "..", "website", "data", "tally-state.json");
+const SAFETY_BLOCKS = 30;   /* never checkpoint the tip: a shallow reorg would double-count */
+
+const fingerprint = createHash("sha256").update(JSON.stringify({
+  byko: BYKO, pool: POOL, deploy: DEPLOY_BLOCK, minVote: MIN_VOTE,
+  topic: TRANSFER_TOPIC,
+  routers: [...KNOWN_ROUTERS].sort(),
+  founders: [...FOUNDER_WALLETS].sort(),
+})).digest("hex");
+
+let prior = null;
+if (!process.argv.includes("--full")) {
+  try {
+    const saved = JSON.parse(readFileSync(STATE_FILE, "utf8"));
+    if (saved.fingerprint === fingerprint && Number.isInteger(saved.block) && saved.addresses) prior = saved;
+    else process.stderr.write("checkpoint ignored: inputs changed, full rescan\n");
+  } catch { /* no checkpoint yet — full rescan */ }
+}
+
+const head = parseInt(await rpc("eth_blockNumber", []), 16);
+const latest = head - SAFETY_BLOCKS;
+const scanFrom = prior ? prior.block + 1 : DEPLOY_BLOCK;
+process.stderr.write("head " + head + " · scanning " + scanFrom + ".." + latest
+  + (prior ? " (resumed from checkpoint)" : " (full)") + "\n");
 
 /* 1. All Transfer logs since deployment. */
 const logs = [];
 
-/* CHUNK_SIZE is what the endpoints have always taken; when one refuses the span
-   anyway, halve it and ask again rather than failing the snapshot. Recursion
-   bottoms out at a single block, which every plan allows. */
+/* CHUNK_SIZE tracks the most permissive endpoint we have; when one refuses the
+   span anyway, halve it and ask again rather than failing the snapshot.
+   Recursion bottoms out at a single block, which every plan allows. */
 async function getLogsRange(from, to) {
   try {
     return await rpc("eth_getLogs", [{
@@ -172,7 +214,7 @@ async function getLogsRange(from, to) {
   }
 }
 
-for (let from = DEPLOY_BLOCK; from <= latest; from += CHUNK_SIZE) {
+for (let from = scanFrom; from <= latest; from += CHUNK_SIZE) {
   const to = Math.min(from + CHUNK_SIZE - 1, latest);
   logs.push(...await getLogsRange(from, to));
   process.stderr.write("\rscanned to " + to + ", " + logs.length + " logs ");
@@ -199,7 +241,22 @@ const acquiredViaPool = new Set(); // paid for a position in some swap tx
 const everQualified = new Set();   // met the full holding rule at some point
 const receivedGift = new Set();    // got a direct transfer from a founder wallet
 const seen = new Set();
+const touched = new Set();   /* addresses that moved tokens in THIS run's logs */
+const codeCache = new Map();
 const MIN_VOTE_WEI = BigInt(MIN_VOTE) * WEI;
+
+/* Seed the running totals from the checkpoint, then fold only the new logs. */
+if (prior) {
+  for (const [address, st] of Object.entries(prior.addresses)) {
+    seen.add(address);
+    balances.set(address, BigInt(st.b));
+    if (st.p) acquiredViaPool.add(address);
+    if (st.q) everQualified.add(address);
+    if (st.g) receivedGift.add(address);
+    if (st.e === 0 || st.e === 1) codeCache.set(address, st.e === 1);
+  }
+  process.stderr.write("resumed " + seen.size + " addresses from checkpoint\n");
+}
 
 for (const tx of txOrder) {
   const transfers = byTx.get(tx);
@@ -207,8 +264,8 @@ for (const tx of txOrder) {
   for (const t of transfers) {
     if (t.from !== ZERO) net.set(t.from, (net.get(t.from) || 0n) - t.amount);
     if (t.to !== ZERO) net.set(t.to, (net.get(t.to) || 0n) + t.amount);
-    if (t.from !== ZERO) seen.add(t.from);
-    if (t.to !== ZERO) seen.add(t.to);
+    if (t.from !== ZERO) { seen.add(t.from); touched.add(t.from); }
+    if (t.to !== ZERO) { seen.add(t.to); touched.add(t.to); }
     if (founderSet.has(t.from) && t.to !== POOL) receivedGift.add(t.to);
   }
   const poolSoldByko = (net.get(POOL) || 0n) < 0n;
@@ -224,7 +281,6 @@ for (const tx of txOrder) {
 }
 
 /* 3. EOA check for every address that matters for a bucket. */
-const codeCache = new Map();
 
 /* Ask for every code up front, three per request, instead of one blocking
    call per address inside the classify loop. A thousand sequential requests is
@@ -253,6 +309,12 @@ const toByko = wei => Number(wei / 10n ** 12n) / 1e6;
 const rows = [];
 const tally = { for: 0, withdrawn: 0 };
 const notCounted = { dust: 0, contracts: 0, giftOnly: 0 };
+
+/* An address that moved tokens this run gets its code read again: it can become
+   a contract (CREATE2) or gain a 7702 delegation after we cached it. Dormant
+   addresses keep the cached answer — re-reading nine hundred of them every six
+   hours is exactly what the checkpoint exists to avoid. */
+for (const a of touched) codeCache.delete(a);
 
 await prefetchCodes([...seen].filter((a) =>
   a !== POOL && a !== DEAD && !founderSet.has(a) && !KNOWN_ROUTERS.includes(a)));
@@ -337,5 +399,21 @@ for (const r of rows) {
 }
 csv.push("# computed " + updated + " at block " + latest + " · rule: " + snapshot.rule.text);
 writeFileSync(join(root, "website/data/tally.csv"), csv.join("\n") + "\n");
+
+/* The checkpoint: exact wei and the three history flags, so the next run folds
+   forward instead of replaying the chain. Written last, so a crash anywhere
+   above leaves the previous checkpoint intact rather than a half-built one. */
+const state = { fingerprint, block: latest, updated, addresses: {} };
+for (const address of [...seen].sort()) {
+  state.addresses[address] = {
+    b: (balances.get(address) || 0n).toString(),
+    p: acquiredViaPool.has(address) ? 1 : 0,
+    q: everQualified.has(address) ? 1 : 0,
+    g: receivedGift.has(address) ? 1 : 0,
+    e: codeCache.has(address) ? (codeCache.get(address) ? 1 : 0) : null,
+  };
+}
+writeFileSync(STATE_FILE, JSON.stringify(state) + "\n");
+process.stderr.write("checkpoint written at block " + latest + " (" + seen.size + " addresses)\n");
 
 console.log(JSON.stringify(snapshot, null, 2));
