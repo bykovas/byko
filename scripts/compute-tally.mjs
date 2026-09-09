@@ -70,6 +70,15 @@ const RPC_URLS = rpcArg > -1
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/* "Ask for less" is not the same as "come back later". Free endpoints disagree
+   about how many blocks one eth_getLogs may cover, and DRPC load-balances to
+   backends that differ from each other — one of them began refusing anything
+   over 50 blocks mid-run and failed the whole snapshot. This tells the two
+   apart so a range limit is answered by splitting rather than by waiting. */
+function isRangeError(error) {
+  return /range|too large|too many|exceed|maximum allowed/i.test(String(error?.message ?? ""));
+}
+
 /* One pass over the node list and then give up was enough while this script
    made a few dozen calls. It now makes about a thousand — one eth_getCode per
    address the airdrop created — and both public endpoints answer 429 partway
@@ -90,7 +99,10 @@ async function rpc(method, params, attempt = 0) {
       return payload.result;
     } catch (error) { lastError = error; }
   }
-  if (attempt < 5) {
+  /* A range limit is deterministic: every endpoint refuses the same span however
+     long we wait, so retrying it only burns the backoff ladder before the caller
+     gets a chance to split. Rate limits and transport errors still get it. */
+  if (attempt < 5 && !isRangeError(lastError)) {
     await sleep(400 * Math.pow(3, attempt));
     return rpc(method, params, attempt + 1);
   }
@@ -139,14 +151,30 @@ process.stderr.write("latest block " + latest + "\n");
 
 /* 1. All Transfer logs since deployment. */
 const logs = [];
+
+/* CHUNK_SIZE is what the endpoints have always taken; when one refuses the span
+   anyway, halve it and ask again rather than failing the snapshot. Recursion
+   bottoms out at a single block, which every plan allows. */
+async function getLogsRange(from, to) {
+  try {
+    return await rpc("eth_getLogs", [{
+      address: BYKO,
+      fromBlock: "0x" + from.toString(16),
+      toBlock: "0x" + to.toString(16),
+      topics: [TRANSFER_TOPIC]
+    }]);
+  } catch (error) {
+    if (from >= to || !isRangeError(error)) throw error;
+    const mid = Math.floor((from + to) / 2);
+    const head = await getLogsRange(from, mid);
+    const tail = await getLogsRange(mid + 1, to);
+    return head.concat(tail);
+  }
+}
+
 for (let from = DEPLOY_BLOCK; from <= latest; from += CHUNK_SIZE) {
   const to = Math.min(from + CHUNK_SIZE - 1, latest);
-  logs.push(...await rpc("eth_getLogs", [{
-    address: BYKO,
-    fromBlock: "0x" + from.toString(16),
-    toBlock: "0x" + to.toString(16),
-    topics: [TRANSFER_TOPIC]
-  }]));
+  logs.push(...await getLogsRange(from, to));
   process.stderr.write("\rscanned to " + to + ", " + logs.length + " logs ");
 }
 process.stderr.write("\n");
