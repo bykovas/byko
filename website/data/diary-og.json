@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "silv-was-permissionless-until-its-issuer-froze-2-819-accounts",
+      "title": "SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts",
+      "dateText": "12 September 2026",
+      "datePublished": "2026-09-12",
+      "imageVersion": "2cfad0145e80",
+      "twitterImageVersion": "94e50ac075e2",
+      "hero": {
+        "src": "/assets/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts/hero.jpg",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "self-custody-did-not-patch-the-wallet",
       "title": "Self-Custody Did Not Patch the Wallet",
       "dateText": "10 September 2026",

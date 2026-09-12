@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts — 12 September 2026
+
+Dominion described SILV as permissionless. After a treasury multisig breach, the issuer froze 2,819 token accounts and said tokens bought during the incident window would be removed, with a USDC refund path for affected buyers.
+
+The response uses exactly what an admin-controlled token can provide: a way to protect backing and earlier holders by overruling purchases that were valid onchain when they occurred.
+
+For BYKO, the point is not that admin control is simply bad. BYKO cannot freeze, seize or recover holder balances. That protects ownership from the issuer, but it also removes an emergency correction mechanism. Wallets should make that trade-off visible before a user buys.
+
+Sources: Dominion Market, Bitquery, SolanaFloor, CryptoCompass, Solana documentation.
+
+---
+**Teaser:** The silver stayed in the vault; the token’s admin powers reached into holder accounts.
+**X:** Dominion called SILV permissionless, then froze 2,819 token accounts after a multisig breach and plans to remove incident-window tokens. BYKO asks whether wallets expose issuer powers before users trade. Sources: Dominion, Bitquery, SolanaFloor.
+**Image:** ![SILV token accounts frozen by issuer after multisig breach](/assets/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts/hero.jpg)
+
 ## Self-Custody Did Not Patch the Wallet — 10 September 2026
 
 Alby disclosed a critical vulnerability in older Alby Hub versions when the wallet's management interface was reachable from the public internet. The flaw could allow unauthorized API access and outgoing payments. One affected user is known.
