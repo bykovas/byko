@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "self-custody-did-not-patch-the-wallet",
+      "title": "Self-Custody Did Not Patch the Wallet",
+      "dateText": "10 September 2026",
+      "datePublished": "2026-09-10",
+      "imageVersion": "61a8468fa878",
+      "twitterImageVersion": "09833c029371",
+      "hero": {
+        "src": "/assets/diary/self-custody-did-not-patch-the-wallet/hero.jpg",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "cozy-paid-an-undisputed-lie-as-truth",
       "title": "Cozy Paid an Undisputed Lie as Truth",
       "dateText": "9 September 2026",

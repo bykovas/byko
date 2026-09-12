@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Self-Custody Did Not Patch the Wallet — 10 September 2026
+
+Alby disclosed a critical vulnerability in older Alby Hub versions when the wallet's management interface was reachable from the public internet. The flaw could allow unauthorized API access and outgoing payments. One affected user is known.
+
+The affected range is v1.7.0 through v1.18.5. Alby says v1.19.0 and later are unaffected and recommends restricting public access, updating to v1.24.0, and changing the unlock password on previously exposed installations.
+
+For BYKO, the useful distinction is between control and protection. Self-custody identifies who holds the keys; it does not certify the software, network exposure, or patch state protecting those keys. An immutable token contract can remain correct while the operational custody layer fails.
+
+Sources: Alby, GitHub, The Hacker News, Bitcoin.com, CriptoNoticias.
+
+---
+**Teaser:** An old wallet behind the right owner can still expose the wrong interface.
+**X:** Alby says old, internet-exposed Hub versions could let attackers access the management API and send funds. One user is affected. BYKO's lesson: self-custody proves who holds keys, not whether the software guarding them is safe. Sources: Alby, THN.
+**Image:** ![Alby Hub vulnerability exposing wallet management interface](/assets/diary/self-custody-did-not-patch-the-wallet/hero.jpg)
+
 ## Cozy Paid an Undisputed Lie as Truth — 9 September 2026
 
 Cozy Finance says false YES answers in UMA Optimistic Oracle went undisputed for five days, then triggered three protection markets and a 170,186 USDC.e payout.
