@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Cozy Paid an Undisputed Lie as Truth — 9 September 2026
+
+Cozy Finance says false YES answers in UMA Optimistic Oracle went undisputed for five days, then triggered three protection markets and a 170,186 USDC.e payout.
+
+The available evidence does not indicate that Aave or Curve were hacked. Their names identified covered markets. The failure was the path from an uncontested external assertion to an automatic economic result.
+
+For BYKO, this is a useful distinction: an uncontested claim is not the same as a verified fact. The same applies to token infrastructure. No scam label does not mean a token was reviewed, just as a displayed price does not mean the price deserves trust.
+
+Sources: Cozy Finance, SlowMist, Blockaid, UMA, BeInCrypto, Cexvia.
+
+---
+**Teaser:** A false oracle answer survived five days without a dispute, triggering three protection markets and a 170,186 USDC.e payout.
+**X:** Cozy says false "YES" answers sat undisputed for five days, then triggered three protection markets and a 170,186 USDC.e payout. BYKO asks whether "uncontested" is being displayed as "verified." Sources: Cozy, SlowMist, UMA, BeInCrypto.
+**Image:** ![Three protection markets triggered by an undisputed false oracle answer](/assets/diary/cozy-paid-an-undisputed-lie-as-truth/hero.jpg)
+
 ## Liquid Recovered 3,400 BTC. Redemption Did Not Reopen — 8 September 2026
 
 Liquid's federation wallet received 3,400 BTC in a confirmed Bitcoin transaction after the L-BTC incident. About 598.5 BTC remained at the withdrawal-linked address.
