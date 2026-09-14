@@ -1,13 +1,13 @@
 {
-  "updated": "2026-09-14T09:45:28.633Z",
-  "block": 51294727,
+  "updated": "2026-09-14T09:50:59.841Z",
+  "block": 51294901,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
   },
   "tally": {
     "for": 2,
-    "withdrawn": 3
+    "withdrawn": 0
   },
   "notCounted": {
     "dust": 2,
@@ -24,7 +24,10 @@
       "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
       "0x36041020857b33aa09ee7d9a99743176a7778134",
       "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
-      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae"
+      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
+      "0x33d857fb6f06aafc498de09654da82a8f68be233",
+      "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
     ],
     "holdings": [
       {
@@ -80,6 +83,24 @@
         "balance": 0,
         "role": "icons",
         "class": "primary"
+      },
+      {
+        "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
       }
     ],
     "balance": 355721.03,
@@ -92,24 +113,9 @@
       "balance": 45860.230224
     },
     {
-      "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
-      "status": "withdrawn",
-      "balance": 0
-    },
-    {
-      "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-      "status": "withdrawn",
-      "balance": 0
-    },
-    {
       "address": "0x4d7965bf4b7cae5eb8b8b7592c6ddc4f51eebf8a",
       "status": "for",
       "balance": 1425.492021
-    },
-    {
-      "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
-      "status": "withdrawn",
-      "balance": 0
     }
   ]
 }
