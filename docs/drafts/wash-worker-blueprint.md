@@ -1,4 +1,4 @@
-# Blueprint — the market worker (disclosed self-trading), BYKO
+# Blueprint — the market worker (disclosed self-trading), BYKO and LUKO
 
 Written for the model that implements it. Read the whole thing before writing
 code, then read the files in §1 before writing code that touches them.
@@ -93,6 +93,13 @@ These go in `rules.json`, committed before the first trade.
       "token":  "0x078bb16e24C8931Fc007928c370422e5e38F4372",
       "pool":   "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca",
       "stop":   { "max_days": 14, "on_signal_cleared": true }
+    },
+    {
+      "id": "luko",
+      "wallet": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "token":  "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1",
+      "pool":   "0x2222a01b83db8c533b062aeb6de4f61d6ae792f2",
+      "stop":   { "max_days": null, "on_signal_cleared": false }
     }
   ],
   "quote": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
@@ -104,7 +111,8 @@ These go in `rules.json`, committed before the first trade.
 }
 ```
 
-The worker must treat "not enough to trade" as a clean halt.
+The LUKO arm has no fixed end. The owner stops it by withdrawing the wallet's
+funds; the worker must treat "not enough to trade" as a clean halt.
 
 **The rule, stated so it cannot drift:** after each trade the arm draws a fresh
 uniform delay from `interval_minutes` (independently per arm) and a fresh
@@ -140,7 +148,7 @@ CREATE TABLE IF NOT EXISTS rules (
 
 CREATE TABLE IF NOT EXISTS wallets (
   address TEXT PRIMARY KEY,
-  arm     TEXT NOT NULL,          -- e.g. byko
+  arm     TEXT NOT NULL,          -- byko | luko
   label   TEXT NOT NULL,          -- as printed in founder-wallets.json
   token   TEXT NOT NULL,
   pool    TEXT NOT NULL,
@@ -240,25 +248,25 @@ Each alarm:
 Use the same RPC fallback list as `scripts/airdrop/lib.mjs`: DRPC first, public
 nodes behind it. A node failure is an `events` row, not a silent retry loop.
 
-**Running out of funds is a clean halt.** When the wallet cannot fund a trade
-the arm writes a `halt` event and stops setting alarms. It must not error-loop,
-and must not spend below the gas reserve.
+**LUKO has no timer.** It runs until its wallet cannot fund a trade, then writes
+a `halt` event with reason `funds-withdrawn` and stops setting alarms. It must
+not error-loop, and must not spend below the gas reserve.
 
 ---
 
 ## 7. The collector
 
-A cron job, hourly, writing `flag_checks` and `market_samples` for every arm.
+A cron job, hourly, writing `flag_checks` and `market_samples` for both arms.
 Every source below was probed and behaved as described on 19 Aug 2026.
 
 | source | request | current BYKO reading | notes |
 | --- | --- | --- | --- |
-| MetaMask price | `price.api.cx.metamask.io/v2/chains/8453/spot-prices?tokenAddresses=…&vsCurrency=usd` | HTTP 500 | **the machine behind "Unstable price".** USDC returns a price; BYKO 500. If this ever returns a number, the condition behind the label moved. |
+| MetaMask price | `price.api.cx.metamask.io/v2/chains/8453/spot-prices?tokenAddresses=…&vsCurrency=usd` | HTTP 500 | **the machine behind "Unstable price".** USDC returns a price; BYKO and LUKO both 500. If this ever returns a number, the condition behind the label moved. |
 | MetaMask token | `token.api.cx.metamask.io/token/8453?address=…` | `aggregators: ["dynamic"]` | on no curated list |
 | GoPlus | `api.gopluslabs.io/api/v1/token_security/8453?contract_addresses=…` | 919 holders, `is_in_dex: 0` | full risk field set |
 | DexScreener | `api.dexscreener.com/latest/dex/tokens/…` | 1 pair | listed 18 Aug after the first sale |
 | GeckoTerminal pool | `api.geckoterminal.com/api/v2/networks/base/pools/…` | `locked_liquidity_percentage: null` | it does not know the LP is 100% burned |
-| CoinGecko | `api.coingecko.com/api/v3/coins/base/contract/…` | 404 | |
+| CoinGecko | `api.coingecko.com/api/v3/coins/base/contract/…` | 404 | LUKO also 404 |
 | Blockscout | `base.blockscout.com/api/v2/tokens/…` | `holders: 1`, `reputation: ok` | reports 1 holder against 919 on chain |
 | Uniswap list | `tokens.uniswap.org` | absent | |
 | Trust assets | `raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/assets/{checksum}/info.json` | 404 | |
@@ -298,6 +306,8 @@ reinterpreted afterwards:
   already vanished and returned within 18 hours once
 - **backstop:** 14 days, unconditionally
 
+The **luko** arm has none of these. It stops when the money is taken out.
+
 ---
 
 ## 9. API and page
@@ -311,6 +321,12 @@ The page carries the shared header and footer, is not hidden, and opens with
 the disclosure, not the tables: Blockaid's reply quoted verbatim, the declared
 rules with a link to the commit that predates the first trade, the stop
 conditions, and the sentence naming this wash trading.
+
+**A row that must be prominent and live on the LUKO arm:** its LP is 100% held
+by MEETLUKO — a founder wallet — and is withdrawable, unlike BYKO's, which is
+100% at `0x…dEaD`. Show the LP holder and balance as read from the chain so
+anyone can verify it was not touched. This is the strongest objection to the
+LUKO arm; publish it louder than anyone else could put it.
 
 **Table 1 — checks.** Sources in rows, days in columns, day numbers from the
 start, only elapsed days. Three cell states and no others:
@@ -347,11 +363,11 @@ it, diffable and versioned, exactly as `airdrop-journal.jsonl` is.
 ## 11. Definition of done
 
 - `rules.json` committed, hash in D1, worker refuses to run on mismatch
-- every arm trading on its own schedule, rows written before broadcast
+- both arms trading on independent schedules, rows written before broadcast
 - confirmer settles pending rows; no row stays `pending` beyond two hours
   without an `events` explanation
-- collector filling `flag_checks` hourly for every arm, `ok=0` on failure
-- `/api/wash` serving; page rendering both tables
+- collector filling `flag_checks` hourly for both arms, `ok=0` on failure
+- `/api/wash` serving; page rendering both tables and the LUKO LP row
 - guards demonstrably firing in a dry run
 - daily CSV export committing
 - `?v=` bumped on every tag referencing changed CSS/JS, across all pages
@@ -365,4 +381,5 @@ it, diffable and versioned, exactly as `airdrop-journal.jsonl` is.
 - do not widen the size range to look less "tiny"; the closed loop is the finding
 - do not colour numbers green or red
 - do not silently retry; failures are rows
+- do not touch the LUKO LP position
 - do not publish or post anything; the owner approves the diary entry separately

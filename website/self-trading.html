@@ -126,25 +126,25 @@ td a:hover{color:var(--byko-ink)}
      each row becomes its own block of label-and-value pairs, in the order the
      header used to read. Nothing is dropped. */
   .scroll{overflow-x:visible}
-  #checks, #trades-byko,
-  #checks tbody, #trades-byko tbody,
-  #checks tr, #trades-byko tr,
-  #checks td, #trades-byko td{display:block;width:auto}
-  #checks thead, #trades-byko thead{display:none}
-  #checks tr, #trades-byko tr{
+  #checks, #trades-byko, #trades-luko,
+  #checks tbody, #trades-byko tbody, #trades-luko tbody,
+  #checks tr, #trades-byko tr, #trades-luko tr,
+  #checks td, #trades-byko td, #trades-luko td{display:block;width:auto}
+  #checks thead, #trades-byko thead, #trades-luko thead{display:none}
+  #checks tr, #trades-byko tr, #trades-luko tr{
     border-bottom:var(--byko-rule-heavy);padding:10px 0 12px}
-  #checks td, #trades-byko td{
+  #checks td, #trades-byko td, #trades-luko td{
     display:flex;align-items:baseline;justify-content:space-between;gap:16px;
     border-bottom:0;padding:3px 0;text-align:right;white-space:normal}
-  #checks td::before, #trades-byko td::before{
+  #checks td::before, #trades-byko td::before, #trades-luko td::before{
     content:attr(data-label);flex:0 0 auto;text-align:left;
     font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
     text-transform:uppercase;color:var(--byko-label)}
   /* the row's own name leads the block instead of sitting in a column */
-  #checks td.src, #trades-byko td.lead{
+  #checks td.src, #trades-byko td.lead, #trades-luko td.lead{
     font:700 15px/1.2 var(--byko-font-sans);color:var(--byko-ink);
     padding-bottom:6px;justify-content:flex-start}
-  #checks td.src::before, #trades-byko td.lead::before{content:none}
+  #checks td.src::before, #trades-byko td.lead::before, #trades-luko td.lead::before{content:none}
   /* the arm caption row keeps its own shape */
   #checks td[colspan]{display:block;padding-top:14px}
   #checks td[colspan]::before{content:none}
@@ -226,7 +226,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <div class="arms" id="arms"></div>
 
-  <button class="reveal" id="checks-reveal" type="button" aria-expanded="false" aria-controls="checks-wrap"><span id="checks-reveal-label">Show what the classifiers say about BYKO →</span><span class="n" id="checks-n"></span></button>
+  <button class="reveal" id="checks-reveal" type="button" aria-expanded="false" aria-controls="checks-wrap"><span id="checks-reveal-label">Show what the classifiers say about BYKO &amp; LUKO →</span><span class="n" id="checks-n"></span></button>
   <div id="checks-wrap" hidden>
     <div class="scroll"><table id="checks"><thead></thead><tbody></tbody></table></div>
     <div class="grid-key">
@@ -243,6 +243,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <th>USDC</th><th>BYKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
   </tr></thead><tbody></tbody></table></div>
   <p class="note scan-link" style="margin-top:10px;padding-top:0;border-top:0"><a id="scan-byko" target="_blank" rel="noopener">View all BYKO transactions on BaseScan →</a></p>
+
+  <h2 class="sec">Trades — LUKO (TOP 10)<span class="n" id="trades-n-luko-top"></span></h2>
+  <div class="scroll"><table id="trades-luko-top"><thead><tr>
+    <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
+    <th>USDC</th><th>LUKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+  </tr></thead><tbody></tbody></table></div>
+  <p class="note scan-link" style="margin-top:10px;padding-top:0;border-top:0"><a id="scan-luko" target="_blank" rel="noopener">View all LUKO transactions on BaseScan →</a></p>
 
   <p class="note" id="scope" style="margin-top:12px;padding-top:0;border-top:0"></p>
 
@@ -270,6 +277,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="market-self.js?v=20260914"></script>
+<script src="market-self.js?v=20260908"></script>
 </body>
 </html>

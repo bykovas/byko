@@ -1,7 +1,7 @@
 /* Self-trading readout — reads the byko-market worker and renders the
    disclosure, the classifier grid and the trade log. Vanilla, no framework,
-   same shape as the ledger page. No blue anywhere except the live chain reads
-   (the LP and founder figures): the trade log is recorded history. */
+   same shape as the ledger page. No blue anywhere except the one genuinely
+   live chain read (LUKO's LP balance): the trade log is recorded history. */
 (function () {
   "use strict";
   var API = "https://byko-market.bykovas.lt/api/wash?limit=300";
@@ -68,7 +68,8 @@
   /* Only the loading skeleton uses this list; the real render walks data.arms,
      so an arm added in rules.json appears without touching it. Kept in step so
      the placeholder matches what arrives. */
-  var ARM_LABELS = [["byko", "BYKO Buyer"]];
+  var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"],
+    ["luko01", "LUKO Buyer 01"], ["luko02", "LUKO Buyer 02"]];
   var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "token net",
     "turnover", "trades 24h", "LP burned", "LP held by founders", "supply held by founders"];
 
@@ -94,6 +95,7 @@
         var dd = el("dd"); dd.appendChild(dash()); dl.appendChild(dd);
       });
       box.appendChild(dl);
+      if (KEEPER_ARMS.indexOf(pair[0]) >= 0) box.appendChild(objection(pair[0], null, null));
       wrap.appendChild(box);
     });
 
@@ -233,7 +235,7 @@
         ? Number(arm.usdc_balance) / 1e6 : null;
       var currentTokenBalance = arm.token_balance != null && arm.token_balance !== ""
         ? Number(arm.token_balance) / 1e18 : null;
-      var sym = arm.id.toUpperCase();
+      var sym = arm.id === "luko" ? "LUKO" : "BYKO";
       row("USDC net", currentUsdcBalance == null ? "—" : "$" + n(currentUsdcBalance));
       row(sym + " net", currentTokenBalance == null ? "—" : n(currentTokenBalance, 0));
 
@@ -258,10 +260,13 @@
       row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " +
         (m.sells_24h != null ? m.sells_24h : "?") + (tAge ? " · " + tAge : ""));
       /* The live chain read. "Burned" is the honest word: LP tokens at an
-         address with no key, which nobody can withdraw. "Held by founders" is
-         printed even at zero: omitting it would invite the reading that there
-         is nothing to declare, when what there is is a zero — and a zero here
-         is the strongest fact BYKO owns. */
+         address with no key, which nobody can withdraw. Calling the keeper's
+         share "locked" would report LUKO as maximally safe while 100% of its
+         LP sits in a founder wallet. */
+      /* Both arms carry both figures, always. Printing "held by founders" for
+         one arm and omitting it for the other invites the reading that the
+         silent one has nothing to declare, when what it has is a zero — and a
+         zero here is the strongest fact BYKO owns. */
       if (m.lp_locked != null) row("LP burned", m.lp_locked + "%", true);
       var keeper = m.lp_holder ? String(m.lp_holder).split(":") : null;
       var keeperPct = keeper && keeper.length === 2 ? keeper[1] : "0.00";
@@ -272,8 +277,33 @@
         box.appendChild(el("div", "st",
           "Not measured: price and LP are read from the chain, nothing is asked of any classifier, so the market fields stay empty rather than guessed."));
       }
+      if (KEEPER_ARMS.indexOf(arm.id) >= 0) {
+        box.appendChild(objection(arm.id,
+          keeper && keeper.length === 2 ? keeper[1] : null,
+          keeper && keeper.length === 2 ? keeper[0] : null));
+      }
       wrap.appendChild(box);
     });
+  }
+
+  /* Arms whose liquidity is NOT burned. The sentence below never changes — it
+     is a standing disclosure, not a reading — so it is printed the moment the
+     page opens and only the two figures inside it wait for the chain. */
+  var KEEPER_ARMS = ["luko"];
+
+  function objection(armId, pct, addr) {
+    var box = el("div", "warn");
+    box.appendChild(document.createTextNode(
+      "The strongest objection to this arm, stated by us: " + armId.toUpperCase() +
+      "'s liquidity is NOT burned. "));
+    if (pct === null) box.appendChild(dash()); else box.appendChild(document.createTextNode(pct + "%"));
+    box.appendChild(document.createTextNode(" of its LP tokens sit in "));
+    if (addr === null) box.appendChild(dash());
+    else box.appendChild(document.createTextNode(addr.slice(0, 10) + "…"));
+    box.appendChild(document.createTextNode(
+      ", a founder wallet, and can be withdrawn at any moment — unlike BYKO's, which is 100% at " +
+      "0x…dEaD and gone forever. Both figures are read live so anyone can watch that it stays untouched."));
+    return box;
   }
 
   function renderChecks(data) {
@@ -438,7 +468,7 @@
       var tok = t.token_amount ? Number(t.token_amount) / 1e18 : null;
       var poolUsdc = t.reserve_usdc_after ? Number(t.reserve_usdc_after) / 1e6 : null;
       var tr = el("tr");
-      var sym = armId.toUpperCase();
+      var sym = armId === "luko" ? "LUKO" : "BYKO";
       tr.appendChild(cell("l mono lead", "#" + t.id));
       tr.appendChild(cell("l mono", (t.decided_at || "").replace("T", " ").slice(0, 19), "utc"));
       tr.appendChild(cell("side " + (buy ? "buy" : "sell"), t.side, "side"));
@@ -479,7 +509,7 @@
     }
     box.appendChild(document.createTextNode(
       "This ledger records the worker's trades only — " + started.join(", ") +
-      ". The wallet is an ordinary address that existed and traded before the worker was armed, so a pool chart will show earlier trades from it that are not listed here. Those were not the worker and are not claimed as its work."));
+      ". Both wallets are ordinary addresses that existed and traded before the worker was armed, so a pool chart will show earlier trades from them that are not listed here. LUKO Buyer, for one, bought $1.29 of LUKO on 18 August, the day before any of this started. Those were not the worker and are not claimed as its work."));
   }
 
   function renderEvents(data) {
@@ -534,8 +564,8 @@
     if (open) wrap.removeAttribute("hidden"); else wrap.setAttribute("hidden", "");
     checksBtn.setAttribute("aria-expanded", open ? "true" : "false");
     $("checks-reveal-label").textContent = open
-      ? "Hide what the classifiers say about BYKO"
-      : "Show what the classifiers say about BYKO →";
+      ? "Hide what the classifiers say about BYKO & LUKO"
+      : "Show what the classifiers say about BYKO & LUKO →";
   });
 
   load();
