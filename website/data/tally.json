@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-14T09:50:59.841Z",
-  "block": 51294901,
+  "updated": "2026-09-14T13:18:05.422Z",
+  "block": 51301238,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -50,7 +50,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 21258.430868,
+        "balance": 17327.426442,
         "role": "buyer",
         "class": "primary"
       },
@@ -103,8 +103,8 @@
         "class": "same owner"
       }
     ],
-    "balance": 355721.03,
-    "pct": 45
+    "balance": 351790.03,
+    "pct": 44.5
   },
   "voters": [
     {
