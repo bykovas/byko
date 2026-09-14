@@ -2,8 +2,8 @@
 --
 --   cd market && npx wrangler d1 execute byko-market --remote --file=src/db/schema.sql
 --
--- The disclosed self-trading experiment. Two arms (byko, luko) trade against
--- their own Aerodrome pools on a schedule; every row here is meant to be
+-- The disclosed self-trading experiment. Each arm trades against its own
+-- Aerodrome pool on a schedule; every row here is meant to be
 -- published, and the repo's daily CSV export is the copy that outlives the DB.
 -- Every statement is idempotent.
 --
@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS rules (
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- The two participants. Both are already in website/data/founder-wallets.json;
+-- The participants. Every one is already in website/data/founder-wallets.json;
 -- no address here may be one that is not in that public register.
 CREATE TABLE IF NOT EXISTS wallets (
   address TEXT PRIMARY KEY,
-  arm     TEXT NOT NULL,              -- byko | luko
+  arm     TEXT NOT NULL,              -- arm id, e.g. byko
   label   TEXT NOT NULL,              -- as printed in founder-wallets.json
   token   TEXT NOT NULL,
   pool    TEXT NOT NULL,

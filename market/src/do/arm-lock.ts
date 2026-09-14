@@ -10,7 +10,7 @@ import {
 import { RULES, armRules, rulesHash } from "../lib/rules";
 import { event, halt } from "../lib/db";
 
-/* One instance per arm ("byko" | "luko"), created by idFromName. It owns that
+/* One instance per arm (e.g. "byko"), created by idFromName. It owns that
  * arm's money and the alarm that paces it. Everything that can move funds runs
  * inside the alarm, single-threaded by the DO. The invariant is app227's: the
  * trade row, with its tx hash, is written BEFORE the broadcast, and a broadcast
@@ -171,7 +171,7 @@ export class ArmLock {
 
       /* 4. the key for this arm */
       /* One secret per arm, ARM_PRIVATE_KEY_<ID in caps>. The ternary this
-         replaces knew exactly two arms and would have handed a third arm luko's
+         replaces knew exactly two arms and would have handed any other arm the second arm's
          key: the address check below would still have caught it, but as a
          key-mismatch rather than as the missing secret it actually is. */
       const keyName = `ARM_PRIVATE_KEY_${arm.toUpperCase().replace(/[^A-Z0-9]/g, "_")}` as const;
@@ -229,8 +229,7 @@ export class ArmLock {
 
     /* --- guards and stops --- */
     if (gas < MIN_GAS_WEI) {
-      /* for luko this is exactly how the owner stops it: take the money out */
-      await halt(env, r.wallet, arm, arm === "luko" ? "funds-withdrawn" : "insufficient-gas");
+      await halt(env, r.wallet, arm, "insufficient-gas");
       return;
     }
 

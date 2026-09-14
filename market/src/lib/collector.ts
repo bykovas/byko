@@ -3,11 +3,10 @@ import { RULES } from "./rules";
 
 /* The collector: hourly.
  *
- * Only the BYKO arm is measured. It is the one with a flag to clear, so it is
- * the one the classifiers are asked about; LUKO simply trades in the
- * background and gets a chain-read sample only. That halves the outbound
- * calls, which is also what stops the shared Workers egress IP from earning
- * 429s at GoPlus, GeckoTerminal and CoinGecko.
+ * The BYKO arm is the one measured: it has a flag to clear, so it is the one
+ * the classifiers are asked about. Keeping outbound calls to that one arm is
+ * also what stops the shared Workers egress IP from earning 429s at GoPlus,
+ * GeckoTerminal and CoinGecko.
  *
  * It never fabricates "unchanged" — a request that fails writes ok=0 and the
  * grid renders '?'. Base App has no API and is entered by hand via
@@ -17,12 +16,10 @@ import { RULES } from "./rules";
 
 const BURN = "0x000000000000000000000000000000000000dEaD";
 
-/* The wallet that actually holds each pool's LP tokens when they are NOT
-   burned. BYKO has none — its LP is entirely at the burn address. LUKO's sits
-   with MEETLUKO, a founder wallet, which is the whole point of disclosing it. */
-const LP_KEEPER: Record<string, string> = {
-  luko: "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
-};
+/* The wallet that actually holds a pool's LP tokens when they are NOT burned,
+   keyed by arm. BYKO has none — its LP is entirely at the burn address — so
+   the map is empty and lpState reports the burned share alone. */
+const LP_KEEPER: Record<string, string> = {};
 
 interface Probe { ok: boolean; value: string; raw: string }
 
@@ -332,12 +329,11 @@ export async function poolReserves(env: Env, pool: string): Promise<{ price: str
 
 /* "Locked" means BURNED — LP tokens at an address with no private key, which
  * nobody can ever withdraw. It does not mean "sitting where we expect".
- * Measuring the designated holder's share and calling it locked would have
- * reported LUKO as 100% locked when 100% of its LP is in a founder wallet and
- * withdrawable at will — the exact opposite of the truth, printed under the
- * word this experiment promised to be loudest about. So the number published
- * is the share at the burn address, for both arms, and the keeper is named
- * separately. */
+ * Measuring a designated holder's share and calling it locked would report a
+ * pool as 100% locked when its LP sat in a founder wallet, withdrawable at will
+ * — the exact opposite of the truth, printed under the word this experiment
+ * promised to be loudest about. So the number published is the share at the
+ * burn address, and any keeper is named separately. */
 async function lpState(env: Env, arm: string, pool: string):
   Promise<{ holder: string; burned: string }> {
   const keeper = LP_KEEPER[arm];
@@ -405,8 +401,7 @@ export async function collect(env: Env): Promise<void> {
       oneInch ? listMembership(oneInch, token) : unmeasured("fetch-failed"));
 
     /* The LP figure is read from the chain, not from GeckoTerminal, and it is
-       this experiment's own disclosure — LUKO's liquidity is withdrawable by a
-       founder wallet. It must not disappear from the page because a third
+       this experiment's own disclosure. It must not disappear from the page because a third
        party rate-limited us, so the sample is written either way and the
        market columns are simply left empty when the quote did not arrive. */
     const lp = await lpState(env, r.id, r.pool);
@@ -423,10 +418,9 @@ export async function collect(env: Env): Promise<void> {
     /* Read the reserves EVERY pass, not only when both vendors are silent.
        tvl_usd was filled by whichever of them answered, and they do not report
        the same quantity: GeckoTerminal's reserve_in_usd counts both sides of
-       the pool, CMC's liquidity counts one. So the column held $140 for byko
-       and $578 for luko while the chain said $140 and $290 — the same column
-       meaning two different things depending on who replied, published on two
-       cards side by side for comparison. The chain answer is unambiguous and
+       the pool, CMC's liquidity counts one. So the column could hold a two-sided
+       figure from one vendor and a one-sided figure from the other — the same
+       column meaning two different things depending on who replied. The chain answer is unambiguous and
        is now stored in its own columns; tvl_usd keeps whatever the vendor
        said, and nothing computes against it. */
     const chain = await poolReserves(env, r.pool);

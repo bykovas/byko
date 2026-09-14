@@ -2,7 +2,7 @@
 
 Implements `docs/drafts/wash-worker-blueprint.md`. A self-contained Cloudflare
 Worker on `byko-market.bykovas.lt`, separate from app227 and from the Pages
-site. Two arms (`byko`, `luko`) trade against their own Aerodrome pools on a
+site. The `byko` arm trades against its own Aerodrome pool on a
 random schedule; every trade is recorded before it is broadcast and published
 at `/api/wash`, which the site page `website/self-trading.html` renders.
 
@@ -44,7 +44,6 @@ node scripts/hash-rules.mjs
 
 # 4. set the secrets (never in the repo)
 npx wrangler secret put ARM_PRIVATE_KEY_BYKO   # must derive 0xe1e1...0a16 (BYKO Buyer)
-npx wrangler secret put ARM_PRIVATE_KEY_LUKO   # must derive 0x46bc...c68e (LUKO Buyer)
 npx wrangler secret put DRPC_URL
 npx wrangler secret put ADMIN_TOKEN
 
@@ -66,9 +65,9 @@ curl -X POST https://byko-market.bykovas.lt/api/kick \
 
 To stop everything at once: set `MARKET_OPEN = "0"` and deploy — every arm
 halts at its next alarm without sending. To stop one arm now:
-`POST /api/halt` with `{"arm":"luko"}` and the admin bearer. The **luko** arm
-is also stopped simply by withdrawing its wallet's funds — the worker treats
-"cannot fund a trade" as a clean `funds-withdrawn` halt.
+`POST /api/halt` with `{"arm":"byko"}` and the admin bearer. An arm also stops
+by itself when its wallet runs out of gas — the worker halts it with
+`insufficient-gas` rather than failing a trade.
 
 ## Recording the daily Base App check
 
