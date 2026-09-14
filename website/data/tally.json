@@ -1,13 +1,13 @@
 {
-  "updated": "2026-09-14T05:24:15.725Z",
-  "block": 51287023,
+  "updated": "2026-09-14T09:45:28.633Z",
+  "block": 51294727,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
   },
   "tally": {
     "for": 2,
-    "withdrawn": 0
+    "withdrawn": 3
   },
   "notCounted": {
     "dust": 2,
@@ -22,16 +22,9 @@
       "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
       "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c",
       "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
-      "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
-      "0xbc170538038adc0651292e28a42dab4286641e02",
-      "0x33d857fb6f06aafc498de09654da82a8f68be233",
-      "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-      "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
-      "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "0x36041020857b33aa09ee7d9a99743176a7778134",
       "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
-      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
-      "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3"
+      "0xd785526884facb7d57a7f71e6cdbb940c5b62eae"
     ],
     "holdings": [
       {
@@ -54,7 +47,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 10135.690755,
+        "balance": 21258.430868,
         "role": "buyer",
         "class": "primary"
       },
@@ -69,42 +62,6 @@
         "balance": 231,
         "role": "farcaster",
         "class": "primary"
-      },
-      {
-        "address": "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0xbc170538038adc0651292e28a42dab4286641e02",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
       },
       {
         "address": "0x36041020857b33aa09ee7d9a99743176a7778134",
@@ -123,16 +80,10 @@
         "balance": 0,
         "role": "icons",
         "class": "primary"
-      },
-      {
-        "address": "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
       }
     ],
-    "balance": 344598.29,
-    "pct": 43.6
+    "balance": 355721.03,
+    "pct": 45
   },
   "voters": [
     {
@@ -141,9 +92,24 @@
       "balance": 45860.230224
     },
     {
+      "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
+      "status": "withdrawn",
+      "balance": 0
+    },
+    {
+      "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "status": "withdrawn",
+      "balance": 0
+    },
+    {
       "address": "0x4d7965bf4b7cae5eb8b8b7592c6ddc4f51eebf8a",
       "status": "for",
       "balance": 1425.492021
+    },
+    {
+      "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+      "status": "withdrawn",
+      "balance": 0
     }
   ]
 }
