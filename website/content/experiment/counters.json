@@ -66,11 +66,11 @@
     },
     {
       "id": "listing-approvals",
-      "value": "1",
+      "value": "0",
       "label": "Listing approvals",
       "kind": "result",
       "asOf": "2026-08-26",
-      "counts": "Applications for public token information that ended in a stated approval: BaseScan answered “The token has been queued for update” for LUKO on 21 Aug 2026, after one template rejection and a rewrite of the description from manifesto language into plain facts. Counted when the service says yes, not when the page shows it — checked five days later, the page still does not.",
+      "counts": "Applications for public token information that ended in a stated approval. None so far for BYKO. Counted when the service says yes, not when the page shows it.",
       "excludes": "Paid fast-track offers (declined on principle — see Paid for legitimacy), approvals implied but never stated, and the update actually appearing on the page — that is a separate fact anyone can verify against the token page itself.",
       "provenance": "hand"
     },
@@ -107,12 +107,12 @@
     },
     {
       "id": "listing-rejections",
-      "value": "4",
+      "value": "3",
       "label": "Listing rejections",
       "kind": "result",
       "home": false,
       "asOf": "2026-08-26",
-      "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 for BYKO, and 07 Aug 2026 for LUKO's BaseScan Token Info application. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
+      "counts": "Rejections counted per submission wave — a distinct submission date, not a distinct email: 04, 05 and 11 Aug 2026 for BYKO. One wave can answer with several template refusals the same day (one bundled four identical emails); it still counts once. A submission with no reply after the service's own stated review window also counts — silence is an answer.",
       "excludes": "Forms never submitted, paid fast-track offers (declined on principle — see Paid for legitimacy), and resubmissions of the same form that are still inside the review window.",
       "provenance": "hand"
     },
@@ -123,7 +123,7 @@
       "kind": "result",
       "home": false,
       "asOf": "2026-08-20",
-      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning. Two stand. MetaMask's \"Unstable price\". And Base App's \"scam\", which was gone on 17 Aug 2026 and back by 19 Aug — screenshotted at 23:01 that evening, full-screen, on BYKO and on its control token LUKO, with the same two reasons on both. Base App's own sheet attributes the verdict to \"security providers\". Blockaid, the provider MetaMask reads, wrote on 20 Aug 2026 that for this token it returns Spam with the reason code unstable-price, that it is \"not returning Malicious/Scam for this token\", and that the Coinbase wording is \"Coinbase's own classification (different vendor/policy)\".",
+      "counts": "Wallet products that mark BYKO as risky or suspected spam by default, counted per product, verified by opening the token in the wallet and screenshotting the warning. Two stand. MetaMask's \"Unstable price\". And Base App's \"scam\", which was gone on 17 Aug 2026 and back by 19 Aug — screenshotted at 23:01 that evening, full-screen, with the same two reasons. Base App's own sheet attributes the verdict to \"security providers\". Blockaid, the provider MetaMask reads, wrote on 20 Aug 2026 that for this token it returns Spam with the reason code unstable-price, that it is \"not returning Malicious/Scam for this token\", and that the Coinbase wording is \"Coinbase's own classification (different vendor/policy)\".",
       "excludes": "Third-party allowlist databases the wallets read from — the flag is counted once, at the wallet where the user sees it.",
       "provenance": "hand"
     },
