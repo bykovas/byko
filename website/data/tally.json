@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-14T13:18:05.422Z",
-  "block": 51301238,
+  "updated": "2026-09-14T17:04:53.211Z",
+  "block": 51307909,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
@@ -22,12 +22,16 @@
       "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
       "0x1533897a4b46cd1b7e34b90dfd614daacc69cb4c",
       "0x2f66cab27ad9a62561df741cad01f908ca7295b9",
+      "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
+      "0xbc170538038adc0651292e28a42dab4286641e02",
+      "0x33d857fb6f06aafc498de09654da82a8f68be233",
+      "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+      "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
+      "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
       "0x36041020857b33aa09ee7d9a99743176a7778134",
       "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
       "0xd785526884facb7d57a7f71e6cdbb940c5b62eae",
-      "0x33d857fb6f06aafc498de09654da82a8f68be233",
-      "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-      "0x7d9766f447a6b86cf589a31db5b5535e379863e7"
+      "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3"
     ],
     "holdings": [
       {
@@ -50,7 +54,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 17327.426442,
+        "balance": 20902.370656,
         "role": "buyer",
         "class": "primary"
       },
@@ -65,6 +69,42 @@
         "balance": 231,
         "role": "farcaster",
         "class": "primary"
+      },
+      {
+        "address": "0xf0adec1e81c31bbb253b819c67cbb1826fb7109e",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0xbc170538038adc0651292e28a42dab4286641e02",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0xe5bf5007a56b83faf325e69ccd83af932d0168a2",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
+      },
+      {
+        "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+        "balance": 0,
+        "role": "neighbouring project",
+        "class": "same owner"
       },
       {
         "address": "0x36041020857b33aa09ee7d9a99743176a7778134",
@@ -85,26 +125,14 @@
         "class": "primary"
       },
       {
-        "address": "0x33d857fb6f06aafc498de09654da82a8f68be233",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0x46bcf5c09ef3831020d06ed879d69098a5a3c68e",
-        "balance": 0,
-        "role": "neighbouring project",
-        "class": "same owner"
-      },
-      {
-        "address": "0x7d9766f447a6b86cf589a31db5b5535e379863e7",
+        "address": "0xc392bb8ba12a8aa4ddd65d824a1bce36b51205e3",
         "balance": 0,
         "role": "neighbouring project",
         "class": "same owner"
       }
     ],
-    "balance": 351790.03,
-    "pct": 44.5
+    "balance": 355364.97,
+    "pct": 45
   },
   "voters": [
     {
