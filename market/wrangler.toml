@@ -6,6 +6,7 @@
 #
 # No secrets in this file, ever. The trading key goes in with
 #   wrangler secret put ARM_PRIVATE_KEY_BYKO      (from market/)
+#   wrangler secret put ARM_PRIVATE_KEY_LUKO
 #   wrangler secret put DRPC_URL
 #   wrangler secret put ADMIN_TOKEN
 # Local dev values live in .dev.vars (gitignored).

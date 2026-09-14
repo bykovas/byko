@@ -19,6 +19,8 @@ const BASE = process.env.MARKET_URL || "https://byko-market.bykovas.lt";
 const ARMS = [
   { arm: "byko", token: "0x078bb16e24C8931Fc007928c370422e5e38F4372",
     pool: "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" },
+  { arm: "luko", token: "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1",
+    pool: "0x2222a01b83db8c533b062aeb6de4f61d6ae792f2" },
 ];
 
 function adminToken() {

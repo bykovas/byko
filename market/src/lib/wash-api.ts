@@ -53,7 +53,7 @@ function nextByRule(
   }
   /* The chain figure, not tvl_usd: the vendors disagree about whether that
      counts one side of the pool or both, and this clamp is a share of the
-     USDC side. Using theirs made a published range twice as wide as the
+     USDC side. Using theirs made luko's published range twice as wide as the
      worker would ever draw — the worker reads reserves itself. */
   const poolUsdc = sample?.reserve_usdc ? Number(sample.reserve_usdc) / 1e6 : 0;
   const [sizeMin, sizeMax] = RULES.strategy.trade_usdc;
