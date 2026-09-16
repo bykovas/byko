@@ -707,6 +707,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           button.textContent = "copied";
           setTimeout(function () { button.textContent = "copy"; }, 1400);
         }
+      }, function () {
+        /* The browser refused (page not focused, permission denied): nothing
+           was copied and there is nothing to report (BYKO-C). */
       });
     });
   });
@@ -971,7 +974,7 @@ document.getElementById('copyBtn').addEventListener('click', function () {
   navigator.clipboard.writeText(document.getElementById('addr').textContent).then(function () {
     btn.textContent = 'copied';
     setTimeout(function () { btn.textContent = 'copy'; }, 1500);
-  });
+  }, function () { /* refused by the browser; see the copy handler above */ });
 });
 
 /* Check my vote */
