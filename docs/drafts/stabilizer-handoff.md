@@ -174,25 +174,25 @@ effect: unknown; no prediction changes.
 | roll | engineer | rules hash → D1; deploy; kick `byko`; start the stabilizer; verify `/api/wash` |
 | LUKO arms | nobody | no withdrawal; they buy their excess into LUKO on day one (accepted) |
 
-## 7. The live test (owner decides)
+## 7. The live test (settled)
 
-The owner proposed buying **$2** from a wallet he holds the key to (the
-address the site calls LUKAS, `0x30Fd…eFBF`) and moving the BYKO to his
-main wallet. Two facts for him to decide on before anything is published:
+**$20 USDC → BYKO from the wallet the site calls LUKAS**, `0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF`.
+It is Lukas's own wallet (the owner keeps a backup of its seed so it cannot
+be lost; Lukas signs). It is not in the register, so under §2 the buy is
+`outside` and under $100 — exactly what the stabilizer exists to answer.
 
-1. $2 moves this pool +1.4% — under the 5% band. The stabilizer will log
-   "inside the band" and do nothing. To see it act, the buy must be ≥ ~$8
-   (+5.3%); $10 → +6.9% → it sells ≈ $7.5 of BYKO and lands at +1.7%.
-2. Under rule 2 a wallet the founder can sign from is a founder wallet. If
-   LUKAS is one, (a) it belongs in the register — and the referendum then
-   loses its only outside "for" vote, which the home page currently
-   presents as not the author's; (b) a test buy from it resets the
-   reference and triggers nothing. If a real other person signs from it,
-   the buy is outside and the test is honest. The owner answers this; do
-   not resolve it for him.
+Expected at today's depth (292.5 USDC : 187,328 BYKO): Lukas receives
+≈ 11,700 BYKO, price +13.9%; within one tick (≤ 10 min) the stabilizer sells
+≈ 8,200 BYKO (≈ $15) and lands at ≈ +3.5% over the reference; that sell
+becomes the new reference. Lukas's position is marked down ≈ 9% by the
+issuer within ten minutes — that is the rule working, and the evidence
+entry says so in those words.
 
-Whatever the test wallet: announce before sending (wallet, amount, expected
-move), then publish both hashes, the decision row and before/after prices.
+Before sending: announce (wallet, amount, expected move) on the page or in
+the diary. After: publish both hashes, the decision row, the check strip
+and before/after prices. Keep the bought BYKO in Lukas's wallet; if it is
+later moved to a founder wallet, the chain shows a buy from LUKAS followed
+by a transfer to the author, and the entry must say that too.
 
 ## 8. Order of work
 
@@ -201,4 +201,4 @@ move), then publish both hashes, the decision row and before/after prices.
 2. Halt `byko`; owner does the three transfers and the secret.
 3. Reset `wallet_state`; hash → D1; deploy; kick; verify.
 4. `stabilizer.html` + `stabilizer.js` + home card + render-diary; push.
-5. Owner's test (after §7 is settled); evidence entry in the diary.
+5. The test in §7; evidence entry in the diary.
