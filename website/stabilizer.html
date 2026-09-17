@@ -69,6 +69,7 @@ td.side.buy{color:var(--byko-pass)}
 td.side.sell{color:var(--byko-quoted)}
 td.side.none{color:var(--byko-label)}
 td.side.cannot{color:var(--byko-strike)}
+td.side.intent{color:var(--byko-ink)}
 td.mono{font-family:var(--byko-font-mono)}
 td.pos{color:var(--byko-ink)}
 td a{font:var(--byko-data);color:var(--byko-label)}
@@ -157,6 +158,7 @@ tr.day td{color:var(--byko-label);font:var(--byko-data);border-bottom:var(--byko
 .checks i.sell{color:var(--byko-quoted)}
 .checks i.buy{color:var(--byko-pass)}
 .checks i.cannot,.checks i.skipped{color:var(--byko-strike)}
+.checks i.intent{color:var(--byko-ink)}
 .checks-note{font:var(--byko-data);color:var(--byko-label);margin:8px 0 0}
 
 @media (max-width:640px){
@@ -225,12 +227,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <p class="meta" id="meta">loading…</p>
 
   <section class="lede">
-    <p>One founder wallet watches the BYKO pool every ten minutes. When a trade of under $100 by somebody outside the published register moves the price more than <span class="name">5%</span> away from the reference, the wallet trades back three quarters of the move. This project's own trades carry the reference with them; its own corrections, any founder trade and any outside trade of $100 or more reset it.</p>
-    <p>It sells into outside buying and buys into outside selling, so it earns the spread; every look and every decision is logged below. <a href="/self-trading">The self-trading arm</a> keeps running beside it.</p>
+    <p>One founder wallet watches the BYKO pool every ten minutes. When a trade of under $100 by somebody outside the published register moves the price more than <span class="name">5%</span> away from the reference, the wallet announces what it will do and looks again five minutes later: if the move is still there, it trades back three quarters of it; if not, it cancels. This project's own trades carry the reference with them; its own corrections, any founder trade and any outside trade of $100 or more reset it.</p>
+    <p>It sells into outside buying and buys into outside selling, so it earns the spread; every look, every intent and every decision is logged below. <a href="/self-trading">The self-trading arm</a> keeps running beside it.</p>
     <div class="rules" id="rules">
       <span>threshold <b id="r-th">5%</b></span>
       <span>damping <b id="r-damp">75%</b></span>
       <span>check every <b id="r-every">10 min</b></span>
+      <span>confirm after <b id="r-confirm">5 min</b></span>
       <span>resets on <b>own · founder · ≥$100</b></span>
       <span>budget <b>the wallet's balances</b></span>
       <span>slippage <b>3%</b></span>
@@ -320,7 +323,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div class="checks" id="s-checks"></div>
-    <p class="checks-note" id="s-checks-note">today, UTC · one glyph per look · <span class="mono">·</span> looked and did nothing · <span class="mono">▲</span> sold · <span class="mono">▼</span> bought · <span class="mono">×</span> wanted to act and could not · <span class="mono">?</span> could not look (a node or the register did not answer)</p>
+    <p class="checks-note" id="s-checks-note">today, UTC · one glyph per look · <span class="mono">·</span> looked and did nothing · <span class="mono">▲</span> sold · <span class="mono">▼</span> bought · <span class="mono">!</span> intent announced · <span class="mono">~</span> intent cancelled · <span class="mono">×</span> wanted to act and could not · <span class="mono">?</span> could not look (a node or the register did not answer)</p>
   </div>
 
   <h2 class="sec" id="decisions-head">Decisions<span class="n">newest first · checks above 1% and every action</span></h2>
@@ -365,6 +368,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="stabilizer.js?v=20260917d"></script>
+<script src="stabilizer.js?v=20260917e"></script>
 </body>
 </html>

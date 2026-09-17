@@ -102,6 +102,7 @@
       above: "above the band",
       below: "below the band",
       cannot: "cannot act · logged",
+      intent: "intent announced · confirms at the next look",
       acted: "acted · reading taken before the trade"
     }[s.state] || s.state;
     set("s-status", status);
@@ -133,6 +134,7 @@
     }
     var landPrice = hasRef ? ref * (1 + (dev / 100) * (1 - DAMP / 100)) : null;
     var showLand = hasRef && !inside && s.state !== "cannot" && s.state !== "acted";
+    set("r-confirm", (s.rules.confirm_minutes || 5) + " min");
 
     var band = $("s-band");
     if (band) {
@@ -225,6 +227,15 @@
         ? "sold ~" + int(whole(it.token, 18)) + " BYKO (about " + money(whole(it.usdc, 6)) + ")"
         : "bought about " + money(whole(it.usdc, 6)) + " of BYKO") +
         " to land at " + pct(it.land_pct) + " · the deviation stands and is logged";
+    } else if (s.state === "intent" && it) {
+      var plan = it.side === "sell"
+        ? "sells ~" + int(whole(it.token, 18)) + " BYKO (about " + money(whole(it.usdc, 6)) + ")"
+        : "buys about " + money(whole(it.usdc, 6)) + " of BYKO";
+      say = (dev > 0 ? "Above" : "Below") + " the band by " + Math.abs(dev).toFixed(1) + "%. Intent announced" +
+        (it.announced_at ? " at " + hhmm(it.announced_at) + " UTC" : "") + ": at the next look, if the price is still more than " +
+        TH + "% away, the wallet " + plan + " to land at " + pct(it.land_pct) + "; if it has come back, the intent is cancelled.";
+      sub = (nextTxt ? "confirms or cancels: " + nextTxt : "confirms or cancels at the next look") +
+        " · the size is recomputed from the price it reads then";
     } else if (it) {
       var amount = it.side === "sell"
         ? "sells ~" + int(whole(it.token, 18)) + " BYKO (about " + money(whole(it.usdc, 6)) + ")"
@@ -245,7 +256,7 @@
     strip.textContent = "";
     (s.checks_today || []).forEach(function (c) {
       var glyph = c.kind === "sell" ? "▲" : c.kind === "buy" ? "▼" : c.kind === "cannot" ? "×"
-        : c.kind === "skipped" ? "?" : "·";
+        : c.kind === "skipped" ? "?" : c.kind === "intent" ? "!" : c.kind === "cancelled" ? "~" : "·";
       var i = el("i", c.kind === "none" ? null : c.kind, glyph);
       i.title = hhmm(c.at) + " UTC · " + c.kind;
       strip.appendChild(i);
@@ -266,16 +277,20 @@
       var dv = r.dev_pct == null ? "—" : pct(Number(r.dev_pct));
       tr.appendChild(cell(Math.abs(Number(r.dev_pct || 0)) > s.rules.threshold_pct ? "pos" : null, dv, "deviation"));
       var dec = r.decision === "sell" || r.decision === "buy" ? r.decision
-        : r.decision === "cannot" ? "cannot" : r.decision === "wait" ? "wait" : "none";
+        : r.decision === "cannot" ? "cannot" : r.decision === "wait" ? "wait"
+        : r.decision === "intent" ? "intent" : "none";
       var label = r.decision === "bootstrap" ? "reference set"
-        : r.decision === "skipped" ? "skipped" : dec;
+        : r.decision === "skipped" ? "skipped"
+        : r.decision === "intent" ? "intent · " + r.side
+        : r.decision === "cancelled" ? "cancelled" : dec;
       tr.appendChild(cell("side " + dec + " l", label, "decision"));
       var tok = whole(r.settled_token || r.token_amount, 18);
       var usd = whole(r.usdc_settled || r.usdc_amount, 6);
       var acted = dec === "sell" || dec === "buy";
-      tr.appendChild(cell(null, acted && tok != null ? int(tok) + " BYKO" : "—", "size"));
-      tr.appendChild(cell(null, acted && usd != null ? money(usd)
-        : r.decision === "cannot" || r.decision === "skipped" || r.decision === "wait" ? (r.note || "—") : "—", "value"));
+      var planned = r.decision === "intent";
+      tr.appendChild(cell(null, (acted || planned) && tok != null ? (planned ? "~" : "") + int(tok) + " BYKO" : "—", "size"));
+      tr.appendChild(cell(null, (acted || planned) && usd != null ? (planned ? "~" : "") + money(usd)
+        : r.decision === "cannot" || r.decision === "skipped" || r.decision === "wait" || r.decision === "cancelled" ? (r.note || "—") : "—", "value"));
       var landed = r.landed_price && r.ref_price ? pct((Number(r.landed_price) / Number(r.ref_price) - 1) * 100) : "—";
       tr.appendChild(cell(null, acted ? landed : "—", "landed at"));
       var txtd = cell("l", null, "tx");
@@ -314,8 +329,9 @@
     });
   }
 
+  var loaded = false;
   function load() {
-    $("meta").textContent = "reading the worker…";
+    if (!loaded) $("meta").textContent = "reading the worker…";
     fetch(API + "?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) {
         return r.json().then(function (body) {
@@ -323,7 +339,7 @@
           throw new Error(body && body.error ? body.error : "HTTP " + r.status);
         });
       })
-      .then(paint)
+      .then(function (d) { loaded = true; paint(d); })
       .catch(function (err) {
         var meta = $("meta");
         meta.textContent = "";
@@ -337,4 +353,7 @@
   var btn = $("refresh");
   if (btn) btn.addEventListener("click", load);
   load();
+  /* the readout is small; read it again every minute so an announced intent
+     and the look that confirms it both reach an open page */
+  setInterval(function () { if (!document.hidden) load(); }, 60000);
 })();

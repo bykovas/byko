@@ -33,6 +33,7 @@ export interface StabilizerRules {
   damp_pct: number;
   reset_outside_usdc: number;  /* an outside trade this large sets the price */
   check_minutes: number;
+  confirm_minutes: number;     /* SEVENTEENTH: an intent is confirmed or cancelled this much later */
   log_min_deviation_pct: number;
   pool_fee_bps: number;
   slippage_bps: number;

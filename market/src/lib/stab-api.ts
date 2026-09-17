@@ -20,7 +20,8 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
   let st: Record<string, unknown> | null;
   try {
     st = await env.DB.prepare(
-      `SELECT ref_price, ref_reason, ref_at, ref_block, ref_tx, last_block, halted, halt_reason, next_check_at
+      `SELECT ref_price, ref_reason, ref_at, ref_block, ref_tx, last_block, halted, halt_reason, next_check_at,
+            intent_side, intent_at
          FROM stab_state WHERE id = 1`,
     ).first<Record<string, unknown>>();
   } catch {
@@ -50,7 +51,7 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
        LEFT JOIN trades t ON t.tx_hash = c.tx_hash
        LEFT JOIN stab_flow f ON f.tx_hash = c.tx_hash
       WHERE c.decision != 'catchup'
-        AND (c.decision IN ('sell','buy','cannot','wait','bootstrap','skipped')
+        AND (c.decision IN ('sell','buy','cannot','wait','bootstrap','skipped','intent','cancelled')
              OR ABS(COALESCE(c.dev_pct, 0)) > ?1)
       ORDER BY c.id DESC LIMIT 60`,
   ).bind(floor).all<Record<string, unknown>>();
@@ -98,6 +99,7 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
   if (!st || ref == null || !last) state = "unset";
   else if (last.decision === "sell" || last.decision === "buy") state = "acted";
   else if (last.decision === "cannot") state = "cannot";
+  else if (st.intent_side && dev != null && Math.abs(dev) > th) state = "intent";
   else if (dev != null && Math.abs(dev) > th) state = dev > 0 ? "above" : "below";
   else state = "quiet";
 
@@ -109,6 +111,8 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
         target_price: last.target_price,
         land_pct: dev * (1 - damp / 100),
         blocked: last.decision === "cannot" ? last.note : null,
+        announced_at: st?.intent_at ?? null,
+        confirm_at: st?.intent_side ? st?.next_check_at ?? null : null,
       }
     : null;
 
@@ -136,6 +140,8 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
       kind: c.decision === "sell" || c.decision === "buy" ? c.decision
         : c.decision === "cannot" ? "cannot"
         : c.decision === "skipped" ? "skipped"
+        : c.decision === "intent" ? "intent"
+        : c.decision === "cancelled" ? "cancelled"
         : Math.abs(c.dev_pct ?? 0) > th ? "out" : "none",
     })),
     decisions: decisions.results,

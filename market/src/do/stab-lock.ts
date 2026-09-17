@@ -25,6 +25,10 @@ import { readCache, writeCache, ageOf } from "../lib/cache";
  *        no swap (liquidity) .. carry
  *   3. compares the pool price with the reference and, past threshold_pct,
  *      trades the amount that takes the price back damp_pct of the way.
+ *      SEVENTEENTH AMENDMENT: not at once. The first look past the band
+ *      publishes an intent and calls the next look in confirm_minutes; that
+ *      look trades on the deviation it then reads, or cancels the intent if
+ *      the price has come back inside the band.
  *
  * It WATCHES whatever the switches say — the page is live even when it may not
  * act — and it ACTS only when the rules hash matches, the kill switch is open,
@@ -56,6 +60,8 @@ interface StabState {
   last_price: string | null;
   halted: number;
   halt_reason: string | null;
+  intent_side: string | null;
+  intent_at: string | null;
 }
 
 interface Log {
@@ -84,6 +90,7 @@ const priceOf = (token: bigint, usdc: bigint) =>
 const pad = (addr: string) => "0x" + addr.toLowerCase().replace(/^0x/, "").padStart(64, "0");
 const fmtPct = (x: number) => (x >= 0 ? "+" : "−") + Math.abs(x * 100).toFixed(2) + "%";
 const fmtPx = (x: number) => "$" + x.toFixed(8);
+const utcTime = (ts: string | null) => (ts ? ts.slice(11, 16) + " UTC" : "earlier");
 
 /* The trade that moves a constant-product pool to `target`, fee included.
    Aerodrome sends the fee out of the pool, so the reserve grows by the input
@@ -129,6 +136,7 @@ export class StabLock {
          a minute, so the page shows the pool the trade left, not the reading
          that caused it, for nine more minutes */
       if (r === "approving" || r === "sell" || r === "buy" || r === "wait") next = 60_000;
+      if (r === "intent" || r === "early") next = S.confirm_minutes * 60_000;
       if (r === "catchup") next = 30_000;
     } catch (err) {
       await event(this.env, STABILIZER_ID, "error", String((err as Error)?.message ?? err).slice(0, 300));
@@ -160,7 +168,8 @@ export class StabLock {
     const env = this.env;
     await this.ensureRow();
     const st = await env.DB.prepare(
-      `SELECT ref_price, ref_reason, ref_block, last_block, last_price, halted, halt_reason
+      `SELECT ref_price, ref_reason, ref_block, last_block, last_price, halted, halt_reason,
+              intent_side, intent_at
          FROM stab_state WHERE id = 1`,
     ).first<StabState>();
     if (!st) return "no-state";
@@ -346,7 +355,16 @@ export class StabLock {
     /* 4. the decision */
     const dev = live / ref - 1;
     const th = S.threshold_pct / 100;
+    const intentSide = st.intent_side === "buy" || st.intent_side === "sell" ? st.intent_side : null;
     if (Math.abs(dev) <= th) {
+      if (intentSide) {
+        await this.setIntent(null);
+        await this.logCheck({ block: head, ref, live, dev, decision: "cancelled", side: intentSide, reserves, wallet: bal,
+          note: `the price is back inside the band; the ${intentSide} intent of ${utcTime(st.intent_at)} is cancelled` });
+        await event(env, STABILIZER_ID, "stab-cancel",
+          `${intentSide} intent of ${utcTime(st.intent_at)} cancelled — deviation now ${fmtPct(dev)}, inside ±${S.threshold_pct}%`);
+        return "cancelled";
+      }
       await this.logCheck({ block: head, ref, live, dev, decision: "none", reserves, wallet: bal });
       await this.approveWhileIdle(bal);
       return "none";
@@ -377,11 +395,38 @@ export class StabLock {
       return "wait";
     }
 
+    /* an intent is only announced when the wallet could act on it */
     const gate = await this.gate(bal);
     if (gate) {
       await this.logCheck({ ...base, note: gate });
       return "cannot";
     }
+
+    const fundable = side === "buy"
+      ? Number(bal.usdc) / 1e6 >= DUST_USDC
+      : (Number(bal.token) / 1e18) * live >= DUST_USDC;
+    if (!fundable) {
+      await this.logCheck({ ...base, note: side === "buy"
+        ? `the wallet holds $${(Number(bal.usdc) / 1e6).toFixed(2)} USDC — it cannot buy until it has earned some by selling`
+        : `the wallet holds ${(Number(bal.token) / 1e18).toFixed(0)} BYKO — nothing to sell` });
+      return "cannot";
+    }
+
+    /* SEVENTEENTH AMENDMENT: announce first, act on the next look. */
+    if (intentSide !== side) {
+      await this.setIntent(side);
+      const replaced = intentSide ? `; replaces the ${intentSide} intent of ${utcTime(st.intent_at)}` : "";
+      await this.logCheck({ ...base, decision: "intent",
+        note: `next look in ${S.confirm_minutes} min: ${side} if the price is still more than ${S.threshold_pct}% away, cancel if not${replaced}` });
+      await event(env, STABILIZER_ID, "stab-intent",
+        `deviation ${fmtPct(dev)} from ${fmtPx(ref)} — intends to ${side} about ` +
+        (side === "sell" ? `${want.toFixed(0)} BYKO ($${wantUsd.toFixed(2)})` : `$${wantUsd.toFixed(2)} of BYKO`) +
+        ` to land at ${fmtPct(target / ref - 1)}; confirms or cancels at the next look, in ${S.confirm_minutes} min${replaced}`);
+      return "intent";
+    }
+    /* a look that comes early (a manual tick) neither confirms nor re-announces */
+    const intentAge = st.intent_at ? Date.now() - Date.parse(st.intent_at.replace(" ", "T") + "Z") : Infinity;
+    if (intentAge < (S.confirm_minutes * 60 - 30) * 1000) return "early";
 
     let amountIn: bigint;
     let inputToken: Address;
@@ -463,12 +508,20 @@ export class StabLock {
       `deviation ${fmtPct(dev)} from ${fmtPx(ref)}, aiming for ${fmtPx(target)} ` +
       `(${S.damp_pct}% back)${capped ? ", capped by the balance" : ""}; min out ${minOut} · ${hash}`);
 
+    await this.setIntent(null);
     try {
       await wl.sendRawTransaction({ serializedTransaction: signed });
     } catch (err) {
       await event(env, STABILIZER_ID, "error", `broadcast: ${String((err as Error)?.message ?? err).slice(0, 200)}`);
     }
     return side;
+  }
+
+  private async setIntent(side: "buy" | "sell" | null): Promise<void> {
+    await this.env.DB.prepare(
+      `UPDATE stab_state SET intent_side = ?1,
+         intent_at = CASE WHEN ?1 IS NULL THEN NULL ELSE datetime('now') END WHERE id = 1`,
+    ).bind(side).run();
   }
 
   /* Why the stabilizer may not act right now, or null if it may. */

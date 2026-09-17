@@ -244,3 +244,8 @@ CREATE TABLE IF NOT EXISTS stab_flow (
 
 CREATE INDEX IF NOT EXISTS idx_stab_checks_at ON stab_checks(at);
 CREATE INDEX IF NOT EXISTS idx_stab_flow_block ON stab_flow(block);
+
+-- SEVENTEENTH AMENDMENT, 17 Sep 2026: announce, then act. Added by hand:
+--   ALTER TABLE stab_state ADD COLUMN intent_side TEXT;
+--   ALTER TABLE stab_state ADD COLUMN intent_at   TEXT;
+-- stab_checks.decision gains 'intent' and 'cancelled'.
