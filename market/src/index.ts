@@ -135,7 +135,30 @@ const MIRRORS: Record<string, string[]> = {
   tally: [SITE + "/api/tally", SITE + "/data/tally.json"],
 };
 
-async function handle(request: Request, env: Env): Promise<Response> {
+/* The public readouts are served from the edge cache for 30 seconds. The
+   pages add a cache-busting ?t= to every request, so the key drops it: a room
+   full of readers costs one set of D1 reads per half minute, not one per
+   reader — the free plan's 5M rows a day is shared by everything here. */
+async function cached(request: Request, make: () => Promise<Response>, ctx?: ExecutionContextLike): Promise<Response> {
+  const url = new URL(request.url);
+  url.searchParams.delete("t");
+  const key = new Request(url.toString(), { method: "GET" });
+  const cache = (caches as unknown as { default: Cache }).default;
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  const res = await make();
+  if (res.status === 200) {
+    const copy = new Response(res.clone().body, res);
+    copy.headers.set("Cache-Control", "public, max-age=30");
+    const put = cache.put(key, copy);
+    if (ctx) ctx.waitUntil(put); else await put;
+  }
+  return res;
+}
+
+interface ExecutionContextLike { waitUntil(p: Promise<unknown>): void }
+
+async function handle(request: Request, env: Env, ctx?: ExecutionContextLike): Promise<Response> {
   const url = new URL(request.url);
 
   if (url.pathname === "/api/pool") {
@@ -150,12 +173,12 @@ async function handle(request: Request, env: Env): Promise<Response> {
 
   if (url.pathname === "/api/stabilizer") {
     if (request.method !== "GET") return methodNotAllowed();
-    return stabilizerApi(env);
+    return cached(request, () => stabilizerApi(env), ctx);
   }
 
   if (url.pathname === "/api/wash") {
     if (request.method !== "GET") return methodNotAllowed();
-    return washApi(request, env);
+    return cached(request, () => washApi(request, env), ctx);
   }
 
   if (url.pathname === "/api/kick") {
@@ -316,9 +339,9 @@ async function heartbeat(env: Env): Promise<void> {
 }
 
 export default Sentry.withSentry(sentryOptions, {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContextLike): Promise<Response> {
     try {
-      return await handle(request, env);
+      return await handle(request, env, ctx);
     } catch (err) {
       Sentry.captureException(err);
       console.error("market", err);
