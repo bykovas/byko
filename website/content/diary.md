@@ -34,6 +34,21 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Liquid Is Producing Blocks Without Processing Transactions — 11 September 2026
+
+Liquid Network entered a controlled recovery stage on September 10. Functionary nodes are producing and validating blocks again after node updates, but user transactions are still not being processed.
+
+Peg operations, including PAK-authorized peg-outs, remain suspended while the BTC/LBTC reserve is being restored. Block production therefore confirms one layer of liveness, not full usability.
+
+For BYKO, the useful question is how wallets, explorers and market-data services display that partial state. A chain can be alive while a token cannot transfer, trade or redeem. “Back” is not a single technical fact.
+
+Sources: Liquid Network, Blockstream Status, CryptoTimes, Bitcoin.com, TechFlow.
+
+---
+**Teaser:** A restarted chain can produce blocks while users still cannot transact or redeem.
+**X:** Liquid makes blocks again, but transactions and peg operations remain paused. BYKO asks: when infrastructure says a network is “back,” does its interface distinguish liveness, transferability and redemption? Sources: Liquid, Blockstream, CryptoTimes.
+**Image:** ![BYKO infographic on Liquid Network controlled recovery: block production online, user transactions not processed, peg operations suspended, with a “back online but not yet for you” sign](/assets/diary/liquid-is-producing-blocks-without-processing-transactions/hero.jpg)
+
 ## SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts — 12 September 2026
 
 Dominion described SILV as permissionless. After a treasury multisig breach, the issuer froze 2,819 token accounts and said tokens bought during the incident window would be removed, with a USDC refund path for affected buyers.

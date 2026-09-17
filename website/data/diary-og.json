@@ -15,6 +15,19 @@
       }
     },
     {
+      "slug": "liquid-is-producing-blocks-without-processing-transactions",
+      "title": "Liquid Is Producing Blocks Without Processing Transactions",
+      "dateText": "11 September 2026",
+      "datePublished": "2026-09-11",
+      "imageVersion": "955c92587f05",
+      "twitterImageVersion": "1a43c7a3792b",
+      "hero": {
+        "src": "/assets/diary/liquid-is-producing-blocks-without-processing-transactions/hero.jpg",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "self-custody-did-not-patch-the-wallet",
       "title": "Self-Custody Did Not Patch the Wallet",
       "dateText": "10 September 2026",
