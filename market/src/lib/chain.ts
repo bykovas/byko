@@ -87,6 +87,11 @@ export const ROUTER_ABI = [
 export const SWAP_TOPIC =
   "0xb3e2773606abfd36b5bd91394b3a54d1398336c65005baf7bf7a05efeffaf75b";
 
+/* topic0 of the pool's Sync(reserve0, reserve1): written on every reserve
+   change, just before Swap in the same transaction. */
+export const SYNC_TOPIC =
+  "0xcf2aa50876cdfbb541206f89af0ee78d44a2abf8d328e37fa4917f982149848a";
+
 export interface Route { from: Address; to: Address; stable: boolean; factory: Address }
 
 export function route(from: string, to: string, stable: boolean, factory: string): Route {

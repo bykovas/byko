@@ -653,7 +653,7 @@ const NAV_ITEMS = [
    experiments block and from the diary entry it belongs to, not from the nav. */
 const NAV_PAGES = [INDEX_PAGE, DIARY_PAGE, "website/experiment.html",
   "website/market.html", "website/specification.html", "website/ledger.html",
-  "website/self-trading.html", "website/self-trading-luko.html"];
+  "website/self-trading.html", "website/self-trading-luko.html", "website/stabilizer.html"];
 
 for (const path of NAV_PAGES) {
   const file = path.split("/").pop();
@@ -717,6 +717,7 @@ const sitemapUrls = [
   { loc: `${SITE}/ledger` },
   { loc: `${SITE}/self-trading` },
   { loc: `${SITE}/self-trading-luko` },
+  { loc: `${SITE}/stabilizer` },
 ];
 writeFileSync(SITEMAP,
   `<?xml version="1.0" encoding="UTF-8"?>\n` +

@@ -3,6 +3,7 @@
  * /api/wash  — public, read-only, the whole disclosed readout.
  * /api/kick  — admin (Bearer ADMIN_TOKEN): seed rows and arm the schedulers.
  * /api/halt  — admin: stop one arm (or all) now.
+ * /api/stabilizer/tick — admin: one stabilizer look now (the alarm does the rest).
  * scheduled  — settle pending trades, run the collector, re-arm lost alarms.
  *
  * The trading itself lives in the ArmLock Durable Object's alarm; this file
@@ -10,13 +11,14 @@
  * kicked AND the rules hash matches — see wrangler.toml. */
 import * as Sentry from "@sentry/cloudflare";
 import type { Env } from "./types";
-import { RULES } from "./lib/rules";
+import { RULES, STABILIZER_ID } from "./lib/rules";
 import { json, error, methodNotAllowed } from "./lib/respond";
 import { washApi } from "./lib/wash-api";
 import { confirmTrades } from "./lib/confirm";
 import { collect } from "./lib/collector";
 import { event } from "./lib/db";
 import { ArmLock as ArmLockDO } from "./do/arm-lock";
+import { StabLock as StabLockDO } from "./do/stab-lock";
 import { computePool, type PoolPayload } from "./lib/pool";
 import { readCache, writeCache, ageOf } from "./lib/cache";
 
@@ -28,6 +30,7 @@ const sentryOptions = (env: Env) => ({
 });
 
 export const ArmLock = Sentry.instrumentDurableObjectWithSentry(sentryOptions, ArmLockDO);
+export const StabLock = Sentry.instrumentDurableObjectWithSentry(sentryOptions, StabLockDO);
 
 function authed(request: Request, env: Env): boolean {
   const header = request.headers.get("Authorization") ?? "";
@@ -44,6 +47,21 @@ async function seedRows(env: Env): Promise<void> {
       `INSERT OR IGNORE INTO wallet_state (address, halted) VALUES (?1, 0)`,
     ).bind(r.wallet).run();
   }
+}
+
+/* SIXTEENTH AMENDMENT: one stabilizer, addressed as "stabilizer" by the same
+   kick and halt routes as the arms. Halting it stops sending, not watching. */
+async function stab(env: Env, op: "start" | "tick"): Promise<Response> {
+  const stub = env.STAB.get(env.STAB.idFromName(STABILIZER_ID));
+  return stub.fetch(new Request("https://stab/op", { method: "POST", body: JSON.stringify({ op }) }));
+}
+
+async function setStabHalt(env: Env, halted: boolean, reason: string | null): Promise<void> {
+  await env.DB.prepare(
+    `INSERT INTO stab_state (id, halted, halt_reason, updated_at) VALUES (1, ?1, ?2, datetime('now'))
+     ON CONFLICT(id) DO UPDATE SET halted = excluded.halted, halt_reason = excluded.halt_reason,
+       updated_at = excluded.updated_at`,
+  ).bind(halted ? 1 : 0, reason).run();
 }
 
 async function arm(env: Env, id: string): Promise<void> {
@@ -144,6 +162,12 @@ async function handle(request: Request, env: Env): Promise<Response> {
        published on the page — a schedule should not shift because a different
        arm was being restarted. Mirrors /api/halt, which has always taken it. */
     const body = (await request.json().catch(() => ({}))) as { arm?: string };
+    if (body.arm === STABILIZER_ID) {
+      await setStabHalt(env, false, null);
+      await stab(env, "start");
+      await event(env, STABILIZER_ID, "resume", "kicked stabilizer");
+      return json({ kicked: [STABILIZER_ID], market_open: env.MARKET_OPEN === "1" });
+    }
     const targets = body.arm ? RULES.arms.filter((a) => a.id === body.arm) : RULES.arms;
     if (targets.length === 0) return error("unknown arm", 400);
     /* clear a deliberate halt so a re-open resumes, then arm each enabled arm */
@@ -161,12 +185,26 @@ async function handle(request: Request, env: Env): Promise<Response> {
     if (request.method !== "POST") return methodNotAllowed();
     if (!authed(request, env)) return error("unauthorized", 401);
     const body = (await request.json().catch(() => ({}))) as { arm?: string };
-    const targets = body.arm ? RULES.arms.filter((a) => a.id === body.arm) : RULES.arms;
+    const halted: string[] = [];
+    if (!body.arm || body.arm === STABILIZER_ID) {
+      await setStabHalt(env, true, "manual");
+      await event(env, STABILIZER_ID, "halt", "manual — the stabilizer keeps watching and sends nothing");
+      halted.push(STABILIZER_ID);
+    }
+    const targets = !body.arm ? RULES.arms : RULES.arms.filter((a) => a.id === body.arm);
     for (const r of targets) {
       const stub = env.ARM.get(env.ARM.idFromName(r.id));
       await stub.fetch(new Request("https://arm/op", { method: "POST", body: JSON.stringify({ op: "halt" }) }));
+      halted.push(r.id);
     }
-    return json({ halted: targets.map((a) => a.id) });
+    return json({ halted });
+  }
+
+  if (url.pathname === "/api/stabilizer/tick") {
+    if (request.method !== "POST") return methodNotAllowed();
+    if (!authed(request, env)) return error("unauthorized", 401);
+    const res = await stab(env, "tick");
+    return json(await res.json());
   }
 
   /* Force a collector pass now, without waiting for the hourly window — used
@@ -246,8 +284,18 @@ async function handle(request: Request, env: Env): Promise<Response> {
   return json({ service: "byko-market", see: "/api/wash" });
 }
 
-/* re-arm any enabled, non-halted arm whose alarm looks lost */
+/* re-arm any enabled, non-halted arm whose alarm looks lost, and the
+   stabilizer's look (which runs whatever the switches say, once started) */
 async function heartbeat(env: Env): Promise<void> {
+  try {
+    const next = await env.DB.prepare(`SELECT next_check_at FROM stab_state WHERE id = 1`)
+      .first<string | null>("next_check_at");
+    const due = next ? Date.parse(next) : NaN;
+    if (Number.isFinite(due) && due < Date.now() - 15 * 60_000) {
+      await event(env, STABILIZER_ID, "resume", "heartbeat re-armed a lost look");
+      await stab(env, "start");
+    }
+  } catch { /* stab tables not applied yet */ }
   if (env.MARKET_OPEN !== "1") return;
   for (const r of RULES.arms) {
     const s = await env.DB.prepare(

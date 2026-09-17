@@ -83,20 +83,24 @@ function drawSkipWaitMin(): number {
    advance and published, not chosen once the outcome is known. A sell run aims
    up into run_ceiling_usdc, a buy run down into run_floor_usdc; the run ends on
    the trade that CROSSES the target, so the overshoot varies by itself. The
-   0.75 gap keeps the target far enough from the balance to be a run at all. */
+   0.75 gap keeps the target far enough from the balance to be a run at all.
+   FIFTEENTH AMENDMENT: when the drawn edge sits within $0.50 of that gap, the
+   target used to be pushed a further $1-5 out — past the published range, so
+   a sell run could aim $5 above run_ceiling_usdc. The push is a fixed $0.50
+   now, and the corridor the file publishes is the corridor this draws. */
 function drawRunTarget(side: "buy" | "sell", balance: number): number {
   const [floorLo, floorHi] = RULES.strategy.run_floor_usdc;
   const [ceilLo, ceilHi] = RULES.strategy.run_ceiling_usdc;
   if (side === "sell") {
     const lo = balance + 0.75;
     let hi = uniform(ceilLo, ceilHi);
-    if (hi < lo + 0.5) hi = lo + uniform(1, 5);
+    if (hi < lo + 0.5) hi = lo + 0.5;
     return uniform(lo, hi);
   }
   const hi = balance - 0.75;
   if (hi <= floorLo) return floorLo;
   let lo = uniform(floorLo, floorHi);
-  if (lo > hi - 0.5) lo = Math.max(floorLo, hi - uniform(1, 5));
+  if (lo > hi - 0.5) lo = Math.max(floorLo, hi - 0.5);
   return uniform(lo, hi);
 }
 

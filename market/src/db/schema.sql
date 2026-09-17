@@ -176,3 +176,71 @@ CREATE TABLE IF NOT EXISTS cache (
   ok         INTEGER NOT NULL DEFAULT 1,
   note       TEXT
 );
+
+-- SIXTEENTH AMENDMENT, 17 Sep 2026: the stabilizer (src/do/stab-lock.ts).
+-- Applied by hand like everything above. Its own trades go into `trades`
+-- with arm = 'stabilizer', so the confirmer and the attribution share one
+-- ledger. The strategy numbers the fifteenth amendment changed live in
+-- rules.json only; no table changes for them.
+--
+-- One row: the reference price and how far the pool history has been read.
+CREATE TABLE IF NOT EXISTS stab_state (
+  id            INTEGER PRIMARY KEY CHECK (id = 1),
+  ref_price     TEXT,            -- the price moves are measured from
+  ref_reason    TEXT,            -- bootstrap | own trade | founder trade | outside trade of $100 or more
+  ref_at        TEXT,
+  ref_block     INTEGER,
+  ref_tx        TEXT,
+  last_block    INTEGER,         -- the last pool block folded into the reference
+  last_price    TEXT,            -- the pool price at that block
+  halted        INTEGER NOT NULL DEFAULT 0,   -- halted = watches, never sends
+  halt_reason   TEXT,
+  next_check_at TEXT,
+  updated_at    TEXT
+);
+
+-- Every look, including the ones where nothing is done: the page draws one
+-- glyph per row and lists the rows that mattered.
+--   decision: bootstrap | none | sell | buy | cannot | wait | skipped | catchup
+CREATE TABLE IF NOT EXISTS stab_checks (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  at            TEXT NOT NULL,
+  block         INTEGER,
+  ref_price     TEXT,
+  live_price    TEXT,
+  dev_pct       REAL,
+  decision      TEXT NOT NULL,
+  side          TEXT,
+  token_amount  TEXT,            -- raw 1e18: sold, or expected when buying
+  usdc_amount   TEXT,            -- raw 1e6: spent, or expected when selling
+  target_price  TEXT,
+  tx_hash       TEXT,
+  note          TEXT,
+  reserve_token TEXT,
+  reserve_usdc  TEXT,
+  wallet_token  TEXT,
+  wallet_usdc   TEXT,
+  wallet_eth    TEXT
+);
+
+-- The attribution ledger: every BYKO pool transaction the stabilizer read,
+-- whose it was, and what it did to the reference.
+--   cls:    self-arm | self-stab | founder | outside | liquidity
+--   effect: carry | reset | hold
+CREATE TABLE IF NOT EXISTS stab_flow (
+  tx_hash      TEXT PRIMARY KEY,
+  block        INTEGER NOT NULL,
+  cls          TEXT NOT NULL,
+  side         TEXT,
+  token_amount TEXT,
+  usdc_amount  TEXT,
+  sender       TEXT,
+  price_before TEXT,
+  price_after  TEXT,
+  effect       TEXT NOT NULL,
+  ref_after    TEXT,
+  at           TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_stab_checks_at ON stab_checks(at);
+CREATE INDEX IF NOT EXISTS idx_stab_flow_block ON stab_flow(block);

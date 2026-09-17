@@ -1,6 +1,7 @@
 import type { Env } from "../types";
 import { RULES, rulesHash } from "./rules";
 import { json, error } from "./respond";
+import { stabilizerReadout } from "./stab-api";
 
 /* GET /api/wash — the whole public readout in one document. Refuses to answer
  * rather than guess if the rules row is missing (the precedent is the site's
@@ -218,6 +219,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       strategy: RULES.strategy, venue: RULES.venue,
     },
     arms,
+    stabilizer: await stabilizerReadout(env),
     trades: trades.results,
     events: events.results,
   }, 200, { "Cache-Control": "public, max-age=15" });

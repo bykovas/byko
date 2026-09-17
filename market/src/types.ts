@@ -44,6 +44,7 @@ export interface DurableObjectState {
 export interface Env {
   DB: D1Database;
   ARM: DurableObjectNamespace;
+  STAB: DurableObjectNamespace;       /* the stabilizer's single lock (sixteenth amendment) */
 
   /* plain config (wrangler.toml [vars]) */
   MARKET_OPEN: string;               /* "1" allows sending; anything else halts */
@@ -59,6 +60,7 @@ export interface Env {
   ARM_PRIVATE_KEY_BYKO?: string;
   ARM_PRIVATE_KEY_LUKO?: string;
   [armPrivateKey: `ARM_PRIVATE_KEY_${string}`]: string | undefined;
+  STABILIZER_PRIVATE_KEY?: string;   /* BYKO LP Pumper; missing = the stabilizer only watches */
   DRPC_URL?: string;
   CMC_API_KEY?: string;
   ADMIN_TOKEN?: string;

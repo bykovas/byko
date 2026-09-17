@@ -68,6 +68,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 /* page-specific composition; the system itself lives in assets/byko.css */
 /* running experiments: same grid as the diary cards, but a block with two exits
    rather than one link. No blue anywhere — nothing here is read from the chain. */
+/* four running experiments: the three-column grid of byko.css, one column
+   wider; two across on a tablet, one on a phone */
+.cards4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:4px}
+@media (max-width:900px){.cards4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.cards4{grid-template-columns:minmax(0,1fr)}}
 .run{border-top:var(--byko-rule-heavy);padding:14px 0 4px}
 .run .when{font:var(--byko-data);color:var(--byko-label)}
 .run h3{margin:8px 0 0}
@@ -340,7 +345,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span class="kicker">Running experiments</span>
       <h2>What is live right now</h2>
     </div>
-    <div class="cards3">
+    <div class="cards4">
       <div class="run">
         <span class="when">since 18 August 2026</span>
         <h3>BYKO 227 — fact-check my token</h3>
@@ -365,6 +370,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p>A second token traded by the same worker under the same rules. It is the control variant: whatever happens to BYKO can be compared against it.</p>
         <span class="exits">
           <a href="/self-trading-luko">Every LUKO trade &rarr;</a>
+        </span>
+      </div>
+      <div class="run">
+        <span class="when">since 17 September 2026</span>
+        <h3>Stabilizer — the issuer takes the other side</h3>
+        <p>One founder wallet checks the BYKO pool every ten minutes and trades back three quarters of any price move over 5% made by an outside trade under $100. It sells into buying and buys into selling, so it earns the spread.</p>
+        <span class="exits">
+          <a href="/stabilizer">What it does &rarr;</a>
+          <a href="/stabilizer#decisions-head">Every decision &rarr;</a>
         </span>
       </div>
     </div>

@@ -1,7 +1,8 @@
 import type { Env } from "../types";
-import { armRules } from "./rules";
-import { SWAP_TOPIC, decodeSwap } from "./chain";
+import { tradeVenue } from "./rules";
+import { SWAP_TOPIC, SYNC_TOPIC, decodeSwap } from "./chain";
 import { event } from "./db";
+import { rpc, big } from "./rpc";
 
 /* The confirmer: settle 'pending' trades from their receipts, exactly as
  * app227's confirm.ts settles advances. It fills the values that only exist
@@ -9,36 +10,10 @@ import { event } from "./db";
  * log), the price after, and the gas — and never invents them. Raw JSON-RPC,
  * keyed node first, so a rate-limited read cannot stall the ledger. */
 
-function nodes(env: Env): string[] {
-  return [env.DRPC_URL, env.RPC_URL, "https://base-rpc.publicnode.com", "https://base.drpc.org"]
-    .filter((u): u is string => Boolean(u))
-    .filter((u, i, all) => all.indexOf(u) === i);
-}
-
-async function rpc(env: Env, method: string, params: unknown[]): Promise<unknown> {
-  let last: unknown = null;
-  for (const url of nodes(env)) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-        signal: AbortSignal.timeout(8_000),
-      });
-      if (!res.ok) throw new Error(`rpc ${res.status}`);
-      const body = (await res.json()) as { result?: unknown; error?: { message?: string } };
-      if (body.error) throw new Error(body.error.message ?? "rpc error");
-      return body.result;
-    } catch (err) { last = err; }
-  }
-  throw last instanceof Error ? last : new Error("rpc unavailable");
-}
-
 interface Log { address: string; topics: string[]; data: string }
 interface Receipt { status: string; blockNumber: string; gasUsed: string; effectiveGasPrice: string; logs: Log[] }
 
 const CONFIRMATIONS = 2n;
-const big = (h: string) => (h && h !== "0x" ? BigInt(h) : 0n);
 
 async function totalSupply(env: Env, token: string): Promise<bigint> {
   const r = await rpc(env, "eth_call", [{ to: token, data: "0x18160ddd" }, "latest"]);
@@ -70,7 +45,7 @@ export async function confirmTrades(env: Env): Promise<void> {
         }
         if (latest - big(receipt.blockNumber) < CONFIRMATIONS) continue;
 
-        const rules = armRules(row.arm);
+        const rules = tradeVenue(row.arm);
         if (!rules) continue;
         const pool = rules.pool.toLowerCase();
         const swap = receipt.logs.find(
@@ -86,7 +61,16 @@ export async function confirmTrades(env: Env): Promise<void> {
           else { tokenAmount = String(s.a0In); usdcSettled = String(s.a1Out); }
         }
 
-        const res = await reservesLatest(env, pool);
+        /* The pool writes its reserves into the receipt (Sync, just before
+           Swap), so the price this trade left is read from the trade itself.
+           The latest reserves were the fallback before, and by confirmation
+           time they could already include somebody else's swap. */
+        const sync = receipt.logs.filter(
+          (l) => l.address.toLowerCase() === pool && l.topics[0]?.toLowerCase() === SYNC_TOPIC,
+        ).pop();
+        const res = sync
+          ? { token: big("0x" + sync.data.slice(2, 66)), usdc: big("0x" + sync.data.slice(66, 130)) }
+          : await reservesLatest(env, pool);
         const price = res.token > 0n ? (Number(res.usdc) / 1e6) / (Number(res.token) / 1e18) : 0;
         const supply = await totalSupply(env, rules.token);
         const fdv = price * (Number(supply) / 1e18);

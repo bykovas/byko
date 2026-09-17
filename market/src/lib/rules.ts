@@ -19,6 +19,25 @@ export interface ArmRules {
   guards: { max_gross_usdc: number };
 }
 
+/* SIXTEENTH AMENDMENT: one founder wallet trades back three quarters of a
+   price move that the worker did not make, once it passes threshold_pct from
+   the reference. The whole rule is in rules.json's note and in
+   src/do/stab-lock.ts; these are its published numbers. */
+export interface StabilizerRules {
+  wallet: string;
+  label: string;
+  token: string;
+  pool: string;
+  register: string;            /* the founder register the classifier reads */
+  threshold_pct: number;
+  damp_pct: number;
+  reset_outside_usdc: number;  /* an outside trade this large sets the price */
+  check_minutes: number;
+  log_min_deviation_pct: number;
+  pool_fee_bps: number;
+  slippage_bps: number;
+}
+
 export interface Rules {
   declared_at: string;
   chain_id: number;
@@ -55,12 +74,23 @@ export interface Rules {
     slippage_bps: number;
   };
   arms: ArmRules[];
+  stabilizer: StabilizerRules;
 }
 
 export const RULES = rulesJson as unknown as Rules;
 
 export function armRules(id: string): ArmRules | undefined {
   return RULES.arms.find((a) => a.id === id);
+}
+
+export const STABILIZER_ID = "stabilizer";
+
+/* The pool and token a trades row belongs to, for an arm or the stabilizer —
+   the confirmer settles both from the same table. */
+export function tradeVenue(id: string): { pool: string; token: string } | undefined {
+  if (id === STABILIZER_ID) return { pool: RULES.stabilizer.pool, token: RULES.stabilizer.token };
+  const a = armRules(id);
+  return a ? { pool: a.pool, token: a.token } : undefined;
 }
 
 /* Deterministic serialization: object keys sorted recursively, arrays in

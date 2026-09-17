@@ -45,9 +45,19 @@ database_id = "93b0988f-bbac-4a64-ae7c-555e15702190"
 name = "ARM"
 class_name = "ArmLock"
 
+# SIXTEENTH AMENDMENT: the stabilizer's single lock. Its key goes in with
+#   wrangler secret put STABILIZER_PRIVATE_KEY
+[[durable_objects.bindings]]
+name = "STAB"
+class_name = "StabLock"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["ArmLock"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["StabLock"]
 
 [triggers]
 # Heartbeat: settle pending trades, run the collector, and re-arm any enabled

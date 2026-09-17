@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TXQNJ496');</script>
+<!-- End Google Tag Manager -->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BYKO — Stabilizer</title>
+<meta name="description" content="A disclosed policy on the BYKO/USDC pool: one founder wallet trades back three quarters of any price move somebody else made, once it passes 5%. It sells into outside buying and buys into outside selling, and every decision is logged.">
+<meta property="og:title" content="BYKO — Stabilizer">
+<meta property="og:description" content="One founder wallet trades back three quarters of any outside price move past 5% in the BYKO pool. Every check and every decision is published.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://byko.bykovas.lt/stabilizer">
+<link rel="canonical" href="https://byko.bykovas.lt/stabilizer">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="stylesheet" href="assets/byko.css?v=20260902a">
+<style>/* Stabilizer page — page-specific composition. The system itself lives in
+ * byko.css; the skeleton rules (.head, .lede, .rules, .arm, table, .note) are
+ * copied verbatim from website/self-trading.html so the two pages are siblings.
+ * Everything under "stabilizer figure" is new.
+ */
+main.wrap{padding-top:28px}
+.head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head h1{font:700 25px/1.18 var(--byko-font-sans)}
+.head .btn{margin-left:auto}
+.meta{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
+.meta .err{color:var(--byko-quoted)}
+.lede{margin-top:22px;border-top:var(--byko-rule-heavy);padding-top:18px}
+.lede p{font:400 15.5px/1.55 var(--byko-font-sans);color:var(--byko-ink-2);margin:0;max-width:760px}
+.lede p + p{margin-top:10px}
+.lede .name{color:var(--byko-ink);font-weight:600}
+.lede a{color:var(--byko-ink)}
+/* one line on desktop: the strip is a header of facts */
+.rules{display:flex;flex-wrap:nowrap;gap:0 18px;margin-top:16px;overflow-x:auto;
+  min-width:0;max-width:100%;
+  font:var(--byko-data);color:var(--byko-label);white-space:nowrap}
+.rules span{flex:0 0 auto}
+.rules b{color:var(--byko-ink);font-family:var(--byko-font-mono);font-weight:400}
+.arms{margin-top:24px;border-top:var(--byko-rule-heavy);max-width:520px}
+.arm{padding:14px 0 16px}
+.arm h3{font:700 16px/1.2 var(--byko-font-sans);margin:0}
+.arm dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:12px 0 0;font:var(--byko-data)}
+.arm dt{color:var(--byko-label);text-transform:uppercase;letter-spacing:var(--byko-label-tracking)}
+.arm dd{margin:0;color:var(--byko-ink-2);font-family:var(--byko-font-mono);text-align:right}
+.arm dd.live{color:var(--byko-live-ink)}
+.arm dd.buy{color:var(--byko-pass)}
+.arm dd.sell{color:var(--byko-quoted)}
+h2.sec{font:700 17px/1.2 var(--byko-font-sans);margin:34px 0 0}
+h2.sec .n{font:var(--byko-data);color:var(--byko-label);font-weight:400;margin-left:8px}
+.scroll{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:var(--byko-cell-pad);border-bottom:var(--byko-rule-hair);white-space:nowrap}
+th{font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase;
+  color:var(--byko-label);border-bottom:var(--byko-rule-heavy)}
+th.l,td.l{text-align:left}
+th:first-child,td:first-child{padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+td{font:var(--byko-value);color:var(--byko-ink-2)}
+td.side{text-align:left;font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);text-transform:uppercase}
+td.side.buy{color:var(--byko-pass)}
+td.side.sell{color:var(--byko-quoted)}
+td.side.none{color:var(--byko-label)}
+td.side.cannot{color:var(--byko-strike)}
+td.mono{font-family:var(--byko-font-mono)}
+td.pos{color:var(--byko-ink)}
+td a{font:var(--byko-data);color:var(--byko-label)}
+td a:hover{color:var(--byko-ink)}
+tr.day td{color:var(--byko-label);font:var(--byko-data);border-bottom:var(--byko-rule-section)}
+.events{margin-top:20px;font:var(--byko-note);color:var(--byko-ink-2)}
+/* event details carry hashes with nothing to break on */
+.events div{padding:3px 0;border-bottom:var(--byko-rule-hair);overflow-wrap:anywhere}
+.events .k{color:var(--byko-label);font-family:var(--byko-font-mono);margin-right:8px}
+.note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
+.empty{font:var(--byko-note);color:var(--byko-label);padding:14px 0}
+
+/* ── stabilizer figure ───────────────────────────────────────────────────
+ * The /market axis, carrying three things instead of one: genesis (dashed
+ * centre), the reference the worker left behind, and the live fact. A 5%
+ * price move is ~0.035 of a halving, so on that axis the dead band is about
+ * five pixels wide — it is drawn at its true width and never widened. The
+ * detail rail under it re-plots the same three marks on its own declared
+ * scale (±20% of price), which is where reference, landing and fact are
+ * legible when they sit on top of each other — the normal case.
+ */
+.fig{margin-top:26px}
+.fig-head{display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+  padding-bottom:10px;border-bottom:var(--byko-rule-heavy)}
+.fig-head .data{color:var(--byko-label)}
+
+.stab .pool-readouts{margin-top:28px}
+/* the fact is a chain read, so the edge the bar splits on carries the legend */
+.stab .pool-bar .side.l{border-right:3px solid var(--byko-live-edge)}
+.stab .pool-bar .ref{position:absolute;top:-8px;bottom:-8px;width:0;
+  border-left:2px solid var(--byko-ink);transform:translateX(-1px);pointer-events:none}
+.stab .pool-bar .ref span{position:absolute;right:8px;top:-3px;font:var(--byko-label-sm-font);
+  letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;color:var(--byko-ink);white-space:nowrap}
+.stab .pool-bar .band5{position:absolute;top:0;bottom:0;background:rgba(13,17,22,.12);
+  border-left:1px solid var(--byko-rule-2);border-right:1px solid var(--byko-rule-2);pointer-events:none}
+.stab .pool-bar .land{position:absolute;top:0;bottom:0;width:0;
+  border-left:1.5px dotted var(--byko-ink-2);pointer-events:none}
+.axis-note{font:var(--byko-data);color:var(--byko-label);margin:12px 0 0}
+
+.dtl-head{display:flex;align-items:baseline;gap:14px;margin-top:30px}
+.dtl-head .data{margin-left:auto;color:var(--byko-label)}
+.dtl{position:relative;height:76px;margin-top:12px;background:var(--byko-paper-2);
+  border-top:var(--byko-rule-heavy);border-bottom:var(--byko-rule-hair)}
+.dtl .zone{position:absolute;top:0;bottom:0;background:var(--byko-paper);
+  border-left:1px solid var(--byko-rule-2);border-right:1px solid var(--byko-rule-2)}
+.dtl .zone i{position:absolute;left:50%;top:7px;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);font-style:normal;letter-spacing:var(--byko-label-sm-tracking);
+  text-transform:uppercase;color:var(--byko-label);white-space:nowrap}
+.dtl .ref{position:absolute;top:-7px;bottom:-7px;width:0;border-left:2px solid var(--byko-ink);
+  transform:translateX(-1px)}
+.dtl .land{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dotted var(--byko-ink-2)}
+.dtl .land span{position:absolute;left:7px;bottom:8px;font:var(--byko-label-sm-font);
+  letter-spacing:var(--byko-label-sm-tracking);text-transform:uppercase;color:var(--byko-ink-2);white-space:nowrap}
+.dtl .fact{position:absolute;top:0;bottom:0;width:0;border-left:3px solid var(--byko-live-edge)}
+.dtl .fact b{position:absolute;left:8px;top:30px;font:600 15px/1 var(--byko-font-mono);
+  letter-spacing:-.02em;color:var(--byko-live-ink);white-space:nowrap}
+.dtl .fact.flip b{left:auto;right:8px}
+.dtl .fact.flip span{left:auto;right:8px}
+.dtl-ticks{position:relative;height:28px;margin-top:14px}
+.dtl-ticks i{position:absolute;top:0;width:1px;height:6px;background:var(--byko-rule-2)}
+.dtl-ticks i.major{height:9px;background:var(--byko-ink)}
+.dtl-ticks span{position:absolute;top:11px;left:0;transform:translateX(-50%);
+  font:var(--byko-label-sm-font);letter-spacing:var(--byko-label-sm-tracking);color:var(--byko-label)}
+.dtl-ticks i.major span{color:var(--byko-ink)}
+.offscale{font:var(--byko-data);color:var(--byko-quoted);margin:10px 0 0}
+.offscale[hidden]{display:none}
+
+/* The decision, in one line: the figure large because it is the reading, the
+   sentence beside it because it is what the rule does about it. */
+.call{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 22px;align-items:baseline;
+  margin-top:22px;padding-top:14px;border-top:var(--byko-rule-heavy)}
+.call .dev{font:600 40px/1 var(--byko-font-mono);letter-spacing:-.04em;color:var(--byko-live-ink)}
+.call .dev.quiet{color:var(--byko-ink)}
+.call .say{font:400 16.5px/1.5 var(--byko-font-sans);color:var(--byko-ink);max-width:62ch}
+.call .say b{font-weight:600}
+.call .lab{grid-column:1;font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
+  text-transform:uppercase;color:var(--byko-label);margin-top:8px}
+.call .sub{grid-column:2;font:var(--byko-data);color:var(--byko-label);margin-top:8px}
+
+/* 144 checks a day: one glyph each, so "it looked and did nothing" is visible
+   without 144 table rows. */
+.checks{display:flex;flex-wrap:wrap;gap:0 4px;margin-top:16px;
+  font:400 13px/1.35 var(--byko-font-mono);color:var(--byko-rule-2)}
+.checks i{font-style:normal}
+.checks i.out{color:var(--byko-ink-2)}
+.checks i.sell{color:var(--byko-quoted)}
+.checks i.buy{color:var(--byko-pass)}
+.checks i.cannot,.checks i.skipped{color:var(--byko-strike)}
+.checks-note{font:var(--byko-data);color:var(--byko-label);margin:8px 0 0}
+
+@media (max-width:640px){
+  .call{grid-template-columns:minmax(0,1fr)}
+  .call .lab,.call .sub{grid-column:1}
+  .dtl-head{flex-wrap:wrap;gap:8px}
+  /* the fact label sits under the rail on a phone: beside the fact it ran
+     into the band's own label whenever the two were a few pixels apart */
+  .dtl{margin-bottom:26px}
+  .dtl .fact b,.dtl .fact.flip b{top:auto;bottom:-24px;left:-4px;right:auto;font-size:13px}
+  .dtl .fact.flip b{left:auto;right:-4px}
+  .stab .pool-readouts span{flex-wrap:wrap;white-space:normal}
+  .dtl-head .data{margin-left:0;flex-basis:100%}
+  /* On a phone each decision row becomes its own block of label-and-value
+     pairs, in the order the header used to read. Nothing is dropped. */
+  .scroll{overflow-x:visible}
+  #decisions, #decisions tbody, #decisions tr, #decisions td{display:block;width:auto}
+  #decisions thead{display:none}
+  #decisions tr{border-bottom:var(--byko-rule-heavy);padding:10px 0 12px}
+  #decisions td{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+    border-bottom:0;padding:3px 0;text-align:right;white-space:normal}
+  #decisions td::before{content:attr(data-label);flex:0 0 auto;text-align:left;
+    font:var(--byko-label-font);letter-spacing:var(--byko-label-tracking);
+    text-transform:uppercase;color:var(--byko-label)}
+  #decisions td.lead{font:700 15px/1.2 var(--byko-font-sans);color:var(--byko-ink);
+    padding-bottom:6px;justify-content:flex-start}
+  #decisions td.lead::before{content:none}
+  .rules{flex-wrap:wrap;overflow-x:visible;white-space:normal;gap:4px 18px}
+}
+</style>
+<script
+  src="https://js-de.sentry-cdn.com/f5d956145bb95f53a2f42b3ce11b04e0.min.js"
+  crossorigin="anonymous"
+></script>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXQNJ496"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/"><img src="assets/coin.svg" alt="" width="26" height="26">BYKO</a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <nav class="nav-links" id="nav-links">
+<!-- nav:begin -->
+      <a href="/#referendum">Referendum</a>
+      <a href="/diary">Diary</a>
+      <a href="/#facts">Facts</a>
+      <a class="services" href="/#services">Services</a>
+      <a href="/market">Market</a>
+      <a href="/specification">Specification</a>
+<!-- nav:end -->
+      <span class="lamp">LIVE ON BASE</span>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="stabilizer">
+  <div class="head">
+    <span class="kicker">Disclosed policy · stabilizer</span>
+    <h1>Stabilizer</h1>
+    <button class="btn" id="refresh" type="button">Refresh</button>
+  </div>
+  <p class="meta" id="meta">loading…</p>
+
+  <section class="lede">
+    <p>One founder wallet watches the BYKO pool every ten minutes. When a trade of under $100 by somebody outside the published register moves the price more than <span class="name">5%</span> away from the reference, the wallet trades back three quarters of the move. This project's own trades carry the reference with them; its own corrections, any founder trade and any outside trade of $100 or more reset it.</p>
+    <p>It sells into outside buying and buys into outside selling, so it earns the spread; every look and every decision is logged below. <a href="/self-trading">The self-trading arm</a> keeps running beside it.</p>
+    <div class="rules" id="rules">
+      <span>threshold <b id="r-th">5%</b></span>
+      <span>damping <b id="r-damp">75%</b></span>
+      <span>check every <b id="r-every">10 min</b></span>
+      <span>resets on <b>own · founder · ≥$100</b></span>
+      <span>budget <b>the wallet's balances</b></span>
+      <span>slippage <b>3%</b></span>
+      <span>wallet <b>0x9c86…3206</b></span>
+      <span>commit <b id="r-commit">—</b></span>
+    </div>
+  </section>
+
+  <div class="arms">
+    <div class="arm">
+      <h3>BYKO LP Pumper</h3>
+      <dl>
+        <dt>reference</dt><dd id="s-ref">—</dd>
+        <dt>live price</dt><dd class="live" id="s-live">—</dd>
+        <dt>deviation</dt><dd id="s-devcell">—</dd>
+        <dt>status</dt><dd id="s-status">—</dd>
+        <dt>wallet byko</dt><dd class="live" id="s-wb">—</dd>
+        <dt>wallet usdc</dt><dd class="live" id="s-wu">—</dd>
+        <dt>wallet eth</dt><dd class="live" id="s-we">—</dd>
+        <dt>last action</dt><dd id="s-last">—</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="fig stab" id="fig">
+    <div class="fig-head">
+      <span class="label">Figure · genesis, the reference, the fact</span>
+      <span class="data">blue = read from the chain at the last look · ink = the rule's own marks</span>
+    </div>
+
+    <div class="pool-readouts">
+      <div>
+        <b id="s-byko">—</b>
+        <span id="s-byko-label">BYKO in pool</span>
+      </div>
+      <div class="r">
+        <b id="s-usdc">—</b>
+        <span id="s-usdc-label">USDC in pool</span>
+      </div>
+    </div>
+
+    <div class="pool-bar" id="s-bar" role="img" aria-label="Pool reserves on the halvings axis, with genesis at the centre, the reference and its dead band, and the live fact">
+      <i class="side l" aria-hidden="true"></i>
+      <i class="side r" aria-hidden="true"></i>
+      <i class="band5" id="s-band" aria-hidden="true"></i>
+      <i class="land" id="s-land-main" aria-hidden="true"></i>
+      <i class="ref" id="s-ref-main" aria-hidden="true"><span>reference</span></i>
+      <i class="genesis" aria-hidden="true"><span>genesis · 100%</span></i>
+    </div>
+
+    <div class="pool-ticks" aria-hidden="true">
+      <i class="major" data-k="0" style="left:50%"><span>100</span></i>
+      <i data-k="1" style="left:41.667%"><span>50</span></i>
+      <i data-k="2" style="left:33.333%"><span>25</span></i>
+      <i data-k="3" style="left:25%"><span>12.5</span></i>
+      <i data-k="4" style="left:16.667%"><span>6.3</span></i>
+      <i data-k="5" style="left:8.333%"><span>3.1</span></i>
+      <i data-k="1" style="left:58.333%"><span>50</span></i>
+      <i data-k="2" style="left:66.667%"><span>25</span></i>
+      <i data-k="3" style="left:75%"><span>12.5</span></i>
+      <i data-k="4" style="left:83.333%"><span>6.3</span></i>
+      <i data-k="5" style="left:91.667%"><span>3.1</span></i>
+    </div>
+
+    <p class="axis-note">the /market axis · log scale, one tick = one halving of a reserve · left is BYKO, right is USDC, each as % of its genesis level · dashed centre = genesis, 740,227 BYKO : 74.0227 USDC · solid ink = the reference, with its dead band shaded at true width — a 5% price move is 0.035 of a halving, so the band is about five pixels and is never widened to be seen · blue edge = the pool now</p>
+
+    <div class="dtl-head">
+      <span class="label">Detail · the same three marks</span>
+      <span class="data">own scale: ±20% of price, 28× the axis above</span>
+    </div>
+
+    <div class="dtl" id="s-dtl" role="img" aria-label="Detail rail: the dead band, the reference, the live price and where the stabilizer intends to land">
+      <i class="zone" id="s-zone"><i id="s-zone-label">±5% · nothing to do</i></i>
+      <i class="land" id="s-land"><span>intends to land</span></i>
+      <i class="ref" id="s-ref-dtl"></i>
+      <i class="fact" id="s-fact"><b id="s-fact-label">—</b></i>
+    </div>
+
+    <div class="dtl-ticks" id="s-dtl-ticks" aria-hidden="true"></div>
+    <p class="offscale" id="s-offscale" hidden=""></p>
+
+    <div class="call">
+      <span class="dev quiet" id="s-dev">—</span>
+      <span class="say" id="s-say">Reading the stabilizer…</span>
+      <span class="lab">Decision</span>
+      <span class="sub" id="s-sub"></span>
+    </div>
+
+    <div class="checks" id="s-checks"></div>
+    <p class="checks-note" id="s-checks-note">today, UTC · one glyph per look · <span class="mono">·</span> looked and did nothing · <span class="mono">▲</span> sold · <span class="mono">▼</span> bought · <span class="mono">×</span> wanted to act and could not · <span class="mono">?</span> could not look (a node or the register did not answer)</p>
+  </div>
+
+  <h2 class="sec" id="decisions-head">Decisions<span class="n">newest first · checks above 1% and every action</span></h2>
+  <div class="scroll" id="decisions-wrap"><table id="decisions"><thead><tr>
+    <th class="l">UTC</th><th>deviation</th><th class="l">decision</th>
+    <th>size</th><th>value</th><th>landed at</th><th class="l">tx</th>
+  </tr></thead><tbody>
+  </tbody></table></div>
+  <p class="note" style="margin-top:10px;padding-top:0;border-top:0"><a href="https://basescan.org/address/0x02dd4285ad38ea93d021ca854016a839b0b2a6ca" target="_blank" rel="noopener">Every BYKO pool transaction on BaseScan →</a> · the wallet is <span class="mono">0x9c86…3206</span>, listed in the register on the <a href="/#disclosure">home page</a></p>
+
+  <h2 class="sec">Log<span class="n">who moved the pool, where the reference went, what failed</span></h2>
+  <div class="events" id="events"></div>
+    <div><span class="k">2026-09-17 06:00:03 · check</span>deviation +3.5% · inside the band since the reference moved · nothing sent</div>
+    <div><span class="k">2026-09-17 05:50:12 · reference_set</span>reference moved to $0.0016157 — the worker's own sell, matched by transaction hash, so the next deviation is measured from here</div>
+    <div><span class="k">2026-09-17 05:50:09 · trade_sent</span>sell 8,170 BYKO · slippage limit 3% · min out $14.42 · tx 0x…</div>
+    <div><span class="k">2026-09-17 05:50:02 · check</span>deviation +13.9% above the band · damping 75% · target $0.0016157 · budget 350,000 BYKO</div>
+    <div><span class="k">2026-09-17 05:40:03 · blocked</span>deviation −11.2% below the band · wallet holds 0 USDC · nothing sent, the deviation stands</div>
+    <div><span class="k">2026-09-17 05:30:05 · attribution</span>outside buy of $20.00 · not in the worker's own transaction set, so the move is somebody else's</div>
+    <div><span class="k">2026-09-17 04:20:02 · blocked</span>deviation −6.8% below the band · wallet holds 0 USDC · nothing sent</div>
+    <div><span class="k">2026-09-17 00:00:07 · rules_loaded</span>threshold 5% · damping 75% · interval 10m · slippage 3% · commit tbd</div>
+  </div>
+
+  <p class="note">The rule is a rule, not a promise: it acts on 75% of an outside move and leaves 25% of it standing, it stops when the wallet's balances run out, and it can be wrong. Nothing here puts a floor under the price, nothing here is an offer, and nothing here is financial advice. Every figure on this page can be recomputed from the pool's reserves and the transactions above.</p>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="row">
+      <span class="links">BYKO · Base · chain 8453 · since 2026</span>
+      <span class="links">
+        <a href="https://t.me/bykocoin" target="_blank" rel="noopener">Telegram</a> ·
+        <a href="https://x.com/bykocoin" target="_blank" rel="noopener">X</a> ·
+        <a href="https://www.facebook.com/profile.php?id=61592828503907" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://bykovas.lt" target="_blank" rel="noopener">bykovas.lt</a> ·
+        <a href="https://github.com/bykovas/byko" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="mailto:hello@byko.bykovas.lt">hello@byko.bykovas.lt</a>
+      </span>
+      <span class="eq">1 BYKO = 1 BYKO</span>
+    </div>
+    <p class="disclaimer">BYKO is a token with no built-in functionality, no yield and no promises, and it gives its holder no rights; anyone accepting it in payment does so by their own decision. It does not represent equity, debt or any claim on anything. Nothing on this page is financial advice. Supply is fixed at 790,227 and the contract is immutable — verify at basescan.org before interacting. 1 BYKO = 1 BYKO.</p>
+  </div>
+</footer>
+
+<script src="stabilizer.js?v=20260917"></script>
+</body>
+</html>

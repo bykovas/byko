@@ -4,8 +4,30 @@
     {
       "name": "byko-static",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8791", "--directory", "website"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8791",
+        "--directory",
+        "website"
+      ],
       "port": 8791
+    },
+    {
+      "name": "byko-market-local",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "market",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "8787",
+        "--ip",
+        "127.0.0.1"
+      ],
+      "port": 8787
     }
   ]
 }
