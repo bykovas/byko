@@ -270,16 +270,33 @@
   function renderDecisions(s) {
     var tbody = $("decisions").querySelector("tbody");
     tbody.textContent = "";
-    var rows = s.decisions || [];
+    /* Consecutive looks that did nothing and read the same deviation are one
+       line: a quiet afternoon was printing twenty identical rows and pushing
+       the looks that mattered off the table. */
+    var rows = [];
+    (s.decisions || []).forEach(function (r) {
+      var quiet = r.decision === "none" && !r.tx_hash;
+      var prev = rows[rows.length - 1];
+      if (quiet && prev && prev.decision === "none" && !prev.tx_hash &&
+          pct(Number(prev.dev_pct || 0)) === pct(Number(r.dev_pct || 0))) {
+        prev.looks = (prev.looks || 1) + 1;
+        prev.since = r.at;
+        return;
+      }
+      rows.push(Object.assign({}, r));
+    });
     rows.forEach(function (r) {
       var tr = el("tr");
-      tr.appendChild(cell("l lead", utc(r.at).slice(5, 16).replace(" ", " · "), "UTC"));
+      var when = utc(r.at).slice(5, 16).replace(" ", " · ");
+      if (r.looks > 1) when += " – " + hhmm(r.since);
+      tr.appendChild(cell("l lead", when, "UTC"));
       var dv = r.dev_pct == null ? "—" : pct(Number(r.dev_pct));
       tr.appendChild(cell(Math.abs(Number(r.dev_pct || 0)) > s.rules.threshold_pct ? "pos" : null, dv, "deviation"));
       var dec = r.decision === "sell" || r.decision === "buy" ? r.decision
         : r.decision === "cannot" ? "cannot" : r.decision === "wait" ? "wait"
         : r.decision === "intent" ? "intent" : "none";
-      var label = r.decision === "bootstrap" ? "reference set"
+      var label = r.looks > 1 ? r.looks + " looks, nothing to do"
+        : r.decision === "bootstrap" ? "reference set"
         : r.decision === "skipped" ? "skipped"
         : r.decision === "intent" ? "intent · " + r.side
         : r.decision === "cancelled" ? "cancelled" : dec;
