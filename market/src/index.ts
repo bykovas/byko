@@ -178,8 +178,7 @@ async function handle(request: Request, env: Env, ctx?: ExecutionContextLike): P
 
   if (url.pathname === "/api/wash") {
     if (request.method !== "GET") return methodNotAllowed();
-    /* two minutes: the arms trade every few minutes at most, and one read of
-       this costs every trade row for the turnover sums */
+    /* two minutes: the arms trade every few minutes at most */
     return cached(request, () => washApi(request, env), ctx, 120);
   }
 

@@ -64,7 +64,7 @@
   }
 
   var RULE_KEYS = ["declared", "interval", "modes", "size", "targets", "slip", "commit"];
-  var CARD_FIELDS = ["price", "FDV", "pool USDC", "holders", "turnover", "trades 24h",
+  var CARD_FIELDS = ["price", "FDV", "pool USDC", "holders", "trades 24h",
     "LP burned", "LP held by founders", "supply held by founders"];
 
   /* Draw everything that is known without the network. */
@@ -153,7 +153,7 @@
   }
 
   /* One card for the pool. Several arms may trade the same pool; the pool
-     figures are the same for all of them, and turnover is their sum. */
+     figures are the same for all of them. */
   function renderCard(data) {
     var arms = mine(data.arms);
     var wrap = $("arms"); wrap.textContent = "";
@@ -186,18 +186,6 @@
     var hAge = hm.holders != null ? ago(hm.holders_at) : "";
     row("holders", hm.holders != null ? n(hm.holders, 0) + (hAge ? " · " + hAge : "") : "—");
 
-    /* Turnover: USDC moved by confirmed trades on both sides, not buys minus
-       sells. */
-    var bought = 0, sold = 0;
-    arms.forEach(function (a) {
-      bought += Number(a.usdc_bought || 0);
-      sold += Number(a.usdc_received || 0);
-    });
-    dl.appendChild(el("dt", null, "turnover"));
-    var turnDd = el("dd", null, "$" + n(bought + sold));
-    turnDd.appendChild(el("br"));
-    turnDd.appendChild(document.createTextNode("buys $" + n(bought) + " · sells $" + n(sold)));
-    dl.appendChild(turnDd);
 
     var tm = (arms.filter(function (a) { return a.market && a.market.buys_24h != null; })[0] || {}).market || {};
     var tAge = tm.buys_24h != null ? ago(tm.trades_at) : "";
