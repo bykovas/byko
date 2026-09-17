@@ -5,11 +5,13 @@
    framework. Blue only on the figures read live from the chain. */
 (function () {
   "use strict";
-  var API = "https://byko-market.bykovas.lt/api/wash?limit=120";
+  var API = "https://byko-market.bykovas.lt/api/wash?limit=10";
   var SCAN = "https://basescan.org";
   var main = document.querySelector("main[data-token]");
   var TOKEN = main ? main.getAttribute("data-token") : "byko";
   var SYM = TOKEN.toUpperCase();
+  /* only this page's arms, and only what the page draws: ten trades and the log */
+  API += "&token=" + encodeURIComponent(TOKEN);
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {

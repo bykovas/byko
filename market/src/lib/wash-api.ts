@@ -3,6 +3,7 @@ import { RULES, rulesHash } from "./rules";
 import { json, error } from "./respond";
 import { stabilizerReadout } from "./stab-api";
 
+
 /* GET /api/wash — the whole public readout in one document. Refuses to answer
  * rather than guess if the rules row is missing (the precedent is the site's
  * tally function): no pre-registration, no readout. */
@@ -52,6 +53,12 @@ function nextByRule(
 export async function washApi(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const limit = Math.min(Number(url.searchParams.get("limit") ?? 200), 500);
+  /* ?token=byko asks for one page's arms only (byko → byko; luko → luko,
+     luko01, luko02): their cards, their trades, their log. */
+  const token = (url.searchParams.get("token") ?? "").toLowerCase();
+  const armList = token ? RULES.arms.filter((a) => a.id.startsWith(token)) : RULES.arms;
+  const armIds = armList.map((a) => a.id);
+  const inArms = armIds.map((_, i) => `?${i + 2}`).join(",");
 
   const rulesRow = await env.DB.prepare(
     `SELECT declared_at, git_commit, sha256 FROM rules WHERE id = 1`,
@@ -59,11 +66,11 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
   if (!rulesRow) return error("no rules row — the experiment is not pre-registered yet", 503);
 
   const live = await rulesHash();
-  const stabilizerP = stabilizerReadout(env);
+  const stabilizerP = token ? Promise.resolve(null) : stabilizerReadout(env);
 
   /* The arms are independent, so they are read side by side; the readout used
      to walk them one query at a time and took six seconds. */
-  const arms = await Promise.all(RULES.arms.map(async (r) => {
+  const arms = await Promise.all(armList.map(async (r) => {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
               s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
@@ -112,6 +119,8 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
        omission: it never credits a sell. Settled amounts from the Swap log are
        the truth where the confirmer has written them (raw 1e-6 units); the
        decided size stands in for rows not yet settled (whole USDC). */
+    /* Turnover: confirmed USDC in both directions, settled amounts where the
+       confirmer wrote them, the decided size otherwise. */
     const flow = await env.DB.prepare(
       `SELECT
          SUM(CASE WHEN side = 'buy' THEN
@@ -155,12 +164,12 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     `SELECT id, arm, side, usdc_amount, delay_min, trigger_usdc, price_before, price_after,
             fdv_after, reserve_usdc_after, token_amount, usdc_settled, tx_hash, status,
             block_number, decided_at, confirmed_at, gas_wei
-       FROM trades ORDER BY id DESC LIMIT ?1`,
-  ).bind(limit).all<Record<string, unknown>>();
+       FROM trades WHERE arm IN (${inArms}) ORDER BY id DESC LIMIT ?1`,
+  ).bind(limit, ...armIds).all<Record<string, unknown>>();
 
   const events = await env.DB.prepare(
-    `SELECT at, arm, kind, detail FROM events ORDER BY id DESC LIMIT 60`,
-  ).all<Record<string, unknown>>();
+    `SELECT at, arm, kind, detail FROM events WHERE arm IN (${inArms}) ORDER BY id DESC LIMIT ?1`,
+  ).bind(token ? 25 : 60, ...armIds).all<Record<string, unknown>>();
   const stabilizer = await stabilizerP;
 
   return json({
