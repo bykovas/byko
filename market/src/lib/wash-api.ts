@@ -7,26 +7,6 @@ import { stabilizerReadout } from "./stab-api";
  * rather than guess if the rules row is missing (the precedent is the site's
  * tally function): no pre-registration, no readout. */
 
-const SOURCE_ORDER = [
-  "metamask-price", "metamask-token", "goplus", "dexscreener", "geckoterminal",
-  "coingecko", "cmc-dex", "cmc-index", "blockscout", "uniswap-list", "1inch-list", "base-app",
-];
-
-const SOURCE_ASKS: Record<string, string> = {
-  "metamask-price": "price or refusal",
-  "metamask-token": "aggregators",
-  "goplus": "risk verdict",
-  "dexscreener": "pair listed",
-  "geckoterminal": "locked liquidity",
-  "coingecko": "contract known",
-  "cmc-dex": "pool priced",
-  "cmc-index": "ticker known",
-  "blockscout": "holders / reputation",
-  "uniswap-list": "present",
-  "1inch-list": "present",
-  "base-app": "what the screen says (by hand)",
-};
-
 /* The side the band selects right now. NINTH AMENDMENT: price is out of it —
    direction is the USDC balance with hysteresis, nothing else. */
 function nextByRule(
@@ -67,12 +47,6 @@ function nextByRule(
     next_run_target_usdc: Number.isFinite(target) ? target : null,
     next_mode: w.mode ?? null,
   };
-}
-
-function dayIndex(startDate: string, d: string): number {
-  const a = Date.parse(startDate + "T00:00:00Z");
-  const b = Date.parse(d + "T00:00:00Z");
-  return Math.floor((b - a) / 86_400_000) + 1;
 }
 
 export async function washApi(request: Request, env: Env): Promise<Response> {
@@ -151,38 +125,12 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
     const bought = flow?.bought ?? 0;
     const sold = flow?.sold ?? 0;
 
-    /* the checks grid for this arm */
-    const start = await env.DB.prepare(
-      `SELECT MIN(date(checked_at)) AS d FROM flag_checks WHERE arm = ?1`,
-    ).bind(r.id).first<string>("d");
-    /* Both arms are measured: the published entry compares a structurally
-       clean token against one carrying real red flags, and half a comparison
-       is worse than none. */
+    /* The classifier grid is no longer served: no page draws it since the
+       self-trading pages were split, and reading it walked the whole
+       flag_checks table on every request — most of the account's daily D1
+       reads. The rows stay in the table and in the CSV export. */
     const measured = true;
-    /* Two queries for the whole grid instead of two per source: the latest
-       reading of each source, and one row per source per day. */
-    const nowRows = await env.DB.prepare(
-      `SELECT source, ok, value, checked_at FROM flag_checks
-        WHERE id IN (SELECT MAX(id) FROM flag_checks WHERE arm = ?1 GROUP BY source)`,
-    ).bind(r.id).all<{ source: string; ok: number; value: string | null; checked_at: string }>();
-    const dayRows = await env.DB.prepare(
-      `SELECT source, date(checked_at) AS d,
-              MAX(CASE WHEN changed = 1 THEN 1 ELSE 0 END) AS ch, MAX(ok) AS anyok
-         FROM flag_checks WHERE arm = ?1 GROUP BY source, date(checked_at) ORDER BY d ASC`,
-    ).bind(r.id).all<{ source: string; d: string; ch: number; anyok: number }>();
-    const nowBy = new Map(nowRows.results.map((x) => [x.source, x]));
-    const grid = SOURCE_ORDER.map((source) => {
-      const now = nowBy.get(source);
-      const cells = start ? dayRows.results.filter((row) => row.source === source).map((row) => ({
-        day: dayIndex(start, row.d),
-        state: row.ch ? "changed" : row.anyok ? "same" : "missing",
-      })) : [];
-      return {
-        source, asks: SOURCE_ASKS[source] ?? "",
-        now: now ? { value: now.value, ok: now.ok === 1, at: now.checked_at } : null,
-        cells,
-      };
-    });
+    const grid: unknown[] = [];
 
     return {
       id: r.id, label: r.label, wallet: r.wallet, token: r.token, pool: r.pool,

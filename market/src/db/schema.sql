@@ -249,3 +249,9 @@ CREATE INDEX IF NOT EXISTS idx_stab_flow_block ON stab_flow(block);
 --   ALTER TABLE stab_state ADD COLUMN intent_side TEXT;
 --   ALTER TABLE stab_state ADD COLUMN intent_at   TEXT;
 -- stab_checks.decision gains 'intent' and 'cancelled'.
+
+-- 17 Sep 2026: the free plan's 5M rows_read/day was nearly spent by queries
+-- that walked whole tables. Added by hand:
+CREATE INDEX IF NOT EXISTS idx_checks_method_at ON flag_checks(method, checked_at);  -- the cron's "is the collector due"
+CREATE INDEX IF NOT EXISTS idx_checks_arm_at    ON flag_checks(arm, checked_at);
+CREATE INDEX IF NOT EXISTS idx_trades_tx        ON trades(tx_hash);                  -- confirmer, stabilizer joins
