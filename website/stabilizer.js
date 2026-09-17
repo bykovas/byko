@@ -161,7 +161,11 @@
       [-20, -10, -5, 0, 5, 10, 20].forEach(function (d) {
         var i = el("i", d === 0 ? "major" : null);
         i.style.left = posDtl(ref * (1 + d / 100), ref).toFixed(3) + "%";
-        i.appendChild(el("span", null, d === 0 ? "0" : (d > 0 ? "+" : "−") + Math.abs(d) + "%"));
+        var lab = el("span", null, d === 0 ? "0" : (d > 0 ? "+" : "−") + Math.abs(d) + "%");
+        /* the two edge labels sit inside the rail instead of centred on its edge */
+        if (d === -20) lab.style.transform = "none";
+        if (d === 20) lab.style.transform = "translateX(-100%)";
+        i.appendChild(lab);
         ticks.appendChild(i);
       });
     }
