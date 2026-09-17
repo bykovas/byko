@@ -5,7 +5,7 @@
    framework. Blue only on the figures read live from the chain. */
 (function () {
   "use strict";
-  var API = "https://byko-market.bykovas.lt/api/wash?limit=500";
+  var API = "https://byko-market.bykovas.lt/api/wash?limit=120";
   var SCAN = "https://basescan.org";
   var main = document.querySelector("main[data-token]");
   var TOKEN = main ? main.getAttribute("data-token") : "byko";

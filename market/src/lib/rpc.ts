@@ -4,15 +4,22 @@ import type { Env } from "../types";
    that answers with an error object is a refusal, not a reply, and the next
    node is asked. Shared by the confirmer and the stabilizer. */
 
-function nodes(env: Env): string[] {
-  return [env.DRPC_URL, env.RPC_URL, "https://base-rpc.publicnode.com", "https://base.drpc.org"]
+function nodes(env: Env, method: string): string[] {
+  /* DRPC's free key refuses eth_getLogs outright and mainnet.base.org answers
+     Cloudflare's shared egress with 429 often enough to blind a look, so logs
+     go to the nodes that serve them first (probed 17 Sep 2026). */
+  const logs = method === "eth_getLogs"
+    ? ["https://gateway.tenderly.co/public/base", "https://developer-access-mainnet.base.org",
+       "https://base-rpc.publicnode.com", "https://base.gateway.tenderly.co"]
+    : [];
+  return [...logs, env.DRPC_URL, env.RPC_URL, "https://base-rpc.publicnode.com", "https://base.drpc.org"]
     .filter((u): u is string => Boolean(u))
     .filter((u, i, all) => all.indexOf(u) === i);
 }
 
 export async function rpc(env: Env, method: string, params: unknown[]): Promise<unknown> {
   let last: unknown = null;
-  for (const url of nodes(env)) {
+  for (const url of nodes(env, method)) {
     try {
       const res = await fetch(url, {
         method: "POST",

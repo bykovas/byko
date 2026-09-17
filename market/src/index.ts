@@ -139,7 +139,7 @@ const MIRRORS: Record<string, string[]> = {
    pages add a cache-busting ?t= to every request, so the key drops it: a room
    full of readers costs one set of D1 reads per half minute, not one per
    reader — the free plan's 5M rows a day is shared by everything here. */
-async function cached(request: Request, make: () => Promise<Response>, ctx?: ExecutionContextLike): Promise<Response> {
+async function cached(request: Request, make: () => Promise<Response>, ctx?: ExecutionContextLike, ttl = 30): Promise<Response> {
   const url = new URL(request.url);
   url.searchParams.delete("t");
   const key = new Request(url.toString(), { method: "GET" });
@@ -149,7 +149,7 @@ async function cached(request: Request, make: () => Promise<Response>, ctx?: Exe
   const res = await make();
   if (res.status === 200) {
     const copy = new Response(res.clone().body, res);
-    copy.headers.set("Cache-Control", "public, max-age=30");
+    copy.headers.set("Cache-Control", `public, max-age=${ttl}`);
     const put = cache.put(key, copy);
     if (ctx) ctx.waitUntil(put); else await put;
   }
@@ -178,7 +178,9 @@ async function handle(request: Request, env: Env, ctx?: ExecutionContextLike): P
 
   if (url.pathname === "/api/wash") {
     if (request.method !== "GET") return methodNotAllowed();
-    return cached(request, () => washApi(request, env), ctx);
+    /* two minutes: the arms trade every few minutes at most, and one read of
+       this costs every trade row for the turnover sums */
+    return cached(request, () => washApi(request, env), ctx, 120);
   }
 
   if (url.pathname === "/api/kick") {
