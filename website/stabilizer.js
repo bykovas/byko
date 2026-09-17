@@ -8,7 +8,7 @@
 (function () {
   "use strict";
   var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-  var API = (LOCAL ? "http://127.0.0.1:8787" : "https://byko-market.bykovas.lt") + "/api/wash?limit=5";
+  var API = (LOCAL ? "http://127.0.0.1:8787" : "https://byko-market.bykovas.lt") + "/api/stabilizer";
   var SCAN = "https://basescan.org";
   var GENESIS_BYKO = 740227, GENESIS_USDC = 74.0227, HALVINGS = 6;
   var SPAN = 0.20;                          /* detail rail: ±20% of price, linear */
@@ -309,7 +309,7 @@
 
   function load() {
     $("meta").textContent = "reading the worker…";
-    fetch(API + "&t=" + Date.now(), { cache: "no-store" })
+    fetch(API + "?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) {
         return r.json().then(function (body) {
           if (r.ok) return body;

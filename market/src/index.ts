@@ -13,7 +13,7 @@ import * as Sentry from "@sentry/cloudflare";
 import type { Env } from "./types";
 import { RULES, STABILIZER_ID } from "./lib/rules";
 import { json, error, methodNotAllowed } from "./lib/respond";
-import { washApi } from "./lib/wash-api";
+import { washApi, stabilizerApi } from "./lib/wash-api";
 import { confirmTrades } from "./lib/confirm";
 import { collect } from "./lib/collector";
 import { event } from "./lib/db";
@@ -146,6 +146,11 @@ async function handle(request: Request, env: Env): Promise<Response> {
     if (request.method !== "GET") return methodNotAllowed();
     const key = url.pathname.slice("/api/".length);
     return serveMirror(env, key, MIRRORS[key]);
+  }
+
+  if (url.pathname === "/api/stabilizer") {
+    if (request.method !== "GET") return methodNotAllowed();
+    return stabilizerApi(env);
   }
 
   if (url.pathname === "/api/wash") {

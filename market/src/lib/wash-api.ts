@@ -85,9 +85,11 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
   if (!rulesRow) return error("no rules row — the experiment is not pre-registered yet", 503);
 
   const live = await rulesHash();
+  const stabilizerP = stabilizerReadout(env);
 
-  const arms = [];
-  for (const r of RULES.arms) {
+  /* The arms are independent, so they are read side by side; the readout used
+     to walk them one query at a time and took six seconds. */
+  const arms = await Promise.all(RULES.arms.map(async (r) => {
     const w = await env.DB.prepare(
       `SELECT w.enabled, w.started_at, w.start_price, w.usdc_spent,
               s.halted, s.halt_reason, s.next_fire_at, s.usdc_balance, s.token_balance, s.updated_at,
@@ -157,30 +159,32 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
        clean token against one carrying real red flags, and half a comparison
        is worse than none. */
     const measured = true;
-    const grid = [];
-    for (const source of SOURCE_ORDER) {
-      const now = await env.DB.prepare(
-        `SELECT ok, value, checked_at FROM flag_checks WHERE arm = ?1 AND source = ?2
-          ORDER BY id DESC LIMIT 1`,
-      ).bind(r.id, source).first<{ ok: number; value: string | null; checked_at: string }>();
-      const days = await env.DB.prepare(
-        `SELECT date(checked_at) AS d,
-                MAX(CASE WHEN changed = 1 THEN 1 ELSE 0 END) AS ch,
-                MAX(ok) AS anyok
-           FROM flag_checks WHERE arm = ?1 AND source = ?2 GROUP BY date(checked_at) ORDER BY d ASC`,
-      ).bind(r.id, source).all<{ d: string; ch: number; anyok: number }>();
-      const cells = start ? days.results.map((row) => ({
+    /* Two queries for the whole grid instead of two per source: the latest
+       reading of each source, and one row per source per day. */
+    const nowRows = await env.DB.prepare(
+      `SELECT source, ok, value, checked_at FROM flag_checks
+        WHERE id IN (SELECT MAX(id) FROM flag_checks WHERE arm = ?1 GROUP BY source)`,
+    ).bind(r.id).all<{ source: string; ok: number; value: string | null; checked_at: string }>();
+    const dayRows = await env.DB.prepare(
+      `SELECT source, date(checked_at) AS d,
+              MAX(CASE WHEN changed = 1 THEN 1 ELSE 0 END) AS ch, MAX(ok) AS anyok
+         FROM flag_checks WHERE arm = ?1 GROUP BY source, date(checked_at) ORDER BY d ASC`,
+    ).bind(r.id).all<{ source: string; d: string; ch: number; anyok: number }>();
+    const nowBy = new Map(nowRows.results.map((x) => [x.source, x]));
+    const grid = SOURCE_ORDER.map((source) => {
+      const now = nowBy.get(source);
+      const cells = start ? dayRows.results.filter((row) => row.source === source).map((row) => ({
         day: dayIndex(start, row.d),
         state: row.ch ? "changed" : row.anyok ? "same" : "missing",
       })) : [];
-      grid.push({
+      return {
         source, asks: SOURCE_ASKS[source] ?? "",
         now: now ? { value: now.value, ok: now.ok === 1, at: now.checked_at } : null,
         cells,
-      });
-    }
+      };
+    });
 
-    arms.push({
+    return {
       id: r.id, label: r.label, wallet: r.wallet, token: r.token, pool: r.pool,
       enabled: w?.enabled !== 0, halted: w?.halted === 1, halt_reason: w?.halt_reason ?? null,
       started_at: w?.started_at ?? null, start_price: w?.start_price ?? null,
@@ -196,8 +200,8 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
          moves, because it is clamped to a share of the pool. Anyone can redo
          this arithmetic from the figures on the card, which is the point. */
       ...nextByRule(r, w, sample),
-    });
-  }
+    };
+  }));
 
   const trades = await env.DB.prepare(
     `SELECT id, arm, side, usdc_amount, delay_min, trigger_usdc, price_before, price_after,
@@ -209,6 +213,7 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
   const events = await env.DB.prepare(
     `SELECT at, arm, kind, detail FROM events ORDER BY id DESC LIMIT 60`,
   ).all<Record<string, unknown>>();
+  const stabilizer = await stabilizerP;
 
   return json({
     generated: new Date().toISOString(),
@@ -219,8 +224,27 @@ export async function washApi(request: Request, env: Env): Promise<Response> {
       strategy: RULES.strategy, venue: RULES.venue,
     },
     arms,
-    stabilizer: await stabilizerReadout(env),
+    stabilizer,
     trades: trades.results,
     events: events.results,
+  }, 200, { "Cache-Control": "public, max-age=15" });
+}
+
+/* GET /api/stabilizer — the stabilizer page's own readout: the rules row and
+   the stabilizer object, without the arms' market samples and classifier
+   grid it never draws. */
+export async function stabilizerApi(env: Env): Promise<Response> {
+  const [rulesRow, live, stabilizer] = await Promise.all([
+    env.DB.prepare(`SELECT git_commit, sha256 FROM rules WHERE id = 1`)
+      .first<{ git_commit: string; sha256: string }>(),
+    rulesHash(),
+    stabilizerReadout(env),
+  ]);
+  if (!rulesRow) return error("no rules row — the experiment is not pre-registered yet", 503);
+  return json({
+    generated: new Date().toISOString(),
+    market_open: env.MARKET_OPEN === "1",
+    rules: { git_commit: rulesRow.git_commit, sha256: rulesRow.sha256, hash_ok: rulesRow.sha256 === live },
+    stabilizer,
   }, 200, { "Cache-Control": "public, max-age=15" });
 }

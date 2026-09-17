@@ -29,20 +29,20 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
 
   /* the last look that read the whole pool (catch-up and skipped looks are
      logged but carry no complete reading) */
-  const last = await env.DB.prepare(
+  const lastP = env.DB.prepare(
     `SELECT * FROM stab_checks WHERE decision NOT IN ('skipped', 'catchup') ORDER BY id DESC LIMIT 1`,
   ).first<CheckRow>();
-  const latest = await env.DB.prepare(
+  const latestP = env.DB.prepare(
     `SELECT id, at, decision, note FROM stab_checks ORDER BY id DESC LIMIT 1`,
   ).first<{ id: number; at: string; decision: string; note: string | null }>();
 
-  const today = await env.DB.prepare(
+  const todayP = env.DB.prepare(
     `SELECT at, decision, dev_pct FROM stab_checks
       WHERE at >= date('now') AND decision != 'catchup' ORDER BY id ASC`,
   ).all<{ at: string; decision: string; dev_pct: number | null }>();
 
   const floor = S.log_min_deviation_pct;
-  const decisions = await env.DB.prepare(
+  const decisionsP = env.DB.prepare(
     `SELECT c.id, c.at, c.block, c.ref_price, c.live_price, c.dev_pct, c.decision, c.side,
             c.token_amount, c.usdc_amount, c.target_price, c.tx_hash, c.note,
             t.status, t.token_amount AS settled_token, t.usdc_settled, f.price_after AS landed_price
@@ -55,7 +55,7 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
       ORDER BY c.id DESC LIMIT 60`,
   ).bind(floor).all<Record<string, unknown>>();
 
-  const days = await env.DB.prepare(
+  const daysP = env.DB.prepare(
     `SELECT date(at) AS day, COUNT(*) AS checks,
             SUM(CASE WHEN ABS(COALESCE(dev_pct,0)) > ?1 THEN 1 ELSE 0 END) AS outside_band,
             SUM(CASE WHEN decision IN ('sell','buy') THEN 1 ELSE 0 END) AS acted,
@@ -64,17 +64,17 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
       GROUP BY date(at) ORDER BY day DESC`,
   ).bind(S.threshold_pct).all<Record<string, unknown>>();
 
-  const flow = await env.DB.prepare(
+  const flowP = env.DB.prepare(
     `SELECT tx_hash, block, cls, side, token_amount, usdc_amount, sender, price_before, price_after,
             effect, ref_after, at
        FROM stab_flow WHERE cls != 'self-arm' ORDER BY block DESC LIMIT 30`,
   ).all<Record<string, unknown>>();
 
-  const events = await env.DB.prepare(
+  const eventsP = env.DB.prepare(
     `SELECT at, kind, detail FROM events WHERE arm = ?1 ORDER BY id DESC LIMIT 40`,
   ).bind(STABILIZER_ID).all<Record<string, unknown>>();
 
-  const lastAction = await env.DB.prepare(
+  const lastActionP = env.DB.prepare(
     `SELECT c.at, c.side, c.token_amount, c.usdc_amount, c.tx_hash, c.dev_pct, c.ref_price,
             t.status, t.token_amount AS settled_token, t.usdc_settled, f.price_after AS landed_price
        FROM stab_checks c
@@ -82,6 +82,10 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
        LEFT JOIN stab_flow f ON f.tx_hash = c.tx_hash
       WHERE c.decision IN ('sell','buy') ORDER BY c.id DESC LIMIT 1`,
   ).first<Record<string, unknown>>();
+
+  const [last, latest, today, decisions, days, flow, events, lastAction] = await Promise.all([
+    lastP, latestP, todayP, decisionsP, daysP, flowP, eventsP, lastActionP,
+  ]);
 
   const ref = st?.ref_price != null ? Number(st.ref_price) : null;
   const live = last?.live_price != null ? Number(last.live_price) : null;
