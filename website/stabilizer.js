@@ -11,7 +11,7 @@
   var API = (LOCAL ? "http://127.0.0.1:8787" : "https://byko-market.bykovas.lt") + "/api/wash?limit=5";
   var SCAN = "https://basescan.org";
   var GENESIS_BYKO = 740227, GENESIS_USDC = 74.0227, HALVINGS = 6;
-  var SPAN = Math.log(1.2);                 /* detail rail: ±20% of price */
+  var SPAN = 0.20;                          /* detail rail: ±20% of price, linear */
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -52,7 +52,9 @@
   function posMain(bykoReserve) {
     return 50 + 50 * (Math.log(bykoReserve / GENESIS_BYKO) / Math.LN2) / HALVINGS;
   }
-  function posDtl(p, ref) { return 50 + 50 * Math.log(p / ref) / SPAN; }
+  /* Linear in percent, so −20% and +20% sit at the two edges. A log rail of
+     ±ln 1.2 put its own −20% tick outside the rail (it ends at −16.7%). */
+  function posDtl(p, ref) { return 50 + 50 * (p / ref - 1) / SPAN; }
 
   function renderRules(s) {
     set("r-th", s.threshold_pct + "%");
@@ -177,7 +179,7 @@
     land.style.display = showLand ? "" : "none";
     if (showLand) land.style.left = clamp(posDtl(landPrice, ref)).toFixed(3) + "%";
     var fact = $("s-fact");
-    var off = hasRef && Math.abs(Math.log(live / ref)) > SPAN;
+    var off = hasRef && Math.abs(live / ref - 1) > SPAN;
     fact.style.display = hasRef ? "" : "none";
     if (hasRef) {
       var fx = clamp(posDtl(live, ref));
