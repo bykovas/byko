@@ -11,13 +11,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BYKO — Self-trading</title>
-<meta name="description" content="Disclosed wash trading in BYKO: a security vendor said two-sided trading would clear the token's last flag, so the founder's own wallet buys and sells against its pool on a pre-registered schedule. Every trade is published.">
-<meta property="og:title" content="BYKO — Self-trading">
-<meta property="og:description" content="Disclosed wash trading in BYKO: a security vendor said two-sided trading would clear the token's last flag, so the founder's own wallet buys and sells against its pool on a pre-registered schedule. Every trade is published.">
+<title>LUKO — Self-trading, the control</title>
+<meta name="description" content="LUKO is the control for the BYKO self-trading experiment: a second token traded by the same worker under the same rules, so BYKO's results have something to be compared against. Every trade is published.">
+<meta property="og:title" content="LUKO — Self-trading, the control">
+<meta property="og:description" content="LUKO is the control for the BYKO self-trading experiment: a second token traded by the same worker under the same rules, so BYKO's results have something to be compared against. Every trade is published.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://byko.bykovas.lt/self-trading">
-<link rel="canonical" href="https://byko.bykovas.lt/self-trading">
+<meta property="og:url" content="https://byko.bykovas.lt/self-trading-luko">
+<link rel="canonical" href="https://byko.bykovas.lt/self-trading-luko">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
@@ -125,32 +125,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </header>
 
-<main class="wrap" data-token="byko">
+<main class="wrap" data-token="luko">
   <div class="head">
-    <span class="kicker">Disclosed experiment · wash trading</span>
-    <h1>Self-trading BYKO</h1>
+    <span class="kicker">Control variant · wash trading</span>
+    <h1>Self-trading LUKO</h1>
     <button class="btn" id="refresh" type="button">Refresh</button>
   </div>
   <p class="meta" id="meta">loading…</p>
 
   <section class="lede">
-    <p>Blockaid flags BYKO as <span class="name">Spam · unstable-price</span> and said the flag clears with sustained two-sided trading. Nobody else trades BYKO, so the founder's own wallet buys and sells against the pool on a random schedule whose rules were committed before the first trade: <span class="name">wash trading, disclosed</span>. <a href="/d/the-only-advice-i-can-follow-is-to-fake-a-market">Why →</a></p>
+    <p>LUKO is the <span class="name">control</span> for the <a href="/self-trading">BYKO experiment</a>: a second token from the same author, traded by the same worker under the same published rules, so what happens to BYKO can be compared against it. Its own wallets buy and sell against the LUKO pool on a random schedule; every trade is below.</p>
     <div class="rules" id="rules"></div>
   </section>
 
   <div class="arms" id="arms"></div>
 
-  <h2 class="sec">Trades — BYKO<span class="n" id="trades-n"></span></h2>
+  <h2 class="sec">Trades — LUKO<span class="n" id="trades-n"></span></h2>
   <div class="scroll"><table id="trades"><thead><tr>
     <th class="l">#</th><th class="l">UTC</th><th class="l">side</th>
-    <th>USDC</th><th>BYKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
+    <th>USDC</th><th>LUKO</th><th>price</th><th>FDV</th><th>pool USDC</th><th>status</th><th class="l">tx</th>
   </tr></thead><tbody></tbody></table></div>
-  <p class="note" style="margin-top:10px;padding-top:0;border-top:0"><a id="scan" target="_blank" rel="noopener">Every BYKO pool transaction on BaseScan →</a></p>
+  <p class="note" style="margin-top:10px;padding-top:0;border-top:0"><a id="scan" target="_blank" rel="noopener">Every LUKO pool transaction on BaseScan →</a></p>
 
   <h2 class="sec">Log<span class="n">everything that was not a trade</span></h2>
   <div class="events" id="events"></div>
 
-  <p class="note">Read live from the byko-market worker; every transaction is verifiable on BaseScan. The same worker trades <a href="/self-trading-luko">LUKO, the control</a>. Nothing here is financial advice.</p>
+  <p class="note">Read live from the byko-market worker; every transaction is verifiable on BaseScan. The experiment it is compared against is <a href="/self-trading">BYKO</a>. Nothing here is financial advice.</p>
 </main>
 
 <footer class="site-foot">

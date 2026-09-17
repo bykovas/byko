@@ -1,11 +1,15 @@
-/* Self-trading readout — reads the byko-market worker and renders the
-   disclosure, the classifier grid and the trade log. Vanilla, no framework,
-   same shape as the ledger page. No blue anywhere except the one genuinely
-   live chain read (LUKO's LP balance): the trade log is recorded history. */
+/* Self-trading readout — one token per page. The page names its token in
+   <main data-token="byko">; this script reads the byko-market worker and
+   renders only the arms trading that token: the pool card, the rules strip,
+   the trade table with the next scheduled fires, and the log. Vanilla, no
+   framework. Blue only on the figures read live from the chain. */
 (function () {
   "use strict";
-  var API = "https://byko-market.bykovas.lt/api/wash?limit=300";
+  var API = "https://byko-market.bykovas.lt/api/wash?limit=500";
   var SCAN = "https://basescan.org";
+  var main = document.querySelector("main[data-token]");
+  var TOKEN = main ? main.getAttribute("data-token") : "byko";
+  var SYM = TOKEN.toUpperCase();
 
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) {
@@ -23,10 +27,14 @@
   }
   function short(h) { return h ? h.slice(0, 6) + "…" + h.slice(-4) : "—"; }
 
+  /* The arms of this page: every arm whose id starts with the token name
+     (byko → byko; luko → luko, luko01, luko02). */
+  function mine(arms) {
+    return (arms || []).filter(function (a) { return a.id.indexOf(TOKEN) === 0; });
+  }
+
   /* A value asked for but not yet received: three monospace cells with the dash
-     stepping between them. One shared ticker drives every placeholder, and each
-     starts on a random frame — identical phases would make the whole page beat
-     in unison and read as one wave rather than many small independent waits. */
+     stepping between them, each on its own random phase. */
   var FRAMES = ["-  ", " - ", "  -"];
   var loaders = [];
   var tick = 0;
@@ -53,31 +61,14 @@
     return td;
   }
 
-  /* What we ask each source, known before any answer arrives. The server sends
-     the same list with the data; this copy exists only so the labels can be on
-     screen while the request is in flight, and is replaced wholesale by the
-     real render. */
-  var ASKING = [
-    ["metamask-price", "price or refusal"], ["metamask-token", "aggregators"],
-    ["goplus", "risk verdict"], ["dexscreener", "pair listed"],
-    ["geckoterminal", "locked liquidity"], ["coingecko", "contract known"],
-    ["cmc-dex", "pool priced"], ["cmc-index", "ticker known"],
-    ["blockscout", "holders / reputation"], ["uniswap-list", "present"],
-    ["1inch-list", "present"], ["base-app", "what the screen says (by hand)"],
-  ];
-  /* Only the loading skeleton uses this list; the real render walks data.arms,
-     so an arm added in rules.json appears without touching it. Kept in step so
-     the placeholder matches what arrives. */
-  var ARM_LABELS = [["byko", "BYKO Buyer"], ["luko", "LUKO Buyer"],
-    ["luko01", "LUKO Buyer 01"], ["luko02", "LUKO Buyer 02"]];
-  var ARM_FIELDS = ["price", "FDV", "pool USDC", "holders", "USDC net", "token net",
-    "turnover", "trades 24h", "LP burned", "LP held by founders", "supply held by founders"];
+  var RULE_KEYS = ["declared", "interval", "modes", "size", "targets", "slip", "commit"];
+  var CARD_FIELDS = ["price", "FDV", "pool USDC", "holders", "turnover", "trades 24h",
+    "LP burned", "LP held by founders", "supply held by founders"];
 
-  /* Draw everything that is known without the network: the rules strip, both
-     arm panels, every source row, one trade line and one log line. */
+  /* Draw everything that is known without the network. */
   function renderSkeleton() {
     var rules = $("rules"); rules.textContent = "";
-    ["declared", "interval", "size", "band", "slip", "hash", "switch", "commit"].forEach(function (k) {
+    RULE_KEYS.forEach(function (k) {
       var span = el("span");
       span.appendChild(document.createTextNode(k + " "));
       span.appendChild(dash());
@@ -85,53 +76,22 @@
     });
 
     var wrap = $("arms"); wrap.textContent = "";
-    ARM_LABELS.forEach(function (pair, i) {
-      var box = el("div", "arm" + (i % 2 ? " right" : ""));
-      box.appendChild(el("h3", null, pair[1] + " · " + pair[0].toUpperCase()));
-      box.appendChild(el("div", "st", "reading…"));
-      var dl = el("dl");
-      ARM_FIELDS.forEach(function (f) {
-        dl.appendChild(el("dt", null, f));
-        var dd = el("dd"); dd.appendChild(dash()); dl.appendChild(dd);
-      });
-      box.appendChild(dl);
-      if (KEEPER_ARMS.indexOf(pair[0]) >= 0) box.appendChild(objection(pair[0], null, null));
-      wrap.appendChild(box);
+    var box = el("div", "arm");
+    box.appendChild(el("h3", null, SYM + " / USDC pool"));
+    var dl = el("dl");
+    CARD_FIELDS.forEach(function (f) {
+      dl.appendChild(el("dt", null, f));
+      var dd = el("dd"); dd.appendChild(dash()); dl.appendChild(dd);
     });
+    box.appendChild(dl);
+    wrap.appendChild(box);
 
-    var table = $("checks");
-    var thead = table.querySelector("thead"), tbody = table.querySelector("tbody");
-    thead.textContent = ""; tbody.textContent = "";
-    var htr = el("tr");
-    htr.appendChild(el("th", "l", "source"));
-    htr.appendChild(el("th", "l", "asks"));
-    htr.appendChild(el("th", "l", "now"));
-    thead.appendChild(htr);
-    ARM_LABELS.forEach(function (pair) {
-      var cap = el("tr");
-      var c0 = el("td", "src", pair[0].toUpperCase());
-      c0.colSpan = 3; c0.style.color = "var(--byko-label)";
-      c0.style.fontWeight = "400"; c0.style.paddingTop = "10px";
-      cap.appendChild(c0); tbody.appendChild(cap);
-      ASKING.forEach(function (row) {
-        var tr = el("tr");
-        tr.appendChild(cell("src", row[0]));
-        tr.appendChild(cell("asks", row[1], "asks"));
-        tr.appendChild(cellDash("now", "now"));
-        tbody.appendChild(tr);
-      });
-    });
-
-    ARM_LABELS.forEach(function (pair) {
-      var t = $("trades-" + pair[0] + "-top");
-      if (!t) return;
-      var tb = t.querySelector("tbody");
-      tb.textContent = "";
-      var tr = el("tr");
-      var lab = ["", "utc", "side", "usdc", pair[0].toUpperCase(), "price", "fdv", "pool usdc", "status", "tx"];
-      for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i === 0 ? "l mono lead" : (i < 3 ? "l" : "mono"), lab[i]));
-      tb.appendChild(tr);
-    });
+    var tb = $("trades").querySelector("tbody");
+    tb.textContent = "";
+    var tr = el("tr");
+    var lab = ["", "utc", "side", "usdc", SYM, "price", "fdv", "pool usdc", "status", "tx"];
+    for (var i = 0; i < 10; i++) tr.appendChild(cellDash(i === 0 ? "l mono lead" : (i < 3 ? "l" : "mono"), lab[i]));
+    tb.appendChild(tr);
 
     var log = $("events"); log.textContent = "";
     var line = el("div");
@@ -139,23 +99,21 @@
     line.appendChild(dash());
     log.appendChild(line);
   }
+
   function n(v, d) {
     if (v === null || v === undefined || v === "") return "—";
     var x = Number(v);
     return isNaN(x) ? String(v) : x.toLocaleString("en-US", { maximumFractionDigits: d === undefined ? 2 : d });
   }
-  /* Fixed decimals, not significant digits: a column of prices should line up.
-     toPrecision gave $0.0002543 beside $0.003345 and the digits never met. */
+  /* Fixed decimals, not significant digits: a column of prices should line up. */
   function price(v) {
     if (v === null || v === undefined || v === "") return "—";
     var x = Number(v);
     return isNaN(x) ? String(v) : "$" + x.toFixed(8);
   }
 
-  /* GoPlus answers an ordinary connection but not Cloudflare's shared egress,
-     so the holder count comes from a probe run outside the Worker and is
-     necessarily older than the rest of the card. Print how old rather than
-     letting it sit beside live chain reads pretending to be one of them. */
+  /* Holder and trade counts arrive from a probe outside the Worker and are
+     older than the chain reads beside them; print how old. */
   function ago(ts) {
     if (!ts) return "";
     var t = Date.parse(String(ts).replace(" ", "T") + "Z");
@@ -167,10 +125,7 @@
 
   function renderRules(data) {
     var box = $("rules"); box.textContent = "";
-    var s = data.rules.strategy, v = data.rules.venue;
-    /* TWELFTH AMENDMENT: the fixed band is replaced by two target ranges, and
-       the wait comes from whichever cadence mode the arm is holding, so the
-       strip publishes the modes' overall span rather than one interval. */
+    var s = data.rules.strategy;
     var modes = s.modes || [];
     var lo = null, hi = null;
     modes.forEach(function (m) {
@@ -185,8 +140,7 @@
       ["size", "$" + s.trade_usdc[0] + "–$" + s.trade_usdc[1]],
       ["targets", range(s.run_floor_usdc) + " / " + range(s.run_ceiling_usdc)],
       ["slip", (s.slippage_bps / 100) + "%"],
-      ["hash", data.rules.hash_ok ? "verified" : "MISMATCH"],
-      ["switch", data.market_open ? "open" : "closed"],
+      ["commit", data.rules.git_commit ? data.rules.git_commit.slice(0, 8) : "—"],
     ];
     bits.forEach(function (b) {
       var span = el("span");
@@ -194,227 +148,99 @@
       span.appendChild(el("b", null, b[1]));
       box.appendChild(span);
     });
-    if (data.rules.git_commit) {
-      var a = el("span");
-      a.appendChild(document.createTextNode("commit "));
-      a.appendChild(el("b", null, data.rules.git_commit.slice(0, 8)));
-      box.appendChild(a);
-    }
   }
 
-  function renderArms(data) {
+  /* One card for the pool. Several arms may trade the same pool; the pool
+     figures are the same for all of them, and turnover is their sum. */
+  function renderCard(data) {
+    var arms = mine(data.arms);
     var wrap = $("arms"); wrap.textContent = "";
-    data.arms.forEach(function (arm, i) {
-      var box = el("div", "arm" + (i % 2 ? " right" : ""));
-      box.appendChild(el("h3", null, arm.label + " · " + arm.id.toUpperCase()));
-      var st = arm.halted ? "halted — " + (arm.halt_reason || "") :
-        (data.market_open ? (arm.next_fire_at ? "running" : "armed") : "waiting for kill switch");
-      box.appendChild(el("div", "st", st));
-      var m = arm.market || {};
-      var dl = el("dl");
-      function row(k, v, live) {
-        dl.appendChild(el("dt", null, k));
-        dl.appendChild(el("dd", live ? "live" : null, v));
-      }
-      row("price", price(m.price_usd));
-      row("FDV", m.fdv_usd ? "$" + n(m.fdv_usd) : "—");
-      /* Read from the chain, so it means one thing. The vendors' own "TVL"
-         does not: GeckoTerminal counts both sides of the pool, CMC counts one,
-         and whichever answered filled the column — which printed $140 for one
-         arm and $578 for the other while the chain said $140 and $290, on two
-         cards placed side by side to be compared. */
-      row("pool USDC", m.reserve_usdc ? "$" + n(Number(m.reserve_usdc) / 1e6) : "—", true);
-      var hAge = m.holders != null ? ago(m.holders_at) : "";
-      row("holders", m.holders != null ? n(m.holders, 0) + (hAge ? " · " + hAge : "") : "—");
-
-      /* NET means what the buyer wallet holds right now — the current on-chain
-         balance the worker reads each tick and stores, NOT an accounting result
-         of buys minus sells. USDC NET and {token} NET answer one question:
-         what does this experiment wallet hold at this moment. */
-      var currentUsdcBalance = arm.usdc_balance != null && arm.usdc_balance !== ""
-        ? Number(arm.usdc_balance) / 1e6 : null;
-      var currentTokenBalance = arm.token_balance != null && arm.token_balance !== ""
-        ? Number(arm.token_balance) / 1e18 : null;
-      var sym = arm.id === "luko" ? "LUKO" : "BYKO";
-      row("USDC net", currentUsdcBalance == null ? "—" : "$" + n(currentUsdcBalance));
-      row(sym + " net", currentTokenBalance == null ? "—" : n(currentTokenBalance, 0));
-
-      /* TURNOVER is cumulative trading activity, kept apart from NET so the
-         balance above is never mistaken for a ledger total. It sums the USDC
-         moved by confirmed trades on BOTH sides — buys spent plus sells
-         received — and is NOT buys minus sells. The server already restricts
-         usdc_bought / usdc_received to confirmed trades of this arm, so pending,
-         failed and the next scheduled trade are excluded. */
-      if (arm.usdc_bought != null && arm.usdc_received != null) {
-        var buyUsdcTotal = Number(arm.usdc_bought);
-        var sellUsdcTotal = Number(arm.usdc_received);
-        var turnoverUsdc = buyUsdcTotal + sellUsdcTotal;
-        dl.appendChild(el("dt", null, "turnover"));
-        var turnDd = el("dd", null, "$" + n(turnoverUsdc));
-        turnDd.appendChild(el("br"));
-        turnDd.appendChild(document.createTextNode(
-          "buys $" + n(buyUsdcTotal) + " · sells $" + n(sellUsdcTotal)));
-        dl.appendChild(turnDd);
-      }
-      var tAge = m.buys_24h != null ? ago(m.trades_at) : "";
-      row("trades 24h", (m.buys_24h != null ? m.buys_24h : "?") + " / " +
-        (m.sells_24h != null ? m.sells_24h : "?") + (tAge ? " · " + tAge : ""));
-      /* The live chain read. "Burned" is the honest word: LP tokens at an
-         address with no key, which nobody can withdraw. Calling the keeper's
-         share "locked" would report LUKO as maximally safe while 100% of its
-         LP sits in a founder wallet. */
-      /* Both arms carry both figures, always. Printing "held by founders" for
-         one arm and omitting it for the other invites the reading that the
-         silent one has nothing to declare, when what it has is a zero — and a
-         zero here is the strongest fact BYKO owns. */
-      if (m.lp_locked != null) row("LP burned", m.lp_locked + "%", true);
-      var keeper = m.lp_holder ? String(m.lp_holder).split(":") : null;
-      var keeperPct = keeper && keeper.length === 2 ? keeper[1] : "0.00";
-      if (m.lp_locked != null) row("LP held by founders", keeperPct + "%", true);
-      if (m.founders_pct != null) row("supply held by founders", m.founders_pct + "%", true);
-      box.appendChild(dl);
-      if (arm.measured === false) {
-        box.appendChild(el("div", "st",
-          "Not measured: price and LP are read from the chain, nothing is asked of any classifier, so the market fields stay empty rather than guessed."));
-      }
-      if (KEEPER_ARMS.indexOf(arm.id) >= 0) {
-        box.appendChild(objection(arm.id,
-          keeper && keeper.length === 2 ? keeper[1] : null,
-          keeper && keeper.length === 2 ? keeper[0] : null));
-      }
-      wrap.appendChild(box);
-    });
-  }
-
-  /* Arms whose liquidity is NOT burned. The sentence below never changes — it
-     is a standing disclosure, not a reading — so it is printed the moment the
-     page opens and only the two figures inside it wait for the chain. */
-  var KEEPER_ARMS = ["luko"];
-
-  function objection(armId, pct, addr) {
-    var box = el("div", "warn");
-    box.appendChild(document.createTextNode(
-      "The strongest objection to this arm, stated by us: " + armId.toUpperCase() +
-      "'s liquidity is NOT burned. "));
-    if (pct === null) box.appendChild(dash()); else box.appendChild(document.createTextNode(pct + "%"));
-    box.appendChild(document.createTextNode(" of its LP tokens sit in "));
-    if (addr === null) box.appendChild(dash());
-    else box.appendChild(document.createTextNode(addr.slice(0, 10) + "…"));
-    box.appendChild(document.createTextNode(
-      ", a founder wallet, and can be withdrawn at any moment — unlike BYKO's, which is 100% at " +
-      "0x…dEaD and gone forever. Both figures are read live so anyone can watch that it stays untouched."));
-    return box;
-  }
-
-  function renderChecks(data) {
-    var table = $("checks");
-    var thead = table.querySelector("thead"), tbody = table.querySelector("tbody");
-    thead.textContent = ""; tbody.textContent = "";
-    var maxDay = 0;
-    data.arms.forEach(function (a) {
-      (a.checks || []).forEach(function (c) {
-        (c.cells || []).forEach(function (x) { if (x.day > maxDay) maxDay = x.day; });
-      });
-    });
-    var htr = el("tr");
-    htr.appendChild(el("th", "l", "source"));
-    htr.appendChild(el("th", "l", "asks"));
-    htr.appendChild(el("th", "l", "now"));
-    for (var d = 1; d <= maxDay; d++) htr.appendChild(el("th", null, "d" + d));
-    thead.appendChild(htr);
-
-    data.arms.forEach(function (a) {
-      if (a.measured === false) return;   /* said in words below, not as dashes */
-      var cap = el("tr");
-      var c0 = el("td", "src", a.id.toUpperCase());
-      c0.colSpan = 4 + maxDay;
-      c0.style.color = "var(--byko-label)";
-      c0.style.fontWeight = "400";
-      c0.style.paddingTop = "10px";
-      cap.appendChild(c0);
-      tbody.appendChild(cap);
-      (a.checks || []).forEach(function (c) {
-        var tr = el("tr");
-        tr.appendChild(cell("src", c.source));
-        tr.appendChild(cell("asks", c.asks, "asks"));
-        tr.appendChild(cell("now", c.now ? (c.now.ok ? (c.now.value || "—") : "?") : "—", "now"));
-        var byDay = {};
-        (c.cells || []).forEach(function (x) { byDay[x.day] = x.state; });
-        var strip = [];
-        for (var d = 1; d <= maxDay; d++) {
-          var st = byDay[d];
-          var glyph = st === "changed" ? "▲" : st === "same" ? "·" : st === "missing" ? "?" : " ";
-          strip.push(glyph);
-          var cls = "g" + (st === "changed" ? " moved" : st === "missing" ? " miss" : "");
-          tr.appendChild(el("td", cls, glyph === " " ? "" : glyph));
-        }
-        /* the same glyphs as one strip, for the phone layout where a column
-           per day would become a row per day */
-        if (maxDay) tr.appendChild(cell("daystrip", strip.join(""), "days 1–" + maxDay));
-        tbody.appendChild(tr);
-      });
-    });
-    $("checks-n").textContent = maxDay ? "day " + maxDay : "not started";
-
-    /* Name the arms nobody is asking about, so an empty row is never mistaken
-       for a measurement that came back empty. */
-    var un = data.arms.filter(function (a) { return a.measured === false; });
-    var noteBox = $("unmeasured");
-    noteBox.textContent = "";
-    if (un.length) {
-      noteBox.appendChild(document.createTextNode(
-        un.map(function (a) { return a.id.toUpperCase(); }).join(", ") +
-        (un.length > 1 ? " are" : " is") +
-        " not measured. Only the arm carrying the flag we are trying to clear is put to the classifiers; the other trades in the background and is read from the chain alone. Nothing was asked about it, so nothing is reported — the row is absent rather than empty."));
+    if (!arms.length) return;
+    /* The collector's hourly sample sometimes comes back without a price when
+       the RPC refuses it. The arm with a priced sample wins; failing that, the
+       newest confirmed trade carries the same three figures, and says so. */
+    var m = (arms.filter(function (a) { return a.market && a.market.price_usd; })[0] || arms[0]).market || {};
+    var ids = arms.map(function (a) { return a.id; });
+    var last = (data.trades || []).filter(function (t) {
+      return ids.indexOf(t.arm) >= 0 && t.status === "confirmed" && t.price_after;
+    })[0];
+    var fromTrade = !m.price_usd && last;
+    var tag = fromTrade ? " · last trade" : "";
+    var box = el("div", "arm");
+    box.appendChild(el("h3", null, SYM + " / USDC pool"));
+    var dl = el("dl");
+    function row(k, v, live) {
+      dl.appendChild(el("dt", null, k));
+      dl.appendChild(el("dd", live ? "live" : null, v));
     }
+    var px = fromTrade ? last.price_after : m.price_usd;
+    var fdv = fromTrade ? last.fdv_after : m.fdv_usd;
+    var pool = fromTrade ? last.reserve_usdc_after : m.reserve_usdc;
+    row("price", px ? price(px) + tag : "—");
+    row("FDV", fdv ? "$" + n(fdv) + tag : "—");
+    /* Read from the chain: the vendors disagree on what "TVL" counts. */
+    row("pool USDC", pool ? "$" + n(Number(pool) / 1e6) + tag : "—", true);
+    var hm = (arms.filter(function (a) { return a.market && a.market.holders != null; })[0] || {}).market || {};
+    var hAge = hm.holders != null ? ago(hm.holders_at) : "";
+    row("holders", hm.holders != null ? n(hm.holders, 0) + (hAge ? " · " + hAge : "") : "—");
+
+    /* Turnover: USDC moved by confirmed trades on both sides, not buys minus
+       sells. */
+    var bought = 0, sold = 0;
+    arms.forEach(function (a) {
+      bought += Number(a.usdc_bought || 0);
+      sold += Number(a.usdc_received || 0);
+    });
+    dl.appendChild(el("dt", null, "turnover"));
+    var turnDd = el("dd", null, "$" + n(bought + sold));
+    turnDd.appendChild(el("br"));
+    turnDd.appendChild(document.createTextNode("buys $" + n(bought) + " · sells $" + n(sold)));
+    dl.appendChild(turnDd);
+
+    var tm = (arms.filter(function (a) { return a.market && a.market.buys_24h != null; })[0] || {}).market || {};
+    var tAge = tm.buys_24h != null ? ago(tm.trades_at) : "";
+    row("trades 24h", tm.buys_24h != null
+      ? tm.buys_24h + " / " + (tm.sells_24h != null ? tm.sells_24h : "?") + (tAge ? " · " + tAge : "")
+      : "—");
+    /* "Burned" is LP at an address nobody holds a key to. "Held by founders"
+       prints even at zero: a missing row would read as nothing to declare. */
+    /* "?" is a read that failed, not a figure: leave those rows out rather
+       than print "?%" or a zero that was never measured. */
+    var lpOk = m.lp_locked != null && m.lp_locked !== "?";
+    if (lpOk) row("LP burned", m.lp_locked + "%", true);
+    var keeper = m.lp_holder ? String(m.lp_holder).split(":") : null;
+    var keeperPct = keeper && keeper.length === 2 ? keeper[1] : "0.00";
+    if (lpOk) row("LP held by founders", keeperPct + "%", true);
+    if (m.founders_pct != null) row("supply held by founders", m.founders_pct + "%", true);
+    box.appendChild(dl);
+    wrap.appendChild(box);
+
+    var scan = $("scan");
+    if (scan && arms[0].pool) scan.href = SCAN + "/address/" + arms[0].pool;
   }
 
-  /* The waiting row used to show the fire time and five dashes. More than that
-     is knowable: the band and the run-reversal rule pick the side from the
-     balance and the price, both printed on this page — and since the sixth
-     amendment a published coin may flip it at fire time, so the flip odds
-     print next to the side. The size, while drawn at fire time, is drawn
-     from a range that is clamped to a share of the pool and so is a number
-     too. Those are shown as "by
-     rule", because they are what the published rule yields right now and not
-     a claim about a trade that has not happened; if the balance or the pool
-     moves before the alarm, so does the answer. What genuinely cannot be known
-     until the receipt — the exact amounts, the price it fills at — stays a
-     dash. */
-  function waitingRows(data, tbody) {
-    (data.arms || []).forEach(function (a) {
+  /* The next scheduled fire of each arm. Side and size range are what the
+     published rule yields right now ("by rule"), not a claim about a trade
+     that has not happened; the fill itself stays a dash. */
+  function waitingRows(data, arms, tbody) {
+    arms.forEach(function (a) {
       if (a.halted || !a.next_fire_at) return;
       var tr = el("tr");
       var labels = ["side", "usdc", "token", "price", "fdv", "pool usdc"];
       tr.appendChild(cell("l mono lead", "next"));
       tr.appendChild(cell("l mono", String(a.next_fire_at).replace("T", " ").slice(0, 19), "utc"));
-
       if (a.next_side) {
-        /* The turning point is drawn per run and written down before the run's
-           first trade, so it is a committed figure rather than a forecast —
-           show it beside the side it governs. The side itself is the run's;
-           since the sixth amendment each fire may flip it with the published
-           probability, so the odds print right next to the claim they weaken. */
-        /* TWELFTH AMENDMENT: the run turns when the wallet's cash crosses the
-           target drawn before the run's first trade, so the committed figure is
-           a dollar level, not a price move. The cadence mode prints beside it. */
-        var turn = a.next_run_target_usdc != null
-          ? " · turns at $" + Number(a.next_run_target_usdc).toFixed(2) : "";
         var mode = a.next_mode ? " · " + a.next_mode : "";
         var cpct = data.rules && data.rules.strategy && data.rules.strategy.contrarian_pct;
         var flips = cpct ? " · flips " + cpct + "%" : "";
         tr.appendChild(cell("l mono byrule",
-          "by rule " + a.next_side.toUpperCase() + flips + turn + mode, labels[0]));
-      }
-      else tr.appendChild(cellDash("l", labels[0]));
-
+          "by rule " + a.next_side.toUpperCase() + flips + mode, labels[0]));
+      } else tr.appendChild(cellDash("l", labels[0]));
       if (a.next_size_max) {
         tr.appendChild(cell("mono byrule",
-          /* fixed cents, so $0.30 does not print as $0.3 next to $7.06 */
           "by rule $" + Number(a.next_size_min).toFixed(2) + "–" + Number(a.next_size_max).toFixed(2),
           labels[1]));
       } else tr.appendChild(cellDash("mono", labels[1]));
-
       for (var i = 2; i < 6; i++) tr.appendChild(cellDash("mono", labels[i]));
       var stat = cell("l", null, "status");
       stat.appendChild(el("span", "pill", "waiting"));
@@ -425,55 +251,34 @@
   }
 
   function renderTrades(data) {
-    /* One table per arm: a single mixed ledger made the reader check the arm
-       column on every row to know which token a number belonged to. The page
-       shows only the last ten with the "next" line for the glance; the
-       exhaustive raw history lives on BaseScan, linked below each table, so the
-       site does not reproduce the full chain log it is not the canonical copy of. */
-    (data.arms || []).forEach(function (a) {
-      renderArmTrades(data, a.id, true);
-      var scan = $("scan-" + a.id);
-      if (scan && a.wallet) scan.href = SCAN + "/address/" + a.wallet;
-    });
-  }
-
-  function renderArmTrades(data, armId, top) {
-    var table = $("trades-" + armId + (top ? "-top" : ""));
-    if (!table) return;
-    var tbody = table.querySelector("tbody");
+    var arms = mine(data.arms);
+    var ids = arms.map(function (a) { return a.id; });
+    var tbody = $("trades").querySelector("tbody");
     tbody.textContent = "";
-    var all = (data.trades || []).filter(function (t) { return t.arm === armId; });
-    var rows = top ? all.slice(0, 10) : all;
-    var counter = $("trades-n-" + armId + (top ? "-top" : ""));
-    if (counter) {
-      counter.textContent = top
-        ? (all.length > 10 ? "last 10 of " + all.length : all.length + " done")
-        : all.length + " done";
-    }
-    var arm = (data.arms || []).filter(function (a) { return a.id === armId; })[0];
-    /* the "next fire" line belongs to the current view, not the archive */
-    if (top && arm) waitingRows({ arms: [arm], rules: data.rules }, tbody);
+    var all = (data.trades || []).filter(function (t) { return ids.indexOf(t.arm) >= 0; });
+    var rows = all.slice(0, 10);
+    $("trades-n").textContent = all.length > 10 ? "last 10" : all.length + " done";
+    var upcoming = arms.slice().sort(function (a, b) {
+      return String(a.next_fire_at).localeCompare(String(b.next_fire_at));
+    });
+    waitingRows(data, upcoming, tbody);
     if (!rows.length) {
       var tr = el("tr");
       var td = el("td", "l"); td.colSpan = 10;
-      td.appendChild(el("span", "empty", data.market_open
-        ? "No trades yet — the first alarm has not fired."
-        : "No trades yet. The parameters are pre-registered; trading begins only when the kill switch opens."));
+      td.appendChild(el("span", "empty", "No trades yet."));
       tr.appendChild(td); tbody.appendChild(tr); return;
     }
     rows.forEach(function (t) {
       var buy = t.side === "buy";
       var usdc = t.usdc_settled || (Number(t.usdc_amount) * 1e6).toFixed(0);
-      var usdcWhole = Number(usdc) / 1e6;
       var tok = t.token_amount ? Number(t.token_amount) / 1e18 : null;
       var poolUsdc = t.reserve_usdc_after ? Number(t.reserve_usdc_after) / 1e6 : null;
       var tr = el("tr");
-      var sym = armId === "luko" ? "LUKO" : "BYKO";
       tr.appendChild(cell("l mono lead", "#" + t.id));
       tr.appendChild(cell("l mono", (t.decided_at || "").replace("T", " ").slice(0, 19), "utc"));
       tr.appendChild(cell("side " + (buy ? "buy" : "sell"), t.side, "side"));
-      tr.appendChild(cell("mono", (buy ? "−" : "+") + n(usdcWhole, 4), "usdc"));
-      tr.appendChild(cell("mono", tok == null ? "—" : (buy ? "+" : "−") + n(tok, 0), sym));
+      tr.appendChild(cell("mono", (buy ? "−" : "+") + n(Number(usdc) / 1e6, 4), "usdc"));
+      tr.appendChild(cell("mono", tok == null ? "—" : (buy ? "+" : "−") + n(tok, 0), SYM));
       tr.appendChild(cell("mono", price(t.price_after || t.price_before), "price"));
       tr.appendChild(cell("mono", t.fdv_after ? "$" + n(t.fdv_after) : "—", "fdv"));
       tr.appendChild(cell("mono pos", poolUsdc == null ? "—" : "$" + n(poolUsdc), "pool usdc"));
@@ -491,50 +296,29 @@
     });
   }
 
-  /* These wallets existed before the worker did and traded on their own. The
-     ledger below covers the worker's trades only, so a pool chart can legally
-     show a trade this table does not — and a reader who spots that deserves to
-     have been told first, not to catch us. */
-  function renderLedgerScope(data) {
-    var box = $("scope");
-    if (!box) return;
-    box.textContent = "";
-    var started = data.arms
-      .filter(function (a) { return a.started_at; })
-      .map(function (a) { return a.id.toUpperCase() + " from " + a.started_at + " UTC"; });
-    if (!started.length) {
-      box.appendChild(document.createTextNode(
-        "The ledger records the worker's own trades. It is empty until the worker makes one."));
-      return;
-    }
-    box.appendChild(document.createTextNode(
-      "This ledger records the worker's trades only — " + started.join(", ") +
-      ". Both wallets are ordinary addresses that existed and traded before the worker was armed, so a pool chart will show earlier trades from them that are not listed here. LUKO Buyer, for one, bought $1.29 of LUKO on 18 August, the day before any of this started. Those were not the worker and are not claimed as its work."));
-  }
-
   function renderEvents(data) {
     var box = $("events"); box.textContent = "";
-    var evs = data.events || [];
+    var ids = mine(data.arms).map(function (a) { return a.id; });
+    var evs = (data.events || []).filter(function (e) { return ids.indexOf(e.arm) >= 0; }).slice(0, 25);
     if (!evs.length) { box.appendChild(el("div", null, "nothing logged")); return; }
     evs.forEach(function (e) {
       var d = el("div");
-      d.appendChild(el("span", "k", (e.at || "").replace("T", " ").slice(0, 19) + " · " + (e.arm || "—") + " · " + e.kind));
+      d.appendChild(el("span", "k", (e.at || "").replace("T", " ").slice(0, 19) + " · " + e.kind));
       d.appendChild(document.createTextNode(e.detail || ""));
       box.appendChild(d);
     });
   }
 
   function render(data) {
-    $("meta").innerHTML = "read " + new Date(data.generated).toISOString().replace("T", " ").slice(0, 19) +
-      " UTC · kill switch <b>" + (data.market_open ? "open" : "closed") + "</b>" +
+    $("meta").innerHTML = "read " + new Date(data.generated).toISOString().replace("T", " ").slice(0, 19) + " UTC" +
       (data.rules.hash_ok ? "" : " · <span class=\"err\">rules hash MISMATCH — worker will not trade</span>");
-    renderRules(data); renderArms(data); renderChecks(data); renderTrades(data); renderLedgerScope(data); renderEvents(data);
+    renderRules(data); renderCard(data); renderTrades(data); renderEvents(data);
   }
 
   function load() {
     $("meta").textContent = "reading the worker…";
     renderSkeleton();
-    fetch(API + (API.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now(), { cache: "no-store" })
+    fetch(API + "&t=" + Date.now(), { cache: "no-store" })
       .then(function (r) {
         return r.json().then(function (body) {
           if (r.ok) return body;
@@ -543,30 +327,12 @@
       })
       .then(render)
       .catch(function (err) {
-        var msg = String(err.message || err);
-        if (/not pre-registered|no rules/.test(msg)) {
-          $("meta").innerHTML = "The experiment is pre-registered but has not started. The parameters are committed; the worker begins only when the kill switch opens.";
-        } else {
-          $("meta").innerHTML = '<span class="err">could not read the readout: ' + msg + "</span>";
-        }
+        $("meta").innerHTML = '<span class="err">could not read the readout: ' +
+          String(err.message || err).replace(/</g, "&lt;") + "</span>";
       });
   }
 
   var btn = $("refresh");
   if (btn) btn.addEventListener("click", load);
-
-  /* the classifier grid folds away, same mechanism as the wallet register
-     on the home page: the data stays on the page, only its rows hide */
-  var checksBtn = $("checks-reveal");
-  if (checksBtn) checksBtn.addEventListener("click", function () {
-    var wrap = $("checks-wrap");
-    var open = wrap.hasAttribute("hidden");
-    if (open) wrap.removeAttribute("hidden"); else wrap.setAttribute("hidden", "");
-    checksBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    $("checks-reveal-label").textContent = open
-      ? "Hide what the classifiers say about BYKO & LUKO"
-      : "Show what the classifiers say about BYKO & LUKO →";
-  });
-
   load();
 })();
