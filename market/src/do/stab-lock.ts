@@ -125,7 +125,10 @@ export class StabLock {
     let next = S.check_minutes * 60_000;
     try {
       const r = await this.tick();
-      if (r === "approving") next = 60_000;
+      /* after its own trade (or while one is in flight) the next look comes in
+         a minute, so the page shows the pool the trade left, not the reading
+         that caused it, for nine more minutes */
+      if (r === "approving" || r === "sell" || r === "buy" || r === "wait") next = 60_000;
       if (r === "catchup") next = 30_000;
     } catch (err) {
       await event(this.env, STABILIZER_ID, "error", String((err as Error)?.message ?? err).slice(0, 300));

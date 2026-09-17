@@ -95,14 +95,14 @@
     /* ── the card ── */
     set("s-ref", ref != null ? px(ref) : "—");
     set("s-live", live != null ? px(live) : "—");
-    set("s-devcell", dev != null ? pct(dev) : "—");
+    set("s-devcell", dev != null ? pct(dev) + (s.state === "acted" ? " before the trade" : "") : "—");
     var status = {
       unset: "waiting for the first look",
       quiet: "inside the band",
       above: "above the band",
       below: "below the band",
       cannot: "cannot act · logged",
-      acted: "acted · reference moves with its trade"
+      acted: "acted · reading taken before the trade"
     }[s.state] || s.state;
     set("s-status", status);
     var w = s.wallet;
@@ -210,8 +210,11 @@
       var landed = la.landed_price && la.ref_price ? (Number(la.landed_price) / Number(la.ref_price) - 1) * 100 : null;
       say = "Acted. " + (la.side === "sell" ? "Sold " : "Bought ") + int(whole(la.settled_token || la.token_amount, 18)) +
         " BYKO for about " + money(whole(la.usdc_settled || la.usdc_amount, 6)) +
-        "; that trade becomes the reference" + (landed != null ? ", and it landed at " + pct(landed) + " of the old one." : " once it is in the pool history.");
-      sub = "tx " + short(la.tx_hash) + " · " + DAMP + "% traded back, " + (100 - DAMP) + "% left standing" + (nextTxt ? " · " + nextTxt : "");
+        (landed != null
+          ? "; the price landed at " + pct(landed) + " of the reference and that trade is the new reference."
+          : ". The " + pct(dev) + " above is the reading that caused it, taken before the trade; the next look reads the pool the trade left and moves the reference there.");
+      sub = "tx " + short(la.tx_hash) + " · aimed at " + pct(dev * (1 - DAMP / 100)) + " · " + DAMP + "% traded back, " +
+        (100 - DAMP) + "% left standing" + (nextTxt ? " · " + nextTxt : "");
     } else if (inside) {
       say = "Inside the ±" + TH + "% band. Nothing to do.";
       sub = (nextTxt ? nextTxt + " · " : "") + "the band is " + TH + "% of price either way";
