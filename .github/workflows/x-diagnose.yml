@@ -10,6 +10,10 @@ on:
         description: "Also POST the pending card-2 tweet"
         type: boolean
         default: false
+      like:
+        description: "Like-and-unlike our own last tweet as a write probe"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -30,4 +34,5 @@ jobs:
           XCOM_BYKO_ACCESS_TOKEN: ${{ secrets.XCOM_BYKO_ACCESS_TOKEN }}
           XCOM_BYKO_ACCESS_SECRET: ${{ secrets.XCOM_BYKO_ACCESS_SECRET }}
           POST_CARD2: ${{ inputs.post }}
+          LIKE_PROBE: ${{ inputs.like }}
         run: node scripts/x-diagnose.mjs

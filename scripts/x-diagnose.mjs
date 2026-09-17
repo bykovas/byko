@@ -59,3 +59,17 @@ if (text) {
 } else {
   console.log("\nPOST_CARD2 not set — no post attempted");
 }
+
+/* write probe that publishes nothing lasting: like our own last tweet, then
+   remove the like. 403 here too means the account cannot write at all. */
+if (process.env.LIKE_PROBE === "true") {
+  const me = "2087521805871325184", tweet = "2100570090907333036";
+  const likeUrl = `https://api.x.com/2/users/${me}/likes`;
+  await show("POST likes", await fetch(likeUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: oauthHeader("POST", likeUrl) },
+    body: JSON.stringify({ tweet_id: tweet }),
+  }));
+  const unUrl = `${likeUrl}/${tweet}`;
+  await show("DELETE like", await fetch(unUrl, { method: "DELETE", headers: { Authorization: oauthHeader("DELETE", unUrl) } }));
+}
