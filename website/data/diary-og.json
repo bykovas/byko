@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "blockaid-removes-incorrect-byko-flag-after-volatility-controls",
+      "title": "Blockaid removes incorrect BYKO flag after volatility controls",
+      "dateText": "17 September 2026",
+      "datePublished": "2026-09-17",
+      "imageVersion": "490349945e13",
+      "twitterImageVersion": "14c27a39eaf1",
+      "hero": {
+        "src": "/assets/diary/blockaid-removes-incorrect-byko-flag-after-volatility-controls/hero.png",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "two-publishers-one-shared-failure",
       "title": "Two Publishers, One Shared Failure",
       "dateText": "15 September 2026",

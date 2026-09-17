@@ -34,6 +34,35 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Blockaid removes incorrect BYKO flag after volatility controls — 17 September 2026
+
+Blockaid has completed its review of BYKO and removed the incorrect flag.
+
+Their final conclusion was explicit: “the flagging was indeed incorrect, the flagging has been modified accordingly.”
+
+The path to that result was not to hide the uncomfortable parts of a tiny market. We documented them.
+
+BYKO has a shallow BYKO/USDC pool. Its LP is permanently burned, but that also means liquidity cannot simply be withdrawn and rebuilt. At this depth even a small trade can move the USD price materially. We also disclosed that much of the visible two-sided activity comes from a founder wallet following a public self-trading schedule, not organic demand.
+
+When Blockaid identified USD volatility as the remaining risk factor, we changed the experiment on 17 September:
+
+• capped our self-trading size at 1% of the pool’s USDC reserve per trade;
+• narrowed the trading corridor;
+• published a deterministic stabilization policy for smaller outside moves;
+• started logging every stabilizer check, intent, cancellation and trade publicly;
+• documented the stabilizer’s limits instead of presenting it as a peg or price guarantee.
+
+The mechanism was tested immediately. An outside $19.79 buy moved the price +13.39%. Within ten minutes the stabilizer sold 8,050 BYKO for $14.68 and brought the deviation to +3.35%, its computed target.
+
+After reviewing the appeal, Blockaid closed the case in BYKO’s favor and changed the flag.
+
+For a token built as a transparency experiment, this is the result that matters most: the answer to a risk signal was more disclosure, more measurable rules and more public evidence — not less.
+
+---
+**Teaser:** Blockaid completed its appeal review and confirmed that BYKO’s security flag was incorrect. The classification was changed after a review that included our liquidity, trading and volatility-control disclosures.
+**X:** Blockaid completed its BYKO appeal: “the flagging was indeed incorrect.” The flag on 0x078b…4372 has been modified. Before the final review we published the pool limits, reduced our own trading amplitude and added a public stabilizer.
+**Image:** ![A smiling grey cat in a BYKO hoodie holds balanced scales of USDT and BYKO coins while a Blockaid robot judge raises a NOT GUILTY sign beside a checked BYKO appeal and a stack of amendment books](/assets/diary/blockaid-removes-incorrect-byko-flag-after-volatility-controls/hero.png)
+
 ## Two Publishers, One Shared Failure — 15 September 2026
 
 Pragma’s Vesu post-mortem explains how apparent price diversity collapsed into one shared dependency.
