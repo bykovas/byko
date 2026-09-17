@@ -11,38 +11,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts — BYKO Diary</title>
-<meta name="description" content="The silver stayed in the vault; the token’s admin powers reached into holder accounts.">
-<link rel="canonical" href="https://byko.bykovas.lt/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts">
+<title>Two Publishers, One Shared Failure — BYKO Diary</title>
+<meta name="description" content="Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.">
+<link rel="canonical" href="https://byko.bykovas.lt/d/two-publishers-one-shared-failure">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="BYKO">
-<meta property="og:title" content="SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts">
-<meta property="og:description" content="The silver stayed in the vault; the token’s admin powers reached into holder accounts.">
-<meta property="og:url" content="https://byko.bykovas.lt/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts">
-<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts-94e50ac075e2.png">
-<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts-94e50ac075e2.png">
+<meta property="og:title" content="Two Publishers, One Shared Failure">
+<meta property="og:description" content="Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.">
+<meta property="og:url" content="https://byko.bykovas.lt/d/two-publishers-one-shared-failure">
+<meta property="og:image" content="https://byko.bykovas.lt/assets/og/diary/two-publishers-one-shared-failure-9453a4f5b185.png">
+<meta property="og:image:secure_url" content="https://byko.bykovas.lt/assets/og/diary/two-publishers-one-shared-failure-9453a4f5b185.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BYKO Diary — SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts">
-<meta property="article:published_time" content="2026-09-12">
+<meta property="og:image:alt" content="BYKO Diary — Two Publishers, One Shared Failure">
+<meta property="article:published_time" content="2026-09-15">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@bykocoin">
 <meta name="twitter:creator" content="@bykocoin">
-<meta name="twitter:title" content="SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts">
-<meta name="twitter:description" content="The silver stayed in the vault; the token’s admin powers reached into holder accounts.">
-<meta name="twitter:url" content="https://byko.bykovas.lt/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts">
-<meta name="twitter:image" content="https://byko.bykovas.lt/assets/og/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts-94e50ac075e2.png">
-<meta name="twitter:image:alt" content="BYKO Diary — SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts">
+<meta name="twitter:title" content="Two Publishers, One Shared Failure">
+<meta name="twitter:description" content="Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.">
+<meta name="twitter:url" content="https://byko.bykovas.lt/d/two-publishers-one-shared-failure">
+<meta name="twitter:image" content="https://byko.bykovas.lt/assets/og/diary/two-publishers-one-shared-failure-9453a4f5b185.png">
+<meta name="twitter:image:alt" content="BYKO Diary — Two Publishers, One Shared Failure">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "@id": "https://byko.bykovas.lt/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts",
-  "url": "https://byko.bykovas.lt/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts",
-  "headline": "SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts",
-  "description": "The silver stayed in the vault; the token’s admin powers reached into holder accounts.",
-  "datePublished": "2026-09-12",
+  "@id": "https://byko.bykovas.lt/d/two-publishers-one-shared-failure",
+  "url": "https://byko.bykovas.lt/d/two-publishers-one-shared-failure",
+  "headline": "Two Publishers, One Shared Failure",
+  "description": "Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.",
+  "datePublished": "2026-09-15",
   "inLanguage": "en",
   "author": {
     "@type": "Person",
@@ -56,7 +56,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   },
   "image": {
     "@type": "ImageObject",
-    "url": "https://byko.bykovas.lt/assets/og/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts-94e50ac075e2.png",
+    "url": "https://byko.bykovas.lt/assets/og/diary/two-publishers-one-shared-failure-9453a4f5b185.png",
     "width": 1200,
     "height": 630
   }
@@ -125,27 +125,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <main class="wrap">
   <div class="entry-doc">
-    <article data-diary-slug="silv-was-permissionless-until-its-issuer-froze-2-819-accounts">
+    <article data-diary-slug="two-publishers-one-shared-failure">
       <a class="back" href="/diary">← the whole log</a>
       <div class="entry-meta">
-        <time datetime="2026-09-12">12 September 2026</time>
-        <span>EP 64</span>
+        <time datetime="2026-09-15">15 September 2026</time>
+        <span>EP 65</span>
       </div>
-      <h1>SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts</h1>
-      <p class="entry-teaser">The silver stayed in the vault; the token’s admin powers reached into holder accounts.</p>
-      <figure class="entry-hero"><img src="/assets/diary/silv-was-permissionless-until-its-issuer-froze-2-819-accounts/hero.jpg" alt="SILV token accounts frozen by issuer after multisig breach" width="1536" height="1024" decoding="async"></figure>
+      <h1>Two Publishers, One Shared Failure</h1>
+      <p class="entry-teaser">Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.</p>
+      <figure class="entry-hero"><img src="/assets/diary/two-publishers-one-shared-failure/hero.png" alt="BYKO infographic on the Pragma Vesu oracle incident: a stale USDC to USDC.e token mapping and a two-source USDT/USD price cut BTC, ETH, STRK and USDC roughly in half, with a diagram showing many surfaces tracing back to one shared source" width="1536" height="1024" decoding="async"></figure>
       <div class="entry-body">
-<p>Dominion described SILV as permissionless. After a treasury multisig breach, the issuer froze 2,819 token accounts and said tokens bought during the incident window would be removed, with a USDC refund path for affected buyers.</p>
-<p>The response uses exactly what an admin-controlled token can provide: a way to protect backing and earlier holders by overruling purchases that were valid onchain when they occurred.</p>
-<p>For BYKO, the point is not that admin control is simply bad. BYKO cannot freeze, seize or recover holder balances. That protects ownership from the issuer, but it also removes an emergency correction mechanism. Wallets should make that trade-off visible before a user buys.</p>
-<p>Sources: Dominion Market, Bitquery, SolanaFloor, CryptoCompass, Solana documentation.</p>
+<p>Pragma’s Vesu post-mortem explains how apparent price diversity collapsed into one shared dependency.</p>
+<p>A stale route through an inactive USDC.e pool produced a bad USDT/USD observation. Freshness filtering left only that value and one healthy exchange price. The resulting aggregate was then reused to construct other feeds, making several major assets appear to lose about half their value.</p>
+<p>Two publishers did not provide two independent answers. They ran the same software and repeated the same conversion path. Vesu saw healthy-looking source counts on the composed feeds even though those observations depended on one weak input.</p>
+<p>For BYKO, several wallets and price pages showing the same number are not independent confirmation if they inherit the same pool, API or conversion chain. Surface count is not source independence.</p>
+<p>The technical account comes from Pragma. Independent reports confirm the liquidations, but have not yet reproduced the full root cause.</p>
+<p>Sources: Pragma, Vesu, crypto.news, AInvest.</p>
       </div>
       <p class="notestrip">Figures corrected after publication stay on the page: the old number is struck, not deleted, and the entry that fixed it is dated.</p>
     </article>
     <aside class="apparatus">
       <span class="label">Apparatus</span>
       <ul>
-        <li><span class="label-sm">Published</span><br><span class="mono">12 September 2026</span></li>
+        <li><span class="label-sm">Published</span><br><span class="mono">15 September 2026</span></li>
         <li><span class="label-sm">Source</span><br><a href="https://github.com/bykovas/byko/blob/main/website/content/diary.md" target="_blank" rel="noopener">diary.md →</a></li>
         <li><span class="label-sm">Contract</span><br><a href="https://basescan.org/token/0x078bB16e24c8931fc007928c370422e5e38F4372" target="_blank" rel="noopener">BYKO on BaseScan →</a></li>
         <li><span class="label-sm">Deployment</span><br><span class="mono">block 49,430,937 · 2 Aug 2026</span></li>
@@ -167,14 +169,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h2>Either side of this one</h2>
     </div>
     <div class="log">
-      <a class="log-row" href="/d/two-publishers-one-shared-failure">
-        <span class="date">15 September 2026</span>
-        <span><h3>Two Publishers, One Shared Failure</h3><p>Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.</p></span>
-        <span class="ep">newer</span>
-      </a>
-      <a class="log-row" href="/d/liquid-is-producing-blocks-without-processing-transactions">
-        <span class="date">11 September 2026</span>
-        <span><h3>Liquid Is Producing Blocks Without Processing Transactions</h3><p>A restarted chain can produce blocks while users still cannot transact or redeem.</p></span>
+      <a class="log-row" href="/d/silv-was-permissionless-until-its-issuer-froze-2-819-accounts">
+        <span class="date">12 September 2026</span>
+        <span><h3>SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts</h3><p>The silver stayed in the vault; the token’s admin powers reached into holder accounts.</p></span>
         <span class="ep">older</span>
       </a>
     </div>

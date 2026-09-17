@@ -34,6 +34,25 @@
   .github/workflows/publish-diary.yml, which posts it to Facebook and X.
 -->
 
+## Two Publishers, One Shared Failure — 15 September 2026
+
+Pragma’s Vesu post-mortem explains how apparent price diversity collapsed into one shared dependency.
+
+A stale route through an inactive USDC.e pool produced a bad USDT/USD observation. Freshness filtering left only that value and one healthy exchange price. The resulting aggregate was then reused to construct other feeds, making several major assets appear to lose about half their value.
+
+Two publishers did not provide two independent answers. They ran the same software and repeated the same conversion path. Vesu saw healthy-looking source counts on the composed feeds even though those observations depended on one weak input.
+
+For BYKO, several wallets and price pages showing the same number are not independent confirmation if they inherit the same pool, API or conversion chain. Surface count is not source independence.
+
+The technical account comes from Pragma. Independent reports confirm the liquidations, but have not yet reproduced the full root cause.
+
+Sources: Pragma, Vesu, crypto.news, AInvest.
+
+---
+**Teaser:** Pragma’s post-mortem shows how a stale USDC.e route turned apparent source diversity into a single point of failure.
+**X:** Pragma’s Vesu post-mortem shows how many sources can still mean one failure: two publishers reused the same bad USDT conversion and cut major asset prices in half. For BYKO, surface count is not data independence. Sources: Pragma, Vesu, crypto.news.
+**Image:** ![BYKO infographic on the Pragma Vesu oracle incident: a stale USDC to USDC.e token mapping and a two-source USDT/USD price cut BTC, ETH, STRK and USDC roughly in half, with a diagram showing many surfaces tracing back to one shared source](/assets/diary/two-publishers-one-shared-failure/hero.png)
+
 ## Liquid Is Producing Blocks Without Processing Transactions — 11 September 2026
 
 Liquid Network entered a controlled recovery stage on September 10. Functionary nodes are producing and validating blocks again after node updates, but user transactions are still not being processed.

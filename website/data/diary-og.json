@@ -2,6 +2,19 @@
   "version": 1,
   "entries": [
     {
+      "slug": "two-publishers-one-shared-failure",
+      "title": "Two Publishers, One Shared Failure",
+      "dateText": "15 September 2026",
+      "datePublished": "2026-09-15",
+      "imageVersion": "71724b548ba5",
+      "twitterImageVersion": "9453a4f5b185",
+      "hero": {
+        "src": "/assets/diary/two-publishers-one-shared-failure/hero.png",
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
       "slug": "silv-was-permissionless-until-its-issuer-froze-2-819-accounts",
       "title": "SILV Was “Permissionless” Until Its Issuer Froze 2,819 Accounts",
       "dateText": "12 September 2026",

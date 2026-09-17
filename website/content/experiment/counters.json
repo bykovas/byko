@@ -76,7 +76,7 @@
     },
     {
       "id": "episodes",
-      "value": "64",
+      "value": "65",
       "label": "Episodes published",
       "kind": "result",
       "asOf": "2026-09-17",
