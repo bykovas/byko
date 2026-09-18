@@ -288,7 +288,11 @@
     rows.forEach(function (r) {
       var tr = el("tr");
       var when = utc(r.at).slice(5, 16).replace(" ", " · ");
-      if (r.looks > 1) when += " – " + hhmm(r.since);
+      if (r.looks > 1) {
+        /* a run that crosses midnight names the older day too */
+        var sameDay = utc(r.since).slice(0, 10) === utc(r.at).slice(0, 10);
+        when += " – " + (sameDay ? hhmm(r.since) : utc(r.since).slice(5, 16).replace(" ", " · "));
+      }
       tr.appendChild(cell("l lead", when, "UTC"));
       var dv = r.dev_pct == null ? "—" : pct(Number(r.dev_pct));
       tr.appendChild(cell(Math.abs(Number(r.dev_pct || 0)) > s.rules.threshold_pct ? "pos" : null, dv, "deviation"));

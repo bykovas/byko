@@ -53,7 +53,9 @@ export async function stabilizerReadout(env: Env): Promise<Record<string, unknow
       WHERE c.decision != 'catchup'
         AND (c.decision IN ('sell','buy','cannot','wait','bootstrap','skipped','intent','cancelled')
              OR ABS(COALESCE(c.dev_pct, 0)) > ?1)
-      ORDER BY c.id DESC LIMIT 60`,
+      ORDER BY c.id DESC LIMIT 400`,   /* quiet looks collapse into runs on the
+        page, so the window has to be long enough that the runs reach the day
+        summaries below them — at 60 rows a calm day left a hole */
   ).bind(floor).all<Record<string, unknown>>();
 
   const daysP = env.DB.prepare(
