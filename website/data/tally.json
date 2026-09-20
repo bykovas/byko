@@ -1,18 +1,18 @@
 {
-  "updated": "2026-09-20T11:46:22.743Z",
-  "block": 51557687,
+  "updated": "2026-09-20T16:27:13.928Z",
+  "block": 51566113,
   "rule": {
     "minVote": 100,
     "text": "100+ BYKO, acquired via pool swap, EOA only; excluded: pool, burn address, founder wallets, contracts, routers"
   },
   "tally": {
-    "for": 2,
-    "withdrawn": 2
+    "for": 1,
+    "withdrawn": 3
   },
   "notCounted": {
     "dust": 5,
     "contracts": 10,
-    "giftOnly": 881
+    "giftOnly": 880
   },
   "founder": {
     "wallets": [
@@ -54,7 +54,7 @@
       },
       {
         "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
-        "balance": 19861.30805,
+        "balance": 19195.832589,
         "role": "buyer",
         "class": "primary"
       },
@@ -114,7 +114,7 @@
       },
       {
         "address": "0x9c8665dd47eba6e23c47fa2577fe3ad953563206",
-        "balance": 326412.472108,
+        "balance": 330037.074678,
         "role": "lp pumper",
         "class": "primary"
       },
@@ -131,8 +131,8 @@
         "class": "same owner"
       }
     ],
-    "balance": 357273.78,
-    "pct": 45.2
+    "balance": 360232.91,
+    "pct": 45.6
   },
   "voters": [
     {
@@ -152,8 +152,8 @@
     },
     {
       "address": "0x4d7965bf4b7cae5eb8b8b7592c6ddc4f51eebf8a",
-      "status": "for",
-      "balance": 1425.492021
+      "status": "withdrawn",
+      "balance": 0
     }
   ]
 }
