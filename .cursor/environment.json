@@ -1,0 +1,14 @@
+{
+  "name": "BYKO",
+  "install": "npm ci --prefix scripts/airdrop && npm ci --prefix market && (npm ci --prefix app227 || npm install --prefix app227)",
+  "terminals": [
+    {
+      "name": "site",
+      "command": "python3 -m http.server 8791 --directory website",
+      "description": "Static BYKO website served from website/ at http://localhost:8791"
+    }
+  ],
+  "ports": [
+    { "name": "site", "port": 8791 }
+  ]
+}
