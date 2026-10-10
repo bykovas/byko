@@ -3,8 +3,9 @@
    and writes website/data/tally.json + website/data/tally.csv, so anyone
    can recount by re-running this script.
 
-   Counting rule (also implemented in functions/api/tally.js and published
-   on the site — keep the three in sync):
+   Counting rule (published on the site beside the figures; this script is
+   now its only implementation — the Pages function that mirrored it was
+   removed on 10 Oct 2026 when the count was closed):
 
    A vote ("for") = an address that
      - currently holds >= MIN_VOTE BYKO
@@ -35,7 +36,7 @@ import { fileURLToPath } from "url";
 const BYKO = "0x078bB16e24c8931fc007928c370422e5e38F4372";
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const DEPLOY_BLOCK = 49430937;
-const CHUNK_SIZE = 2000;   /* base.org caps eth_getLogs at 2,000 blocks (it was 10,000 until 9 Sep 2026); bisection below covers stricter backends */
+const CHUNK_SIZE = 1000;   /* the span tenderly serves, and it answers; base.org allows 2,000 but rate-limits. Bisection below covers stricter backends */
 const MIN_VOTE = 100; // BYKO — config, published on the page
 
 const POOL = "0x02dd4285ad38ea93d021ca854016a839b0b2a6ca";
@@ -43,8 +44,8 @@ const ZERO = "0x0000000000000000000000000000000000000000";
 const DEAD = "0x000000000000000000000000000000000000dead";
 
 /* Founder wallets come from website/data/founder-wallets.json — the single
-   source this script, functions/api/tally.js and the home page all read, so
-   a new wallet is added in exactly one place. */
+   source this script and the home page both read, so a new wallet is added
+   in exactly one place. */
 const WALLET_CONFIG = JSON.parse(readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "..", "website", "data", "founder-wallets.json"), "utf8"));
 const FOUNDER_WALLET_META = WALLET_CONFIG.wallets.map(w => ({
@@ -67,7 +68,9 @@ const UA = "byko-tally/1.0 (+https://byko.bykovas.lt)";
 const rpcArg = process.argv.indexOf("--rpc");
 const RPC_URLS = rpcArg > -1
   ? [process.argv[rpcArg + 1]]
-  : ["https://mainnet.base.org", "https://base.drpc.org"];
+  : ["https://gateway.tenderly.co/public/base",  // serves 1,000-block getLogs
+     "https://mainnet.base.org",                  // allows 2,000, but rate-limits
+     "https://base.drpc.org"];                    // free plan caps near 100
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -94,7 +97,14 @@ async function rpc(method, params, attempt = 0) {
         headers: { "Content-Type": "application/json", "User-Agent": UA },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
       });
-      if (!response.ok) throw new Error("http " + response.status);
+      if (!response.ok) {
+        /* The body carries the reason. DRPC refuses an over-long range with
+           HTTP 400 and says so only inside it, so throwing the bare status
+           hid that from isRangeError: the caller waited out the backoff
+           ladder instead of splitting the range, and the snapshot failed. */
+        const detail = await response.text().catch(() => "");
+        throw new Error("http " + response.status + (detail ? " " + detail.slice(0, 200) : ""));
+      }
       const payload = await response.json();
       if (payload.error || payload.result === undefined) throw new Error(JSON.stringify(payload.error));
       return payload.result;

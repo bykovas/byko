@@ -78,13 +78,22 @@ force-push (it destroys the publish workflow's diff baseline).
 ## Founder wallets
 
 - `website/data/founder-wallets.json` is the single source: address, role and
-  class. `functions/api/tally.js` fetches it (and refuses to answer if it
-  cannot, rather than counting the author's own wallets as votes),
-  `scripts/compute-tally.mjs` reads it from disk, and the home page renders
-  the register from whatever the tally reports — no second list anywhere.
-- Adding or removing a wallet is a one-file change, **plus** a bump of
-  `CHECKPOINT_KEY` in `functions/api/tally.js`: the stored checkpoint was
+  class. `scripts/compute-tally.mjs` reads it from disk and the home page
+  renders the register from what the tally reports — no second list anywhere.
+- Adding or removing a wallet is a one-file change, **plus** deleting
+  `website/data/tally-state.json` before the next recount: that checkpoint was
   folded with the previous list and would keep the old exclusions.
+
+## The referendum is closed
+
+Closed on 10 Oct 2026 at block 52,437,497, after two months in which the
+count moved four times. `functions/api/tally.js` and the six-hourly
+`tally-snapshot` workflow are gone; the figures on the home page are plain
+markup, baked from `website/data/tally.json` by `render-diary.mjs` and not
+refreshed on load. `scripts/compute-tally.mjs` still reproduces the whole
+count from Transfer logs — the page links it as "recount it yourself" — so
+keep it working, but nothing runs it on a schedule. Reopening the count means
+restoring a scheduled run, not rewriting the script.
 
 ## Counters data (hours / dollars / stat bar)
 

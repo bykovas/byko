@@ -393,7 +393,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="kicker">Disclosure</span>
           <h2>What the author holds, and where</h2>
         </div>
-        <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">359,864</span> BYKO (<span id="founder-pct">45.5</span>% of supply), spread across <span class="mono" id="founder-wallets-held">3</span> of <span class="mono" id="founder-wallets-total">16</span> disclosed wallets, and can sell it into the pool like any other holder. Every one of them is listed below, so that is visible too.</p>
+        <p>A vote pays the pool, not the author's wallet — the pool's LP tokens are burned, so the liquidity itself can never be withdrawn by anyone. The founder holds <span class="mono" id="founder-balance">360,823</span> BYKO (<span id="founder-pct">45.7</span>% of supply), spread across <span class="mono" id="founder-wallets-held">3</span> of <span class="mono" id="founder-wallets-total">16</span> disclosed wallets, and can sell it into the pool like any other holder. Every one of them is listed below, so that is visible too.</p>
         <button class="reveal" id="wallet-reveal" type="button" aria-expanded="false" aria-controls="wallet-register"><span id="wallet-reveal-label">show the register</span> →</button>
         <div id="wallet-register" hidden>
           <table class="ptable">
@@ -491,21 +491,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="tiles">
       <div class="tile">
-        <b id="tally-for">2</b>
+        <b id="tally-for">1</b>
         <span class="label">For · bought and holding now</span>
       </div>
       <div class="tile right">
-        <b id="tally-withdrawn">0</b>
+        <b id="tally-withdrawn">3</b>
         <span class="label">Withdrawn · sold to zero</span>
       </div>
     </div>
-    <div class="tally-bar"><i class="for" id="tally-bar-for"></i><i class="withdrawn" id="tally-bar-withdrawn"></i></div>
+    <div class="tally-bar"><i class="for" id="tally-bar-for" style="width:25%"></i><i class="withdrawn" id="tally-bar-withdrawn" style="width:75%"></i></div>
     <div class="tally-caption">
-      <span id="tally-caption-for">for 2 · 100.0%</span>
-      <span class="mid" id="tally-updated">2 counted · 17 Sep 2026 17:14 UTC · block 51,437,935</span>
-      <span id="tally-caption-withdrawn">withdrawn 0 · 0.0%</span>
+      <span id="tally-caption-for">for 1 · 25.0%</span>
+      <span class="mid" id="tally-updated">4 counted · 10 Oct 2026 20:33 UTC · block 52,437,497</span>
+      <span id="tally-caption-withdrawn">withdrawn 3 · 75.0%</span>
     </div>
-    <p class="fine" id="tally-notcounted">not counted: 2 below the floor · 9 contracts · 892 gift-only (never bought)</p>
+    <p class="fine" id="tally-notcounted">not counted: 7 below the floor · 10 contracts · 867 gift-only (never bought)</p>
     <p class="fine">rule: 100+ BYKO, acquired via pool, EOA only · excluded: pool, burn address, founder wallets, contracts · <a href="data/tally.csv">raw data →</a> · <a href="https://github.com/bykovas/byko/blob/main/scripts/compute-tally.mjs" target="_blank" rel="noopener">recount it yourself →</a></p>
 
     <div class="field">
@@ -513,6 +513,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button type="button" class="btn btn-outline" id="check-vote-btn">Check my vote</button>
     </div>
     <p class="fine" id="vote-result"></p>
+
+    <p class="fine">Closed on 10 Oct 2026 at block 52,437,497. The count is no longer recomputed: it ran every six hours for two months and moved four times, which is not a measurement that needs a cron. The figures above are the final run and carry the block they were taken at; the CSV is the working.</p>
 
     <p class="note" style="margin-top:18px">Disclosure: the single counted holder is personally known to the author · said out loud because a tally one address wide means nothing without it · the purchase itself is real, made with their own money, and stays counted.</p>
   </section>
@@ -911,87 +913,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 })();
 
-/* Referendum tally + founder disclosure. Computed server-side by
-   /api/tally (cached ~1h, never client-side); the committed snapshot in
-   data/tally.json is the fallback so the page shows real numbers even
-   when the API is down. Sample numbers are never rendered. */
-(function () {
-  function fmt(value) { return Math.round(value).toLocaleString("en-US"); }
-  function stamp(iso) {
-    var date = new Date(iso);
-    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    if (isNaN(date.getTime())) return iso;
-    return date.getUTCDate() + " " + months[date.getUTCMonth()] + " " + date.getUTCFullYear() + " " +
-      String(date.getUTCHours()).padStart(2, "0") + ":" + String(date.getUTCMinutes()).padStart(2, "0") + " UTC";
-  }
-  function set(id, text) {
-    var node = document.getElementById(id);
-    if (node) node.textContent = text;
-  }
-  function render(data) {
-    if (!data || !data.tally) return;
-    var forCount = data.tally.for;
-    var withdrawnCount = data.tally.withdrawn;
-    var total = forCount + withdrawnCount;
-    var forPct = total ? forCount / total * 100 : 0;
-    var withdrawnPct = total ? withdrawnCount / total * 100 : 0;
-    var barFor = document.getElementById("tally-bar-for");
-    var barWithdrawn = document.getElementById("tally-bar-withdrawn");
-    set("tally-for", String(forCount));
-    set("tally-withdrawn", String(withdrawnCount));
-    set("tally-caption-for", "for " + forCount + (total ? " · " + forPct.toFixed(1) + "%" : ""));
-    set("tally-caption-withdrawn", "withdrawn " + withdrawnCount + (total ? " · " + withdrawnPct.toFixed(1) + "%" : ""));
-    if (barFor) barFor.style.width = forPct + "%";
-    if (barWithdrawn) barWithdrawn.style.width = (total ? withdrawnPct : 0) + "%";
-    set("tally-updated", (total ? total + " counted · " : "") + stamp(data.updated) + (data.block ? " · block " + data.block.toLocaleString("en-US") : ""));
-    if (data.notCounted) {
-      set("tally-notcounted", "not counted: " + data.notCounted.dust + " below the floor · " +
-        data.notCounted.contracts + " contracts · " + data.notCounted.giftOnly + " gift-only (never bought)");
-    }
-    /* the disclosure block reads its own figures live from the chain */
-    if (false) {
-      /* An endpoint that predates the per-wallet split (or a cached answer
-         from one) has no holdings; fall back to the committed snapshot
-         rather than rendering an empty register that reads as "0 of 0". */
-      if (window.renderWalletRegister) {
-        var holdings = data.founder.holdings;
-        if (Array.isArray(holdings) && holdings.length) {
-          window.renderWalletRegister(holdings);
-        } else {
-          fetch("data/tally.json")
-            .then(function (response) { return response.json(); })
-            .then(function (snapshot) {
-              var fallback = snapshot && snapshot.founder && snapshot.founder.holdings;
-              if (Array.isArray(fallback) && fallback.length) window.renderWalletRegister(fallback);
-            })
-            .catch(function () {});
-        }
-      }
-    }
-  }
-  /* Three sources, in order of freshness, each a real measurement: the
-     worker's hourly copy, then the Pages function that computes it live (it
-     has been answering 503 — every public RPC refuses that many getLogs from
-     Cloudflare's shared egress), then the committed snapshot, which a
-     six-hourly GitHub job keeps current. Whichever answers, the block and the
-     timestamp travel with it, so the page never shows a number without
-     saying when it was true. */
-  function tallyFrom(url, unwrap) {
-    return fetch(url).then(function (response) {
-      if (!response.ok) throw new Error("tally");
-      return response.json();
-    }).then(function (body) {
-      var data = unwrap ? body && body.value : body;
-      if (!data || !data.tally) throw new Error("tally");
-      return data;
-    });
-  }
-  tallyFrom("https://byko-market.bykovas.lt/api/tally", true)
-    .catch(function () { return tallyFrom("/api/tally", false); })
-    .catch(function () { return tallyFrom("data/tally.json", false); })
-    .then(render)
-    .catch(function () {});
-}());
+/* The referendum is a closed measurement. It was recomputed from Transfer
+   logs every six hours until 10 Oct 2026; the figures in the markup are the
+   last run and are not refreshed on load, so there is nothing here to fetch.
+   website/data/tally.json holds the same numbers, tally.csv the address-by-
+   address working, and scripts/compute-tally.mjs reproduces both. */
 
 document.getElementById('copyBtn').addEventListener('click', function () {
   var btn = this;
