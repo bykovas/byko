@@ -23,6 +23,13 @@
       "funded_by": "Kraken"
     },
     {
+      "address": "0x287e59d8526f3a3bf2cae4349760df573e938f87",
+      "role": "personal · reserve",
+      "class": "primary",
+      "name": "BYKOVAS NZ",
+      "funded_by": "Kraken"
+    },
+    {
       "address": "0xe1e16dd66b66bc471b8cafac4c71e2abe0060a16",
       "role": "buyer",
       "class": "primary",
@@ -112,12 +119,6 @@
       "class": "same owner",
       "name": "LUKO Buyer 02",
       "funded_by": "Kraken"
-    },
-    {
-      "address": "0x287e59d8526f3a3bf2cae4349760df573e938f87",
-      "role": "personal · reserve",
-      "class": "primary",
-      "name": "BYKOVAS NZ"
     }
   ]
 }

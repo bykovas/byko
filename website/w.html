@@ -111,8 +111,10 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     { name: "LUKAS", by: "Kraken", address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF", watched: true }
   ];
 
-  /* The order that has always opened this table. */
-  var PRINCIPALS = ["BYKOVAS", "LUKAS", "BYKOCOIN", "MEETLUKO"];
+  /* The order that has always opened this table. BYKOVAS NZ follows BYKOVAS:
+     it is the same person's reserve, and reading it anywhere else in the
+     alphabet hides that. */
+  var PRINCIPALS = ["BYKOVAS", "BYKOVAS NZ", "LUKAS", "BYKOCOIN", "MEETLUKO"];
 
   var BALANCE_OF = "0x70a08231";
   var COLUMNS = ["eth", "usdc", "luko", "byko"];
