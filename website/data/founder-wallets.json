@@ -1,5 +1,5 @@
 {
-  "note": "Every founder-owned wallet, in one place. This file is the single source: the tally endpoint and compute-tally.mjs both read it to exclude these addresses from the vote, and the home page renders the roles from it. Adding a wallet here is the whole change — but bump CHECKPOINT_KEY in functions/api/tally.js at the same time, because the stored checkpoint was folded with the old list and would keep the old exclusions. Names and funding come from here too: website/w.html renders this file rather than keeping its own copy.",
+  "note": "Every founder-owned wallet, in one place. This file is the single source: the tally endpoint and compute-tally.mjs both read it to exclude these addresses from the vote, and the home page renders the roles from it. Adding a wallet here is the whole change: the count closed on 10 Oct 2026 and functions/api/tally.js went with it, so there is no checkpoint left to bump. Names and funding come from here too: website/w.html renders this file rather than keeping its own copy.",
   "wallets": [
     {
       "address": "0x624056460437cb4c63f7a3cf0c5a554df3375222",
@@ -112,6 +112,12 @@
       "class": "same owner",
       "name": "LUKO Buyer 02",
       "funded_by": "Kraken"
+    },
+    {
+      "address": "0x287e59d8526f3a3bf2cae4349760df573e938f87",
+      "role": "personal · reserve",
+      "class": "primary",
+      "name": "BYKOVAS NZ"
     }
   ]
 }
