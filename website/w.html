@@ -32,8 +32,6 @@ tbody tr.total td{border-top:var(--byko-rule-heavy);border-bottom:0;color:var(--
 td.addr a{font:var(--byko-data);color:var(--byko-label)}
 td.addr a:hover{color:var(--byko-ink)}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
-tbody tr.watched td{color:var(--byko-label)}
-tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
 /* Phone: the name and the four currency columns share one screen — the
    currencies sit right after the name and the numbers print compact (whole
    LUKO/BYKO, cents for USDC, thousandths for ETH). Funded-by and the address
@@ -74,7 +72,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     </table>
   </div>
 
-  <p class="note">Balances are read live from Base, one batched JSON-RPC call, straight from the token contracts — no indexer, no aggregator in between. The numbered rows are the project's own wallets, taken from the same register the tally reads; the dim ones marked <em>not mine</em> belong to other people and are shown but never added to the total — one of them is the only wallet that has voted. Nothing is stored here; the page holds no keys and cannot move anything.</p>
+  <p class="note">Balances are read live from Base, one batched JSON-RPC call, straight from the token contracts — no indexer, no aggregator in between. Every row is one of the project's own wallets, taken from the same register the tally reads; nobody else's wallet is listed here. Nothing is stored here; the page holds no keys and cannot move anything.</p>
 </main>
 
 <script>
@@ -103,18 +101,10 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
      place: a wallet added there shows up here without touching this page. */
   var WALLETS = [];
 
-  /* Wallets worth watching that are NOT the project's. They must never enter
-     founder-wallets.json: that file is what the tally excludes from the vote,
-     and LUKAS is the one address that has actually voted. Kept here, shown
-     apart, counted apart. */
-  var WATCHED = [
-    { name: "LUKAS", by: "Kraken", address: "0x30Fd96C5aE61f0fB3d97e6159ab023710163eFBF", watched: true }
-  ];
-
   /* The order that has always opened this table. BYKOVAS NZ follows BYKOVAS:
      it is the same person's reserve, and reading it anywhere else in the
      alphabet hides that. */
-  var PRINCIPALS = ["BYKOVAS", "BYKOVAS NZ", "LUKAS", "BYKOCOIN", "MEETLUKO"];
+  var PRINCIPALS = ["BYKOVAS", "BYKOVAS NZ", "BYKOCOIN"];
 
   var BALANCE_OF = "0x70a08231";
   var COLUMNS = ["eth", "usdc", "luko", "byko"];
@@ -167,8 +157,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     var mine = 0;
     WALLETS.forEach(function (wallet, index) {
       var row = document.createElement("tr");
-      if (wallet.watched) row.className = "watched";
-      if (!wallet.watched) mine += 1;
+      mine += 1;
       [["l", String(index + 1)],
        ["l name", wallet.name]].forEach(function (pair) {
         var td = document.createElement("td");
@@ -179,12 +168,11 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
       COLUMNS.forEach(function (key) {
         var amount = balances ? balances[wallet.address.toLowerCase()][key] : null;
         cell(row, amount, key);
-        /* watched wallets are shown, never counted as the project's */
-        if (amount && !wallet.watched) totals[key] += amount;
+        if (amount) totals[key] += amount;
       });
       var by = document.createElement("td");
       by.className = "l";
-      by.textContent = wallet.watched ? wallet.by + " · not mine" : wallet.by;
+      by.textContent = wallet.by;
       row.appendChild(by);
       var addr = document.createElement("td");
       addr.className = "l addr";
@@ -203,7 +191,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
     var label = document.createElement("td");
     label.className = "l";
     label.colSpan = 2;
-    label.textContent = "total · " + mine + " wallets · watched excluded";
+    label.textContent = "total · " + mine + " wallets";
     total.appendChild(label);
     COLUMNS.forEach(function (key) {
       cell(total, balances ? totals[key] : null, key);
@@ -255,7 +243,7 @@ tbody tr.watched td.name{color:var(--byko-ink-2);font-weight:500}
             by: wallet.funded_by || "—",
             address: wallet.address,
           };
-        }).concat(WATCHED);
+        });
 
         /* The four principals first, in their own order; everything else
            alphabetically. Row numbers follow the position, as before. */
