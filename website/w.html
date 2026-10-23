@@ -32,9 +32,9 @@ tbody tr.total td{border-top:var(--byko-rule-heavy);border-bottom:0;color:var(--
 td.addr a{font:var(--byko-data);color:var(--byko-label)}
 td.addr a:hover{color:var(--byko-ink)}
 .note{font:var(--byko-note);color:var(--byko-ink-2);margin-top:26px;padding-top:14px;border-top:var(--byko-rule-section)}
-/* Phone: the name and the four currency columns share one screen — the
+/* Phone: the name and the three currency columns share one screen — the
    currencies sit right after the name and the numbers print compact (whole
-   LUKO/BYKO, cents for USDC, thousandths for ETH). Funded-by and the address
+   BYKO, cents for USDC, thousandths for ETH). Funded-by and the address
    stay in the row but live past the right edge, one swipe away. */
 @media (max-width:900px){
   table{min-width:0}
@@ -62,7 +62,6 @@ td.addr a:hover{color:var(--byko-ink)}
           <th class="l">Name</th>
           <th>ETH</th>
           <th>USDC</th>
-          <th>LUKO</th>
           <th>BYKO</th>
           <th class="l">Funded by</th>
           <th class="l">Address</th>
@@ -92,7 +91,6 @@ td.addr a:hover{color:var(--byko-ink)}
   /* decimals matter: USDC is 6, everything else here is 18 */
   var TOKENS = [
     { key: "usdc", address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6 },
-    { key: "luko", address: "0x4a9DA2831A691E7C4aca594CaFd58c35e0131fD1", decimals: 18 },
     { key: "byko", address: "0x078bB16e24c8931fc007928c370422e5e38F4372", decimals: 18 }
   ];
 
@@ -107,7 +105,7 @@ td.addr a:hover{color:var(--byko-ink)}
   var PRINCIPALS = ["BYKOVAS", "BYKOVAS NZ", "BYKOCOIN"];
 
   var BALANCE_OF = "0x70a08231";
-  var COLUMNS = ["eth", "usdc", "luko", "byko"];
+  var COLUMNS = ["eth", "usdc", "byko"];
 
   function short(address) {
     return address.slice(0, 6) + "…" + address.slice(-4);
@@ -123,12 +121,12 @@ td.addr a:hover{color:var(--byko-ink)}
     return Number(whole) + Number(rest) / Number(scale);
   }
 
-  /* On a phone the numbers print compact so the name and all four currencies
-     share one screen: whole LUKO/BYKO, cents for USDC, thousandths for ETH.
+  /* On a phone the numbers print compact so the name and all three currencies
+     share one screen: whole BYKO, cents for USDC, thousandths for ETH.
      Anything that would round to all zeros while being real prints as "<…" —
      dust must never read as an empty wallet. Desktop keeps four decimals. */
   var compactQuery = window.matchMedia("(max-width:900px)");
-  var DECIMALS = { eth: 3, usdc: 2, luko: 0, byko: 0 };
+  var DECIMALS = { eth: 3, usdc: 2, byko: 0 };
 
   function fmt(amount, key) {
     if (amount === null || amount === undefined) return null;
@@ -152,7 +150,7 @@ td.addr a:hover{color:var(--byko-ink)}
   function render(balances) {
     var body = document.getElementById("rows");
     body.textContent = "";
-    var totals = { eth: 0, usdc: 0, luko: 0, byko: 0 };
+    var totals = { eth: 0, usdc: 0, byko: 0 };
 
     var mine = 0;
     WALLETS.forEach(function (wallet, index) {
@@ -310,7 +308,7 @@ td.addr a:hover{color:var(--byko-ink)}
 
       var balances = {};
       WALLETS.forEach(function (wallet) {
-        balances[wallet.address.toLowerCase()] = { eth: 0, usdc: 0, luko: 0, byko: 0 };
+        balances[wallet.address.toLowerCase()] = { eth: 0, usdc: 0, byko: 0 };
       });
       var block = null;
       calls.forEach(function (call, index) {
